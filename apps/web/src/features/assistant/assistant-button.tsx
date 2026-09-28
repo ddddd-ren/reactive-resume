@@ -14,6 +14,7 @@ export function AssistantButton() {
 			label={t`Assistant`}
 			shortcut="⌘J"
 			aria-pressed={open}
+			data-assistant-toggle=""
 			className={cn("text-ink-2", open && "bg-accent-soft text-accent-text hover:bg-accent-soft")}
 			onClick={() => setOpen(!open)}
 		/>

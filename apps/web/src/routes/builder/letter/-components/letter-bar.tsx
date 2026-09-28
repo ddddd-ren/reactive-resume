@@ -71,18 +71,12 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 
 			<div className="flex items-center justify-end gap-1">
 				{layout === "desktop" && (
-					<>
-						<IconButton
-							icon="history"
-							label={t`History`}
-							className="text-ink-2"
-							onClick={() => setShareTab("history")}
-						/>
-						<span className="me-1.5">
-							<AssistantButton />
-						</span>
-					</>
+					<IconButton icon="history" label={t`History`} className="text-ink-2" onClick={() => setShareTab("history")} />
 				)}
+				{/* Every layout opens the assistant from the ✦: a column, a drawer, or full screen on phones. */}
+				<span className={layout === "desktop" ? "me-1.5" : undefined}>
+					<AssistantButton />
+				</span>
 				{layout === "desktop" && wide ? (
 					<Button variant="secondary" className="gap-1.5" onClick={() => setShareTab("download")}>
 						<Icon name="ios_share" />
@@ -91,7 +85,7 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 				) : (
 					<IconButton icon="ios_share" label={t`Share`} onClick={() => setShareTab("download")} />
 				)}
-				<DownloadButtons compact={layout === "mobile"} />
+				<DownloadButtons compact={layout === "mobile"} iconOnly={layout === "tablet"} />
 			</div>
 		</header>
 	);
@@ -121,7 +115,7 @@ export function useDownloadLetter() {
 	return { run, busy };
 }
 
-function DownloadButtons({ compact }: { compact: boolean }) {
+function DownloadButtons({ compact, iconOnly }: { compact: boolean; iconOnly: boolean }) {
 	const download = useDownloadLetter();
 	const setShareTab = useEditorStore((state) => state.setShareTab);
 
@@ -139,9 +133,16 @@ function DownloadButtons({ compact }: { compact: boolean }) {
 
 	return (
 		<ButtonGroup aria-label={t`Download`}>
-			<Button loading={download.busy} className="gap-1.5" onClick={() => void download.run()}>
+			{/* Tablets drop the label so the bar fits beside the mode switch; the button keeps its name. */}
+			<Button
+				loading={download.busy}
+				size={iconOnly ? "icon" : "default"}
+				aria-label={iconOnly ? t`Download PDF` : undefined}
+				className="gap-1.5"
+				onClick={() => void download.run()}
+			>
 				{!download.busy && <Icon name="download" />}
-				{download.busy ? <Trans>Preparing…</Trans> : <Trans>Download PDF</Trans>}
+				{iconOnly ? null : download.busy ? <Trans>Preparing…</Trans> : <Trans>Download PDF</Trans>}
 			</Button>
 			<Button
 				size="icon"

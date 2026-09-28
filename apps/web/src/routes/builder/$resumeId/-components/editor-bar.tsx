@@ -47,14 +47,15 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 					<>
 						<UndoButton />
 						<HistoryButton />
-						<span className="me-1.5">
-							<AssistantButton />
-						</span>
 					</>
 				)}
+				{/* Every layout opens the assistant from the ✦: a column, a drawer, or full screen on phones. */}
+				<span className={layout === "desktop" ? "me-1.5" : undefined}>
+					<AssistantButton />
+				</span>
 				{/* Below 1280 the bar is too narrow for Share's label next to everything else. */}
 				<ShareButton compact={layout !== "desktop" || !wide} disabled={offline} />
-				<DownloadButtons compact={layout === "mobile"} disabled={offline} />
+				<DownloadButtons compact={layout === "mobile"} iconOnly={layout === "tablet"} disabled={offline} />
 			</div>
 		</header>
 	);
@@ -159,7 +160,7 @@ function ShareButton({ compact, disabled }: ToolbarActionProps) {
 }
 
 /** Download PDF is the only filled button; the ▾ segment opens the Download tab with every format. */
-function DownloadButtons({ compact, disabled }: ToolbarActionProps) {
+function DownloadButtons({ compact, iconOnly, disabled }: ToolbarActionProps & { iconOnly?: boolean }) {
 	const resume = useCurrentResume();
 	const { onDownloadPDF, isExporting } = useResumeExport(resume);
 	const setShareTab = useEditorStore((state) => state.setShareTab);
@@ -178,9 +179,17 @@ function DownloadButtons({ compact, disabled }: ToolbarActionProps) {
 
 	return (
 		<ButtonGroup aria-label={t`Download`}>
-			<Button loading={isExporting} disabled={disabled} className="gap-1.5" onClick={() => void onDownloadPDF()}>
+			{/* Tablets drop the label so the bar fits beside the mode switch; the button keeps its name. */}
+			<Button
+				loading={isExporting}
+				disabled={disabled}
+				size={iconOnly ? "icon" : "default"}
+				aria-label={iconOnly ? t`Download PDF` : undefined}
+				className="gap-1.5"
+				onClick={() => void onDownloadPDF()}
+			>
 				{!isExporting && <Icon name="download" />}
-				{isExporting ? <Trans>Preparing…</Trans> : <Trans>Download PDF</Trans>}
+				{iconOnly ? null : isExporting ? <Trans>Preparing…</Trans> : <Trans>Download PDF</Trans>}
 			</Button>
 			<Button
 				size="icon"

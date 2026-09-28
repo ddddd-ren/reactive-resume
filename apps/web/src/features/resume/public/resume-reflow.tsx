@@ -3,6 +3,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import { useMemo } from "react";
 import { getResumeSectionTitle } from "@reactive-resume/pdf/section-title";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { contrastOnWhite } from "@reactive-resume/utils/color";
 import { cn } from "@reactive-resume/utils/style";
 import { reflowOrder } from "./reflow";
 import { RichText } from "./rich-text";
@@ -109,7 +110,9 @@ type ResumeReflowProps = { data: ResumeData };
 export function ResumeReflow({ data }: ResumeReflowProps) {
 	const order = useMemo(() => reflowOrder(data), [data]);
 	const { basics } = data;
-	const accent = data.metadata.design.colors.primary;
+	// The template's colour, darkened where it would be too faint to read on white.
+	const primary = data.metadata.design.colors.primary;
+	const accent = contrastOnWhite(primary) >= 4.5 ? primary : `color-mix(in srgb, ${primary} 70%, black)`;
 	const font = data.metadata.typography.body.fontFamily;
 
 	return (

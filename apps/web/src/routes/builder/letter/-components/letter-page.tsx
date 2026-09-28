@@ -105,7 +105,14 @@ export function LetterPage() {
 
 	return (
 		<div className="relative h-full min-h-0 bg-sunken">
-			<div ref={canvasRef} className={cn("absolute inset-0 overflow-auto pt-7 pb-24", isPhone ? "px-4" : "px-10")}>
+			{/* The page has nothing to tab to, so the scroll area itself takes focus for keyboard scrolling. */}
+			<section
+				ref={canvasRef}
+				// biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be reachable by keyboard.
+				tabIndex={0}
+				aria-label={t`Letter page`}
+				className={cn("absolute inset-0 overflow-auto pt-7 pb-24 outline-none", isPhone ? "px-4" : "px-10")}
+			>
 				<ResumePreview
 					data={data}
 					includeCoverLetterHeader
@@ -161,7 +168,7 @@ export function LetterPage() {
 						)
 					}
 				/>
-			</div>
+			</section>
 
 			<ZoomBar fitScale={fitScale} pageCount={Math.max(1, rendered.pageCount)} />
 		</div>

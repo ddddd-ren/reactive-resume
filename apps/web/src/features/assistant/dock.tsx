@@ -42,15 +42,19 @@ export function AssistantOverlay({ place, children }: AssistantOverlayProps) {
 	);
 }
 
+/** Closing the panel hands focus back to the ✦ button in the bar, as closing any panel should. */
+function closeAssistant() {
+	useEditorStore.getState().setAssistantOpen(false);
+	requestAnimationFrame(() => globalThis.document.querySelector<HTMLElement>("[data-assistant-toggle]")?.focus());
+}
+
 export function ResumeAssistant() {
 	const document = useResumeAssistantDocument();
-	const setOpen = useEditorStore((state) => state.setAssistantOpen);
-	return <AssistantPanel document={document} onClose={() => setOpen(false)} />;
+	return <AssistantPanel document={document} onClose={closeAssistant} />;
 }
 
 export function LetterAssistant() {
 	const document = useLetterAssistantDocument();
-	const setOpen = useEditorStore((state) => state.setAssistantOpen);
 	if (!document) return null;
-	return <AssistantPanel document={document} onClose={() => setOpen(false)} />;
+	return <AssistantPanel document={document} onClose={closeAssistant} />;
 }

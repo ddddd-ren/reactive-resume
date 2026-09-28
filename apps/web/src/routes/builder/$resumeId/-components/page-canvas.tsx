@@ -98,8 +98,12 @@ export function PageCanvas() {
 
 	return (
 		<div className="relative h-full min-h-0 bg-sunken">
-			<div
+			<section
 				ref={canvasRef}
+				// The scroll area takes focus so the page can be scrolled from the keyboard even before its lines load.
+				// biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be reachable by keyboard.
+				tabIndex={0}
+				aria-label={t`Resume page`}
 				// Tapping the page (not a line) closes the tablet drawer but keeps the selection; on phones it
 				// dismisses the selection bar.
 				onPointerDown={(event) => {
@@ -108,7 +112,7 @@ export function PageCanvas() {
 					if (isPhone) select(null);
 				}}
 				className={cn(
-					"absolute inset-0 overflow-auto pb-24",
+					"absolute inset-0 overflow-auto pb-24 outline-none",
 					// Check keeps room above the page for the page-view toggle.
 					mode === "check" && !viewing ? "pt-[68px]" : "pt-7",
 					isPhone ? "px-4" : "px-10",
@@ -190,7 +194,7 @@ export function PageCanvas() {
 					}
 				/>
 				{parser && <ParserView />}
-			</div>
+			</section>
 
 			{mode === "check" && !viewing && <PageViewToggle />}
 			{!parser && <ZoomBar fitScale={fitScale} pageCount={Math.max(1, rendered.pageCount)} />}
