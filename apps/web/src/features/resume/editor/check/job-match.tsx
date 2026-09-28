@@ -370,7 +370,7 @@ function PostingSource({ application }: { application: JobMatch["application"] }
 
 function ApplicationPicker({ value, onChange }: { value: string | null; onChange: (id: string) => void }) {
 	const { data: applications } = useQuery(applicationsListQueryOptions());
-	const choices = (applications ?? []).filter((application) => !application.archived);
+	const choices = (applications ?? []).filter((application) => application.status !== "closed");
 	// Linking changes the document's details, which a locked document keeps as they are.
 	const locked = useIsResumeLocked();
 

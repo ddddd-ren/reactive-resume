@@ -64,5 +64,7 @@ describe("getVersionTitle", () => {
 		expect(getVersionTitle({ kind: "named", name: "Sent to Lumen" })).toBe("Sent to Lumen");
 		expect(getVersionTitle({ kind: "import", name: null })).toBe("Imported");
 		expect(getVersionTitle({ kind: "auto", name: null })).toBe("Editing session");
+		expect(getVersionTitle({ kind: "sent", name: "Lumen Health" })).toBe("Sent to Lumen Health");
+		expect(getVersionTitle({ kind: "sent", name: null })).toBe("Sent");
 	});
 });

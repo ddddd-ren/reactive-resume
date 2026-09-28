@@ -66,7 +66,7 @@ export function ExportApplicationsSheet({ open, onOpenChange, applications, filt
 								onValueChange={(value) => value && setScope(value)}
 								options={[
 									{ value: "filtered", label: t`Current filters` },
-									{ value: "all", label: t`All applications (including archived)` },
+									{ value: "all", label: t`All applications (including closed)` },
 								]}
 							/>
 						</div>

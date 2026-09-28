@@ -1,7 +1,7 @@
 import type { ApplicationStatus, Contact } from "@reactive-resume/schema/applications/data";
 import type { Application } from "./types";
 import {
-	applicationStatusSchema,
+	applicationStatusInputSchema,
 	contactSchema,
 	INTERVIEW_KINDS,
 	STAGES,
@@ -78,7 +78,12 @@ type CsvApplication = ParsedApplication & {
 	contactType?: string;
 	contactEmail?: string;
 	contactPhone?: string;
+	/** Exports from before the closed stage mark archived applications here. */
+	archived?: string;
 };
+
+/** A column's destination, or null to leave the column out. */
+export type CsvField = keyof CsvApplication;
 
 function dateOnly(value: string) {
 	if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;
@@ -118,7 +123,38 @@ const HEADER_ALIASES: Record<string, keyof CsvApplication> = {
 	"contact type": "contactType",
 	"contact email": "contactEmail",
 	"contact phone": "contactPhone",
+	archived: "archived",
 };
+
+/** The fields a column can be matched to, in the order the match list offers them. */
+export const CSV_FIELDS: readonly CsvField[] = [
+	"company",
+	"role",
+	"status",
+	"stageEnteredAt",
+	"location",
+	"salary",
+	"source",
+	"sourceUrl",
+	"notes",
+	"tags",
+	"contactName",
+	"contactRole",
+	"contactType",
+	"contactEmail",
+	"contactPhone",
+	"archived",
+];
+
+/** Each header's field by name (case and spacing ignored), or null when nothing matches. */
+export const autoMapHeaders = (headers: readonly string[]): (CsvField | null)[] =>
+	headers.map((header) => HEADER_ALIASES[header.trim().toLowerCase()] ?? null);
+
+const csvLine = (cells: readonly string[]) => cells.map((cell) => `"${cell.replaceAll('"', '""')}"`).join(",");
+
+/** Rows back to CSV text (for downloading the rows an import skipped), header first. */
+export const rowsToCsv = (headers: readonly string[], rows: readonly string[][]) =>
+	`${[headers, ...rows].map(csvLine).join("\r\n")}\r\n`;
 
 // Values a spreadsheet would evaluate as a formula: leading =, +, -, @ (and full-width variants),
 // possibly hidden behind whitespace/control characters, or a leading tab/newline.
@@ -152,6 +188,8 @@ function parseTags(value: string) {
 export type CsvMapResult = {
 	rows: ParsedApplication[];
 	skipped: number;
+	/** The source rows left out (no company or role), to download and fix. */
+	skippedRows: string[][];
 	contactsSkipped: number;
 	headers: string[];
 	recognized: string[];
@@ -161,19 +199,20 @@ export type CsvMapResult = {
 // are skipped (and counted). Status is coerced to a valid stage or dropped. A contact that fails
 // validation (bad email, or contact columns with no name) is dropped on its own — the application
 // still imports, since losing the whole row would silently discard company/role/salary/tags too.
-export function mapCsvToApplications(table: string[][]): CsvMapResult {
+export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvField | null)[]): CsvMapResult {
 	const [headerRow, ...dataRows] = table;
-	if (!headerRow) return { rows: [], skipped: 0, contactsSkipped: 0, headers: [], recognized: [] };
+	if (!headerRow) return { rows: [], skipped: 0, skippedRows: [], contactsSkipped: 0, headers: [], recognized: [] };
 
 	const headers = headerRow.map((h) => h.trim());
-	const fieldFor = headers.map((h) => HEADER_ALIASES[h.toLowerCase()]);
-	const recognized = [...new Set(fieldFor.filter((f): f is keyof CsvApplication => !!f))];
+	// The confirmed match, else the automatic one.
+	const fieldFor = mapping ?? autoMapHeaders(headers);
+	const recognized = [...new Set(fieldFor.filter((f): f is CsvField => !!f))];
 	const isReactiveResumeExport = ["Stage History", "Timeline", "Archived", "Created At", "Updated At"].every((header) =>
 		headers.includes(header),
 	);
 
 	const rows: ParsedApplication[] = [];
-	let skipped = 0;
+	const skippedRows: string[][] = [];
 	let contactsSkipped = 0;
 
 	for (const raw of dataRows) {
@@ -185,7 +224,7 @@ export function mapCsvToApplications(table: string[][]): CsvMapResult {
 			if (!value) return;
 			if (field === "tags") record.tags = parseTags(value);
 			else if (field === "status") {
-				const parsed = applicationStatusSchema.safeParse(value.toLowerCase());
+				const parsed = applicationStatusInputSchema.safeParse(value.toLowerCase());
 				if (parsed.success) record.status = parsed.data;
 			} else if (field === "stageEnteredAt") {
 				record.stageEnteredAt = dateOnly(value);
@@ -193,11 +232,13 @@ export function mapCsvToApplications(table: string[][]): CsvMapResult {
 		});
 
 		if (!record.company || !record.role) {
-			skipped++;
+			skippedRows.push(raw);
 			continue;
 		}
 
-		const { contactName, contactRole, contactType, contactEmail, contactPhone, ...application } = record;
+		const { contactName, contactRole, contactType, contactEmail, contactPhone, archived, ...application } = record;
+		// Archived applications from older exports are closed ones.
+		if (archived?.toLowerCase() === "true") application.status = "closed";
 		if (contactName || contactRole || contactType || contactEmail || contactPhone) {
 			const contact = contactSchema.safeParse({
 				name: contactName,
@@ -212,7 +253,7 @@ export function mapCsvToApplications(table: string[][]): CsvMapResult {
 		rows.push(application as ParsedApplication);
 	}
 
-	return { rows, skipped, contactsSkipped, headers, recognized };
+	return { rows, skipped: skippedRows.length, skippedRows, contactsSkipped, headers, recognized };
 }
 
 export type ApplicationExportOptions = {
@@ -253,6 +294,7 @@ export function exportApplicationsCsv(applications: readonly Application[]): str
 		"Tags",
 		"Contacts",
 		"Notes",
+		"Closed Reason",
 		"Stage History",
 		"Timeline",
 		"Archived",
@@ -289,6 +331,7 @@ export function exportApplicationsCsv(applications: readonly Application[]): str
 				})
 				.join("\n"),
 			application.notes ?? "",
+			application.closedReason ?? "",
 			stages.map((entry) => `${stageLabel(entry.stage)} (${dateOnly(entry.at)})`).join(" → "),
 			timeline.map((entry) => `${dateOnly(entry.at)}: ${timelineText(entry)}`).join("\n"),
 			String(application.archived),

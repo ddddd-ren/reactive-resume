@@ -12,9 +12,9 @@ const router = vi.hoisted(() => ({
 vi.mock("@tanstack/react-router", () => ({
 	getRouteApi: () => ({
 		useSearch: () => router.search,
-		useNavigate: () => (options: { search: { mode?: string } }) =>
+		useNavigate: () => (options: { search: (current: typeof router.search) => { mode?: string } }) =>
 			new Promise<void>((resolve) => {
-				router.navigations.push({ mode: options.search.mode, resolve });
+				router.navigations.push({ mode: options.search(router.search).mode, resolve });
 			}),
 	}),
 }));

@@ -2,7 +2,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { EditorMode, MobileView } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { Outlet } from "@tanstack/react-router";
+import { getRouteApi, Outlet } from "@tanstack/react-router";
 import { useEffect, useSyncExternalStore } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
@@ -50,6 +50,7 @@ export function EditorShell() {
 
 	// Selection, zoom and open sheets belong to one document.
 	useEffect(() => resetEditor, [resetEditor]);
+	useOpenVersionFromUrl();
 
 	return (
 		<Tabs value={mode} onValueChange={(value) => setMode(value as EditorMode)} className="contents">
@@ -72,6 +73,26 @@ export function EditorShell() {
 			</div>
 		</Tabs>
 	);
+}
+
+const routeApi = getRouteApi("/builder/$resumeId");
+
+/** `?version=` opens History on that version (the page shows it read-only), then leaves the URL. */
+function useOpenVersionFromUrl() {
+	const { version } = routeApi.useSearch();
+	const navigate = routeApi.useNavigate();
+
+	useEffect(() => {
+		if (!version) return;
+		const editor = useEditorStore.getState();
+		editor.setShareTab("history");
+		editor.setHistoryVersion(version);
+		void navigate({
+			to: ".",
+			search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, version: undefined }),
+			replace: true,
+		});
+	}, [version, navigate]);
 }
 
 function EditorHotkeys({ onModeChange }: { onModeChange: (mode: EditorMode) => void }) {

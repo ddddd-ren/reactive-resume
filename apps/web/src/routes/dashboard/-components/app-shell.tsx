@@ -42,7 +42,7 @@ function useNavItems() {
 			to: "/dashboard/applications",
 			icon: "work",
 			label: t`Applications`,
-			...(applications ? { count: applications.filter((application) => !application.archived).length } : {}),
+			...(applications ? { count: applications.filter((application) => application.status !== "closed").length } : {}),
 		},
 	];
 	const trash: NavItem | null = counts?.trash

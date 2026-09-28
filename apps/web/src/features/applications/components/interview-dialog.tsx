@@ -152,7 +152,7 @@ export function InterviewDialog({
 		? DURATION_OPTIONS
 		: [...DURATION_OPTIONS, draft.durationMinutes].sort((a, b) => a - b);
 
-	const pickable = applications.filter((item) => !item.archived);
+	const pickable = applications.filter((item) => item.status !== "closed");
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>

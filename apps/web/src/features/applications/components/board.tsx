@@ -12,156 +12,114 @@ import {
 	useSensors,
 } from "@dnd-kit/core";
 import { t } from "@lingui/core/macro";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { STAGES } from "@reactive-resume/schema/applications/data";
-import { toast } from "@reactive-resume/ui/components/toast";
+import { useState } from "react";
 import { cn } from "@reactive-resume/utils/style";
-import { orpc } from "@/libs/orpc/client";
-import { applicationsListQueryKey } from "../queries";
+import { getStageColor, getStageLabel, PIPELINE } from "../stages";
+import { useApplicationActions } from "../use-application-actions";
 import { ApplicationCard } from "./application-card";
 
-type Props = {
+type BoardProps = {
 	applications: Application[];
+	showClosed: boolean;
 	onOpen: (application: Application) => void;
-	onEdit: (application: Application) => void;
 };
 
-export function ApplicationBoard({ applications, onOpen, onEdit }: Props) {
-	const queryClient = useQueryClient();
+/**
+ * A column per stage (Closed only when shown). Dropping a card on a column moves it, with the same toast as the
+ * other ways to change stage; each card's menu has Move to… for the keyboard. Desktop and tablet only.
+ */
+export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProps) {
+	const { moveTo } = useApplicationActions();
 	const [activeId, setActiveId] = useState<string | null>(null);
 
-	// A small activation distance so a click still opens the detail panel instead of starting a drag.
+	// A small activation distance so a click still opens the detail sheet instead of starting a drag.
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+	const stages: ApplicationStatus[] = showClosed ? [...PIPELINE, "closed"] : [...PIPELINE];
 
-	const listKey = applicationsListQueryKey();
+	const byStage = new Map<ApplicationStatus, Application[]>(stages.map((stage) => [stage, []]));
+	for (const application of applications) byStage.get(application.status)?.push(application);
 
-	const move = useMutation(
-		orpc.applications.update.mutationOptions({
-			onMutate: async ({ id, status }) => {
-				await queryClient.cancelQueries({ queryKey: listKey });
-				const previous = queryClient.getQueryData<Application[]>(listKey);
-				queryClient.setQueryData<Application[]>(listKey, (rows) =>
-					(rows ?? []).map((row) => (row.id === id && status ? { ...row, status } : row)),
-				);
-				return { previous };
-			},
-			onError: (_error, _vars, context) => {
-				if (context?.previous) queryClient.setQueryData(listKey, context.previous);
-				toast.add({ type: "error", description: t`Couldn't move the application. Please try again.` });
-			},
-			onSettled: () => void queryClient.invalidateQueries({ queryKey: listKey }),
-		}),
-	);
-
-	const byStage = useMemo(() => {
-		const map = new Map<ApplicationStatus, Application[]>(STAGES.map((s) => [s.value, []]));
-		for (const app of applications) map.get(app.status)?.push(app);
-		return map;
-	}, [applications]);
-
-	const activeApp = activeId ? applications.find((a) => a.id === activeId) : null;
+	const active = activeId ? applications.find((application) => application.id === activeId) : null;
 
 	const onDragStart = (event: DragStartEvent) => setActiveId(String(event.active.id));
 
 	const onDragEnd = (event: DragEndEvent) => {
 		setActiveId(null);
-		const { active, over } = event;
-		if (!over) return;
-		const target = over.id as ApplicationStatus;
-		const app = applications.find((a) => a.id === active.id);
-		if (!app || app.status === target) return;
-		move.mutate({ id: app.id, status: target });
+		const target = event.over?.id as ApplicationStatus | undefined;
+		const application = applications.find((item) => item.id === event.active.id);
+		if (!target || !application || application.status === target) return;
+		moveTo(application, target);
 	};
 
 	return (
 		<DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={onDragStart} onDragEnd={onDragEnd}>
-			<div className="flex h-full min-h-0 gap-4 overflow-x-auto pb-4">
-				{STAGES.map((stage) => (
-					<Column
-						key={stage.value}
-						stage={stage}
-						applications={byStage.get(stage.value) ?? []}
-						onOpen={onOpen}
-						onEdit={onEdit}
-					/>
+			<div className="flex h-full min-h-0 gap-3 overflow-x-auto pb-4">
+				{stages.map((stage) => (
+					<Column key={stage} stage={stage} applications={byStage.get(stage) ?? []} onOpen={onOpen} />
 				))}
 			</div>
 
 			{/* No drop animation: the optimistic move lands after an await, so the default would fly the card back. */}
 			<DragOverlay dropAnimation={null}>
-				{activeApp ? <ApplicationCard application={activeApp} dragging /> : null}
+				{active ? <ApplicationCard application={active} dragging /> : null}
 			</DragOverlay>
 		</DndContext>
 	);
 }
 
-type ColumnProps = {
-	stage: (typeof STAGES)[number];
-	applications: Application[];
-	onOpen: (application: Application) => void;
-	onEdit: (application: Application) => void;
-};
-
-// Cap the cards rendered per column so a stage with hundreds of applications doesn't mount
-// hundreds of draggable nodes at once. Users reveal the rest in batches. Server-side paging
-// isn't needed here — the list payload is small; the cost is DOM/drag nodes.
+// Cap the cards rendered per column so a stage with hundreds of applications doesn't mount hundreds of draggable
+// nodes at once; the rest show in batches.
 const COLUMN_PAGE_SIZE = 50;
 
-function Column({ stage, applications, onOpen, onEdit }: ColumnProps) {
-	const { setNodeRef, isOver } = useDroppable({ id: stage.value });
-	const [visible, setVisible] = useState(COLUMN_PAGE_SIZE);
+type ColumnProps = {
+	stage: ApplicationStatus;
+	applications: Application[];
+	onOpen: (application: Application) => void;
+};
 
+function Column({ stage, applications, onOpen }: ColumnProps) {
+	const { setNodeRef, isOver } = useDroppable({ id: stage });
+	const [visible, setVisible] = useState(COLUMN_PAGE_SIZE);
 	const shown = applications.slice(0, visible);
 	const remaining = applications.length - shown.length;
 
 	return (
-		<div className="flex w-72 shrink-0 flex-col rounded-2xl border border-border bg-muted/30">
-			<div className="flex items-center gap-2 px-3.5 py-3">
-				<span className="size-2.5 rounded-sm" style={{ background: stage.color }} />
-				<span className="font-semibold text-sm tracking-tight">{stage.label}</span>
-				<span className="rounded-full bg-muted px-2 py-0.5 font-semibold text-muted-foreground text-xs">
-					{applications.length}
-				</span>
-			</div>
-			<div
-				ref={setNodeRef}
-				className={cn(
-					"flex min-h-24 flex-1 flex-col gap-2.5 overflow-y-auto px-2.5 pb-3 transition-colors",
-					isOver && "bg-muted/60",
-				)}
-			>
-				{shown.map((app) => (
-					<DraggableCard key={app.id} application={app} onOpen={() => onOpen(app)} onEdit={onEdit} />
+		<section
+			aria-label={getStageLabel(stage)}
+			className={cn(
+				"flex w-[272px] shrink-0 flex-col rounded-xl border bg-sunken transition-colors duration-quick",
+				isOver ? "border-accent bg-accent-soft" : "border-transparent",
+			)}
+		>
+			<h3 className="flex items-center gap-2 px-3 py-2.5 font-semibold text-sm">
+				<span aria-hidden="true" className="size-2 rounded-full" style={{ background: getStageColor(stage) }} />
+				{getStageLabel(stage)}
+				<span className="font-mono font-normal text-ink-3 text-xs">{applications.length}</span>
+			</h3>
+			<div ref={setNodeRef} className="flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">
+				{shown.map((application) => (
+					<DraggableCard key={application.id} application={application} onOpen={() => onOpen(application)} />
 				))}
 				{remaining > 0 && (
 					<button
 						type="button"
-						onClick={() => setVisible((v) => v + COLUMN_PAGE_SIZE)}
-						className="rounded-lg border border-border border-dashed py-2 text-muted-foreground text-xs hover:bg-muted/60"
+						onClick={() => setVisible((count) => count + COLUMN_PAGE_SIZE)}
+						className="rounded-lg border border-line border-dashed py-2 text-ink-3 text-xs hover:bg-hover"
 					>
 						{t`Show ${Math.min(remaining, COLUMN_PAGE_SIZE)} more`}
 					</button>
 				)}
 			</div>
-		</div>
+		</section>
 	);
 }
 
-function DraggableCard({
-	application,
-	onOpen,
-	onEdit,
-}: {
-	application: Application;
-	onOpen: () => void;
-	onEdit: (application: Application) => void;
-}) {
+function DraggableCard({ application, onOpen }: { application: Application; onOpen: () => void }) {
 	const { setNodeRef, attributes, listeners, isDragging } = useDraggable({ id: application.id });
 
 	return (
-		<div ref={setNodeRef} {...attributes} {...listeners} className={cn(isDragging && "opacity-30")}>
-			<ApplicationCard application={application} onClick={onOpen} onEdit={onEdit} />
+		<div ref={setNodeRef} {...attributes} {...listeners} className={cn(isDragging && "opacity-40")}>
+			<ApplicationCard application={application} onClick={onOpen} withMenu />
 		</div>
 	);
 }

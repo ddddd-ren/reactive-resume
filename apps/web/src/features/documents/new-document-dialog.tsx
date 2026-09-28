@@ -27,6 +27,8 @@ export type NewDocumentDialogData = {
 	step?: "copy";
 	/** Copy for a job: the resume to start from. */
 	sourceResumeId?: string;
+	/** Copy for a job: the application it's for. */
+	applicationId?: string;
 	/** A file dropped on the page, imported straight away. */
 	file?: File;
 };
@@ -158,6 +160,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 			<DialogContent className="sm:max-w-[640px]">
 				<CopyForJob
 					initialSourceId={data?.sourceResumeId}
+					initialJobId={data?.applicationId}
 					onBack={data?.step === "copy" ? undefined : () => setStep({ name: "choose" })}
 					onCreated={(resumeId) => {
 						markNew(resumeId);
@@ -454,20 +457,21 @@ function ImportProgress({ stage, notes }: { stage: number; notes: string[] }) {
 
 type CopyForJobProps = {
 	initialSourceId?: string | undefined;
+	initialJobId?: string | undefined;
 	onBack?: (() => void) | undefined;
 	onCreated: (resumeId: string) => void;
 };
 
 /** Pick a resume and a job; the copy is named from both and linked to the application. */
-function CopyForJob({ initialSourceId, onBack, onCreated }: CopyForJobProps) {
+function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyForJobProps) {
 	const { i18n } = useLingui();
 	const nameId = useId();
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const { data: applications } = useQuery(applicationsListQueryOptions());
 	const resumes = (documents ?? []).filter((document) => document.type === "resume");
-	const jobs = (applications ?? []).filter((application) => !application.archived);
+	const jobs = (applications ?? []).filter((application) => application.status !== "closed");
 	const [sourceId, setSourceId] = useState(initialSourceId);
-	const [jobId, setJobId] = useState<string | null>(null);
+	const [jobId, setJobId] = useState<string | null>(initialJobId ?? null);
 	const [name, setName] = useState<string | null>(null);
 	const { mutateAsync: copyForJob, isPending } = useMutation(orpc.documents.copyForJob.mutationOptions());
 	const formatter = new Intl.RelativeTimeFormat(i18n.locale, { numeric: "auto" });

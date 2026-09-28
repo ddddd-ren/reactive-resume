@@ -270,7 +270,7 @@ export function LinkApplicationDialog({ document, onClose }: LinkApplicationDial
 		}
 	};
 
-	const jobs = (applications ?? []).filter((application) => !application.archived);
+	const jobs = (applications ?? []).filter((application) => application.status !== "closed");
 
 	return (
 		<Dialog open={document !== null} onOpenChange={(open) => !open && onClose()}>

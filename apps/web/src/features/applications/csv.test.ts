@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mapCsvToApplications, parseCsv } from "./csv";
+import { autoMapHeaders, mapCsvToApplications, parseCsv, rowsToCsv } from "./csv";
 
 describe("parseCsv", () => {
 	it("parses quoted fields with commas and newlines", () => {
@@ -75,5 +75,26 @@ describe("mapCsvToApplications", () => {
 		expect(rows[0]?.contacts).toBeUndefined();
 		expect(skipped).toBe(0);
 		expect(contactsSkipped).toBe(1);
+	});
+});
+
+describe("column matching", () => {
+	const table = parseCsv(
+		"Employer,Job Title,Status,Archived,Mystery\nAcme,Designer,rejected,false,x\nKiln,Engineer,applied,true,y\n,No company,saved,false,z",
+	);
+
+	it("matches known headers automatically and leaves the rest out", () => {
+		expect(autoMapHeaders(table[0] ?? [])).toEqual(["company", "role", "status", "archived", null]);
+	});
+
+	it("uses the confirmed match, reads retired stages as closed, and keeps skipped rows to download", () => {
+		const result = mapCsvToApplications(table, ["company", "role", "status", "archived", "notes"]);
+
+		expect(result.rows.map((row) => [row.company, row.status, row.notes])).toEqual([
+			["Acme", "closed", "x"],
+			["Kiln", "closed", "y"],
+		]);
+		expect(result.skippedRows).toEqual([["", "No company", "saved", "false", "z"]]);
+		expect(rowsToCsv(["Company", "Role"], [["", 'Say "hi"']])).toBe('"Company","Role"\r\n"","Say ""hi"""\r\n');
 	});
 });

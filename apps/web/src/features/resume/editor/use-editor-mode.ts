@@ -17,8 +17,14 @@ export function useEditorMode() {
 	const setMode = useCallback(
 		(next: EditorMode) => {
 			useEditorStore.setState({ pendingMode: next });
-			// The builder has no other search params, so the object form is safe.
-			void navigate({ to: ".", search: { mode: next === "write" ? undefined : next }, replace: true }).finally(() => {
+			void navigate({
+				to: ".",
+				search: (current: ReturnType<typeof routeApi.useSearch>) => ({
+					...current,
+					mode: next === "write" ? undefined : next,
+				}),
+				replace: true,
+			}).finally(() => {
 				// A later pick may still be on its way; only the latest one hands over to the URL.
 				useEditorStore.setState((state) => (state.pendingMode === next ? { pendingMode: null } : state));
 			});

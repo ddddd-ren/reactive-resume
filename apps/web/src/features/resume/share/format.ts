@@ -70,7 +70,8 @@ export function getVersionTitle(version: Pick<VersionSummary, "kind" | "name">) 
 		case "ai":
 			return t`AI edit`;
 		case "sent":
-			return t`Sent`;
+			// Sent versions are named after the company they went to.
+			return version.name ? t`Sent to ${version.name}` : t`Sent`;
 	}
 }
 
