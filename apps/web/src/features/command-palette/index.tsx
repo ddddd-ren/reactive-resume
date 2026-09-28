@@ -10,6 +10,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import { AskCommandGroup } from "./pages/ask";
 import { NavigationCommandGroup } from "./pages/navigation";
 import { PreferencesCommandGroup } from "./pages/preferences";
 import { ResumesCommandGroup } from "./pages/resumes";
@@ -154,6 +155,7 @@ export function CommandPalette() {
 						<ResumesCommandGroup />
 						<PreferencesCommandGroup />
 						<NavigationCommandGroup />
+						<AskCommandGroup />
 					</CommandList>
 				</Command>
 			</DialogContent>

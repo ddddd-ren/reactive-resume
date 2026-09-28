@@ -4,6 +4,7 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -32,7 +33,6 @@ import { orpc } from "@/libs/orpc/client";
 import { stageSince } from "../next-step";
 import { getClosedReasonLabel, getNextStage, getStageColor, getStageLabel, PIPELINE } from "../stages";
 import { useApplicationActions, useInvalidateApplications } from "../use-application-actions";
-import { ApplicationAiCopilot } from "./application-ai-copilot";
 import { Activity } from "./detail/activity";
 import { CloseDialog } from "./detail/close-dialog";
 import { Contacts } from "./detail/contacts";
@@ -234,14 +234,16 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 				<Tags application={application} />
 				<Notes application={application} />
 				<Activity application={application} onOpenInterview={(entry) => setInterview({ open: true, entry })} />
-				<ApplicationAiCopilot application={application} />
 			</div>
 
 			<footer className="sticky bottom-0 flex flex-wrap items-center gap-2 border-line border-t bg-surface px-5 py-3">
 				{!closed ? (
-					<Button variant="secondary" onClick={() => setClosing(true)}>
-						<Trans>Close application…</Trans>
-					</Button>
+					<>
+						<Button variant="secondary" onClick={() => setClosing(true)}>
+							<Trans>Close application…</Trans>
+						</Button>
+						<PrepareButton application={application} />
+					</>
 				) : (
 					<Button variant="secondary" onClick={() => moveTo(application, "applied")}>
 						<Trans>Reopen</Trans>
@@ -506,5 +508,43 @@ function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) 
 				)}
 			</DialogContent>
 		</Dialog>
+	);
+}
+
+/**
+ * Prepare for next step: the assistant on what was sent (the resume, or the letter), with the posting and the
+ * application's notes, and suggestions for the fit, a follow-up and the interview.
+ */
+function PrepareButton({ application }: { application: Application }) {
+	const navigate = useNavigate();
+	const target = application.resumeId
+		? ({ kind: "resume", id: application.resumeId } as const)
+		: application.coverLetterId
+			? ({ kind: "letter", id: application.coverLetterId } as const)
+			: null;
+
+	return (
+		<Button
+			disabled={!target}
+			title={target ? undefined : t`Link a resume or a letter first`}
+			className="ms-auto bg-accent-soft text-accent-text hover:bg-accent-soft hover:brightness-95"
+			onClick={() => {
+				if (target?.kind === "resume")
+					void navigate({
+						to: "/builder/$resumeId",
+						params: { resumeId: target.id },
+						search: { assistant: "prepare" },
+					});
+				else if (target)
+					void navigate({
+						to: "/builder/letter/$coverLetterId",
+						params: { coverLetterId: target.id },
+						search: { assistant: "prepare" },
+					});
+			}}
+		>
+			<Icon name="auto_awesome" size={18} />
+			<Trans>Prepare for next step</Trans>
+		</Button>
 	);
 }

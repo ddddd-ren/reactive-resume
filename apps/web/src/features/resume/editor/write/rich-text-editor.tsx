@@ -1,6 +1,7 @@
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Editor } from "@tiptap/react";
 import type { ReactNode } from "react";
+import type { ImproveLine } from "./improve";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
@@ -8,7 +9,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { hasUnsupportedTableMarkup, richInputExtensions } from "@/components/input/rich-input";
+import { openAssistantFrom } from "@/features/assistant/open";
+import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { usePrompt } from "@/hooks/use-prompt";
+import { ImprovePanel, lineAtCaret } from "./improve";
 
 type ToolbarAction = {
 	icon: IconName;
@@ -103,7 +107,9 @@ export function RichTextEditor({
 	heightClassName = "max-h-[360px] min-h-[88px]",
 }: RichTextEditorProps) {
 	const [focused, setFocused] = useState(false);
+	const [improving, setImproving] = useState<ImproveLine | null>(null);
 	const actions = useToolbarActions();
+	const ai = useHasUsableAiProvider();
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
 
 	const editor = useEditor({
@@ -135,8 +141,12 @@ export function RichTextEditor({
 		editor,
 		selector: ({ editor }) =>
 			editor
-				? { characters: editor.getText().length, active: actions.map((action) => action.isActive?.(editor) ?? false) }
-				: { characters: 0, active: [] as boolean[] },
+				? {
+						characters: editor.getText().length,
+						active: actions.map((action) => action.isActive?.(editor) ?? false),
+						canImprove: lineAtCaret(editor) !== null,
+					}
+				: { characters: 0, active: [] as boolean[], canImprove: false },
 	});
 
 	// Undo, the page and the assistant change the text from outside; keep the editor in step.
@@ -149,16 +159,25 @@ export function RichTextEditor({
 		editor?.setEditable(!disabled && !readOnlyTable, false);
 	}, [editor, disabled, readOnlyTable]);
 
+	const editing = focused || improving !== null;
+
+	const startImprove = () => {
+		if (!editor) return;
+		// Without a provider, the assistant's inline setup connects one.
+		if (!ai.hasUsableProvider) return void openAssistantFrom({ assistant: "new" });
+		setImproving(lineAtCaret(editor));
+	};
+
 	return (
 		<div
 			className={cn(
 				"rounded-lg border border-line-2 bg-raised transition-[border-color,box-shadow] duration-quick",
-				focused && "border-accent shadow-[0_0_0_3px_var(--accent-soft)]",
+				editing && "border-accent shadow-[0_0_0_3px_var(--accent-soft)]",
 				disabled && "bg-sunken",
 				className,
 			)}
 		>
-			{focused && !readOnlyTable && (
+			{editing && !readOnlyTable && (
 				<div role="toolbar" aria-label={t`Formatting`} className="flex gap-0.5 border-line border-b px-1.5 py-1">
 					{actions.map((action, index) => (
 						<button
@@ -179,6 +198,18 @@ export function RichTextEditor({
 							<Icon name={action.icon} />
 						</button>
 					))}
+					<button
+						type="button"
+						aria-expanded={improving !== null}
+						disabled={!state?.canImprove && improving === null}
+						title={state?.canImprove ? undefined : t`Put the caret in a line to improve it`}
+						onMouseDown={(event) => event.preventDefault()}
+						onClick={() => (improving ? setImproving(null) : startImprove())}
+						className="ms-auto flex h-8 items-center gap-1.5 rounded-md bg-accent-soft px-2.5 font-semibold text-accent-text text-xs transition-[filter] duration-quick hover:brightness-95 disabled:opacity-50"
+					>
+						<Icon name="auto_awesome" size={16} />
+						<Trans>Improve</Trans>
+					</button>
 				</div>
 			)}
 
@@ -192,7 +223,17 @@ export function RichTextEditor({
 
 			<EditorContent editor={editor} />
 
-			{focused && (
+			{editor && improving && (
+				<ImprovePanel
+					key={improving.from}
+					editor={editor}
+					line={improving}
+					where={label}
+					onClose={() => setImproving(null)}
+				/>
+			)}
+
+			{editing && (
 				<div className="flex items-center justify-between gap-3 border-line border-t px-3 py-1.5 text-ink-3 text-xs">
 					<span>{hint ?? <Trans>Markdown shortcuts on</Trans>}</span>
 					<span className="font-mono">

@@ -15,6 +15,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { generateId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
+import { openAssistantFrom } from "@/features/assistant/open";
 import { useCurrentBuilderResumeSelector, useIsResumeLocked, usePatchResume } from "@/features/resume/builder/draft";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -200,6 +201,10 @@ export function JobMatchTab({ match, data }: JobMatchTabProps) {
 										<Button size="sm" disabled={locked} onClick={() => addToSkills(open)}>
 											<Icon name="add" size={16} />
 											{skills?.name ? <Trans>Add to Skills · {skills.name}</Trans> : <Trans>Add to Skills</Trans>}
+										</Button>
+										<Button size="sm" variant="secondary" disabled={locked} onClick={() => askAssistant(open.label)}>
+											<Icon name="auto_awesome" size={16} />
+											<Trans>Ask the assistant to work it in</Trans>
 										</Button>
 										<Button size="sm" variant="ghost" disabled={locked} onClick={() => hideTerm(open)}>
 											<Trans>Not true for me, hide it</Trans>
@@ -551,4 +556,11 @@ function SaveAsApplication() {
 			</div>
 		</form>
 	);
+}
+
+/** The assistant asks before adding anything, so it gets the term and a request to check first. */
+function askAssistant(label: string) {
+	openAssistantFrom({
+		ask: t`The posting asks for “${label}”. If it's true for me, work it into my resume where it fits. Ask me first.`,
+	});
 }

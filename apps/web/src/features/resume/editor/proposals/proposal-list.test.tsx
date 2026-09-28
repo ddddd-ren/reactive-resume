@@ -1,16 +1,17 @@
 // @vitest-environment happy-dom
+
+import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Resume } from "@/features/resume/builder/draft";
-import type { Proposal } from "./proposals";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { readTarget } from "@reactive-resume/resume/proposals";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "../store";
 import { ProposalList } from "./proposal-list";
-import { readTarget } from "./proposals";
 
 const routerParams = vi.hoisted(() => ({ resumeId: "proposals" }));
 const toastState = vi.hoisted(() => ({ add: vi.fn() }));

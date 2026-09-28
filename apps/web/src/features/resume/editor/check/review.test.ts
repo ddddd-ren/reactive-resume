@@ -1,4 +1,4 @@
-import type { Passage } from "../proposals/passages";
+import type { Passage } from "@reactive-resume/resume/proposals";
 import { describe, expect, it } from "vitest";
 import { mapWritingReview } from "./review";
 

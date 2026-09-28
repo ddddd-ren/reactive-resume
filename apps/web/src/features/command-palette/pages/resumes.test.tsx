@@ -20,6 +20,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@tanstack/react-query", () => ({
 	useQuery: vi.fn(),
+	useQueryClient: () => ({ fetchQuery: vi.fn() }),
 }));
 
 vi.mock("@tanstack/react-hotkeys", () => ({
@@ -105,7 +106,7 @@ describe("ResumesCommandGroup", () => {
 	it.each([
 		["resumes", "", "Create a new resume"],
 		["applications", "{ArrowDown}", "New Application"],
-		["threads", "{ArrowDown}{ArrowDown}", "New Thread"],
+		["threads", "{ArrowDown}{ArrowDown}", "Cover letter rewrite"],
 	])("opens the %s list page from the root palette with Enter", async (page, keys, createLabel) => {
 		mockUseQueryData((entity) => {
 			if (entity === "resumes") return [{ id: "resume-1", name: "Evil Apricot Pike", slug: "apricot" }];
@@ -129,7 +130,6 @@ describe("ResumesCommandGroup", () => {
 	it.each([
 		["resumes", "", "Create a new resume", "Evil Apricot Pike"],
 		["applications", "{ArrowDown}", "New Application", "Umbrella"],
-		["threads", "{ArrowDown}{ArrowDown}", "New Thread", "Cover letter rewrite"],
 	])("keeps arrow-key navigation active on the %s list page", async (_page, keys, createLabel, itemLabel) => {
 		mockUseQueryData((entity) => {
 			if (entity === "resumes") return [{ id: "resume-1", name: "Evil Apricot Pike", slug: "apricot" }];
@@ -246,7 +246,7 @@ describe("ResumesCommandGroup", () => {
 		});
 	});
 
-	it("loads threads on agent pages", () => {
+	it("lists assistant conversations with their document", () => {
 		useCommandPaletteStore.setState({ pages: ["threads"] });
 		mockUseQueryData((entity) =>
 			entity === "threads" ? [{ id: "thread-1", title: "Cover letter rewrite", resumeName: "Product Resume" }] : [],
@@ -277,7 +277,7 @@ describe("ResumesCommandGroup", () => {
 });
 
 describe("NavigationCommandGroup", () => {
-	it("shows application and thread navigation items", () => {
+	it("shows application navigation, and no Agents pages", () => {
 		render(
 			<I18nProvider i18n={i18n}>
 				<Command>
@@ -290,25 +290,9 @@ describe("NavigationCommandGroup", () => {
 
 		expect(screen.getByText("Applications")).toBeInTheDocument();
 		expect(screen.getByText("New Application")).toBeInTheDocument();
-		expect(screen.getByText("Threads")).toBeInTheDocument();
-		expect(screen.getByText("New Thread")).toBeInTheDocument();
-	});
-
-	it("navigates to new application and new thread destinations", () => {
-		render(
-			<I18nProvider i18n={i18n}>
-				<Command>
-					<CommandList>
-						<NavigationCommandGroup />
-					</CommandList>
-				</Command>
-			</I18nProvider>,
-		);
+		expect(screen.queryByText("Threads")).not.toBeInTheDocument();
 
 		fireEvent.click(screen.getByText("New Application"));
 		expect(mocks.navigate).toHaveBeenCalledWith({ to: "/dashboard/applications", search: { create: true } });
-
-		fireEvent.click(screen.getByText("New Thread"));
-		expect(mocks.navigate).toHaveBeenCalledWith({ to: "/agent/new" });
 	});
 });

@@ -14,13 +14,15 @@ import { ParserView } from "@/features/resume/editor/check/parser-view";
 import { CANVAS_GUTTER, PAGE_WIDTH, useCanvasWidth, ZoomBar } from "@/features/resume/editor/chrome";
 import { measureOverflow, runFit } from "@/features/resume/editor/design/fit";
 import { PageOverlay } from "@/features/resume/editor/page-overlay";
-import { markProposals } from "@/features/resume/editor/proposals/proposals";
+import { markProposals, pendingProposals } from "@/features/resume/editor/proposals/proposals";
 import { useEditorStore, ZOOM_MAX } from "@/features/resume/editor/store";
 import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
 import { ResumePreview } from "@/features/resume/preview/preview";
 import { formatVersionTime, getVersionTitle } from "@/features/resume/share/format";
 import { orpc } from "@/libs/orpc/client";
+
+const NONE: readonly never[] = [];
 
 /**
  * The page canvas: the live resume on the sunken desk, with a caption above the first page, a pointer layer
@@ -37,6 +39,7 @@ export function PageCanvas() {
 	const pageView = useEditorStore((state) => state.pageView);
 	const checkTab = useEditorStore((state) => state.checkTab);
 	const proposals = useEditorStore((state) => state.proposals);
+	const assistantProposals = useEditorStore((state) => (state.assistantOpen ? state.assistantProposals : NONE));
 	const sheetOpen = useEditorStore((state) => state.shareTab !== null);
 	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const { i18n } = useLingui();
@@ -59,8 +62,14 @@ export function PageCanvas() {
 	});
 	const viewing = historyVersionId !== null && version?.id === historyVersionId ? version : null;
 
-	// Check → Writing: proposed edits show on the page, the old text struck through and the new highlighted.
+	// Check → Writing's and the assistant's proposed edits show on the page, the old text struck through and the new
+	// highlighted.
 	const markEdits = mode === "check" && checkTab === "writing" && pageView === "page" && proposals.length > 0;
+	const marked = useMemo(
+		() => [...(markEdits ? proposals : []), ...assistantProposals],
+		[markEdits, proposals, assistantProposals],
+	);
+	const pendingOnPage = data ? pendingProposals(data, assistantProposals).length : 0;
 	const parser = mode === "check" && pageView === "parser" && !viewing;
 
 	// Design: a hovered or focused template is drawn on the page until it's applied or the pointer leaves.
@@ -70,10 +79,10 @@ export function PageCanvas() {
 				? viewing.data
 				: data && previewTemplate
 					? { ...data, metadata: { ...data.metadata, template: previewTemplate } }
-					: data && markEdits
-						? markProposals(data, proposals)
+					: data && marked.length > 0
+						? markProposals(data, marked)
 						: undefined,
-		[data, previewTemplate, viewing, markEdits, proposals],
+		[data, previewTemplate, viewing, marked],
 	);
 	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, rendered) : null;
 	// Desktop: the page moves 120px aside so it stays visible beside the Share & export sheet.
@@ -141,7 +150,15 @@ export function PageCanvas() {
 									</span>
 								) : (
 									<>
-										{mode === "check" ? (
+										{pendingOnPage > 0 ? (
+											<span className="text-accent-text">
+												<Plural
+													value={pendingOnPage}
+													one="# proposed edit on this page · nothing changes until you accept"
+													other="# proposed edits on this page · nothing changes until you accept"
+												/>
+											</span>
+										) : mode === "check" ? (
 											<Trans>Page 1 · {formatLabel}</Trans>
 										) : (
 											<Trans>Page 1 · {formatLabel} · click any line to edit it</Trans>

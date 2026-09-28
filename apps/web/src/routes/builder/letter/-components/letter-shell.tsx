@@ -10,8 +10,13 @@ import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { AssistantOverlay, assistantPlaceFor, columnsWithAssistant, LetterAssistant } from "@/features/assistant/dock";
 import { useLetterEditorStore } from "@/features/letters/store";
-import { useLetterMode, useOpenLetterVersionFromUrl } from "@/features/letters/use-letter-mode";
+import {
+	useLetterMode,
+	useOpenLetterAssistantFromUrl,
+	useOpenLetterVersionFromUrl,
+} from "@/features/letters/use-letter-mode";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { useIsLandscape } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -33,10 +38,15 @@ export function LetterShell() {
 	const pinnable = layout === "tablet" && landscape;
 	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
 	const resetEditor = useEditorStore((state) => state.reset);
+	const assistantOpen = useEditorStore((state) => state.assistantOpen);
+	const assistantPlace = assistantPlaceFor(breakpoint);
+	const assistantColumn = assistantPlace === "column" && !pinned;
+	const assistantReplaces = assistantPlace === "replace" && assistantOpen;
 
 	// Zoom, open sheets and the History version belong to one document.
 	useEffect(() => resetEditor, [resetEditor]);
 	useOpenLetterVersionFromUrl();
+	useOpenLetterAssistantFromUrl();
 	useLinkedUpdateNotice();
 	useUnsavedGuard();
 
@@ -53,21 +63,47 @@ export function LetterShell() {
 				<LetterBar layout={layout} pinnable={pinnable} />
 
 				{(layout === "desktop" || pinned) && (
-					<div className="grid min-h-0 grid-cols-[var(--editor-panel)_minmax(0,1fr)] max-lg:grid-cols-[380px_minmax(0,1fr)]">
-						<TabsContent
-							value={mode}
-							aria-label={panelLabel(mode)}
-							className="relative min-h-0 overflow-y-auto border-line border-e bg-surface"
-						>
-							<ModePanel mode={mode} />
-						</TabsContent>
+					<div
+						className="grid min-h-0 transition-[grid-template-columns] duration-emphasized ease-enter"
+						style={{
+							gridTemplateColumns: assistantColumn
+								? columnsWithAssistant(assistantOpen)
+								: pinned
+									? "380px minmax(0,1fr)"
+									: "var(--editor-panel) minmax(0,1fr)",
+						}}
+					>
+						{assistantReplaces ? (
+							<div className="min-h-0 border-line border-e">
+								<LetterAssistant />
+							</div>
+						) : (
+							<TabsContent
+								value={mode}
+								aria-label={panelLabel(mode)}
+								className="relative min-h-0 overflow-y-auto border-line border-e bg-surface"
+							>
+								<ModePanel mode={mode} />
+							</TabsContent>
+						)}
 						<main id="main-content" className="min-h-0 min-w-0">
 							<LetterPage />
 						</main>
+						{assistantColumn && (
+							<div inert={!assistantOpen} className="min-h-0 min-w-0 overflow-hidden border-line border-s">
+								{assistantOpen && <LetterAssistant />}
+							</div>
+						)}
 					</div>
 				)}
 				{layout === "tablet" && !pinned && <TabletBody mode={mode} />}
 				{layout === "mobile" && <MobileBody mode={mode} onModeChange={setMode} />}
+
+				{assistantOpen && (assistantPlace === "drawer" || assistantPlace === "screen") && (
+					<AssistantOverlay place={assistantPlace}>
+						<LetterAssistant />
+					</AssistantOverlay>
+				)}
 
 				<LetterShareSheet />
 				<LetterHotkeys onModeChange={setMode} />
@@ -188,6 +224,7 @@ function LetterHotkeys({ onModeChange }: { onModeChange: (mode: LetterMode) => v
 	useHotkey("2", () => onModeChange("design"));
 	useHotkey("Mod+P", () => void download.run());
 	useHotkey("Mod+Shift+E", () => setShareTab("download"));
+	useHotkey("Mod+J", () => useEditorStore.getState().setAssistantOpen(!useEditorStore.getState().assistantOpen));
 	useHotkey("Mod+S", () => {
 		void useLetterEditorStore.getState().flush();
 		toast.add({ type: "info", description: t`Your changes are saved automatically.`, id: "auto-save" });

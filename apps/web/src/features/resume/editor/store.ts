@@ -1,6 +1,6 @@
 import type { PageMap, PageMapTarget } from "@reactive-resume/pdf/page-map";
+import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { Template } from "@reactive-resume/schema/templates";
-import type { Proposal } from "./proposals/proposals";
 import { create } from "zustand/react";
 
 export const EDITOR_MODES = ["write", "design", "check"] as const;
@@ -48,6 +48,14 @@ type EditorStore = {
 	/** History: the version shown on the page, read-only, instead of the current resume. */
 	historyVersionId: string | null;
 	assistantOpen: boolean;
+	/** The assistant's conversation: a thread id, "new" for a fresh one, or null for the document's latest. */
+	assistantThread: string | null;
+	/** A message to send once the assistant is ready, from ⌘K Ask or Prepare for next step. */
+	assistantPrompt: string | null;
+	/** The assistant's pending edits, marked on the page and counted in the outline. */
+	assistantProposals: readonly Proposal[];
+	/** Prepare for next step (Applications) opens the assistant with suggestions for the application. */
+	assistantSuggestions: "prepare" | null;
 	/** Write: sections open in the outline. */
 	openSections: readonly string[];
 	/** Write: sections added this visit that are still empty (a summary before any text), so they stay listed. */
@@ -85,6 +93,10 @@ type EditorStore = {
 	setShareTab: (tab: ShareTab | null) => void;
 	setHistoryVersion: (versionId: string | null) => void;
 	setAssistantOpen: (open: boolean) => void;
+	setAssistantThread: (thread: string | null) => void;
+	setAssistantPrompt: (prompt: string | null) => void;
+	setAssistantProposals: (proposals: readonly Proposal[]) => void;
+	setAssistantSuggestions: (suggestions: "prepare" | null) => void;
 	setSectionOpen: (sectionId: string, open: boolean) => void;
 	markSectionAdded: (sectionId: string) => void;
 	setFocusEntry: (entryId: string | null) => void;
@@ -123,6 +135,10 @@ const initialState = {
 	shareTab: null,
 	historyVersionId: null,
 	assistantOpen: false,
+	assistantThread: null,
+	assistantPrompt: null,
+	assistantProposals: [],
+	assistantSuggestions: null,
 	openSections: [],
 	addedSections: [],
 	focusEntryId: null,
@@ -148,6 +164,10 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 	setShareTab: (shareTab) => set(shareTab ? { shareTab } : { shareTab, historyVersionId: null }),
 	setHistoryVersion: (historyVersionId) => set({ historyVersionId }),
 	setAssistantOpen: (assistantOpen) => set({ assistantOpen }),
+	setAssistantThread: (assistantThread) => set({ assistantThread }),
+	setAssistantPrompt: (assistantPrompt) => set({ assistantPrompt }),
+	setAssistantProposals: (assistantProposals) => set({ assistantProposals }),
+	setAssistantSuggestions: (assistantSuggestions) => set({ assistantSuggestions }),
 	setSectionOpen: (sectionId, open) =>
 		set((state) => {
 			const isOpen = state.openSections.includes(sectionId);

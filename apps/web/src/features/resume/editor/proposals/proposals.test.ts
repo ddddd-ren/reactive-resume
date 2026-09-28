@@ -1,10 +1,18 @@
+import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Proposal } from "./proposals";
 import { describe, expect, it } from "vitest";
 import { produce } from "immer";
+import {
+	applyProposal,
+	canApply,
+	collectPassages,
+	getProposalState,
+	readTarget,
+	replaceBlockText,
+	splitBlocks,
+} from "@reactive-resume/resume/proposals";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { collectPassages, splitBlocks } from "./passages";
-import { applyProposal, canApply, getProposalState, markProposals, readTarget, replaceBlockText } from "./proposals";
+import { markProposals, pendingProposals } from "./proposals";
 
 const OLD_BULLET = "<li><p>Responsible for various design tasks</p></li>";
 
@@ -57,17 +65,23 @@ describe("collectPassages", () => {
 	const labels = {
 		summary: "Summary",
 		sectionTitle: () => "Experience",
+		entryTitle: (_type: string, entry: Record<string, unknown>) => String(entry.position),
 		bullet: (n: number) => `bullet ${n}`,
 		paragraph: (n: number) => `paragraph ${n}`,
 	};
 
 	it("lists the summary and each visible entry's bullets with where they sit", () => {
 		const passages = collectPassages(makeData(), labels);
-		expect(passages.map((passage) => [passage.id, passage.location, passage.text])).toEqual([
-			["p1", "Summary · paragraph 1", "Product designer with 8 years in health tools."],
-			["p2", "Experience · Junior Designer · bullet 1", "Responsible for various design tasks"],
-			["p3", "Experience · Junior Designer · bullet 2", "Designed websites & identities for 20+ businesses"],
+		expect(passages.map((passage) => [passage.location, passage.text])).toEqual([
+			["Summary · paragraph 1", "Product designer with 8 years in health tools."],
+			["Experience · Junior Designer · bullet 1", "Responsible for various design tasks"],
+			["Experience · Junior Designer · bullet 2", "Designed websites & identities for 20+ businesses"],
 		]);
+		// Ids come from the passage's place and words: stable while they stay, new once the words change.
+		expect(new Set(passages.map((passage) => passage.id)).size).toBe(3);
+		expect(collectPassages(makeData(), labels).map((passage) => passage.id)).toEqual(
+			passages.map((passage) => passage.id),
+		);
 		expect(passages[1]?.target).toEqual({ sectionId: "experience", itemId: "kettle", field: "description" });
 	});
 
@@ -143,5 +157,49 @@ describe("proposals", () => {
 		expect(replaceBlockText('<p class="x">Old</p>', "  New <b>&  bold  ")).toBe(
 			'<p class="x">New &lt;b&gt;&amp; bold</p>',
 		);
+	});
+
+	it("adds a block after a passage, marking only the new one", () => {
+		const before = "<li><p>Responsible for various design tasks</p></li>";
+		const addition = proposal({
+			before,
+			after: `${before}<li><p>Introduced monthly accessibility reviews</p></li>`,
+		});
+		const data = makeData();
+		expect(readTarget(markProposals(data, [addition]), addition.target)).toContain(
+			`${before}<li><p><mark data-color="#d4efd9">Introduced monthly accessibility reviews</mark></p></li>`,
+		);
+		const next = produce(data, (draft) => {
+			applyProposal(draft, addition);
+		});
+		expect(readTarget(next, addition.target)).toContain("Introduced monthly accessibility reviews</p></li><li>");
+		expect(getProposalState(next, { ...addition, status: "accepted" })).toBe("accepted");
+	});
+});
+
+describe("pendingProposals", () => {
+	it("counts a section's pill: pending only, not rejected, accepted or out of date", () => {
+		const data = makeData();
+		const summary = proposal({
+			id: "s",
+			target: { sectionId: "summary", field: "content" },
+			before: "<p>Product designer with 8 years in health tools.</p>",
+		});
+		const proposals = [
+			proposal(),
+			proposal({ id: "2", status: "rejected" }),
+			proposal({ id: "3", before: "<p>Text that isn't there any more</p>" }),
+			proposal({
+				id: "4",
+				status: "accepted",
+				before: "<p>Made websites</p>",
+				after: "<p>Designed websites &amp; identities for 20+ businesses</p>",
+			}),
+			summary,
+		];
+
+		expect(pendingProposals(data, proposals, "experience").map((item) => item.id)).toEqual(["1"]);
+		expect(pendingProposals(data, proposals, "summary").map((item) => item.id)).toEqual(["s"]);
+		expect(pendingProposals(data, proposals)).toHaveLength(2);
 	});
 });

@@ -8,6 +8,8 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { AssistantOverlay, assistantPlaceFor, columnsWithAssistant, ResumeAssistant } from "@/features/assistant/dock";
+import { openAssistantFrom } from "@/features/assistant/open";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { IssueStepper } from "@/features/resume/editor/check/page-layer";
 import { useIsLandscape } from "@/features/resume/editor/chrome";
@@ -33,10 +35,13 @@ export function EditorShell() {
 	const pinnable = layout === "tablet" && landscape;
 	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
 	const resetEditor = useEditorStore((state) => state.reset);
+	const assistantOpen = useEditorStore((state) => state.assistantOpen);
+	const assistantPlace = assistantPlaceFor(breakpoint);
 
 	// Selection, zoom and open sheets belong to one document.
 	useEffect(() => resetEditor, [resetEditor]);
 	useOpenVersionFromUrl();
+	useOpenAssistantFromUrl();
 
 	return (
 		<Tabs value={mode} onValueChange={(value) => setMode(value as EditorMode)} className="contents">
@@ -50,9 +55,21 @@ export function EditorShell() {
 
 				<EditorBar layout={layout} pinnable={pinnable} />
 
-				{(layout === "desktop" || pinned) && <DesktopBody mode={mode} />}
+				{(layout === "desktop" || pinned) && (
+					<DesktopBody
+						mode={mode}
+						assistant={assistantPlace === "column" || assistantPlace === "replace" ? assistantPlace : null}
+						narrow={pinned}
+					/>
+				)}
 				{layout === "tablet" && !pinned && <TabletBody mode={mode} />}
 				{layout === "mobile" && <MobileBody mode={mode} onModeChange={setMode} />}
+
+				{assistantOpen && (assistantPlace === "drawer" || assistantPlace === "screen") && (
+					<AssistantOverlay place={assistantPlace}>
+						<ResumeAssistant />
+					</AssistantOverlay>
+				)}
 
 				<ShareSheet />
 				<EditorHotkeys onModeChange={setMode} />
@@ -81,6 +98,25 @@ function useOpenVersionFromUrl() {
 	}, [version, navigate]);
 }
 
+/** `?assistant=` or `?ask=` opens the assistant on that conversation or question, then leaves the URL. */
+function useOpenAssistantFromUrl() {
+	const { assistant, ask } = routeApi.useSearch();
+	const navigate = routeApi.useNavigate();
+
+	useEffect(() => {
+		if (!openAssistantFrom({ assistant, ask })) return;
+		void navigate({
+			to: ".",
+			search: (current: ReturnType<typeof routeApi.useSearch>) => ({
+				...current,
+				assistant: undefined,
+				ask: undefined,
+			}),
+			replace: true,
+		});
+	}, [assistant, ask, navigate]);
+}
+
 function EditorHotkeys({ onModeChange }: { onModeChange: (mode: EditorMode) => void }) {
 	useEditorHotkeys(onModeChange);
 	return null;
@@ -88,22 +124,54 @@ function EditorHotkeys({ onModeChange }: { onModeChange: (mode: EditorMode) => v
 
 const panelLabels = (): Record<EditorMode, string> => ({ write: t`Content`, design: t`Design`, check: t`Check` });
 
-/** The panel beside the page: 400px on desktop, 380px when pinned on a tablet. */
-function DesktopBody({ mode }: { mode: EditorMode }) {
+type DesktopBodyProps = {
+	mode: EditorMode;
+	/** ≥1280: the assistant has its own column. 1024–1279: it takes the panel's place while open. */
+	assistant: "column" | "replace" | null;
+	/** Pinned on a tablet: a 380px panel. */
+	narrow: boolean;
+};
+
+/** The panel beside the page: 400px on desktop, 380px when pinned on a tablet; the assistant joins at ≥1280. */
+function DesktopBody({ mode, assistant, narrow }: DesktopBodyProps) {
+	const assistantOpen = useEditorStore((state) => state.assistantOpen);
+	const replaced = assistant === "replace" && assistantOpen;
+
 	return (
-		<div className="grid min-h-0 grid-cols-[var(--editor-panel)_minmax(0,1fr)] max-lg:grid-cols-[380px_minmax(0,1fr)]">
-			<TabsContent
-				value={mode}
-				aria-label={panelLabels()[mode]}
-				// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
-				// stretching the document, which would let scrollIntoView shift the whole editor.
-				className="relative min-h-0 overflow-y-auto border-line border-e bg-surface"
-			>
-				<ModePanel mode={mode} />
-			</TabsContent>
+		<div
+			className="grid min-h-0 transition-[grid-template-columns] duration-emphasized ease-enter"
+			style={{
+				gridTemplateColumns:
+					assistant === "column"
+						? columnsWithAssistant(assistantOpen)
+						: narrow
+							? "380px minmax(0,1fr)"
+							: "var(--editor-panel) minmax(0,1fr)",
+			}}
+		>
+			{replaced ? (
+				<div className="min-h-0 border-line border-e">
+					<ResumeAssistant />
+				</div>
+			) : (
+				<TabsContent
+					value={mode}
+					aria-label={panelLabels()[mode]}
+					// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
+					// stretching the document, which would let scrollIntoView shift the whole editor.
+					className="relative min-h-0 overflow-y-auto border-line border-e bg-surface"
+				>
+					<ModePanel mode={mode} />
+				</TabsContent>
+			)}
 			<main id="main-content" className="min-h-0 min-w-0">
 				<Outlet />
 			</main>
+			{assistant === "column" && (
+				<div inert={!assistantOpen} className="min-h-0 min-w-0 overflow-hidden border-line border-s">
+					{assistantOpen && <ResumeAssistant />}
+				</div>
+			)}
 		</div>
 	);
 }

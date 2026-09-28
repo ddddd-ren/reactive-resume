@@ -29,6 +29,7 @@ import { IconPicker } from "@/components/input/icon-picker";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { usePrompt } from "@/hooks/use-prompt";
 import { getSectionTitle } from "@/libs/resume/section";
+import { pendingProposals } from "../proposals/proposals";
 import { useEditorStore } from "../store";
 import { addEntryTo } from "./actions";
 import { countEntriesToCheck, getEntries, getSectionObject } from "./model";
@@ -59,6 +60,7 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 	const count = useCurrentBuilderResumeSelector((resume) => getEntries(resume.data, section).length);
 	// Dates read from text that wasn't exact ask for a look (they print as typed until then).
 	const toCheck = useCurrentBuilderResumeSelector((resume) => countEntriesToCheck(getEntries(resume.data, section)));
+	const proposed = useProposedCount(section.id);
 	const open = useEditorStore((state) => state.openSections.includes(section.id));
 	const setOpen = useEditorStore((state) => state.setSectionOpen);
 	const updateResumeData = useUpdateResumeData();
@@ -112,6 +114,11 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 					{title}
 				</button>
 
+				{proposed > 0 && (
+					<Badge variant="accent" className="shrink-0">
+						<Plural value={proposed} one="# proposed" other="# proposed" />
+					</Badge>
+				)}
 				{toCheck > 0 && (
 					<Badge variant="warn" className="shrink-0">
 						<Plural value={toCheck} one="# to check" other="# to check" />
@@ -382,4 +389,13 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 			/>
 		</span>
 	);
+}
+
+const NONE: readonly never[] = [];
+
+/** The assistant's pending edits in a section, while the assistant is open: "2 proposed". */
+function useProposedCount(sectionId: string) {
+	const proposals = useEditorStore((state) => (state.assistantOpen ? state.assistantProposals : NONE));
+	const data = useCurrentBuilderResumeSelector((resume) => resume.data);
+	return pendingProposals(data, proposals, sectionId).length;
 }

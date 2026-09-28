@@ -6,12 +6,13 @@ import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { AssistantButton } from "@/features/assistant/assistant-button";
 import { useCurrentBuilderResumeSelector, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
 import { BackLink, DrawerControls } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
-import { BuilderAiAssistant } from "./ai-assistant";
 import { DocumentMenu } from "./document-menu";
 
 type EditorBarProps = {
@@ -25,9 +26,9 @@ type EditorBarProps = {
  * Share and Download PDF. The mode switch stays centered through a `1fr auto 1fr` grid.
  */
 export function EditorBar({ layout, pinnable }: EditorBarProps) {
-	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	// Download and Share need a connection.
 	const offline = useResumeStore((state) => state.saveStatus === "offline");
+	const wide = useBreakpoint() === "wide";
 
 	return (
 		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-line border-b bg-surface px-3">
@@ -47,11 +48,12 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 						<UndoButton />
 						<HistoryButton />
 						<span className="me-1.5">
-							<BuilderAiAssistant resumeId={resumeId} />
+							<AssistantButton />
 						</span>
 					</>
 				)}
-				<ShareButton compact={layout !== "desktop"} disabled={offline} />
+				{/* Below 1280 the bar is too narrow for Share's label next to everything else. */}
+				<ShareButton compact={layout !== "desktop" || !wide} disabled={offline} />
 				<DownloadButtons compact={layout === "mobile"} disabled={offline} />
 			</div>
 		</header>

@@ -1,5 +1,6 @@
 import { getRouteApi } from "@tanstack/react-router";
 import { useCallback, useEffect } from "react";
+import { openAssistantFrom } from "@/features/assistant/open";
 import { useEditorStore } from "@/features/resume/editor/store";
 
 export type LetterMode = "write" | "design";
@@ -41,4 +42,23 @@ export function useOpenLetterVersionFromUrl() {
 			replace: true,
 		});
 	}, [version, navigate]);
+}
+
+/** `?assistant=` or `?ask=` opens the assistant on that conversation or question, then leaves the URL. */
+export function useOpenLetterAssistantFromUrl() {
+	const { assistant, ask } = routeApi.useSearch();
+	const navigate = routeApi.useNavigate();
+
+	useEffect(() => {
+		if (!openAssistantFrom({ assistant, ask })) return;
+		void navigate({
+			to: ".",
+			search: (current: ReturnType<typeof routeApi.useSearch>) => ({
+				...current,
+				assistant: undefined,
+				ask: undefined,
+			}),
+			replace: true,
+		});
+	}, [assistant, ask, navigate]);
 }

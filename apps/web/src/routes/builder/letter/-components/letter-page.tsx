@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
+import { getStateIn } from "@reactive-resume/resume/proposals";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
@@ -14,11 +15,14 @@ import { letterPageData, useLetterWords } from "@/features/letters/compose";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { useLetterMode } from "@/features/letters/use-letter-mode";
 import { CANVAS_GUTTER, PAGE_WIDTH, useCanvasWidth, ZoomBar } from "@/features/resume/editor/chrome";
+import { markChange } from "@/features/resume/editor/proposals/proposals";
 import { useEditorStore, ZOOM_MAX } from "@/features/resume/editor/store";
 import { getScrollBehavior } from "@/features/resume/editor/write/reveal";
 import { ResumePreview } from "@/features/resume/preview/preview";
 import { formatVersionTime, getVersionTitle } from "@/features/resume/share/format";
 import { orpc } from "@/libs/orpc/client";
+
+const NONE: readonly never[] = [];
 
 /** The latest value, at most every `ms`: a streaming draft re-renders the page a few times a second, not per word. */
 function useThrottled<T>(value: T, ms: number) {
@@ -46,6 +50,7 @@ function useThrottled<T>(value: T, ms: number) {
 export function LetterPage() {
 	const letter = useLetterEditorStore((state) => state.letter);
 	const draft = useLetterEditorStore((state) => state.draft);
+	const assistantProposals = useEditorStore((state) => (state.assistantOpen ? state.assistantProposals : NONE));
 	const words = useLetterWords();
 	const { i18n } = useLingui();
 	const reducedMotion = useReducedMotion();
@@ -74,9 +79,18 @@ export function LetterPage() {
 	const data = useMemo(() => {
 		if (!letter) return undefined;
 		if (viewing) return letterPageData({ ...letter, ...viewing.data }, words);
-		const page = letterPageData(shownDraft ? { ...letter, content: coverLetterTextToHtml(shownDraft) } : letter, words);
+		// The assistant's pending edits show in the body: the old text struck through, the new highlighted.
+		const content = shownDraft
+			? coverLetterTextToHtml(shownDraft)
+			: assistantProposals
+					.filter((proposal) => getStateIn(letter.content, proposal) === "pending")
+					.reduce(
+						(html, proposal) => html.replace(proposal.before, () => markChange(proposal.before, proposal.after)),
+						letter.content,
+					);
+		const page = letterPageData({ ...letter, content }, words);
 		return previewTemplate ? { ...page, metadata: { ...page.metadata, template: previewTemplate } } : page;
-	}, [letter, viewing, shownDraft, previewTemplate, words]);
+	}, [letter, viewing, shownDraft, previewTemplate, words, assistantProposals]);
 
 	if (!letter || !data) return null;
 

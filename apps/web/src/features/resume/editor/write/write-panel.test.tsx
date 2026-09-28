@@ -24,6 +24,8 @@ vi.mock("@/libs/orpc/client", () => ({
 			update: { call: vi.fn(() => new Promise(() => undefined)) },
 		},
 		coverLetters: { copyEmbedded: { mutationOptions: () => ({}) } },
+		aiProviders: { list: { queryOptions: () => ({ queryKey: ["aiProviders"], queryFn: () => [] }) } },
+		ai: { improve: { mutationOptions: () => ({}) } },
 	},
 	streamClient: { resume: { updates: { subscribe: vi.fn() } } },
 }));

@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
+import { collectPassages } from "@reactive-resume/resume/proposals";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
@@ -16,9 +17,9 @@ import { AiProviderPicker } from "@/features/settings/integrations/components/ai
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-import { collectPassages } from "../proposals/passages";
 import { ProposalList } from "../proposals/proposal-list";
 import { useEditorStore } from "../store";
+import { describeEntry } from "../write/model";
 import { getSectionName } from "./issues";
 import { mapWritingReview } from "./review";
 
@@ -49,6 +50,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 			collectPassages(data, {
 				summary: getSectionName(data, "summary"),
 				sectionTitle: (sectionId) => getSectionName(data, sectionId),
+				entryTitle: (type, entry) => describeEntry(type as never, entry as never).title,
 				bullet: (n) => t`bullet ${n}`,
 				paragraph: (n) => t`paragraph ${n}`,
 			}).slice(0, MAX_PASSAGES),

@@ -59,7 +59,7 @@ export function ResumesCommandGroup() {
 		matchesSearch(search, [application.company, application.role]),
 	);
 	const filteredThreads = (threads ?? []).filter((thread) =>
-		matchesSearch(search, [thread.title, thread.resumeName, thread.providerLabel]),
+		matchesSearch(search, [thread.title, thread.resumeName, thread.coverLetterName]),
 	);
 
 	const onCreate = () => {
@@ -85,8 +85,20 @@ export function ResumesCommandGroup() {
 		reset();
 	};
 
+	// A conversation opens its document with the assistant showing it.
 	const onOpenThread = async (thread: Thread) => {
-		await navigate({ to: "/agent/$threadId", params: { threadId: thread.id } });
+		if (thread.coverLetterId)
+			await navigate({
+				to: "/builder/letter/$coverLetterId",
+				params: { coverLetterId: thread.coverLetterId },
+				search: { assistant: thread.id },
+			});
+		else if (thread.workingResumeId)
+			await navigate({
+				to: "/builder/$resumeId",
+				params: { resumeId: thread.workingResumeId },
+				search: { assistant: thread.id },
+			});
 		reset();
 	};
 
@@ -105,9 +117,13 @@ export function ResumesCommandGroup() {
 					<Trans>Applications</Trans>
 				</CommandItem>
 
-				<CommandItem keywords={[t`Threads`, t`Agent`]} value="search.threads" onSelect={() => pushPage("threads")}>
+				<CommandItem
+					keywords={[t`Conversations`, t`Assistant`, t`Threads`]}
+					value="search.threads"
+					onSelect={() => pushPage("threads")}
+				>
 					<ChatCircleDotsIcon />
-					<Trans>Threads</Trans>
+					<Trans>Assistant conversations</Trans>
 				</CommandItem>
 			</BaseCommandGroup>
 
@@ -173,32 +189,25 @@ export function ResumesCommandGroup() {
 			) : null}
 
 			{searchPage === "threads" ? (
-				<BaseCommandGroup page={commandSearchPage} heading={<Trans>Threads</Trans>}>
-					<CommandItem value="threads.create" onSelect={() => onNavigate("/agent/new")}>
-						<PlusIcon />
-						<Trans>New Thread</Trans>
-					</CommandItem>
-
+				<BaseCommandGroup page={commandSearchPage} heading={<Trans>Assistant conversations</Trans>}>
 					{isLoadingThreads ? (
 						<CommandLoading>
-							<Trans>Loading threads…</Trans>
+							<Trans>Loading conversations…</Trans>
 						</CommandLoading>
 					) : (
 						filteredThreads.map((thread) => {
-							const title = thread.title === thread.resumeName ? t`New thread` : thread.title;
-							const resumeName = thread.resumeName ?? "";
-							const providerLabel = thread.providerLabel ?? "";
+							const documentName = thread.coverLetterName ?? thread.resumeName ?? "";
 
 							return (
 								<CommandItem
 									key={thread.id}
 									value={`thread.${thread.id}`}
-									keywords={[title, resumeName, providerLabel]}
+									keywords={[thread.title, documentName]}
 									onSelect={() => onOpenThread(thread)}
 								>
 									<ChatCircleDotsIcon />
-									<span className="min-w-0 truncate">{title}</span>
-									<span className="truncate text-muted-foreground text-xs">{resumeName}</span>
+									<span className="min-w-0 truncate">{thread.title}</span>
+									<span className="truncate text-muted-foreground text-xs">{documentName}</span>
 								</CommandItem>
 							);
 						})

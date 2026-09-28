@@ -60,9 +60,14 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	const inputRef = useRef<HTMLInputElement>(null);
 	const refreshDocuments = () => queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 
-	const openResume = (resumeId: string) => {
+	// A copy made for a job opens with the assistant ready to tailor it.
+	const openResume = (resumeId: string, withAssistant = false) => {
 		closeDialog();
-		void navigate({ to: "/builder/$resumeId", params: { resumeId } });
+		void navigate({
+			to: "/builder/$resumeId",
+			params: { resumeId },
+			search: withAssistant ? { assistant: "new" } : {},
+		});
 	};
 	const openLetter = (coverLetterId: string) => {
 		closeDialog();
@@ -162,10 +167,10 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 					initialSourceId={data?.sourceResumeId}
 					initialJobId={data?.applicationId}
 					onBack={data?.step === "copy" ? undefined : () => setStep({ name: "choose" })}
-					onCreated={(resumeId) => {
+					onCreated={(resumeId, forJob) => {
 						markNew(resumeId);
 						void refreshDocuments();
-						openResume(resumeId);
+						openResume(resumeId, forJob);
 					}}
 				/>
 			</DialogContent>
@@ -469,7 +474,8 @@ type CopyForJobProps = {
 	initialSourceId?: string | undefined;
 	initialJobId?: string | undefined;
 	onBack?: (() => void) | undefined;
-	onCreated: (resumeId: string) => void;
+	/** The new resume, and whether it was made for a job. */
+	onCreated: (resumeId: string, forJob: boolean) => void;
 };
 
 /** Pick a resume and a job; the copy is named from both and linked to the application. */
@@ -501,7 +507,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 				...(finalName ? { name: finalName } : {}),
 			});
 			toast.add({ description: job ? t`Created and linked to ${job.company}` : t`Created “${finalName}”` });
-			onCreated(resumeId);
+			onCreated(resumeId, Boolean(job));
 		} catch (error) {
 			toast.add({ type: "error", description: getOrpcErrorMessage(error, { fallback: t`Couldn't copy the resume.` }) });
 		}

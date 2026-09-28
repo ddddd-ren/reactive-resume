@@ -17,7 +17,9 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { AssistantButton } from "@/features/assistant/assistant-button";
 import { useLetterWords } from "@/features/letters/compose";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
@@ -39,6 +41,8 @@ type LetterBarProps = {
  */
 export function LetterBar({ layout, pinnable }: LetterBarProps) {
 	const setShareTab = useEditorStore((state) => state.setShareTab);
+	// Below 1280 the bar is too narrow for Share's label next to everything else.
+	const wide = useBreakpoint() === "wide";
 
 	return (
 		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-line border-b bg-surface px-3">
@@ -67,9 +71,19 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 
 			<div className="flex items-center justify-end gap-1">
 				{layout === "desktop" && (
-					<IconButton icon="history" label={t`History`} className="text-ink-2" onClick={() => setShareTab("history")} />
+					<>
+						<IconButton
+							icon="history"
+							label={t`History`}
+							className="text-ink-2"
+							onClick={() => setShareTab("history")}
+						/>
+						<span className="me-1.5">
+							<AssistantButton />
+						</span>
+					</>
 				)}
-				{layout === "desktop" ? (
+				{layout === "desktop" && wide ? (
 					<Button variant="secondary" className="gap-1.5" onClick={() => setShareTab("download")}>
 						<Icon name="ios_share" />
 						<Trans>Share</Trans>

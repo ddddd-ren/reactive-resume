@@ -1,15 +1,15 @@
+import type { Proposal, ProposalState } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { KeyboardEvent } from "react";
-import type { Proposal, ProposalState } from "./proposals";
+import type { KeyboardEvent, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useState } from "react";
+import { useId, useState } from "react";
+import { applyProposal, getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "../store";
-import { applyProposal, getProposalState } from "./proposals";
 
 /** The visible text of a passage's HTML, for the card. */
 const passageText = (html: string) =>
@@ -22,17 +22,13 @@ const passageText = (html: string) =>
 		.replace(/&amp;/g, "&")
 		.trim();
 
-/** Applies proposals as one undo step; the toast's Undo takes them back, and they show as pending again. */
-function acceptProposals(proposals: readonly Proposal[]) {
+/** Applies proposals to the resume as one undo step; the toast's Undo takes them back, and they show as pending again. */
+export function acceptResumeProposals(proposals: readonly Proposal[]) {
 	useResumeStore.getState().updateResumeData(
 		(draft) => {
 			for (const proposal of proposals) applyProposal(draft, proposal);
 		},
 		{ newStep: true },
-	);
-	useEditorStore.getState().setProposalStatus(
-		proposals.map((proposal) => proposal.id),
-		"accepted",
 	);
 	toast.add({
 		description: proposals.length === 1 ? t`Edit applied` : t`${proposals.length} edits applied`,
@@ -47,17 +43,55 @@ type ProposalListProps = {
 	onSuggestAgain: () => void;
 };
 
-/**
- * A change set: "n proposed edits" with Accept all, then each edit numbered like its marker on the page, with
- * where it lands, the old text struck through, the new text and why. A accepts and R rejects the focused edit;
- * ↑ and ↓ move between edits.
- */
+/** Check → Writing's change set, applied to the resume. */
 export function ProposalList({ proposals, data, onSuggestAgain }: ProposalListProps) {
 	const setProposalStatus = useEditorStore((state) => state.setProposalStatus);
 	const locked = useIsResumeLocked();
+
+	return (
+		<ChangeSet
+			proposals={proposals}
+			states={proposals.map((proposal) => getProposalState(data, proposal))}
+			locked={locked}
+			onAccept={(accepted) => {
+				acceptResumeProposals(accepted);
+				setProposalStatus(
+					accepted.map((proposal) => proposal.id),
+					"accepted",
+				);
+			}}
+			onReject={(rejected) =>
+				setProposalStatus(
+					rejected.map((proposal) => proposal.id),
+					"rejected",
+				)
+			}
+			onSuggestAgain={onSuggestAgain}
+		/>
+	);
+}
+
+type ChangeSetProps = {
+	proposals: readonly Proposal[];
+	/** Each proposal's state as the document reads now (out of date once its passage changed). */
+	states: readonly ProposalState[];
+	locked: boolean;
+	onAccept: (proposals: readonly Proposal[]) => void;
+	onReject: (proposals: readonly Proposal[]) => void;
+	/** "Suggest again" on an out-of-date proposal. */
+	onSuggestAgain?: (() => void) | undefined;
+	/** The set's title; "n proposed edits" by default. */
+	title?: ReactNode;
+};
+
+/**
+ * A change set: "n proposed edits" with Accept all, then each edit numbered, with where it lands, the old text
+ * struck through, the new text and why. A accepts and R rejects the focused edit; ↑ and ↓ move between edits.
+ */
+export function ChangeSet({ proposals, states, locked, onAccept, onReject, onSuggestAgain, title }: ChangeSetProps) {
 	const [focused, setFocused] = useState(0);
-	const states = proposals.map((proposal) => getProposalState(data, proposal));
 	const pending = proposals.filter((_, index) => states[index] === "pending");
+	const headingId = useId();
 
 	const onKeyDown = (event: KeyboardEvent<HTMLOListElement>) => {
 		if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -77,22 +111,22 @@ export function ProposalList({ proposals, data, onSuggestAgain }: ProposalListPr
 		if (!proposal || states[index] !== "pending" || locked) return;
 		if (event.key === "a" || event.key === "A") {
 			event.preventDefault();
-			acceptProposals([proposal]);
+			onAccept([proposal]);
 		}
 		if (event.key === "r" || event.key === "R") {
 			event.preventDefault();
-			setProposalStatus([proposal.id], "rejected");
+			onReject([proposal]);
 		}
 	};
 
 	return (
-		<section aria-labelledby="proposals-heading" className="overflow-hidden rounded-xl border border-line">
+		<section aria-labelledby={headingId} className="overflow-hidden rounded-xl border border-line">
 			<header className="flex min-h-11 items-center justify-between gap-2 border-line border-b bg-bg px-3 py-2">
-				<h3 id="proposals-heading" className="font-semibold text-sm">
-					<Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />
+				<h3 id={headingId} className="font-semibold text-sm">
+					{title ?? <Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />}
 				</h3>
 				{pending.length > 1 && (
-					<Button size="sm" disabled={locked} onClick={() => acceptProposals(pending)}>
+					<Button size="sm" disabled={locked} onClick={() => onAccept(pending)}>
 						<Trans>Accept all</Trans>
 					</Button>
 				)}
@@ -109,8 +143,8 @@ export function ProposalList({ proposals, data, onSuggestAgain }: ProposalListPr
 						focusable={index === Math.min(focused, proposals.length - 1)}
 						locked={locked}
 						onFocus={() => setFocused(index)}
-						onAccept={() => acceptProposals([proposal])}
-						onReject={() => setProposalStatus([proposal.id], "rejected")}
+						onAccept={() => onAccept([proposal])}
+						onReject={() => onReject([proposal])}
 						onSuggestAgain={onSuggestAgain}
 					/>
 				))}
@@ -133,7 +167,7 @@ type ProposalItemProps = {
 	onFocus: () => void;
 	onAccept: () => void;
 	onReject: () => void;
-	onSuggestAgain: () => void;
+	onSuggestAgain?: (() => void) | undefined;
 };
 
 function ProposalItem(props: ProposalItemProps) {
@@ -193,9 +227,15 @@ function ProposalItem(props: ProposalItemProps) {
 					{state === "stale" && (
 						<>
 							<Trans>Out of date: the text has changed since.</Trans>
-							<button type="button" className="text-ink-2 underline underline-offset-2" onClick={props.onSuggestAgain}>
-								<Trans>Suggest again</Trans>
-							</button>
+							{props.onSuggestAgain && (
+								<button
+									type="button"
+									className="text-ink-2 underline underline-offset-2"
+									onClick={props.onSuggestAgain}
+								>
+									<Trans>Suggest again</Trans>
+								</button>
+							)}
 						</>
 					)}
 				</p>
