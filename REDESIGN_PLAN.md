@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M9 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M10 are done; see §11 and §12.
 
 **PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
 
@@ -1317,3 +1317,82 @@ Verification:
 - knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
 - E2E: replaced `cover-letter-library` with `cover-letter-editor`. It covers writing a letter for an application (recipient, greeting, body, length, rename), downloading PDF and JSON, opening it from the application and the old link, and naming, restoring and copying into a resume.
 - The full suite passes against the dev server except the known dev-only server-PDF steps. Six specs that timed out under full parallel load pass when rerun. `cover-letter-editor`, `applications-tracker`, `share-history`, `documents-new` and `json-export-import` pass against the production build.
+
+### M10 · Assistant (done 29 Sep 2026)
+
+What changed:
+
+- **One assistant, in the editor.** The Agents pages, the builder's assistant sheet and the application copilot panel are gone. The assistant opens beside the resume or letter it works on:
+  - at 1280 px and wider, as a 400 px third column;
+  - from 1024 to 1279 px, in place of the left panel;
+  - below 1024 px, as a right drawer;
+  - on phones, full screen.
+  - The ✦ button in the bar and ⌘J toggle it.
+- **Panel:**
+  - Header: the model chip (tested providers only), New conversation, Past conversations and Close.
+  - Empty state: four suggestions that fit the document. There are resume and letter sets, plus the tailor suggestion when an application is linked.
+  - Thread: streaming, with Send turning into Stop. After a stop it says "Stopped. No edits were proposed." and offers Continue.
+  - Clarifying question cards: answer by choice or in your own words, and the answer continues the reply.
+  - Change sets: the Check card, with Accept, Reject, Accept all and Suggest again, plus the page marks, the "n proposed" pill in the outline and the page caption.
+  - Composer: context chips (the document, and the posting) that decide what the next message shares; a two-row textarea; attachments; and the disclosure naming the provider.
+  - Copy transcript under the conversation.
+- **Server:**
+  - Threads belong to a resume or a letter (`agent_threads.cover_letter_id`). Each thread counts its edits proposed and accepted, which past conversations show.
+  - `propose_edits` rewrites or adds passages by id, and its targets are resolved against the document as it is now. Statuses are stored with the message, so a reopened conversation shows what was accepted.
+  - `read_resume` and `read_letter`, `ask_user_question`, `read_attachment` and provider web search remain. `apply_resume_patch`, approvals, revert and archive are gone.
+  - The system prompt names the document and includes the linked posting with the application's notes.
+- **States:**
+  - D1: connecting OpenAI, Anthropic or an OpenAI-compatible provider in place, through the providers API and its test.
+  - D2: the error keeps the message and offers Retry and Switch model. Retrying a failed answer resends it rather than regenerating.
+  - D3: past conversations, grouped by document, with outcomes ("2 of 3 edits accepted").
+  - D4: stale proposals show as out of date and never apply.
+  - Without `ENCRYPTION_SECRET` the assistant says it isn't set up on this server.
+- **Inline Improve** in every rich-text field: Improve in the toolbar opens "Improve selected line" (Stronger verb, Add a result, Make it shorter, Ask for something else…).
+  - The suggestion card offers Replace or Keep mine. Suggestions that state something new say "Check it's accurate."
+  - Replace changes only that line, and only if it hasn't changed meanwhile.
+  - It is served by a new `ai.improve` endpoint.
+- **Outside the editor:**
+  - ⌘K → Ask the assistant opens the document edited last with the question sent. In the editor, it asks about the open document.
+  - Job match's missing terms offer "Ask the assistant to work it in", which asks first.
+  - Applications' Prepare for next step opens the application's resume or letter with the fit, follow-up and interview suggestions (Q3i).
+  - Copy for a job opens the copy with the assistant ready.
+  - `/agent`, `/agent/new` and `/agent/$threadId` redirect to the document with the assistant open, or to Documents.
+
+Differences from the plan, with reasons:
+
+- **Redis is optional (Q11).** Without it replies stream directly, and a reply interrupted by a reload can't be picked up again.
+- **The letter assistant.** Letters get the same assistant and proposals. Accepting an edit to a letter offers Undo in the toast, since letters have no undo stack; for resumes, Accept all is one undo step.
+- **`?assistant=` and `?ask=` are consumed on open** and removed from the URL, so a reload doesn't send the question again.
+- **Page marks carry no numbers, and cards have no "View".** Edits are marked on the page while the assistant is open, counted in the caption and pilled in the outline; each card names where its passage sits.
+- **"Ask for something else…" asks inline** in the Improve menu rather than moving to the assistant, so the field keeps its place.
+- **Share is an icon below 1280 px**, in both editors, so the bar fits beside the assistant column at 1024.
+- **The copilot's API endpoints stay** (match score, drafted messages, tailoring) for MCP and API users; the web app uses the assistant instead.
+- **Dropped per Q3j:** AI-draft copies, blank drafts, token counts and archiving. Attachments, web-search sources and Copy transcript remain.
+- **Found and fixed:**
+  - `docs/spec.json` and the JSON Resume schema guide had fallen behind (cover-letter routes from M9, Check metadata from M8). They are regenerated, and the OpenAPI test lists the new letter routes.
+  - `react-resizable-panels` and `@shadcn/helpers` were unused in the web app, and are removed.
+
+Verification:
+
+- Typecheck, knip, `turbo boundaries` and Biome are clean across the workspace, and catalogs are extracted.
+- Tests pass: api 485 (plus 10 opt-in), web 881, resume 1328, ai 32, server 126. New tests cover:
+  - the proposal lifecycle, including going out of date after a manual edit and pending again after undo;
+  - additions as new list items;
+  - letter passages and ids;
+  - outline pill counts;
+  - removing a context chip, which leaves the document and posting out of the request;
+  - the Improve prompt and output;
+  - the thread's document and read-only state;
+  - edit statuses carried across saves;
+  - streaming without Redis.
+- E2E: `assistant.spec.ts` runs against a scripted OpenAI-compatible provider (`fixtures/ai-stub.ts`). It covers:
+  - connecting in place;
+  - propose, accept and the persisted change;
+  - the question card and its continuation;
+  - Stop;
+  - Improve and Replace;
+  - ⌘K Ask from Documents;
+  - the `/agent` redirects.
+  - It needs `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` (set in the E2E workflow) and skips without it.
+- The full suite passes against the production build, and the assistant spec passed three runs in a row.
+
