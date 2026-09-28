@@ -142,9 +142,9 @@ msgstr "{count, plural, one {# 則備註} other {# 則備註}}"
 msgid "{count, plural, one {# warning} other {# warnings}}"
 msgstr "{count, plural, one {# 個警告} other {# 個警告}}"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "{label} over the last 30 days"
-msgstr "{label} 過去 30 天內"
+#: src/features/resume/share/download-tab.tsx
+msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{lines, plural, one {Runs onto page {next} by about # line} other {Runs onto page {next} by about # lines}}"
@@ -447,6 +447,10 @@ msgstr "新增標籤並按 Enter…"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr ""
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Add an address."
+msgstr ""
+
 #: src/libs/resume/ats.ts
 msgid "Add an entry, or use projects and volunteer work to show equivalent history."
 msgstr "新增條目，或使用專案和志願者工作來展示同等的歷史。"
@@ -601,6 +605,10 @@ msgstr ""
 msgid "Add your full name under Basics."
 msgstr "在「基本資訊」下新增您的全名。"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Address"
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Adjust the resume for a remote-first role that values async communication and ownership."
 msgstr "調整履歷，使其更適合遠端優先、重視非同步溝通和自主性的職位。"
@@ -651,6 +659,10 @@ msgstr "在配置 REDIS_URL 和 ENCRYPTION_SECRET 之前，AI 代理設定不可
 msgid "AI assistant"
 msgstr "人工智慧助手"
 
+#: src/features/resume/share/format.ts
+msgid "AI edit"
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI provider"
 msgstr "AI 提供者"
@@ -700,10 +712,6 @@ msgstr "所有應徵紀錄（含已封存）"
 msgid "Allow access"
 msgstr "允許存取"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Allow Public Access"
-msgstr "允許公開存取"
-
 #: src/features/ats-checker/messages.ts
 msgid "Almost none of your bullets carry a number."
 msgstr "您的重點裡幾乎沒有數字。"
@@ -737,6 +745,10 @@ msgstr "頁面載入出現意外錯誤，您可以重試或返回。"
 msgid "An unknown error occurred while importing your resume."
 msgstr "匯入履歷時發生未知錯誤。"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Another of your resumes uses this address."
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Answer in your own words"
 msgstr "用您自己的話回答"
@@ -749,13 +761,9 @@ msgstr "任何標籤"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "任何開啟該公開 URL 的人都需要這組密碼。"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Anyone with the link can view the resume."
-msgstr "任何擁有該連結的人都可以檢視這份履歷。"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Anyone with the public URL will be able to view your resume without a password."
-msgstr "任何擁有該公開 URL 的人，都可以不需密碼檢視您的履歷。"
+#: src/features/resume/share/link-tab.tsx
+msgid "Anyone with the link will be able to view your resume."
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "API and MCP access"
@@ -922,10 +930,6 @@ msgstr "您確定要刪除您的帳戶嗎？"
 msgid "Are you sure you want to lock this resume?"
 msgstr "您確定要鎖定這份履歷嗎？"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Are you sure you want to remove password protection?"
-msgstr "您確定要移除密碼保護嗎？"
-
 #: src/features/resume/editor/write/entries.tsx
 msgid "Area of study"
 msgstr ""
@@ -999,6 +1003,19 @@ msgstr "驗證"
 msgid "Auto-fill failed."
 msgstr "自動填入失敗。"
 
+#: src/features/resume/share/format.ts
+msgid "autosaved"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
+msgstr ""
+
+#. placeholder {0}: window.location.host
+#: src/features/resume/share/link-tab.tsx
+msgid "Available · {0}/{username}/{slug}"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "避免使用過大的字距效果，然後重新匯出。"
@@ -1029,6 +1046,10 @@ msgstr "返回驗證設定"
 msgid "Back to documents"
 msgstr ""
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Back to now"
+msgstr ""
+
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "Back to resumes"
 msgstr "返回簡歷頁面"
@@ -1057,13 +1078,17 @@ msgstr "基本 URL"
 msgid "Basics"
 msgstr "基本資料"
 
+#: src/features/resume/share/format.ts
+msgid "Before restore"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Bengali"
 msgstr "孟加拉語"
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Best for applications, sharing, and printing."
-msgstr "最適合應徵、分享與列印。"
+#: src/features/resume/share/download-tab.tsx
+msgid "Best for applying"
+msgstr ""
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Blank draft"
@@ -1161,7 +1186,6 @@ msgstr ""
 #: src/features/settings/pages/api-keys.tsx
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-prompt.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Cancel"
 msgstr "取消"
 
@@ -1253,6 +1277,7 @@ msgstr "檢查"
 msgid "Checking draft"
 msgstr "檢查草稿"
 
+#: src/features/resume/share/link-tab.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Checking…"
 msgstr "正在檢查…"
@@ -1323,10 +1348,6 @@ msgstr ""
 msgid "Choose app language"
 msgstr "選擇應用程式語言"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
-msgid "Choose PDF, DOCX, Markdown, or JSON. Export your resume and cover letter separately when available."
-msgstr "選擇 PDF、DOCX、Markdown 或 JSON 格式。如有履歷和求職信，請分別匯出。"
-
 #: src/features/homepage/feature-explorer.tsx
 msgid "Choose who can see it"
 msgstr "決定誰能看見"
@@ -1372,6 +1393,7 @@ msgstr "用戶端 ID"
 
 #: src/features/cover-letters/editor-dialog.tsx
 #: src/features/cover-letters/editor.tsx
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Close"
 msgstr "關閉"
 
@@ -1435,6 +1457,10 @@ msgstr "公司 A–Z"
 msgid "Compare this resume against this job posting URL and update the keywords without overselling anything."
 msgstr "將這份履歷與這個職缺公告 URL 做比較，更新關鍵字，但不要誇大。"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "壓縮或移除較大的圖片，以保持上傳速度。"
@@ -1444,7 +1470,6 @@ msgstr "壓縮或移除較大的圖片，以保持上傳速度。"
 #: src/dialogs/api-key/create.tsx
 #: src/features/settings/pages/account.tsx
 #: src/hooks/use-prompt.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
 msgstr "確認"
 
@@ -1539,6 +1564,10 @@ msgstr "對話JSON已複製。"
 msgid "Converted stylesheet draft"
 msgstr "已轉換的樣式表草稿"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Copied"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Copied to clipboard."
 msgstr "已複製到剪貼簿。"
@@ -1546,6 +1575,7 @@ msgstr "已複製到剪貼簿。"
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-ai-copilot.tsx
+#: src/features/resume/share/link-tab.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy"
 msgstr "複製"
@@ -1594,10 +1624,6 @@ msgstr "把匯出檔案中的文字複製出來通讀一遍；修正任何位置
 #: src/dialogs/api-key/create.tsx
 msgid "Copy this secret key and use it in your applications to access your data."
 msgstr "複製這組私密金鑰，並在您的應用程式中使用它來存取您的資料。"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Copy URL"
-msgstr "複製 URL"
 
 #: src/libs/resume/ats.ts
 msgid "Correct the year, or use \"Present\" for ongoing work."
@@ -1739,7 +1765,7 @@ msgstr "裁切填滿"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/cover-letters/library.tsx
-#: src/features/resume/export/download-dialog.tsx
+#: src/features/resume/share/download-tab.tsx
 msgid "Cover letter"
 msgstr "求職信"
 
@@ -1811,6 +1837,7 @@ msgstr "立即建立"
 msgid "Create resume with options"
 msgstr "使用選項建立履歷表"
 
+#: src/features/resume/share/format.ts
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Created"
 msgstr "建立日期"
@@ -1885,6 +1912,11 @@ msgstr "自訂樣式"
 msgid "Czech"
 msgstr "捷克語"
 
+#. placeholder {0}: summary.peak
+#: src/features/resume/share/link-tab.tsx
+msgid "Daily views over 30 days, peak {0}"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Danish"
 msgstr "丹麥語"
@@ -1955,6 +1987,7 @@ msgstr "學位"
 #: src/features/applications/components/table-view.tsx
 #: src/features/cover-letters/editor-dialog.tsx
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/routes/agent/-components/agent-chat.tsx
@@ -1963,6 +1996,10 @@ msgstr "學位"
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Delete"
 msgstr "刪除"
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Delete “{title}”?"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/pages/account.tsx
@@ -2021,6 +2058,10 @@ msgstr "刪除時間軸項目"
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Delete…"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Deleted “{title}”"
 msgstr ""
 
 #. placeholder {0}: result.deleted
@@ -2179,11 +2220,15 @@ msgstr "完成"
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/homepage/languages-showcase.tsx
-#: src/features/resume/export/download-dialog.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Download"
 msgstr "下載"
+
+#. placeholder {0}: selected.label
+#: src/features/resume/share/download-tab.tsx
+msgid "Download {0}"
+msgstr ""
 
 #: src/features/settings/pages/account.tsx
 msgid "Download a copy of all your data, including your profile and every resume, as a JSON file."
@@ -2204,6 +2249,10 @@ msgstr "下載 CSV"
 msgid "Download PDF"
 msgstr "下載 PDF"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Download PDF instead"
+msgstr ""
+
 #: src/features/homepage/export-playground.tsx
 msgid "Download sample DOCX"
 msgstr "下載範例 DOCX"
@@ -2220,9 +2269,13 @@ msgstr "下載範例 Markdown"
 msgid "Download sample PDF"
 msgstr "下載範例 PDF"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Downloads"
-msgstr "下載"
+#: src/features/resume/share/download-tab.tsx
+msgid "Downloaded {file}"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "downloads"
+msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Draft · not printed"
@@ -2294,10 +2347,6 @@ msgstr ""
 #: src/libs/locale.ts
 msgid "Dutch"
 msgstr "荷蘭語"
-
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Earlier versions are kept; the builder's undo history is reset."
-msgstr "保留早期版本；重置建構器的撤銷歷史記錄。"
 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/application-actions-menu.tsx
@@ -2373,10 +2422,6 @@ msgstr "編輯模型"
 msgid "Edit note"
 msgstr "編輯備註"
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Editable in Word, Google Docs, and Pages."
-msgstr "可在 Word、Google Docs 和 Pages 中編輯。"
-
 #: src/features/resume/editor/page-overlay.tsx
 msgid "Editing"
 msgstr ""
@@ -2384,6 +2429,10 @@ msgstr ""
 #: src/components/input/chip-input.tsx
 msgid "Editing keyword..."
 msgstr "編輯關鍵字..."
+
+#: src/features/resume/share/format.ts
+msgid "Editing session"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Editor mode"
@@ -2797,6 +2846,10 @@ msgstr "十五種範本，全部免費。挑一個你喜歡的，字體、顏色
 msgid "File"
 msgstr "文件"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "File name"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "填入欄位"
@@ -2910,6 +2963,10 @@ msgstr "例如，記下您把這份履歷投給了哪些公司，或是職缺描
 msgid "For keeping a copy"
 msgstr "用於保留副本"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "For portals or recruiters who ask for Word. Layout is simplified."
+msgstr ""
+
 #: src/features/homepage/export-playground.tsx
 msgid "For your next application"
 msgstr "用於下一次求職"
@@ -2926,6 +2983,10 @@ msgstr "忘記密碼？"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "忘記密碼？"
+
+#: src/features/resume/share/download-tab.tsx
+msgid "Format"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgctxt "Page Format (A4, Letter, Free-form)"
@@ -2951,6 +3012,10 @@ msgstr "自由形式"
 msgid "French"
 msgstr "法文"
 
+#: src/features/resume/share/format.ts
+msgid "from the assistant or API"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "From your resume and the posting"
 msgstr "來自你的履歷與職缺公告"
@@ -2958,10 +3023,6 @@ msgstr "來自你的履歷與職缺公告"
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Full name"
 msgstr ""
-
-#: src/features/resume/export/download-dialog.tsx
-msgid "Full resume data for backup or import."
-msgstr "用於備份或匯入的完整履歷資料。"
 
 #. Layout editor toggle label that makes a page single-column
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -3193,6 +3254,11 @@ msgstr "高亮顏色"
 msgid "Hindi"
 msgstr "印地語"
 
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
+msgid "History"
+msgstr ""
+
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Home"
 msgstr "首頁"
@@ -3279,6 +3345,10 @@ msgstr ""
 msgid "Import JSON"
 msgstr "匯入 JSON"
 
+#: src/features/resume/share/format.ts
+msgid "Imported"
+msgstr ""
+
 #. placeholder {0}: result.imported
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Imported {0} application(s)."
@@ -3305,9 +3375,9 @@ msgstr "在 {0} 中"
 msgid "In the sidebar · tap to move"
 msgstr ""
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Include resume header"
-msgstr "包含履歷頁首"
+#: src/features/resume/share/download-tab.tsx
+msgid "Include the resume's header"
+msgstr ""
 
 #: src/components/input/rich-input.tsx
 msgid "Increase indent"
@@ -3589,11 +3659,6 @@ msgstr "語言"
 msgid "Languages"
 msgstr "語言"
 
-#. placeholder {0}: statistics.lastDownloadedAt.toDateString()
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Last downloaded on {0}"
-msgstr "上次下載日期：{0}"
-
 #: src/routes/dashboard/applications/index.tsx
 msgid "Last updated"
 msgstr "上次更新"
@@ -3606,11 +3671,6 @@ msgstr "最後更新日期"
 #: src/routes/dashboard/resumes/-components/list-view.tsx
 msgid "Last updated on {updatedAt}"
 msgstr "最後更新日期 {updatedAt}"
-
-#. placeholder {0}: statistics.lastViewedAt.toDateString()
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Last viewed on {0}"
-msgstr "上次檢視日期：{0}"
 
 #: src/libs/locale.ts
 msgid "Latvian"
@@ -3709,6 +3769,7 @@ msgstr "行高"
 
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr ""
 
@@ -3727,6 +3788,18 @@ msgstr "連結一份履歷並貼上職缺描述（編輯），即可評估符合
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Link address"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Link copied"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Link is live"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Link turned off. The address is kept"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -3767,6 +3840,11 @@ msgstr "列出您使用的工具和技術。招募人員搜尋技能的頻率高
 msgid "Lithuanian"
 msgstr "立陶宛語"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/link-tab.tsx
+msgid "Live at {0}"
+msgstr ""
+
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
 msgstr "正在加載人工智慧提供者。請稍後再試。"
@@ -3802,10 +3880,6 @@ msgstr "正在載入對話串…"
 msgid "Loading total"
 msgstr "正在載入總數"
 
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Loading…"
-msgstr "載入中…"
-
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/table-view.tsx
 #: src/features/ats-checker/parse-preview.tsx
@@ -3832,6 +3906,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "有大段文字使用了全大寫。"
+
+#: src/features/resume/share/download-tab.tsx
+msgid "Looks exactly like the page. Use it for applications and email."
+msgstr ""
 
 #. Link to backup-code verification flow when authenticator app is unavailable
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3954,10 +4032,6 @@ msgstr "模型"
 msgid "More download formats"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-msgid "More download formats…"
-msgstr ""
-
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
 msgstr ""
@@ -4065,6 +4139,26 @@ msgstr "名稱"
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
 msgstr "用您要應徵的職位來為這份履歷命名。"
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Name this version"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Name this version, e.g. Sent to Lumen"
+msgstr ""
+
+#: src/features/resume/share/format.ts
+msgid "named"
+msgstr ""
+
+#: src/features/resume/share/format.ts
+msgid "Named version"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Named versions are kept until you delete them. This can't be undone."
+msgstr ""
 
 #: src/dialogs/api-key/create.tsx
 msgid "Names help you tell keys apart, so name it after what you will use it for."
@@ -4241,10 +4335,6 @@ msgstr ""
 msgid "No prediction of whether you will be rejected. No tool can do that."
 msgstr "不會預測您是否會被拒絕。沒有任何工具做得到。"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "No prior data"
-msgstr "沒有先前的數據"
-
 #: src/features/homepage/ats-playground.tsx
 msgid "No readable text found. This PDF may contain scanned images. Export a PDF with selectable text and try again."
 msgstr "找不到可讀取的文字。這個 PDF 可能只包含掃描影像。請匯出含有可選取文字的 PDF 後再試一次。"
@@ -4269,10 +4359,6 @@ msgstr "沒有履歷符合您的搜尋條件。"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "尚無履歷。"
-
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "No saved versions yet."
-msgstr "暫無已儲存版本。"
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -4375,6 +4461,10 @@ msgstr "沒有需要修復的內容。其餘頁面只是未被本報告涵蓋。
 msgid "Nothing to suggest."
 msgstr "沒有可提供的建議。"
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Now"
+msgstr ""
+
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Numbered list"
 msgstr ""
@@ -4383,12 +4473,20 @@ msgstr ""
 msgid "Odia"
 msgstr "歐利亞語"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Off. Only you can see this resume."
+msgstr ""
+
 #: src/features/homepage/feature-explorer.tsx
 msgid "Offer"
 msgstr "錄取"
 
 #: src/features/resume/editor/save-status.tsx
 msgid "Offline · saved on this device"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
 msgstr ""
 
 #: src/features/settings/pages/api-keys.tsx
@@ -4412,6 +4510,10 @@ msgstr "僅適用於該部分內容能夠完整顯示在一頁上的情況。"
 msgid "Only one recognisable section heading was found."
 msgstr "只找到一個可識別的部分標題。"
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Only one version so far. Every editing session adds one automatically."
+msgstr ""
+
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Only the first {0} pages were checked, so this report does not cover the whole file."
@@ -4424,6 +4526,10 @@ msgstr "一次只會匯入前 {MAX_IMPORT} 列，其餘 {overflow} 列不會匯�
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
 msgstr "只檢查了前幾頁。"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Only you see these"
+msgstr ""
 
 #. Resume card context menu action to open the resume editor
 #. Resume card dropdown action to open the resume editor
@@ -4459,6 +4565,10 @@ msgstr "開啟整合設定"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "open issues"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Open public page"
 msgstr ""
 
 #: src/features/homepage/template-shelf.tsx
@@ -4500,6 +4610,7 @@ msgid "Optionally, which terms from a job posting already appear."
 msgstr "還可以選擇查看徵才啟事中的哪些詞已經出現。"
 
 #: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 msgid "Options for {title}"
 msgstr "{title} 的選項"
 
@@ -4605,17 +4716,17 @@ msgstr "密碼"
 msgid "Password must be between 6 and 64 characters."
 msgstr "密碼必須為 6 至 64 個字元。"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Password protection has been disabled."
-msgstr "已停用密碼保護。"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Password protection has been enabled."
-msgstr "已啟用密碼保護。"
+#: src/features/resume/share/link-tab.tsx
+msgid "Password removed"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Password required"
 msgstr "需要密碼"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Password set"
+msgstr ""
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Passwords do not match."
@@ -4707,10 +4818,6 @@ msgstr ""
 msgid "Pick a conversation from the sidebar, or start a new thread to work on a draft."
 msgstr "從側邊欄選擇一段對話，或開啟新的對話串來處理草稿。"
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Pick a format for your resume or cover letter."
-msgstr "為您的履歷或求職信選擇一種格式。"
-
 #: src/features/homepage/languages-showcase.tsx
 msgid "Pick a language. See it on the page."
 msgstr "選一種語言，直接在頁面上看效果。"
@@ -4739,9 +4846,9 @@ msgstr "所有應徵紀錄的流程健康狀態"
 msgid "Place it on a page from the Layout panel, or hide it if you meant to park it."
 msgstr "將其放置在「佈局」面板中的頁面上，或者如果您想將其停放，則將其隱藏。"
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Plain text, for AI tools and quick edits."
-msgstr "純文字，適合 AI 工具與快速編輯。"
+#: src/features/resume/share/download-tab.tsx
+msgid "Plain text with headings. Paste into application forms and notes."
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Play data flow animation"
@@ -4798,6 +4905,11 @@ msgstr "偏好設定"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Prepare a conservative patch that improves clarity without changing the story of my career."
 msgstr "請準備一份保守的修改方案，在不改變我職涯敘事的前提下提升清楚度。"
+
+#. placeholder {0}: selected.label
+#: src/features/resume/share/download-tab.tsx
+msgid "Preparing {0} file…"
+msgstr ""
 
 #: src/features/homepage/export-playground.tsx
 msgid "Preparing sample…"
@@ -4941,6 +5053,10 @@ msgstr "提供者模式"
 msgid "Public"
 msgstr "公開"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Public link"
+msgstr ""
+
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Publications"
@@ -4953,6 +5069,14 @@ msgstr "出版者"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "在第一頁頂部附近放一個純文字的電子郵件地址。大多數系統正是用它來歸檔您的資料。"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "QR code"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "QR code for {url}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Raise the design sheet"
@@ -5096,6 +5220,10 @@ msgstr "準備好署上你的名字了嗎？"
 msgid "Recipient"
 msgstr "收件人"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Recruiters see this name. Your name plus “Resume” works well."
+msgstr ""
+
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
 msgstr "長方形"
@@ -5137,6 +5265,10 @@ msgstr "記得密碼？<0/>"
 msgid "Remote, Hybrid, a city…"
 msgstr "遠端、混合、一座城市…"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Remove"
+msgstr ""
+
 #. Screen reader label for button that removes a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
 msgid "Remove {chip}"
@@ -5158,10 +5290,6 @@ msgstr "移除檔案"
 msgid "Remove link"
 msgstr "移除連結"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Remove Password"
-msgstr "移除密碼"
-
 #: src/features/resume/editor/write/entries.tsx
 msgid "Remove role"
 msgstr ""
@@ -5170,11 +5298,16 @@ msgstr ""
 msgid "Remove tag"
 msgstr "移除標籤"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Removing password protection..."
-msgstr "正在移除密碼保護…"
+#: src/features/resume/share/link-tab.tsx
+msgid "Remove the password?"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Rename version"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Rename…"
 msgstr ""
@@ -5225,6 +5358,10 @@ msgstr "回報錯誤"
 #: src/routes/_home/-sections/footer.tsx
 msgid "Report an issue"
 msgstr "回報問題"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Require a password"
+msgstr ""
 
 #: src/features/settings/pages/profile.tsx
 msgid "Resend verification email"
@@ -5277,16 +5414,25 @@ msgstr "恢復"
 msgid "Restore the resume to before this patch?"
 msgstr "將簡歷恢復到此補丁之前的狀態？"
 
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Restore this version?"
-msgstr "恢復此版本？"
+#: src/features/resume/share/history-tab.tsx
+msgid "Restore this version"
+msgstr ""
+
+#: src/features/resume/share/format.ts
+msgid "Restored a version"
+msgstr ""
 
 #: src/features/resume/builder/draft.ts
 msgid "Restored changes that hadn't been saved yet."
 msgstr ""
 
+#. placeholder {0}: formatVersionMoment(version.createdAt, i18n.locale)
+#: src/features/resume/share/history-tab.tsx
+msgid "Restored the version from {0}. Your previous state is saved as “Before restore”."
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
-#: src/features/resume/export/download-dialog.tsx
+#: src/features/resume/share/download-tab.tsx
 #: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/agent/$threadId.tsx
 msgid "Resume"
@@ -5307,10 +5453,6 @@ msgstr "簡歷編輯"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume file"
 msgstr "履歷檔案"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Resume link copied to clipboard."
-msgstr "已將履歷連結複製到剪貼簿。"
 
 #: src/features/applications/components/application-card.tsx
 msgid "Resume linked"
@@ -5346,6 +5488,10 @@ msgstr "重試"
 
 #: src/features/resume/editor/save-status.tsx
 msgid "Retry saving"
+msgstr ""
+
+#: src/features/resume/share/download-tab.tsx
+msgid "Review"
 msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
@@ -5469,6 +5615,7 @@ msgstr "Sans"
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Save"
 msgstr "節省"
@@ -5513,9 +5660,17 @@ msgstr "複製履歷內容或樣式前，請先儲存履歷的變更。"
 msgid "Save the file with every page upright."
 msgstr "儲存檔案時確保每一頁都是正向的。"
 
+#: src/features/resume/share/format.ts
+msgid "saved"
+msgstr ""
+
 #: src/features/resume/editor/save-status.tsx
 msgid "Saved"
 msgstr "已儲存"
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Saved “{trimmed}”"
+msgstr ""
 
 #: src/features/resume/builder/draft.ts
 msgid "Saving is taking longer than expected. Your changes are still open."
@@ -5710,6 +5865,10 @@ msgstr "將已從您的 PDF 中擷取的文字，連同您貼上的職缺描述�
 msgid "Senior product designer"
 msgstr "資深產品設計師"
 
+#: src/features/resume/share/format.ts
+msgid "Sent"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
 msgid "Separator"
 msgstr "分隔線"
@@ -5722,13 +5881,8 @@ msgstr "塞爾維亞語"
 msgid "Serif"
 msgstr "襯線體"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Set a password if you want only people who know it to open the public URL."
-msgstr "如果您希望只有知道密碼的人能開啟公開 URL，請設定密碼。"
-
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/settings/authentication/components/password.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set Password"
 msgstr "設定密碼"
 
@@ -5778,6 +5932,14 @@ msgstr ""
 msgid "Share & export"
 msgstr ""
 
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
+msgid "Share sections"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Share via…"
+msgstr ""
+
 #: src/libs/resume/section.tsx
 msgid "Sharing"
 msgstr "分享"
@@ -5799,10 +5961,6 @@ msgstr ""
 #: src/features/homepage/languages-showcase.tsx
 msgid "Show all languages"
 msgstr "顯示所有語言"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Show Download Buttons"
-msgstr "顯示下載按鈕"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -5845,10 +6003,6 @@ msgstr "顯示圖片"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Show templates"
 msgstr ""
-
-#: src/features/resume/export/download-dialog.tsx
-msgid "Show the same first-page header on the cover letter."
-msgstr "在求職信上顯示相同的首頁頁首。"
 
 #. placeholder {0}: rows.length
 #. placeholder {1}: applications.length
@@ -5921,6 +6075,10 @@ msgstr "正在登出…"
 msgid "Signing up..."
 msgstr "正在註冊…"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "since last view"
+msgstr ""
+
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
 msgstr "單欄版面，左側具有洋紅色邊框點綴；版面緊湊有效率，適合入門或實習職缺。"
@@ -5978,10 +6136,6 @@ msgstr "斯洛伐克語"
 #: src/libs/locale.ts
 msgid "Slovenian"
 msgstr "斯洛維尼亞語"
-
-#: src/dialogs/resume/index.tsx
-msgid "Slug"
-msgstr "標示碼"
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Some applicant tracking systems read columns out of order. Check mode shows the order they'll see."
@@ -6054,7 +6208,7 @@ msgstr "登入時發生錯誤。請再試一次。"
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+#: src/features/resume/share/link-tab.tsx
 msgid "Something went wrong. Please try again."
 msgstr "發生錯誤。請再試一次。"
 
@@ -6443,6 +6597,11 @@ msgstr "該提供者帳戶使用的電子郵件地址與您的帳戶不同。"
 msgid "That sign-in provider is no longer available on this server."
 msgstr "該登入提供者在此伺服器上已無法使用。"
 
+#. placeholder {0}: selected.label
+#: src/features/resume/share/download-tab.tsx
+msgid "The {0} file couldn't be generated. Try again, or download PDF instead."
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "The agent needs your input."
 msgstr "經紀人需要您的意見。"
@@ -6519,6 +6678,10 @@ msgstr "無法驗證提供者的回應。請重新開始。"
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "求職路上的其他事，<0/>也一併包辦。"
+
+#: src/features/resume/share/history-tab.tsx
+msgid "The resume as it is"
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6705,10 +6868,6 @@ msgstr "這是一個 PDF Portfolio（PDF 作品集包）：可見的頁面只是
 msgid "This is a sample edit. In the app, connect your own AI provider. Turn on Review edits to approve changes before they’re applied."
 msgstr "這是一則範例修改。在應用程式中，你可以連接自己的 AI 供應商。開啟「檢閱修改」，即可在變更套用前先行核准。"
 
-#: src/dialogs/resume/index.tsx
-msgid "This is a URL-friendly name for your resume."
-msgstr "這是用於履歷的 URL 友善名稱。"
-
 #: src/features/ats-checker/messages.ts
 msgid "This is an XFA form, so most software reads only the empty shell."
 msgstr "這是一個 XFA 表單，大多數軟體只能讀取到空殼。"
@@ -6880,7 +7039,12 @@ msgid "To delete your account, type the confirmation text below, then click the 
 msgstr "若要刪除您的帳戶，請輸入下方的確認文字，然後點擊按鈕。"
 
 #: src/features/applications/components/calendar-view.tsx
+#: src/features/resume/share/link-tab.tsx
 msgid "Today"
+msgstr ""
+
+#: src/features/resume/share/format.ts
+msgid "Today {time}"
 msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
@@ -6931,10 +7095,6 @@ msgstr "追蹤你正在應徵的職缺並連結已送出的履歷。"
 msgid "Track your first application"
 msgstr "追蹤你的第一筆應徵紀錄"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Track your resume's views and downloads"
-msgstr "追蹤履歷的檢視與下載次數"
-
 #: src/features/homepage/page.tsx
 msgid "Translate the app"
 msgstr "翻譯這個應用程式"
@@ -6945,8 +7105,14 @@ msgstr "翻譯這個應用程式"
 msgid "Translations"
 msgstr "翻譯"
 
+#. placeholder {0}: result.suggestion
+#: src/features/resume/share/link-tab.tsx
+msgid "Try {0}"
+msgstr ""
+
 #: src/components/layout/error-screen.tsx
 #: src/features/homepage/ats-playground.tsx
+#: src/features/resume/share/download-tab.tsx
 msgid "Try again"
 msgstr "再試一次"
 
@@ -6966,9 +7132,13 @@ msgstr "土耳其語"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "匯出時關閉可選連字（discretionary ligatures）。"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Turn on public sharing to track how many times your resume has been viewed or downloaded. Only you can see these numbers."
-msgstr "開啟公開分享後，就能追蹤您的履歷被檢視與下載了幾次。只有您看得到這些數字。"
+#: src/features/resume/share/link-tab.tsx
+msgid "Turn on the link to choose an address."
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Turn on the public link to count views and downloads. Counts are anonymous and kept for 90 days."
+msgstr ""
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Two columns"
@@ -7180,9 +7350,7 @@ msgstr "正在上傳圖片…"
 msgid "Uploading…"
 msgstr "正在上傳…"
 
-#. Form field label for the generated public resume link in sharing settings
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "URL"
 msgstr "URL"
 
@@ -7246,6 +7414,10 @@ msgstr "請使用 6 至 64 個字元。"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Use color {color}"
 msgstr "使用顏色 {color}"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Use lowercase letters, numbers and single dashes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use plain headings such as \"Experience\", \"Education\" and \"Skills\"."
@@ -7345,9 +7517,9 @@ msgstr "正在驗證密碼…"
 msgid "Verifying your email is required when resetting your password."
 msgstr "重設密碼時必須先驗證您的電子郵件。"
 
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Version history"
-msgstr "版本歷史記錄"
+#: src/features/resume/share/history-tab.tsx
+msgid "Versions"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Very few words were recovered for a resume."
@@ -7369,9 +7541,30 @@ msgstr "越南語"
 msgid "View application"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Views"
-msgstr "檢視數"
+#. placeholder {0}: formatVersionTime(viewing.createdAt, i18n.locale)
+#. placeholder {0}: when(selected)
+#. placeholder {1}: getVersionTitle(selected)
+#. placeholder {1}: getVersionTitle(viewing)
+#: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Viewing {0} · {1} · read-only"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "views · 30 days"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Views and downloads"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Visitors can download the PDF"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Visitors enter it before they see the resume. Share it only with people you trust."
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Visitors need your password to open the resume."
@@ -7381,10 +7574,6 @@ msgstr "訪客需要輸入你的密碼才能開啟這份履歷。"
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "志工服務"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "vs previous 30 days"
-msgstr "與前 30 天相比"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Waiting for the agent…"
@@ -7473,6 +7662,10 @@ msgstr "此項檢查的內容"
 msgid "What this does not do"
 msgstr "此項檢查不做的事"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "What to download"
+msgstr ""
+
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "When locked, the resume cannot be updated or deleted."
 msgstr "履歷被鎖定時，將無法更新或刪除。"
@@ -7541,6 +7734,10 @@ msgstr ""
 msgid "Width"
 msgstr ""
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Word"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
 msgstr "文字擷取出來後，單字會連在一起。"
@@ -7598,6 +7795,15 @@ msgstr "文案"
 #: src/routes/_home/-sections/footer.tsx
 msgid "X (Twitter)"
 msgstr "X（推特）"
+
+#: src/features/resume/share/format.ts
+msgid "Yesterday {time}"
+msgstr ""
+
+#. placeholder {0}: result.takenBy
+#: src/features/resume/share/link-tab.tsx
+msgid "You already use this for “{0}”."
+msgstr ""
 
 #: src/features/auth/pages/login.tsx
 msgid "You can also sign in with your username."
@@ -7756,10 +7962,6 @@ msgstr "已複製您的履歷。"
 msgid "Your resume has been imported."
 msgstr "已匯入您的履歷。"
 
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Your resume has been restored to the selected version."
-msgstr "您的履歷已恢復為所選版本。"
-
 #: src/dialogs/resume/index.tsx
 msgid "Your resume has been updated."
 msgstr "已更新您的履歷。"
@@ -7795,10 +7997,6 @@ msgstr "你的履歷沒有顯示任何工作經驗。"
 #: src/features/ats-checker/messages.ts
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "您的履歷使用了「我」和「我的」這類詞。"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Your resume's public URL is protected by a password. Share the password only with people you trust."
-msgstr "您履歷的公開 URL 受密碼保護。請只把密碼分享給您信任的人。"
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Your saved cover letter will remain unchanged."

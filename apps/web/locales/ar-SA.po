@@ -142,9 +142,9 @@ msgstr "{count, plural, one {# ملاحظة} other {# ملاحظات}}"
 msgid "{count, plural, one {# warning} other {# warnings}}"
 msgstr "{count, plural, one {# تحذير} other {# تحذيرات}}"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "{label} over the last 30 days"
-msgstr "{label} خلال الثلاثين يومًا الماضية"
+#: src/features/resume/share/download-tab.tsx
+msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{lines, plural, one {Runs onto page {next} by about # line} other {Runs onto page {next} by about # lines}}"
@@ -447,6 +447,10 @@ msgstr "أضف وسمًا واضغط Enter…"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr ""
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Add an address."
+msgstr ""
+
 #: src/libs/resume/ats.ts
 msgid "Add an entry, or use projects and volunteer work to show equivalent history."
 msgstr "أضف إدخالاً، أو استخدم المشاريع والعمل التطوعي لإظهار التاريخ المعادل."
@@ -601,6 +605,10 @@ msgstr ""
 msgid "Add your full name under Basics."
 msgstr "أضف اسمك الكامل ضمن الأساسيات."
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Address"
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Adjust the resume for a remote-first role that values async communication and ownership."
 msgstr "قم بتعديل سيرتك الذاتية لتناسب وظيفة تتطلب العمل عن بعد وتقدر التواصل غير المتزامن وتحمل المسؤولية."
@@ -651,6 +659,10 @@ msgstr "لا يتوفر إعداد وكيل الذكاء الاصطناعي حت
 msgid "AI assistant"
 msgstr "مساعد الذكاء الاصطناعي"
 
+#: src/features/resume/share/format.ts
+msgid "AI edit"
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI provider"
 msgstr "مزوّد الذكاء الاصطناعي"
@@ -700,10 +712,6 @@ msgstr "جميع التطبيقات (بما في ذلك المؤرشفة)"
 msgid "Allow access"
 msgstr "السماح بالوصول"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Allow Public Access"
-msgstr "السماح بالوصول العام"
-
 #: src/features/ats-checker/messages.ts
 msgid "Almost none of your bullets carry a number."
 msgstr "لا تكاد أي من نقاطك تحتوي على رقم."
@@ -737,6 +745,10 @@ msgstr "حدث خطأ غير متوقع منع تحميل هذه الصفحة. �
 msgid "An unknown error occurred while importing your resume."
 msgstr "حدث خطأ غير معروف أثناء استيراد سيرتك الذاتية."
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Another of your resumes uses this address."
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Answer in your own words"
 msgstr "أجب بكلماتك الخاصة"
@@ -749,13 +761,9 @@ msgstr "أي وسم"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "سيحتاج كل من يفتح الرابط العام إلى كلمة المرور هذه."
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Anyone with the link can view the resume."
-msgstr "يمكن لأي شخص لديه الرابط مشاهدة السيرة الذاتية."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Anyone with the public URL will be able to view your resume without a password."
-msgstr "سيتمكن أي شخص لديه عنوان URL العام من عرض سيرتك الذاتية بدون كلمة مرور."
+#: src/features/resume/share/link-tab.tsx
+msgid "Anyone with the link will be able to view your resume."
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "API and MCP access"
@@ -922,10 +930,6 @@ msgstr "هل أنت متأكد من أنك تريد حذف حسابك؟"
 msgid "Are you sure you want to lock this resume?"
 msgstr "هل أنت متأكد من أنك تريد قفل هذه السيرة الذاتية؟"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Are you sure you want to remove password protection?"
-msgstr "هل أنت متأكد من أنك تريد إزالة حماية كلمة المرور؟"
-
 #: src/features/resume/editor/write/entries.tsx
 msgid "Area of study"
 msgstr ""
@@ -999,6 +1003,19 @@ msgstr "المصادقة"
 msgid "Auto-fill failed."
 msgstr "فشلت التعبئة التلقائية."
 
+#: src/features/resume/share/format.ts
+msgid "autosaved"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
+msgstr ""
+
+#. placeholder {0}: window.location.host
+#: src/features/resume/share/link-tab.tsx
+msgid "Available · {0}/{username}/{slug}"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "تجنّب تأثيرات التباعد الكبير بين الأحرف، ثم أعد التصدير."
@@ -1029,6 +1046,10 @@ msgstr "العودة إلى إعدادات المصادقة"
 msgid "Back to documents"
 msgstr ""
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Back to now"
+msgstr ""
+
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "Back to resumes"
 msgstr "العودة إلى السير الذاتية"
@@ -1057,13 +1078,17 @@ msgstr "عنوان URL الأساسي"
 msgid "Basics"
 msgstr "الأساسيات"
 
+#: src/features/resume/share/format.ts
+msgid "Before restore"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Bengali"
 msgstr "البنغالية"
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Best for applications, sharing, and printing."
-msgstr "الأفضل للطلبات والمشاركة والطباعة."
+#: src/features/resume/share/download-tab.tsx
+msgid "Best for applying"
+msgstr ""
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Blank draft"
@@ -1161,7 +1186,6 @@ msgstr ""
 #: src/features/settings/pages/api-keys.tsx
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-prompt.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -1253,6 +1277,7 @@ msgstr "التحقق"
 msgid "Checking draft"
 msgstr "مراجعة المسودة"
 
+#: src/features/resume/share/link-tab.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Checking…"
 msgstr "جارٍ الفحص…"
@@ -1323,10 +1348,6 @@ msgstr ""
 msgid "Choose app language"
 msgstr "اختر لغة التطبيق"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
-msgid "Choose PDF, DOCX, Markdown, or JSON. Export your resume and cover letter separately when available."
-msgstr "اختر صيغة PDF أو DOCX أو Markdown أو JSON. قم بتصدير سيرتك الذاتية ورسالة التغطية بشكل منفصل عند توفرهما."
-
 #: src/features/homepage/feature-explorer.tsx
 msgid "Choose who can see it"
 msgstr "اختر من يمكنه الاطلاع عليها"
@@ -1372,6 +1393,7 @@ msgstr "معرف العميل"
 
 #: src/features/cover-letters/editor-dialog.tsx
 #: src/features/cover-letters/editor.tsx
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Close"
 msgstr "إغلاق"
 
@@ -1435,6 +1457,10 @@ msgstr "الشركة A–Z"
 msgid "Compare this resume against this job posting URL and update the keywords without overselling anything."
 msgstr "قارن هذه السيرة الذاتية برابط إعلان الوظيفة هذا وحدّث الكلمات المفتاحية دون مبالغة."
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "اضغط الصور الكبيرة أو احذفها لإبقاء عمليات الرفع سريعة."
@@ -1444,7 +1470,6 @@ msgstr "اضغط الصور الكبيرة أو احذفها لإبقاء عمل
 #: src/dialogs/api-key/create.tsx
 #: src/features/settings/pages/account.tsx
 #: src/hooks/use-prompt.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
 msgstr "تأكيد"
 
@@ -1539,6 +1564,10 @@ msgstr "تم نسخ بيانات المحادثة بصيغة JSON."
 msgid "Converted stylesheet draft"
 msgstr "مسودة ورقة الأنماط المحولة"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Copied"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Copied to clipboard."
 msgstr "تم نسخها إلى الحافظة."
@@ -1546,6 +1575,7 @@ msgstr "تم نسخها إلى الحافظة."
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-ai-copilot.tsx
+#: src/features/resume/share/link-tab.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy"
 msgstr "نسخ"
@@ -1594,10 +1624,6 @@ msgstr "انسخ النص من الملف المُصدَّر واقرأه بال
 #: src/dialogs/api-key/create.tsx
 msgid "Copy this secret key and use it in your applications to access your data."
 msgstr "انسخ مفتاحك السري هذا واستخدمه في تطبيقاتك للوصول إلى بياناتك."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Copy URL"
-msgstr "نسخ عنوان URL"
 
 #: src/libs/resume/ats.ts
 msgid "Correct the year, or use \"Present\" for ongoing work."
@@ -1739,7 +1765,7 @@ msgstr "الغلاف"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/cover-letters/library.tsx
-#: src/features/resume/export/download-dialog.tsx
+#: src/features/resume/share/download-tab.tsx
 msgid "Cover letter"
 msgstr "غطاء الرسالة"
 
@@ -1811,6 +1837,7 @@ msgstr "أنشئ واحدة الآن"
 msgid "Create resume with options"
 msgstr "إنشاء سيرة ذاتية مع خيارات"
 
+#: src/features/resume/share/format.ts
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Created"
 msgstr "تم الإنشاء"
@@ -1885,6 +1912,11 @@ msgstr "أنماط مخصصة"
 msgid "Czech"
 msgstr "التشيكية"
 
+#. placeholder {0}: summary.peak
+#: src/features/resume/share/link-tab.tsx
+msgid "Daily views over 30 days, peak {0}"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Danish"
 msgstr "الدانماركية"
@@ -1955,6 +1987,7 @@ msgstr "الدرجة"
 #: src/features/applications/components/table-view.tsx
 #: src/features/cover-letters/editor-dialog.tsx
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/routes/agent/-components/agent-chat.tsx
@@ -1963,6 +1996,10 @@ msgstr "الدرجة"
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Delete"
 msgstr "حذف"
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Delete “{title}”?"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/pages/account.tsx
@@ -2021,6 +2058,10 @@ msgstr "حذف إدخال الجدول الزمني"
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Delete…"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Deleted “{title}”"
 msgstr ""
 
 #. placeholder {0}: result.deleted
@@ -2179,11 +2220,15 @@ msgstr "تم"
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/homepage/languages-showcase.tsx
-#: src/features/resume/export/download-dialog.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Download"
 msgstr "تنزيل"
+
+#. placeholder {0}: selected.label
+#: src/features/resume/share/download-tab.tsx
+msgid "Download {0}"
+msgstr ""
 
 #: src/features/settings/pages/account.tsx
 msgid "Download a copy of all your data, including your profile and every resume, as a JSON file."
@@ -2204,6 +2249,10 @@ msgstr "قم بتنزيل ملف CSV"
 msgid "Download PDF"
 msgstr "تنزيل PDF"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Download PDF instead"
+msgstr ""
+
 #: src/features/homepage/export-playground.tsx
 msgid "Download sample DOCX"
 msgstr "نزّل نموذج DOCX"
@@ -2220,9 +2269,13 @@ msgstr "نزّل نموذج Markdown"
 msgid "Download sample PDF"
 msgstr "نزّل نموذج PDF"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Downloads"
-msgstr "عمليات التنزيل"
+#: src/features/resume/share/download-tab.tsx
+msgid "Downloaded {file}"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "downloads"
+msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Draft · not printed"
@@ -2294,10 +2347,6 @@ msgstr ""
 #: src/libs/locale.ts
 msgid "Dutch"
 msgstr "الهولندية"
-
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Earlier versions are kept; the builder's undo history is reset."
-msgstr "يتم الاحتفاظ بالإصدارات السابقة؛ ويتم إعادة ضبط سجل التراجع الخاص بالمنشئ."
 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/application-actions-menu.tsx
@@ -2373,10 +2422,6 @@ msgstr "تعديل النموذج"
 msgid "Edit note"
 msgstr "تعديل الملاحظة"
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Editable in Word, Google Docs, and Pages."
-msgstr "قابل للتعديل في Word وGoogle Docs وPages."
-
 #: src/features/resume/editor/page-overlay.tsx
 msgid "Editing"
 msgstr ""
@@ -2384,6 +2429,10 @@ msgstr ""
 #: src/components/input/chip-input.tsx
 msgid "Editing keyword..."
 msgstr "تحرير الكلمة الرئيسية..."
+
+#: src/features/resume/share/format.ts
+msgid "Editing session"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Editor mode"
@@ -2797,6 +2846,10 @@ msgstr "خمسة عشر قالبًا، كلها مجانية. اختر ما يع
 msgid "File"
 msgstr "ملف"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "File name"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
 msgstr "ملء الحقول"
@@ -2910,6 +2963,10 @@ msgstr "على سبيل المثال، دوّن الشركات التي أرسل
 msgid "For keeping a copy"
 msgstr "للاحتفاظ بنسخة"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "For portals or recruiters who ask for Word. Layout is simplified."
+msgstr ""
+
 #: src/features/homepage/export-playground.tsx
 msgid "For your next application"
 msgstr "لطلب توظيفك القادم"
@@ -2926,6 +2983,10 @@ msgstr "أنسيت كلمة المرور؟"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "أنسيت كلمة مرورك؟"
+
+#: src/features/resume/share/download-tab.tsx
+msgid "Format"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgctxt "Page Format (A4, Letter, Free-form)"
@@ -2951,6 +3012,10 @@ msgstr "حر الشكل"
 msgid "French"
 msgstr "الفرنسية"
 
+#: src/features/resume/share/format.ts
+msgid "from the assistant or API"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "From your resume and the posting"
 msgstr "من سيرتك الذاتية والإعلان الوظيفي"
@@ -2958,10 +3023,6 @@ msgstr "من سيرتك الذاتية والإعلان الوظيفي"
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Full name"
 msgstr ""
-
-#: src/features/resume/export/download-dialog.tsx
-msgid "Full resume data for backup or import."
-msgstr "بيانات السيرة الذاتية الكاملة للنسخ الاحتياطي أو الاستيراد."
 
 #. Layout editor toggle label that makes a page single-column
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -3193,6 +3254,11 @@ msgstr "لون مميز"
 msgid "Hindi"
 msgstr "الهندية"
 
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
+msgid "History"
+msgstr ""
+
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Home"
 msgstr "الصفحة الرئيسية"
@@ -3279,6 +3345,10 @@ msgstr ""
 msgid "Import JSON"
 msgstr "استيراد جسون"
 
+#: src/features/resume/share/format.ts
+msgid "Imported"
+msgstr ""
+
 #. placeholder {0}: result.imported
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Imported {0} application(s)."
@@ -3305,9 +3375,9 @@ msgstr "في {0}"
 msgid "In the sidebar · tap to move"
 msgstr ""
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Include resume header"
-msgstr "تضمين ترويسة السيرة الذاتية"
+#: src/features/resume/share/download-tab.tsx
+msgid "Include the resume's header"
+msgstr ""
 
 #: src/components/input/rich-input.tsx
 msgid "Increase indent"
@@ -3589,11 +3659,6 @@ msgstr "اللّغة"
 msgid "Languages"
 msgstr "اللغات"
 
-#. placeholder {0}: statistics.lastDownloadedAt.toDateString()
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Last downloaded on {0}"
-msgstr "آخر تنزيل في {0}"
-
 #: src/routes/dashboard/applications/index.tsx
 msgid "Last updated"
 msgstr "آخر تحديث"
@@ -3606,11 +3671,6 @@ msgstr "آخر تحديث"
 #: src/routes/dashboard/resumes/-components/list-view.tsx
 msgid "Last updated on {updatedAt}"
 msgstr "آخر تحديث في {updatedAt}"
-
-#. placeholder {0}: statistics.lastViewedAt.toDateString()
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Last viewed on {0}"
-msgstr "آخر عرض في {0}"
 
 #: src/libs/locale.ts
 msgid "Latvian"
@@ -3709,6 +3769,7 @@ msgstr "ارتفاع السطر"
 
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr ""
 
@@ -3727,6 +3788,18 @@ msgstr "اربط سيرة ذاتية والصق وصف الوظيفة (تحري�
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Link address"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Link copied"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Link is live"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Link turned off. The address is kept"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -3767,6 +3840,11 @@ msgstr "اذكر الأدوات والتقنيات التي تستخدمها. ي
 msgid "Lithuanian"
 msgstr "اللتوانية"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/link-tab.tsx
+msgid "Live at {0}"
+msgstr ""
+
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
 msgstr "جارٍ تحميل مزودي خدمات الذكاء الاصطناعي. يرجى المحاولة مرة أخرى بعد قليل."
@@ -3802,10 +3880,6 @@ msgstr "جارٍ تحميل المواضيع…"
 msgid "Loading total"
 msgstr "جارٍ تحميل الإجمالي"
 
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Loading…"
-msgstr "جارٍ التحميل…"
-
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/table-view.tsx
 #: src/features/ats-checker/parse-preview.tsx
@@ -3832,6 +3906,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
 msgstr "مقاطع طويلة مكتوبة بأحرف كبيرة."
+
+#: src/features/resume/share/download-tab.tsx
+msgid "Looks exactly like the page. Use it for applications and email."
+msgstr ""
 
 #. Link to backup-code verification flow when authenticator app is unavailable
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3954,10 +4032,6 @@ msgstr "النموذج"
 msgid "More download formats"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-msgid "More download formats…"
-msgstr ""
-
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
 msgstr ""
@@ -4065,6 +4139,26 @@ msgstr "الاسم"
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
 msgstr "سمِّ السيرة الذاتية باسم الوظيفة التي تتقدّم لها."
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Name this version"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Name this version, e.g. Sent to Lumen"
+msgstr ""
+
+#: src/features/resume/share/format.ts
+msgid "named"
+msgstr ""
+
+#: src/features/resume/share/format.ts
+msgid "Named version"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Named versions are kept until you delete them. This can't be undone."
+msgstr ""
 
 #: src/dialogs/api-key/create.tsx
 msgid "Names help you tell keys apart, so name it after what you will use it for."
@@ -4241,10 +4335,6 @@ msgstr ""
 msgid "No prediction of whether you will be rejected. No tool can do that."
 msgstr "لا تنبّؤ بما إذا كنت سترفض. لا أداة تستطيع ذلك."
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "No prior data"
-msgstr "لا توجد بيانات سابقة"
-
 #: src/features/homepage/ats-playground.tsx
 msgid "No readable text found. This PDF may contain scanned images. Export a PDF with selectable text and try again."
 msgstr "لم يتم العثور على نص قابل للقراءة. قد يحتوي ملف PDF هذا على صور ممسوحة ضوئيًا. صدّر ملف PDF بنص قابل للتحديد ثم حاول مجددًا."
@@ -4269,10 +4359,6 @@ msgstr "لا توجد سير ذاتية مطابقة لبحثك."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "لم يتم استلام أي سير ذاتية حتى الآن."
-
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "No saved versions yet."
-msgstr "لا توجد نسخ محفوظة حتى الآن."
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -4375,6 +4461,10 @@ msgstr "لا شيء لإصلاحه. الصفحات المتبقية لم يشم�
 msgid "Nothing to suggest."
 msgstr "لا يوجد اقتراح."
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Now"
+msgstr ""
+
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Numbered list"
 msgstr ""
@@ -4383,12 +4473,20 @@ msgstr ""
 msgid "Odia"
 msgstr "الأودية"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Off. Only you can see this resume."
+msgstr ""
+
 #: src/features/homepage/feature-explorer.tsx
 msgid "Offer"
 msgstr "عرض وظيفي"
 
 #: src/features/resume/editor/save-status.tsx
 msgid "Offline · saved on this device"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
 msgstr ""
 
 #: src/features/settings/pages/api-keys.tsx
@@ -4412,6 +4510,10 @@ msgstr "ينطبق هذا فقط عندما يتناسب القسم مع صفح�
 msgid "Only one recognisable section heading was found."
 msgstr "لم يُعثر إلا على عنوان قسم واحد قابل للتمييز."
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Only one version so far. Every editing session adds one automatically."
+msgstr ""
+
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Only the first {0} pages were checked, so this report does not cover the whole file."
@@ -4424,6 +4526,10 @@ msgstr "يُستورد أول {MAX_IMPORT} صف فقط في المرة الوا�
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
 msgstr "تم فحص الصفحات الأولى فقط."
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Only you see these"
+msgstr ""
 
 #. Resume card context menu action to open the resume editor
 #. Resume card dropdown action to open the resume editor
@@ -4459,6 +4565,10 @@ msgstr "فتح إعدادات التكامل"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "open issues"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Open public page"
 msgstr ""
 
 #: src/features/homepage/template-shelf.tsx
@@ -4500,6 +4610,7 @@ msgid "Optionally, which terms from a job posting already appear."
 msgstr "اختياريًا، أي المصطلحات من إعلان وظيفي تظهر بالفعل."
 
 #: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 msgid "Options for {title}"
 msgstr "خيارات لـ {title}"
 
@@ -4605,17 +4716,17 @@ msgstr "كلمة المرور"
 msgid "Password must be between 6 and 64 characters."
 msgstr "يجب أن يتراوح طول كلمة المرور بين 6 و64 حرفًا."
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Password protection has been disabled."
-msgstr "تم تعطيل حماية كلمة المرور."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Password protection has been enabled."
-msgstr "تم تمكين حماية كلمة المرور."
+#: src/features/resume/share/link-tab.tsx
+msgid "Password removed"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Password required"
 msgstr "كلمة المرور مطلوبة"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Password set"
+msgstr ""
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Passwords do not match."
@@ -4707,10 +4818,6 @@ msgstr ""
 msgid "Pick a conversation from the sidebar, or start a new thread to work on a draft."
 msgstr "اختر محادثة من الشريط الجانبي، أو ابدأ موضوعًا جديدًا للعمل على مسودة."
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Pick a format for your resume or cover letter."
-msgstr "اختر صيغة لسيرتك الذاتية أو خطاب التقديم."
-
 #: src/features/homepage/languages-showcase.tsx
 msgid "Pick a language. See it on the page."
 msgstr "اختر لغة وشاهدها على الصفحة."
@@ -4739,9 +4846,9 @@ msgstr "حالة المسار عبر جميع الطلبات"
 msgid "Place it on a page from the Layout panel, or hide it if you meant to park it."
 msgstr "ضعه على صفحة من لوحة Layout، أو قم بإخفائه إذا كنت تقصد إيقافه."
 
-#: src/features/resume/export/download-dialog.tsx
-msgid "Plain text, for AI tools and quick edits."
-msgstr "نص عادي، لأدوات الذكاء الاصطناعي والتعديلات السريعة."
+#: src/features/resume/share/download-tab.tsx
+msgid "Plain text with headings. Paste into application forms and notes."
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Play data flow animation"
@@ -4798,6 +4905,11 @@ msgstr "التفضيلات"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Prepare a conservative patch that improves clarity without changing the story of my career."
 msgstr "جهّز تعديلًا متحفّظًا يحسّن الوضوح دون تغيير مسار مسيرتي المهنية."
+
+#. placeholder {0}: selected.label
+#: src/features/resume/share/download-tab.tsx
+msgid "Preparing {0} file…"
+msgstr ""
 
 #: src/features/homepage/export-playground.tsx
 msgid "Preparing sample…"
@@ -4941,6 +5053,10 @@ msgstr "نموذج المزوّد"
 msgid "Public"
 msgstr "عام"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Public link"
+msgstr ""
+
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Publications"
@@ -4953,6 +5069,14 @@ msgstr "الناشر"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "ضع عنوان بريد إلكتروني بسيط بالقرب من أعلى الصفحة الأولى. فهو ما تصنّفك بموجبه معظم الأنظمة."
+
+#: src/features/resume/share/link-tab.tsx
+msgid "QR code"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "QR code for {url}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Raise the design sheet"
@@ -5096,6 +5220,10 @@ msgstr "هل أنت مستعد لوضع اسمك عليه؟"
 msgid "Recipient"
 msgstr "المستلم"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Recruiters see this name. Your name plus “Resume” works well."
+msgstr ""
+
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
 msgstr "مستطيل"
@@ -5137,6 +5265,10 @@ msgstr "تتذكر كلمة المرور؟ <0/>"
 msgid "Remote, Hybrid, a city…"
 msgstr "عن بُعد، هجين، مدينة…"
 
+#: src/features/resume/share/link-tab.tsx
+msgid "Remove"
+msgstr ""
+
 #. Screen reader label for button that removes a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
 msgid "Remove {chip}"
@@ -5158,10 +5290,6 @@ msgstr "إزالة الملف"
 msgid "Remove link"
 msgstr "إزالة الرابط"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Remove Password"
-msgstr "إزالة كلمة المرور"
-
 #: src/features/resume/editor/write/entries.tsx
 msgid "Remove role"
 msgstr ""
@@ -5170,11 +5298,16 @@ msgstr ""
 msgid "Remove tag"
 msgstr "إزالة الوسم"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Removing password protection..."
-msgstr "جاري إزالة حماية كلمة المرور..."
+#: src/features/resume/share/link-tab.tsx
+msgid "Remove the password?"
+msgstr ""
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Rename version"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Rename…"
 msgstr ""
@@ -5225,6 +5358,10 @@ msgstr "الإبلاغ عن خطأ برمجي"
 #: src/routes/_home/-sections/footer.tsx
 msgid "Report an issue"
 msgstr "الإبلاغ عن مشكلة"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Require a password"
+msgstr ""
 
 #: src/features/settings/pages/profile.tsx
 msgid "Resend verification email"
@@ -5277,16 +5414,25 @@ msgstr "يعيد"
 msgid "Restore the resume to before this patch?"
 msgstr "استعادة السيرة الذاتية إلى ما قبل هذه الرقعة؟"
 
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Restore this version?"
-msgstr "هل تريد استعادة هذه النسخة؟"
+#: src/features/resume/share/history-tab.tsx
+msgid "Restore this version"
+msgstr ""
+
+#: src/features/resume/share/format.ts
+msgid "Restored a version"
+msgstr ""
 
 #: src/features/resume/builder/draft.ts
 msgid "Restored changes that hadn't been saved yet."
 msgstr ""
 
+#. placeholder {0}: formatVersionMoment(version.createdAt, i18n.locale)
+#: src/features/resume/share/history-tab.tsx
+msgid "Restored the version from {0}. Your previous state is saved as “Before restore”."
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
-#: src/features/resume/export/download-dialog.tsx
+#: src/features/resume/share/download-tab.tsx
 #: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/agent/$threadId.tsx
 msgid "Resume"
@@ -5307,10 +5453,6 @@ msgstr "تعديل السيرة الذاتية"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume file"
 msgstr "ملف السيرة الذاتية"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Resume link copied to clipboard."
-msgstr "تم نسخ رابط السيرة الذاتية إلى الحافظة."
 
 #: src/features/applications/components/application-card.tsx
 msgid "Resume linked"
@@ -5346,6 +5488,10 @@ msgstr "إعادة المحاولة"
 
 #: src/features/resume/editor/save-status.tsx
 msgid "Retry saving"
+msgstr ""
+
+#: src/features/resume/share/download-tab.tsx
+msgid "Review"
 msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
@@ -5469,6 +5615,7 @@ msgstr "بلا زوائد"
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Save"
 msgstr "الحفظ"
@@ -5513,9 +5660,17 @@ msgstr "احفظ تغييرات السيرة الذاتية قبل نسخ محت
 msgid "Save the file with every page upright."
 msgstr "احفظ الملف بحيث تكون كل صفحة في وضعها الصحيح."
 
+#: src/features/resume/share/format.ts
+msgid "saved"
+msgstr ""
+
 #: src/features/resume/editor/save-status.tsx
 msgid "Saved"
 msgstr "أنقذ"
+
+#: src/features/resume/share/history-tab.tsx
+msgid "Saved “{trimmed}”"
+msgstr ""
 
 #: src/features/resume/builder/draft.ts
 msgid "Saving is taking longer than expected. Your changes are still open."
@@ -5710,6 +5865,10 @@ msgstr "يُرسل النص المُستخرج بالفعل من ملف PDF ال
 msgid "Senior product designer"
 msgstr "مصمم منتجات أول"
 
+#: src/features/resume/share/format.ts
+msgid "Sent"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
 msgid "Separator"
 msgstr "فاصل"
@@ -5722,13 +5881,8 @@ msgstr "الصربية"
 msgid "Serif"
 msgstr "بزوائد"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Set a password if you want only people who know it to open the public URL."
-msgstr "عيّن كلمة مرور إذا أردت ألّا يفتح الرابط العام إلا من يعرفها."
-
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/settings/authentication/components/password.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set Password"
 msgstr "تعيين كلمة مرور"
 
@@ -5778,6 +5932,14 @@ msgstr ""
 msgid "Share & export"
 msgstr ""
 
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
+msgid "Share sections"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Share via…"
+msgstr ""
+
 #: src/libs/resume/section.tsx
 msgid "Sharing"
 msgstr "المشاركة"
@@ -5799,10 +5961,6 @@ msgstr ""
 #: src/features/homepage/languages-showcase.tsx
 msgid "Show all languages"
 msgstr "عرض كل اللغات"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Show Download Buttons"
-msgstr "إظهار أزرار التنزيل"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -5845,10 +6003,6 @@ msgstr "عرض الصورة"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Show templates"
 msgstr ""
-
-#: src/features/resume/export/download-dialog.tsx
-msgid "Show the same first-page header on the cover letter."
-msgstr "إظهار نفس ترويسة الصفحة الأولى في خطاب التقديم."
 
 #. placeholder {0}: rows.length
 #. placeholder {1}: applications.length
@@ -5921,6 +6075,10 @@ msgstr "جاري تسجيل الخروج..."
 msgid "Signing up..."
 msgstr "جاري التسجيل..."
 
+#: src/features/resume/share/link-tab.tsx
+msgid "since last view"
+msgstr ""
+
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
 msgstr "عمود واحد مع حافة يسارية بلون أرجواني؛ مدمج وفعّال لطلبات الوظائف المبتدئة أو فترات التدريب."
@@ -5978,10 +6136,6 @@ msgstr "السلوفاكية"
 #: src/libs/locale.ts
 msgid "Slovenian"
 msgstr "السلوفينية"
-
-#: src/dialogs/resume/index.tsx
-msgid "Slug"
-msgstr "المعرّف النصي (Slug)"
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Some applicant tracking systems read columns out of order. Check mode shows the order they'll see."
@@ -6054,7 +6208,7 @@ msgstr "حدث خطأ ما أثناء تسجيل دخولك. يُرجى المح
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+#: src/features/resume/share/link-tab.tsx
 msgid "Something went wrong. Please try again."
 msgstr "حدث خطأ ما. يُرجى المحاولة مرة أخرى."
 
@@ -6443,6 +6597,11 @@ msgstr "يستخدم حساب المزوّد هذا عنوان بريد إلكت
 msgid "That sign-in provider is no longer available on this server."
 msgstr "لم يعد مزوّد تسجيل الدخول هذا متاحًا على هذا الخادم."
 
+#. placeholder {0}: selected.label
+#: src/features/resume/share/download-tab.tsx
+msgid "The {0} file couldn't be generated. Try again, or download PDF instead."
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "The agent needs your input."
 msgstr "يحتاج الوكيل إلى رأيك."
@@ -6519,6 +6678,10 @@ msgstr "تعذّر التحقق من استجابة المزوّد. يُرجى �
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "وكذلك بقية<0/>رحلة بحثك عن عمل."
+
+#: src/features/resume/share/history-tab.tsx
+msgid "The resume as it is"
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6705,10 +6868,6 @@ msgstr "هذا ملف PDF Portfolio: الصفحة المرئية هي مجرد �
 msgid "This is a sample edit. In the app, connect your own AI provider. Turn on Review edits to approve changes before they’re applied."
 msgstr "هذا تعديل نموذجي. في التطبيق، اربط موفر الذكاء الاصطناعي الخاص بك. فعّل «مراجعة التعديلات» للموافقة على التغييرات قبل تطبيقها."
 
-#: src/dialogs/resume/index.tsx
-msgid "This is a URL-friendly name for your resume."
-msgstr "هذا اسم مناسب لعناوين URL لسيرتك الذاتية."
-
 #: src/features/ats-checker/messages.ts
 msgid "This is an XFA form, so most software reads only the empty shell."
 msgstr "هذا نموذج XFA، لذا تقرأ معظم البرامج القالب الفارغ فقط."
@@ -6880,7 +7039,12 @@ msgid "To delete your account, type the confirmation text below, then click the 
 msgstr "لحذف حسابك، اكتب نص التأكيد أدناه، ثم اضغط على الزر."
 
 #: src/features/applications/components/calendar-view.tsx
+#: src/features/resume/share/link-tab.tsx
 msgid "Today"
+msgstr ""
+
+#: src/features/resume/share/format.ts
+msgid "Today {time}"
 msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
@@ -6931,10 +7095,6 @@ msgstr "تتبع الوظيفة التي تتقدم لها وقم بربط ال�
 msgid "Track your first application"
 msgstr "تتبع طلبك الأول"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Track your resume's views and downloads"
-msgstr "تتبّع مشاهدات سيرتك الذاتية وتنزيلاتها"
-
 #: src/features/homepage/page.tsx
 msgid "Translate the app"
 msgstr "ترجم التطبيق"
@@ -6945,8 +7105,14 @@ msgstr "ترجم التطبيق"
 msgid "Translations"
 msgstr "الترجمات"
 
+#. placeholder {0}: result.suggestion
+#: src/features/resume/share/link-tab.tsx
+msgid "Try {0}"
+msgstr ""
+
 #: src/components/layout/error-screen.tsx
 #: src/features/homepage/ats-playground.tsx
+#: src/features/resume/share/download-tab.tsx
 msgid "Try again"
 msgstr "حاول مرة أخرى"
 
@@ -6966,9 +7132,13 @@ msgstr "التركية"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "أوقف الحروف المدمجة الاختيارية عند التصدير."
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Turn on public sharing to track how many times your resume has been viewed or downloaded. Only you can see these numbers."
-msgstr "فعّل المشاركة العامة لتتبّع عدد مرات مشاهدة سيرتك الذاتية أو تنزيلها. أنت وحدك من يرى هذه الأرقام."
+#: src/features/resume/share/link-tab.tsx
+msgid "Turn on the link to choose an address."
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Turn on the public link to count views and downloads. Counts are anonymous and kept for 90 days."
+msgstr ""
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Two columns"
@@ -7180,9 +7350,7 @@ msgstr "جارٍ تحميل الصورة…"
 msgid "Uploading…"
 msgstr "جارٍ التحميل…"
 
-#. Form field label for the generated public resume link in sharing settings
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "URL"
 msgstr "عنوان URL"
 
@@ -7246,6 +7414,10 @@ msgstr "يجب أن يتراوح عدد الأحرف بين 6 و64 حرفًا."
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Use color {color}"
 msgstr "استخدام اللون {color}"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Use lowercase letters, numbers and single dashes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use plain headings such as \"Experience\", \"Education\" and \"Skills\"."
@@ -7345,9 +7517,9 @@ msgstr "جاري التحقق من كلمة المرور..."
 msgid "Verifying your email is required when resetting your password."
 msgstr "التحقق من بريدك الإلكتروني مطلوب عند إعادة تعيين كلمة المرور."
 
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Version history"
-msgstr "سجل الإصدارات"
+#: src/features/resume/share/history-tab.tsx
+msgid "Versions"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Very few words were recovered for a resume."
@@ -7369,9 +7541,30 @@ msgstr "الفيتنامية"
 msgid "View application"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "Views"
-msgstr "المشاهدات"
+#. placeholder {0}: formatVersionTime(viewing.createdAt, i18n.locale)
+#. placeholder {0}: when(selected)
+#. placeholder {1}: getVersionTitle(selected)
+#. placeholder {1}: getVersionTitle(viewing)
+#: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Viewing {0} · {1} · read-only"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "views · 30 days"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Views and downloads"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Visitors can download the PDF"
+msgstr ""
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Visitors enter it before they see the resume. Share it only with people you trust."
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Visitors need your password to open the resume."
@@ -7381,10 +7574,6 @@ msgstr "يحتاج الزوار إلى كلمة مرورك لفتح السيرة
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "التطوع"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
-msgid "vs previous 30 days"
-msgstr "مقارنة بالأيام الثلاثين السابقة"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Waiting for the agent…"
@@ -7473,6 +7662,10 @@ msgstr "ما الذي يفحصه هذا"
 msgid "What this does not do"
 msgstr "ما لا يفعله هذا"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "What to download"
+msgstr ""
+
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "When locked, the resume cannot be updated or deleted."
 msgstr "عند القفل، لا يمكن تحديث السيرة الذاتية أو حذفها."
@@ -7541,6 +7734,10 @@ msgstr ""
 msgid "Width"
 msgstr ""
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Word"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
 msgstr "تندمج الكلمات معًا عند استخراج النص."
@@ -7598,6 +7795,15 @@ msgstr "الكتابة"
 #: src/routes/_home/-sections/footer.tsx
 msgid "X (Twitter)"
 msgstr "X (تويتر)"
+
+#: src/features/resume/share/format.ts
+msgid "Yesterday {time}"
+msgstr ""
+
+#. placeholder {0}: result.takenBy
+#: src/features/resume/share/link-tab.tsx
+msgid "You already use this for “{0}”."
+msgstr ""
 
 #: src/features/auth/pages/login.tsx
 msgid "You can also sign in with your username."
@@ -7756,10 +7962,6 @@ msgstr "تم استنساخ سيرتك الذاتية."
 msgid "Your resume has been imported."
 msgstr "تم استيراد سيرتك الذاتية."
 
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Your resume has been restored to the selected version."
-msgstr "تمت استعادة سيرتك الذاتية إلى النسخة المختارة."
-
 #: src/dialogs/resume/index.tsx
 msgid "Your resume has been updated."
 msgstr "تم تحديث سيرتك الذاتية."
@@ -7795,10 +7997,6 @@ msgstr "لا تظهر سيرتك الذاتية أي خبرة في العمل."
 #: src/features/ats-checker/messages.ts
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "تستخدم سيرتك الذاتية \"I\" و\"my\" (أنا وملكيتي)."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
-msgid "Your resume's public URL is protected by a password. Share the password only with people you trust."
-msgstr "الرابط العام لسيرتك الذاتية محمي بكلمة مرور. لا تشارك كلمة المرور إلا مع من تثق بهم."
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Your saved cover letter will remain unchanged."
