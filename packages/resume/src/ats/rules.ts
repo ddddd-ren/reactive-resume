@@ -9,6 +9,7 @@ import {
 	parsePeriod,
 	parseSingleDate,
 } from "@reactive-resume/schema/resume/period";
+import { templateLayouts } from "@reactive-resume/schema/templates";
 import { atsRuleSeverity } from "./catalog";
 import { SECTION_TITLE_ALIASES } from "./section-aliases";
 import { isRenderedSection } from "./walk";
@@ -20,7 +21,10 @@ export type RuleContext = {
 	now: Date;
 };
 
-export type AtsRule = (context: RuleContext) => AtsFinding[];
+/** A finding as a rule reports it; the linter adds its key. */
+export type AtsRuleFinding = Omit<AtsFinding, "key">;
+
+export type AtsRule = (context: RuleContext) => AtsRuleFinding[];
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -34,7 +38,7 @@ const MIN_BODY_FONT_SIZE = 9;
 const MIN_LINE_HEIGHT = 1.15;
 const MIN_PAGE_MARGIN = 8;
 
-function finding(code: AtsRuleCode, pointer: string, params?: AtsFindingParams): AtsFinding {
+function finding(code: AtsRuleCode, pointer: string, params?: AtsFindingParams): AtsRuleFinding {
 	return { code, severity: atsRuleSeverity(code), pointer, ...(params ? { params } : {}) };
 }
 
@@ -57,7 +61,7 @@ function isParseableUrl(value: string): boolean {
 
 const contactRules: AtsRule = (context) => {
 	const { basics, picture } = context.data;
-	const findings: AtsFinding[] = [];
+	const findings: AtsRuleFinding[] = [];
 
 	if (!basics.name.trim()) findings.push(finding("MISSING_NAME", "/basics/name"));
 
@@ -76,7 +80,7 @@ const contactRules: AtsRule = (context) => {
 };
 
 const urlRules: AtsRule = (context) => {
-	const findings: AtsFinding[] = [];
+	const findings: AtsRuleFinding[] = [];
 
 	const website = context.data.basics.website.url.trim();
 	if (website && !isParseableUrl(website)) {
@@ -117,7 +121,7 @@ function periodFindings(
 	pointer: string,
 	type: CustomSectionType,
 	context: RuleContext,
-): AtsFinding[] {
+): AtsRuleFinding[] {
 	if (typeof raw !== "string") return [];
 
 	const value = raw.trim();
@@ -127,7 +131,7 @@ function periodFindings(
 	const parsed = structured ? resumeDatesToPeriod(structured) : parsePeriod(value, context.locale);
 	if (!parsed) return [finding("UNPARSEABLE_PERIOD", pointer, { value })];
 
-	const findings: AtsFinding[] = [];
+	const findings: AtsRuleFinding[] = [];
 	if (parsed.start && parsed.end && isReversedPeriod(parsed.start, parsed.end)) {
 		findings.push(finding("REVERSED_PERIOD", pointer, { value }));
 	}
@@ -138,7 +142,7 @@ function periodFindings(
 	return findings;
 }
 
-function singleDateFindings(raw: unknown, dates: unknown, pointer: string, context: RuleContext): AtsFinding[] {
+function singleDateFindings(raw: unknown, dates: unknown, pointer: string, context: RuleContext): AtsRuleFinding[] {
 	if (typeof raw !== "string") return [];
 
 	const value = raw.trim();
@@ -150,7 +154,7 @@ function singleDateFindings(raw: unknown, dates: unknown, pointer: string, conte
 }
 
 const dateRules: AtsRule = (context) => {
-	const findings: AtsFinding[] = [];
+	const findings: AtsRuleFinding[] = [];
 
 	for (const section of context.sections) {
 		if (isCoverLetter(section) || !isRenderedSection(section)) continue;
@@ -175,7 +179,7 @@ const dateRules: AtsRule = (context) => {
 };
 
 const structureRules: AtsRule = (context) => {
-	const findings: AtsFinding[] = [];
+	const findings: AtsRuleFinding[] = [];
 
 	// A section with no items is not reported: every template's renderer returns null before it
 	// emits a heading, so an empty section produces nothing on the page rather than a bare title.
@@ -211,10 +215,13 @@ const structureRules: AtsRule = (context) => {
 	return findings;
 };
 
-const titleRules: AtsRule = (context) => {
-	if (!context.locale.toLowerCase().startsWith("en")) return [];
+/** The heading rule knows English headings only, so it applies to English resumes alone. */
+export const checksSectionTitles = (locale: string) => locale.toLowerCase().startsWith("en");
 
-	const findings: AtsFinding[] = [];
+const titleRules: AtsRule = (context) => {
+	if (!checksSectionTitles(context.locale)) return [];
+
+	const findings: AtsRuleFinding[] = [];
 
 	for (const section of context.sections) {
 		if (isCoverLetter(section) || !isRenderedSection(section)) continue;
@@ -232,7 +239,7 @@ const titleRules: AtsRule = (context) => {
 };
 
 const layoutRules: AtsRule = (context) => {
-	const findings: AtsFinding[] = [];
+	const findings: AtsRuleFinding[] = [];
 
 	for (const section of context.sections) {
 		if (isCoverLetter(section) || !isRenderedSection(section)) continue;
@@ -255,8 +262,29 @@ const layoutRules: AtsRule = (context) => {
 	return findings;
 };
 
+/**
+ * A two-column template prints its sidebar as a column of its own, which most systems read after the main
+ * column (or interleave with it). Full-width pages print their sidebar sections in the main column instead.
+ */
+const twoColumnRules: AtsRule = (context) => {
+	const { layout, template } = context.data.metadata;
+	if (templateLayouts[template].columns !== 2) return [];
+
+	const printed = new Set(
+		context.sections
+			.filter((section) => !isCoverLetter(section) && isRenderedSection(section) && section.items.length > 0)
+			.map((section) => section.id),
+	);
+	const sidebar = new Set(
+		layout.pages.flatMap((page) => (page.fullWidth ? [] : page.sidebar.filter((id) => printed.has(id)))),
+	);
+	if (sidebar.size === 0) return [];
+
+	return [finding("TWO_COLUMN_LAYOUT", "/metadata/layout/pages", { sections: [...sidebar].join(",") })];
+};
+
 const typographyRules: AtsRule = (context) => {
-	const findings: AtsFinding[] = [];
+	const findings: AtsRuleFinding[] = [];
 	const { page, typography } = context.data.metadata;
 
 	if (typography.body.fontSize < MIN_BODY_FONT_SIZE) {
@@ -295,5 +323,6 @@ export const ATS_RULES: readonly AtsRule[] = [
 	structureRules,
 	titleRules,
 	layoutRules,
+	twoColumnRules,
 	typographyRules,
 ];

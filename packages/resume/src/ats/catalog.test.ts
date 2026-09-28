@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ATS_RULE_CATALOG_V1, ATS_RULE_CODES, atsRuleSeverity } from "./catalog";
+import { ATS_CATEGORIES, ATS_RULE_CATALOG_V1, ATS_RULE_CODES, atsRuleSeverity } from "./catalog";
 
 describe("ATS_RULE_CATALOG_V1", () => {
 	it("has a stable set of codes", () => {
@@ -23,6 +23,7 @@ describe("ATS_RULE_CATALOG_V1", () => {
 			  "NON_STANDARD_SECTION_TITLE",
 			  "MULTI_COLUMN_PROSE_SECTION",
 			  "PROSE_SECTION_IN_SIDEBAR",
+			  "TWO_COLUMN_LAYOUT",
 			  "SMALL_BODY_FONT",
 			  "TIGHT_LINE_HEIGHT",
 			  "TIGHT_PAGE_MARGINS",
@@ -30,10 +31,11 @@ describe("ATS_RULE_CATALOG_V1", () => {
 		`);
 	});
 
-	it("gives every rule a severity", () => {
+	it("gives every rule a severity and a category", () => {
 		for (const code of ATS_RULE_CODES) {
 			const rule = ATS_RULE_CATALOG_V1[code];
 			expect(["error", "warning", "info"]).toContain(rule.severity);
+			expect(ATS_CATEGORIES).toContain(rule.category);
 		}
 	});
 

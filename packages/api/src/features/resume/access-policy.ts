@@ -42,6 +42,8 @@ export function assertCanView(resume: Resume, viewer: Viewer): void {
  *     contains personal context like "Senior Eng @ Foo — final draft").
  *   - `resume.data.metadata.notes` — explicitly documented as "only visible
  *     to the author when editing" in the resume schema.
+ *   - `resume.data.metadata.check` — the author's Check choices (ignored
+ *     issues, job-posting terms hidden as "not true for me").
  *
  * Everything else (including `data.basics.name`, the person's name on the
  * resume itself) is part of the public payload and is returned unchanged.
@@ -61,6 +63,7 @@ export function redactResumeForViewer<T extends { name: string; data: ResumeData
 			metadata: {
 				...resume.data.metadata,
 				notes: "",
+				check: undefined,
 			},
 		},
 	};

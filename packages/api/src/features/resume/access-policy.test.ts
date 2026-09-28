@@ -62,13 +62,21 @@ describe("redactResumeForViewer", () => {
 		expect(result.name).toBe("Resume");
 	});
 
-	it("strips metadata.notes for non-owner", () => {
+	it("strips metadata.notes and the author's Check choices for non-owner", () => {
 		const resume = {
 			name: "Title",
-			data: { ...defaultResumeData, metadata: { ...defaultResumeData.metadata, notes: "Private notes" } },
+			data: {
+				...defaultResumeData,
+				metadata: {
+					...defaultResumeData.metadata,
+					notes: "Private notes",
+					check: { ignored: ["MISSING_PHONE:/basics/phone"], hiddenTerms: ["HIPAA"] },
+				},
+			},
 		};
 		const result = redactResumeForViewer(resume, false);
 		expect(result.data.metadata.notes).toBe("");
+		expect(result.data.metadata.check).toBeUndefined();
 	});
 
 	it("preserves stylesheet source for an authorized non-owner", () => {

@@ -131,6 +131,8 @@ export function analyzePdfResume(raw: RawExtraction, options: AnalyzePdfOptions 
 
 export type { HarvestOptions, HarvestProgress, PdfDocumentLike, PdfPageLike } from "./harvest";
 export type {
+	ContactEntities,
+	DetectedHeading,
 	ExtractedDocument,
 	JdMatchReport,
 	JdTermMatch,
@@ -147,9 +149,13 @@ export type {
 	RawPage,
 	RawTextItem,
 	ResumeSemantics,
+	TextLine,
 } from "./types";
 export type { PdfRuleCode };
+export { buildResumeSemantics } from "./analyze/semantics";
 export { PDF_ATS_RULE_CODES } from "./catalog";
 export { buildExtractedDocument } from "./extract";
 export { HARVEST_DEFAULTS, harvestPdfDocument } from "./harvest";
+export { surfaceFormsOf } from "./jd/aliases";
+export { matchJobDescription } from "./jd/match";
 export { PDF_OPS } from "./pdf-ops";

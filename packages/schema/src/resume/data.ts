@@ -738,6 +738,20 @@ export const metadataSchema = z.object({
 		"Structured style rules that target semantic resume sections and slots for React PDF rendering.",
 	),
 	stylesheet: semanticStylesheetSchema.optional(),
+	check: z
+		.object({
+			ignored: z
+				.array(z.string())
+				.catch([])
+				.describe("Check issues the author chose to ignore, by issue key (the rule code and where it applies)."),
+			hiddenTerms: z
+				.array(z.string())
+				.catch([])
+				.describe("Job-posting terms the author hid from Job match as not true for them."),
+		})
+		.optional()
+		.catch(undefined)
+		.describe("The author's Check choices for this resume. Not printed; missing until a choice is made."),
 });
 
 export const resumeDataSchema = z.looseObject({

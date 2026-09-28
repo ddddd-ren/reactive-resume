@@ -33,6 +33,17 @@ function makeResume(mutate: (data: ResumeData) => void = () => undefined): Resum
 	return data;
 }
 
+const skillItem = () => ({
+	id: "s1",
+	hidden: false,
+	icon: "",
+	iconColor: "",
+	name: "Mathematics",
+	proficiency: "",
+	level: 0,
+	keywords: [],
+});
+
 const lint = (data: ResumeData) => lintResumeForAts(data, { now: NOW });
 const codesOf = (data: ResumeData) => lint(data).findings.map((item) => item.code);
 
@@ -44,7 +55,46 @@ describe("lintResumeForAts", () => {
 	it("counts every rule as passed when nothing fires", () => {
 		const report = lint(makeResume());
 		expect(report.passedRules).toBe(report.totalRules);
+		expect(report.score).toBe(100);
 		expect(report.counts).toEqual({ error: 0, warning: 0, info: 0 });
+		expect(report.categories.contact).toEqual({ total: 7, passed: 7 });
+	});
+
+	it("scores the share of rules with no open finding, and groups them by category", () => {
+		const report = lint(makeResume((data) => (data.basics.phone = "")));
+		expect(report.passedRules).toBe(report.totalRules - 1);
+		expect(report.score).toBe(Math.round(((report.totalRules - 1) / report.totalRules) * 100));
+		expect(report.categories.contact).toEqual({ total: 7, passed: 6 });
+	});
+
+	it("leaves the English heading rule out of the score for other languages", () => {
+		const english = lint(makeResume());
+		const german = lint(makeResume((data) => (data.metadata.page.locale = "de-DE")));
+		expect(german.totalRules).toBe(english.totalRules - 1);
+		expect(german.categories.headings.total).toBe(english.categories.headings.total - 1);
+	});
+
+	it("keys findings by entry id, so reordering entries keeps the key", () => {
+		const second = experienceItem({ id: "exp-2", period: "a while back" });
+		const before = lint(makeResume((data) => (data.sections.experience.items = [experienceItem(), second])));
+		const after = lint(makeResume((data) => (data.sections.experience.items = [second, experienceItem()])));
+		const keyOf = (report: typeof before) => report.findings.find((item) => item.code === "UNPARSEABLE_PERIOD")?.key;
+
+		expect(keyOf(before)).toBe("UNPARSEABLE_PERIOD:/sections/experience/items/#exp-2/period");
+		expect(keyOf(after)).toBe(keyOf(before));
+	});
+
+	it("sets ignored findings aside without counting them against the score", () => {
+		const data = makeResume((resume) => {
+			resume.basics.phone = "";
+			resume.metadata.check = { ignored: ["MISSING_PHONE:/basics/phone"], hiddenTerms: [] };
+		});
+		const report = lint(data);
+
+		expect(report.findings).toEqual([]);
+		expect(report.ignored.map((item) => item.code)).toEqual(["MISSING_PHONE"]);
+		expect(report.counts.warning).toBe(0);
+		expect(report.score).toBe(100);
 	});
 
 	it("flags the gaps in a blank resume", () => {
@@ -75,6 +125,7 @@ describe("contact rules", () => {
 			code: "MALFORMED_URL",
 			severity: "warning",
 			pointer: "/basics/website/url",
+			key: "MALFORMED_URL:/basics/website/url",
 			params: { value: "example.com/ada" },
 		});
 	});
@@ -112,6 +163,7 @@ describe("date rules", () => {
 			code: "UNPARSEABLE_PERIOD",
 			severity: "error",
 			pointer: "/sections/experience/items/0/period",
+			key: "UNPARSEABLE_PERIOD:/sections/experience/items/#exp-1/period",
 			params: { value: "a while back" },
 		});
 	});
@@ -245,6 +297,7 @@ describe("structure rules", () => {
 			code: "SECTION_MISSING_FROM_LAYOUT",
 			severity: "error",
 			pointer: "/sections/education",
+			key: "SECTION_MISSING_FROM_LAYOUT:/sections/education",
 			params: { section: "education" },
 		});
 	});
@@ -335,11 +388,37 @@ describe("layout rules", () => {
 		expect(codesOf(data)).toContain("PROSE_SECTION_IN_SIDEBAR");
 	});
 
-	it("treats a full-width page's sidebar as the main column", () => {
+	it("knows a full-width page prints no sidebar", () => {
 		const data = makeResume((resume) => {
 			resume.metadata.layout.pages = [{ fullWidth: true, main: [], sidebar: ["experience"] }];
 		});
 		expect(codesOf(data)).not.toContain("PROSE_SECTION_IN_SIDEBAR");
+		expect(codesOf(data)).toContain("SECTION_MISSING_FROM_LAYOUT");
+	});
+
+	it("flags a two-column template printing a sidebar, naming its sections", () => {
+		const data = makeResume((resume) => {
+			resume.sections.skills.items = [skillItem()];
+			resume.metadata.template = "azurill";
+			resume.metadata.layout.pages = [{ fullWidth: false, main: ["experience"], sidebar: ["skills"] }];
+		});
+
+		expect(lint(data).findings).toContainEqual(
+			expect.objectContaining({ code: "TWO_COLUMN_LAYOUT", params: { sections: "skills" } }),
+		);
+	});
+
+	it("leaves one-column templates, full-width pages and empty sidebars out of the two-column rule", () => {
+		const withSidebar = (template: ResumeData["metadata"]["template"], fullWidth: boolean, withSkills = true) =>
+			makeResume((resume) => {
+				resume.sections.skills.items = withSkills ? [skillItem()] : [];
+				resume.metadata.template = template;
+				resume.metadata.layout.pages = [{ fullWidth, main: ["experience"], sidebar: ["skills"] }];
+			});
+
+		expect(codesOf(withSidebar("onyx", false))).not.toContain("TWO_COLUMN_LAYOUT");
+		expect(codesOf(withSidebar("azurill", true))).not.toContain("TWO_COLUMN_LAYOUT");
+		expect(codesOf(withSidebar("azurill", false, false))).not.toContain("TWO_COLUMN_LAYOUT");
 	});
 
 	it("leaves short-list sections in the sidebar alone", () => {
