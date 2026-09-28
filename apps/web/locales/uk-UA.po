@@ -27,6 +27,17 @@ msgstr ""
 msgid "\"{0} · {1}\" and its full timeline will be permanently deleted. This can't be undone."
 msgstr "\"{0} · {1}\" і всю хронологію буде назавжди видалено. Це не можна скасувати."
 
+#. placeholder {0}: document.name
+#. placeholder {0}: letter.name
+#: src/features/cover-letters/editor-dialog.tsx
+#: src/features/documents/document-actions.tsx
+msgid "“{0}” moved to Trash"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "“{name}” moved to Trash"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "(link is live)"
 msgstr ""
@@ -46,6 +57,11 @@ msgstr "{0, plural, one {Програма # для експорту} other {# п
 msgid "{0, plural, one {# character} other {# characters}}"
 msgstr ""
 
+#. placeholder {0}: document.name
+#: src/features/documents/document-actions.tsx
+msgid "{0} (copy)"
+msgstr ""
+
 #. placeholder {0}: insights.total
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} applications tracked"
@@ -61,6 +77,21 @@ msgstr "{0} символів"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0} contact(s) skipped (invalid email or missing Contact Name). Those applications still import."
 msgstr "Контакт(и) {0} пропущено (недійсна електронна адреса або відсутнє ім’я контакту). Ці програми все ще імпортуються."
+
+#. placeholder {0}: daysLeftInTrash(document.trashedAt)
+#: src/features/documents/document-card.tsx
+msgid "{0} days left"
+msgstr ""
+
+#. placeholder {0}: step.entries
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} entries"
+msgstr ""
+
+#. placeholder {0}: step.flagged
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} fields are flagged for a quick look in the editor."
+msgstr ""
 
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
@@ -101,6 +132,18 @@ msgstr "{0} відхилено"
 msgid "{0} Sample Resume"
 msgstr "{0} Зразок резюме"
 
+#. placeholder {0}: step.sections
+#. placeholder {0}: summary.sections
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} sections"
+msgstr ""
+
+#. placeholder {0}: step.sections
+#. placeholder {1}: step.entries
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0} sections and {1} entries found."
+msgstr ""
+
 #. placeholder {0}: report.skippedChecks
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
@@ -120,6 +163,10 @@ msgstr "{0} потребує виправлення"
 #. placeholder {1}: index + 1
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "{0}, entry {1} of {count}"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "{base} (copy)"
 msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
@@ -180,6 +227,16 @@ msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
+msgstr ""
+
+#. placeholder {0}: daysLeftInTrash(document.trashedAt)
+#: src/features/documents/document-card.tsx
+msgid "{type} · {0} days left"
+msgstr ""
+
+#. placeholder {0}: formatRelativeTime(document.updatedAt, formatter)
+#: src/features/documents/document-card.tsx
+msgid "{type} · Edited {0}"
 msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
@@ -387,8 +444,9 @@ msgid "Accessibility"
 msgstr "Доступність"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
+#: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/settings/account.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "Обліковий запис"
 
@@ -639,14 +697,6 @@ msgstr "Агент"
 msgid "Agent ready"
 msgstr "Агент готовий"
 
-#: src/routes/dashboard/-components/sidebar.tsx
-msgid "Agents"
-msgstr "Агенти"
-
-#: src/dialogs/resume/import.tsx
-msgid "AI"
-msgstr "ШІ"
-
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "AI agent setup is unavailable right now. Please try again in a moment."
 msgstr "Налаштування агента штучного інтелекту зараз недоступне. Спробуйте ще раз за мить."
@@ -695,6 +745,7 @@ msgstr "AI — коли він вам потрібен"
 msgid "Albanian"
 msgstr "Албанська"
 
+#: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/design/template-group.tsx
 msgid "All"
 msgstr ""
@@ -740,11 +791,6 @@ msgstr "Вбудований шрифт не вдалося прочитати."
 msgid "An unexpected error stopped this page from loading. You can try again or head back."
 msgstr "Неочікувана помилка завадила завантаженню цієї сторінки. Ви можете спробувати ще раз або повернутися назад."
 
-#. Fallback toast when importing a resume fails for an unknown reason
-#: src/dialogs/resume/import.tsx
-msgid "An unknown error occurred while importing your resume."
-msgstr "Під час імпорту вашого резюме сталась невідома помилка."
-
 #: src/features/resume/share/link-tab.tsx
 msgid "Another of your resumes uses this address."
 msgstr ""
@@ -774,8 +820,8 @@ msgid "API Key"
 msgstr "API Ключ"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
 #: src/routes/dashboard/settings/api-keys.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "API Keys"
 msgstr "API Ключі"
 
@@ -787,7 +833,7 @@ msgstr "Ключі API шифруються на сервері та більш�
 msgid "API Reference"
 msgstr "Довідник API"
 
-#: src/routes/dashboard/-components/sidebar.tsx
+#: src/routes/dashboard/-components/app-shell.tsx
 msgid "App"
 msgstr "Додаток"
 
@@ -825,6 +871,8 @@ msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/cover-letters/editor-dialog.tsx
+#: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Application"
 msgstr "застосування"
 
@@ -859,7 +907,7 @@ msgstr "Заявку оновлено."
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
+#: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Applications"
 msgstr "Заявки"
@@ -917,18 +965,9 @@ msgstr "Ви впевнені, що хочете закрити цей діал�
 msgid "Are you sure you want to delete this API key?"
 msgstr "Ви впевнені, що хочете видалити цей API ключ?"
 
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
-msgid "Are you sure you want to delete this resume?"
-msgstr "Ви впевнені, що бажаєте видалити це резюме?"
-
 #: src/features/settings/pages/account.tsx
 msgid "Are you sure you want to delete your account?"
 msgstr "Ви впевнені, що хочете видалити свій профіль?"
-
-#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
-msgid "Are you sure you want to lock this resume?"
-msgstr "Ви впевнені, що хочете заблокувати це резюме?"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Area of study"
@@ -958,9 +997,9 @@ msgstr ""
 msgid "ATS Check"
 msgstr "Перевірка ATS"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/ats-checker.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
 msgid "ATS Checker"
 msgstr "Перевірка ATS"
 
@@ -994,8 +1033,8 @@ msgid "Attachment uploaded."
 msgstr "Вкладення завантажено."
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
 #: src/routes/dashboard/settings/authentication/index.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Authentication"
 msgstr "Автентифікація"
 
@@ -1037,11 +1076,16 @@ msgstr "Азербайджанська"
 msgid "BA"
 msgstr "Бакалавр мистецтв"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Back"
+msgstr ""
+
 #. Action returning a signed-in user to the page where they manage linked providers
 #: src/features/auth/pages/error.tsx
 msgid "Back to authentication settings"
 msgstr "Назад до налаштувань автентифікації"
 
+#: src/features/documents/trash-page.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Back to documents"
 msgstr ""
@@ -1178,6 +1222,7 @@ msgstr ""
 #: src/features/applications/components/export-applications-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/homepage/ats-playground.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -1245,6 +1290,10 @@ msgstr "Чат"
 msgid "Check"
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Check a PDF"
+msgstr ""
+
 #: src/features/ats-checker/tool.tsx
 msgid "Check again"
 msgstr "Перевірити знову"
@@ -1295,9 +1344,13 @@ msgstr "Китайська (традиційна)"
 msgid "Choose {0}"
 msgstr "Обрати {0}"
 
-#: src/features/cover-letters/library.tsx
-msgid "Choose a cover letter"
-msgstr "Виберіть супровідний лист"
+#: src/features/documents/documents-page.tsx
+msgid "Choose a file"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Choose a file to import"
+msgstr ""
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Choose a model and resume draft."
@@ -1318,7 +1371,6 @@ msgid "Choose a preset or custom shade."
 msgstr "Виберіть попередньо встановлений або власний відтінок."
 
 #: src/features/cover-letters/editor-dialog.tsx
-#: src/features/cover-letters/library.tsx
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Choose a resume"
 msgstr "Виберіть резюме"
@@ -1341,6 +1393,10 @@ msgstr "Виберіть програму"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Choose an application…"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Choose another file"
 msgstr ""
 
 #: src/features/homepage/languages-showcase.test.tsx
@@ -1375,6 +1431,10 @@ msgstr "Очистити фільтри"
 msgid "Clear formatting"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "Clear search and filters"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Clear section"
 msgstr ""
@@ -1382,10 +1442,6 @@ msgstr ""
 #: src/components/ui/combobox.tsx
 msgid "Clear selection"
 msgstr "Очистити вибір"
-
-#: src/dialogs/resume/import.tsx
-msgid "Click here to select a file to import"
-msgstr "Натисніть тут, щоб вибрати файл для імпорту"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Client ID"
@@ -1436,7 +1492,6 @@ msgstr "Спільнота"
 
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
-#: src/routes/dashboard/resumes/index.tsx
 msgid "Compact"
 msgstr "Компактний"
 
@@ -1539,15 +1594,6 @@ msgstr "Вміст розташований у вигляді сітки."
 msgid "Continue"
 msgstr "Продовжити"
 
-#: src/routes/dashboard/resumes/-components/cards/import-card.tsx
-#: src/routes/dashboard/resumes/-components/list-view.tsx
-msgid "Continue where you left off"
-msgstr "Продовжити там, де зупинилися"
-
-#: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
-msgstr ""
-
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
 msgstr "Долучитися кодом"
@@ -1572,6 +1618,10 @@ msgstr ""
 msgid "Copied to clipboard."
 msgstr "Скопійовано до буфера обміну."
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Copied to Documents"
+msgstr ""
+
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-ai-copilot.tsx
@@ -1580,9 +1630,9 @@ msgstr "Скопійовано до буфера обміну."
 msgid "Copy"
 msgstr "Скопіювати"
 
-#: src/features/cover-letters/library.tsx
-msgid "Copy an existing letter from a resume"
-msgstr "Скопіюйте наявний лист із резюме"
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copy a resume for a job"
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Copy and store these backup codes in case you lose your device."
@@ -1591,6 +1641,10 @@ msgstr "Скопіюйте та збережіть ці резервні код�
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Copy Backup Codes"
 msgstr "Скопіювати резервні коди"
+
+#: src/features/documents/document-actions.tsx
+msgid "Copy for a job…"
+msgstr ""
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Copy from resume"
@@ -1625,6 +1679,10 @@ msgstr "Скопіюйте текст з експортованого файлу
 msgid "Copy this secret key and use it in your applications to access your data."
 msgstr "Скопіюйте цей секретний ключ та використовуйте його у своїх додатках для доступу до своїх даних."
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Copy to Documents"
+msgstr ""
+
 #: src/libs/resume/ats.ts
 msgid "Correct the year, or use \"Present\" for ongoing work."
 msgstr "Виправте рік або використовуйте \"Поточний\" для поточної роботи."
@@ -1634,7 +1692,6 @@ msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "Виправте рік або напишіть \"Present\" для поточної роботи."
 
 #: src/features/cover-letters/editor-dialog.tsx
-#: src/features/cover-letters/library.tsx
 msgid "Could not complete this action. Please try again."
 msgstr "Не вдалося завершити цю дію. Спробуйте ще раз."
 
@@ -1655,14 +1712,6 @@ msgstr "Не вдалося створити DOCX. Спробуйте ще ра�
 msgid "Could not generate the PDF. Please try again."
 msgstr "Не вдалося створити PDF. Спробуйте ще раз."
 
-#: src/features/cover-letters/library.tsx
-msgid "Could not load cover letters."
-msgstr "Не вдалося завантажити супровідні листи."
-
-#: src/features/cover-letters/library.tsx
-msgid "Could not load the selected resume."
-msgstr "Не вдалося завантажити вибране резюме."
-
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Could not load this cover letter."
 msgstr "Не вдалося завантажити цей супровідний лист."
@@ -1674,11 +1723,6 @@ msgstr "Не вдалося підготувати зразок. Спробуй�
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
 msgstr "Не вдалося підготувати резюме до друку. Спробуйте ще раз."
-
-#. Error shown when AI provider is unreachable during PDF/DOCX resume import
-#: src/dialogs/resume/import.tsx
-msgid "Could not reach the AI provider. Please try again."
-msgstr "Не вдалося зв'язатися з постачальником ШІ. Спробуйте ще раз."
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Could not restore this patch."
@@ -1709,6 +1753,18 @@ msgstr "Не вдалося перевірити з’єднання. Перев
 msgid "Couldn't add the application. Please try again."
 msgstr "Не вдалося додати заявку. Спробуйте ще раз."
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Couldn't copy the letter. Save and try again."
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Couldn't copy the resume."
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Couldn't create the document."
+msgstr ""
+
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't delete the application."
@@ -1722,9 +1778,17 @@ msgstr ""
 msgid "Couldn't delete the timeline entry."
 msgstr "Не вдалося видалити запис хронології."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Couldn't import"
+msgstr ""
+
 #: src/features/applications/components/board.tsx
 msgid "Couldn't move the application. Please try again."
 msgstr "Не вдалося перемістити заявку. Спробуйте ще раз."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Couldn't reach the AI provider. Try again in a moment."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't save the note."
@@ -1764,7 +1828,6 @@ msgstr "Обкладинка"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
-#: src/features/cover-letters/library.tsx
 #: src/features/resume/share/download-tab.tsx
 msgid "Cover letter"
 msgstr "Супровідний лист"
@@ -1778,16 +1841,17 @@ msgstr "Супровідний лист"
 msgid "Cover letter draft"
 msgstr "Чернетка супровідного листа"
 
-#: src/routes/dashboard/-components/sidebar.tsx
-#: src/routes/dashboard/cover-letters.tsx
-msgid "Cover Letters"
-msgstr "Супровідні листи"
+#: src/features/documents/new-document-dialog.tsx
+msgid "Cover letter imported"
+msgstr ""
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Cover letters"
+msgstr ""
 
 #. Create API key dialog submit action
 #: src/dialogs/api-key/create.tsx
-#: src/dialogs/resume/index.tsx
-#: src/features/cover-letters/library.tsx
-#: src/routes/dashboard/resumes/index.tsx
+#: src/features/command-palette/pages/navigation.tsx
 msgid "Create"
 msgstr "Створити"
 
@@ -1804,10 +1868,7 @@ msgstr "Створити новий профіль"
 msgid "Create a new API key"
 msgstr "Створити новий API ключ"
 
-#: src/dialogs/resume/index.tsx
 #: src/features/command-palette/pages/resumes.tsx
-#: src/routes/dashboard/resumes/-components/cards/create-card.tsx
-#: src/routes/dashboard/resumes/-components/list-view.tsx
 msgid "Create a new resume"
 msgstr "Створіть нове резюме"
 
@@ -1815,13 +1876,9 @@ msgstr "Створіть нове резюме"
 msgid "Create a resume"
 msgstr "Створити резюме"
 
-#: src/dialogs/resume/index.tsx
-msgid "Create a Sample Resume"
-msgstr "Створити шаблон резюме"
-
-#: src/features/cover-letters/library.tsx
-msgid "Create cover letter"
-msgstr "Створити супровідний лист"
+#: src/features/documents/new-document-dialog.tsx
+msgid "Create and open"
+msgstr ""
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Create from scratch"
@@ -1832,13 +1889,8 @@ msgstr "Створити з нуля"
 msgid "Create one now"
 msgstr "Створіть його зараз"
 
-#. Accessible label for create-resume split button group
-#: src/dialogs/resume/index.tsx
-msgid "Create resume with options"
-msgstr "Створити резюме з опціями"
-
+#: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
-#: src/routes/dashboard/resumes/index.tsx
 msgid "Created"
 msgstr "Створено"
 
@@ -1847,13 +1899,18 @@ msgstr "Створено"
 msgid "Created \"{0}\" and linked it to this application."
 msgstr "Створено \"{0}\" і прив'язано до цієї заявки."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Created “{finalName}”"
+msgstr ""
+
+#. placeholder {0}: job.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "Created and linked to {0}"
+msgstr ""
+
 #: src/dialogs/api-key/create.tsx
 msgid "Creating your API key..."
 msgstr "Створення вашого API ключа..."
-
-#: src/dialogs/resume/index.tsx
-msgid "Creating your resume..."
-msgstr "Створення вашого резюме..."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and Upload"
@@ -1931,10 +1988,6 @@ msgstr "Темна"
 msgid "Dark theme"
 msgstr "Темна тема"
 
-#: src/routes/dashboard/-components/sidebar.tsx
-msgid "Dashboard"
-msgstr "Інформаційна панель"
-
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Date"
 msgstr "Дата"
@@ -1969,33 +2022,29 @@ msgstr "Зменшити масштаб"
 msgid "Deep check"
 msgstr "Поглиблена перевірка"
 
-#: src/features/cover-letters/library.tsx
-msgid "Default template"
-msgstr "Шаблон за замовчуванням"
-
 #: src/features/resume/editor/write/entries.tsx
 msgid "Degree"
 msgstr "Ступінь"
 
 #. API key deletion confirmation dialog confirm action in settings
 #. Passkey row action to remove the selected passkey
-#. Resume card context menu destructive action to remove a resume
-#. Resume card dropdown destructive action to remove a resume
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/table-view.tsx
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Delete"
 msgstr "Видалити"
+
+#. placeholder {0}: document.name
+#: src/features/documents/document-actions.tsx
+msgid "Delete “{0}” now?"
+msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete “{title}”?"
@@ -2013,6 +2062,14 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game the search."
 msgstr "Видаліть це. Приховані ключові слова розцінюються як навмисна спроба обманути пошук."
+
+#: src/features/documents/document-actions.tsx
+msgid "Delete now"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "Delete now…"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete Page"
@@ -2040,10 +2097,6 @@ msgstr "Видалити цей ланцюжок запитань агента?"
 msgid "Delete this application?"
 msgstr "Видалити цю заявку?"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Delete this cover letter?"
-msgstr "Видалити цей супровідний лист?"
-
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Delete this interview?"
 msgstr ""
@@ -2056,8 +2109,13 @@ msgstr "Видалити цей запис хронології?"
 msgid "Delete timeline entry"
 msgstr "Видалити запис хронології"
 
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
-msgid "Delete…"
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Deleted"
+msgstr ""
+
+#. placeholder {0}: document.name
+#: src/features/documents/document-actions.tsx
+msgid "Deleted “{0}”"
 msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
@@ -2069,6 +2127,10 @@ msgstr ""
 msgid "Deleted {0} application(s)."
 msgstr "Видалено {0} заявок."
 
+#: src/features/documents/trash-page.tsx
+msgid "Deleted in"
+msgstr ""
+
 #: src/features/settings/pages/account.tsx
 msgid "Deleting your account..."
 msgstr "Видалення облікового запису..."
@@ -2076,11 +2138,6 @@ msgstr "Видалення облікового запису..."
 #: src/features/settings/pages/api-keys.tsx
 msgid "Deleting your API key..."
 msgstr "Видаляємо ваш API-ключ..."
-
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
-msgid "Deleting your resume..."
-msgstr "Видалення вашого резюме..."
 
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Denied, waiting for the agent…"
@@ -2191,11 +2248,21 @@ msgstr "Документація"
 msgid "Document menu: {name}"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "Document type"
+msgstr ""
+
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Documentation"
 msgstr "Документація"
+
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "Documents"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Documents sent"
@@ -2309,18 +2376,27 @@ msgstr "Перетягніть, щоб змінити положення, та �
 msgid "Drag to turn the pages"
 msgstr "Перетягуйте, щоб гортати сторінки"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Drop a PDF, Word or JSON file"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
 msgstr "Прибрати займенники та починати з дієслова. Це прийнято на більшості ринків."
 
-#. Resume card context menu action to create a copy
-#. Resume card dropdown action to create a copy
+#: src/features/documents/documents-page.tsx
+msgid "Drop to import"
+msgstr ""
+
 #: src/dialogs/resume/index.tsx
 #: src/features/cover-letters/editor-dialog.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Duplicate"
 msgstr "Дублювати"
 
@@ -2335,6 +2411,10 @@ msgstr "Дублювати резюме"
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate your resume to create a new one, just like the original."
 msgstr "Дублюйте своє резюме, щоб створити нове, ідентичне до оригіналу."
+
+#: src/features/documents/document-actions.tsx
+msgid "Duplicated"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Duplicating your resume..."
@@ -2354,11 +2434,6 @@ msgstr "Голландська"
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Edit"
 msgstr "Редагувати"
-
-#. placeholder {0}: letter.name
-#: src/features/cover-letters/library.tsx
-msgid "Edit {0}"
-msgstr "Редагувати {0}"
 
 #. Screen reader label for button that edits a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
@@ -2391,13 +2466,6 @@ msgstr "Редагувати дату"
 msgid "Edit declined"
 msgstr "Редагування відхилено"
 
-#. Resume card context menu action to edit resume metadata
-#. Resume card dropdown action to edit resume metadata
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
-msgid "Edit details"
-msgstr "Редагувати деталі"
-
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Edit entry"
 msgstr ""
@@ -2421,6 +2489,10 @@ msgstr "Редагувати модель"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Edit note"
 msgstr "Редагувати нотатку"
+
+#: src/features/documents/documents-page.tsx
+msgid "Edited"
+msgstr ""
 
 #: src/features/resume/editor/page-overlay.tsx
 msgid "Editing"
@@ -2639,6 +2711,10 @@ msgstr "Експорт JSON"
 msgid "Export my data"
 msgstr "Експортувати мої дані"
 
+#: src/features/resume/import/read-file.ts
+msgid "export opened"
+msgstr ""
+
 #: src/features/applications/components/insights-view.tsx
 msgid "Export PNG"
 msgstr "Експортувати PNG"
@@ -2842,12 +2918,13 @@ msgstr ""
 msgid "Fifteen templates, all free. Pick one you like. You can change the type, color, and layout in the editor."
 msgstr "П’ятнадцять шаблонів — усі безкоштовні. Оберіть той, що до вподоби. Тип, колір і розташування можна змінити в редакторі."
 
-#: src/dialogs/resume/import.tsx
-msgid "File"
-msgstr "Файл"
-
 #: src/features/resume/share/download-tab.tsx
 msgid "File name"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/import/read-file.ts
+msgid "file read"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -2858,9 +2935,13 @@ msgstr "Заповнити поля"
 msgid "Filled in what we could from the posting."
 msgstr "Заповнили з оголошення все, що змогли."
 
-#: src/routes/dashboard/resumes/index.tsx
-msgid "Filter by"
-msgstr "Фільтрувати за"
+#: src/features/documents/new-document-dialog.tsx
+msgid "Filling in entries"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Filter by tag"
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Filter by tags"
@@ -2873,6 +2954,10 @@ msgstr "Знайдіть слабкі пункти й перепишіть їх,
 #: src/features/homepage/page.tsx
 msgid "Find us on GitHub"
 msgstr "Знайдіть нас на GitHub"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Finding sections"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Finnish"
@@ -2965,6 +3050,10 @@ msgstr "Щоб зберегти копію"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "For which job?"
 msgstr ""
 
 #: src/features/homepage/export-playground.tsx
@@ -3120,7 +3209,7 @@ msgstr "Графічний дизайн"
 msgid "Greek"
 msgstr "Грецька"
 
-#: src/routes/dashboard/resumes/index.tsx
+#: src/features/documents/documents-page.tsx
 msgid "Grid"
 msgstr "Сітка"
 
@@ -3304,8 +3393,7 @@ msgstr "Якщо це результат сканування, це очікув
 msgid "Images cover most of the page."
 msgstr "Зображення займають більшу частину сторінки."
 
-#: src/dialogs/resume/import.tsx
-#: src/routes/dashboard/resumes/index.tsx
+#: src/features/command-palette/pages/navigation.tsx
 msgid "Import"
 msgstr "Імпортувати"
 
@@ -3314,15 +3402,13 @@ msgstr "Імпортувати"
 msgid "Import {0}"
 msgstr "Імпортувати {0}"
 
-#: src/dialogs/resume/import.tsx
-#: src/routes/dashboard/resumes/-components/cards/import-card.tsx
-#: src/routes/dashboard/resumes/-components/list-view.tsx
-msgid "Import an existing resume"
-msgstr "Імпортувати наявне резюме"
+#: src/features/documents/new-document-dialog.tsx
+msgid "Import a resume"
+msgstr ""
 
-#: src/features/cover-letters/library.tsx
-msgid "Import cover letter JSON"
-msgstr "Імпорт супровідного листа JSON"
+#: src/features/documents/new-document-dialog.tsx
+msgid "Import a resume, copy one for a job, or start blank."
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Import CSV"
@@ -3341,9 +3427,17 @@ msgstr "Імпортувати з CSV"
 msgid "Import from library"
 msgstr ""
 
-#: src/features/cover-letters/library.tsx
-msgid "Import JSON"
-msgstr "Імпорт JSON"
+#: src/features/documents/new-document-dialog.tsx
+msgid "Import progress"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Import steps"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh; it takes a minute to get your name on the page."
+msgstr ""
 
 #: src/features/resume/share/format.ts
 msgid "Imported"
@@ -3354,17 +3448,9 @@ msgstr ""
 msgid "Imported {0} application(s)."
 msgstr "Імпортовано {0} заявок."
 
-#: src/dialogs/resume/import.tsx
-msgid "Importing from Word requires a connected AI provider."
-msgstr "Для імпорту з Word потрібен підключений постачальник штучного інтелекту."
-
-#: src/dialogs/resume/import.tsx
-msgid "Importing your resume..."
-msgstr "Імпортуємо ваше резюме..."
-
-#: src/dialogs/resume/import.tsx
-msgid "Importing…"
-msgstr "Імпорт…"
+#: src/features/documents/new-document-dialog.tsx
+msgid "Importing"
+msgstr ""
 
 #. placeholder {0}: suggestion.section
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
@@ -3423,8 +3509,8 @@ msgid "Inspecting page {0} of {1}…"
 msgstr "Перевірка сторінки {0} із {1}…"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
 #: src/routes/dashboard/settings/integrations/route.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Integrations"
 msgstr "Інтеграції"
 
@@ -3466,6 +3552,10 @@ msgstr "Недійсна конфігурація постачальника ш�
 msgid "Issuer"
 msgstr "Ким видано"
 
+#: src/features/documents/document-actions.tsx
+msgid "It will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will be removed from the timeline and calendar. This can't be undone."
 msgstr ""
@@ -3482,6 +3572,14 @@ msgstr "Італійська"
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Italic"
 msgstr "Курсив"
+
+#: src/features/documents/trash-page.tsx
+msgid "Items are deleted permanently after 30 days."
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Items you move here stay for 30 days."
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Japanese"
@@ -3530,10 +3628,9 @@ msgstr "Невідомий."
 msgid "john.doe"
 msgstr "john.doe"
 
-#. Import source option for standard JSON Resume format
-#: src/dialogs/resume/import.tsx
-msgid "JSON Resume"
-msgstr "JSON Резюме"
+#: src/features/resume/import/read-file.ts
+msgid "JSON read"
+msgstr ""
 
 #: src/components/input/rich-input.tsx
 msgid "Justify Align"
@@ -3562,6 +3659,10 @@ msgstr "Продовжуйте редагувати"
 #: src/features/homepage/export-playground.tsx
 msgid "Keep editing in Word, Google Docs, or Pages. Layout may differ from the PDF."
 msgstr "Продовжуйте редагувати у Word, Google Docs або Pages. Розташування може відрізнятися від PDF."
+
+#: src/features/documents/document-actions.tsx
+msgid "Keep in Trash"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
@@ -3659,18 +3760,13 @@ msgstr "Мова"
 msgid "Languages"
 msgstr "Мови"
 
+#: src/features/documents/documents-page.tsx
+msgid "Last edited"
+msgstr ""
+
 #: src/routes/dashboard/applications/index.tsx
 msgid "Last updated"
 msgstr "Останнє оновлення"
-
-#: src/routes/dashboard/resumes/index.tsx
-msgid "Last Updated"
-msgstr "Оновлено востаннє"
-
-#: src/routes/dashboard/resumes/-components/cards/resume-card.tsx
-#: src/routes/dashboard/resumes/-components/list-view.tsx
-msgid "Last updated on {updatedAt}"
-msgstr "Останнє оновлення {updatedAt}"
 
 #: src/libs/locale.ts
 msgid "Latvian"
@@ -3689,7 +3785,6 @@ msgstr "Макет"
 msgid "Lead with the work. Add a concrete detail so someone can picture it."
 msgstr "Почніть із результату. Додайте конкретну деталь, щоб її можна було уявити."
 
-#: src/dialogs/resume/import.tsx
 #: src/hooks/use-form-blocker.tsx
 msgid "Leave"
 msgstr "Залишити"
@@ -3706,10 +3801,6 @@ msgstr "Залиште порожнім, щоб повернути початк�
 msgid "Leave it empty to remove the link."
 msgstr ""
 
-#: src/dialogs/resume/import.tsx
-msgid "Leave to set up an AI provider?"
-msgstr "Вийти, щоб налаштувати постачальника AI?"
-
 #: src/components/input/rich-input.tsx
 msgid "Left Align"
 msgstr "Вирівняти ліворуч"
@@ -3722,12 +3813,21 @@ msgstr "Правова інформація"
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Довжина — не недолік, і не існує універсального правила однієї сторінки. Залишайте ті сторінки, які виправдовують своє місце."
 
+#: src/features/documents/documents-page.tsx
+msgid "Let's start with what you have"
+msgstr ""
+
+#: src/features/documents/document-card.tsx
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Letter"
 msgstr "Letter"
+
+#: src/features/documents/documents-page.tsx
+msgid "Letters"
+msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
@@ -3798,6 +3898,14 @@ msgstr ""
 msgid "Link is live"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+msgid "Link to application"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "Link to application…"
+msgstr ""
+
 #: src/features/resume/share/link-tab.tsx
 msgid "Link turned off. The address is kept"
 msgstr ""
@@ -3815,11 +3923,6 @@ msgstr "Прив'язане Reactive Resume"
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
-#. Import source option for a LinkedIn data export ZIP
-#: src/dialogs/resume/import.tsx
-msgid "LinkedIn (Data Export)"
-msgstr ""
-
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
 msgstr "LinkedIn, рекомендація…"
@@ -3828,7 +3931,7 @@ msgstr "LinkedIn, рекомендація…"
 msgid "Linking your {providerName} account..."
 msgstr "Відбувається підключення вашого облікового запису {providerName}..."
 
-#: src/routes/dashboard/resumes/index.tsx
+#: src/features/documents/documents-page.tsx
 msgid "List"
 msgstr "Список"
 
@@ -3844,10 +3947,6 @@ msgstr "Литовська"
 #: src/features/resume/share/link-tab.tsx
 msgid "Live at {0}"
 msgstr ""
-
-#: src/dialogs/resume/import.tsx
-msgid "Loading AI providers. Please try again in a moment."
-msgstr "Завантаження постачальників ШІ. Будь ласка, спробуйте ще раз за мить."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -3888,15 +3987,13 @@ msgstr "Завантаження підсумку"
 msgid "Location"
 msgstr "Місцеперебування"
 
-#. Resume card context menu action to prevent edits
-#. Resume card dropdown action to prevent edits
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
-msgid "Lock"
-msgstr "Заблокувати"
-
+#: src/features/documents/document-actions.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Lock editing"
+msgstr ""
+
+#: src/features/documents/document-card.tsx
+msgid "Locked"
 msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
@@ -4010,12 +4107,6 @@ msgstr ""
 msgid "Medium impact"
 msgstr "Середній вплив"
 
-#. File format label in import source selector
-#. File format label in import source selector
-#: src/dialogs/resume/import.tsx
-msgid "Microsoft Word"
-msgstr "Microsoft Word"
-
 #: src/routes/agent/-components/resume-pane.tsx
 msgid "Missing working resume"
 msgstr "Відсутнє робоче резюме"
@@ -4106,6 +4197,12 @@ msgstr "Перемістити на співбесіду"
 msgid "Move to offer"
 msgstr "Перемістити на пропозицію"
 
+#: src/features/cover-letters/editor-dialog.tsx
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Move to Trash"
+msgstr ""
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Move to…"
 msgstr ""
@@ -4129,10 +4226,12 @@ msgstr "Переміщено до"
 #: src/features/ats-checker/parse-preview.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/cover-letters/editor.tsx
-#: src/features/cover-letters/library.tsx
+#: src/features/documents/document-card.tsx
+#: src/features/documents/documents-page.tsx
+#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/trash-page.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/pages/profile.tsx
-#: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "Назва"
 
@@ -4188,6 +4287,11 @@ msgstr "Мережа"
 msgid "Never expires"
 msgstr "Ніколи не закінчується"
 
+#: src/features/documents/document-card.tsx
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "New"
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "New account sign-ups are currently disabled on this server."
 msgstr "Реєстрацію нових облікових записів на цьому сервері зараз вимкнено."
@@ -4196,6 +4300,15 @@ msgstr "Реєстрацію нових облікових записів на �
 #: src/features/command-palette/pages/resumes.tsx
 msgid "New Application"
 msgstr "Нова заявка"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "New cover letter instead"
+msgstr ""
+
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/new-document-dialog.tsx
+msgid "New document"
+msgstr ""
 
 #: src/components/input/rich-input.tsx
 msgid "New Line"
@@ -4233,10 +4346,6 @@ msgstr "Нова тема"
 msgid "New Thread"
 msgstr "Нова тема"
 
-#: src/features/cover-letters/library.tsx
-msgid "Next"
-msgstr "Далі"
-
 #: src/features/applications/components/calendar-view.tsx
 msgid "Next month"
 msgstr ""
@@ -4253,10 +4362,6 @@ msgstr ""
 msgid "No AI provider connected"
 msgstr "Постачальника штучного інтелекту не підключено"
 
-#: src/dialogs/resume/import.tsx
-msgid "No AI provider is connected, so we will read the text out of the PDF here in your browser and fill in what we can recognize. Expect to tidy up the result."
-msgstr "Жоден постачальник штучного інтелекту не підключений, тому ми прочитаємо текст із PDF-файлу тут у вашому браузері та заповнимо те, що розпізнаємо. Очікуйте приведення в порядок результату."
-
 #: src/routes/dashboard/applications/index.tsx
 msgid "No applications match your filters."
 msgstr "Немає заявок, що відповідають вашим фільтрам."
@@ -4264,6 +4369,10 @@ msgstr "Немає заявок, що відповідають вашим філ
 #: src/features/applications/components/insights-view.tsx
 msgid "No applications yet. Add a few to see your funnel and reply rates."
 msgstr "Заявок поки немає. Додайте кілька, щоб побачити воронку та частку відповідей."
+
+#: src/features/documents/document-actions.tsx
+msgid "No applications yet. Add one in Applications first."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -4277,15 +4386,6 @@ msgstr "За цим запитом команд не знайдено."
 #: src/features/ats-checker/messages.ts
 msgid "No conventional section headings were found."
 msgstr "Звичних заголовків розділів не знайдено."
-
-#: src/features/cover-letters/library.tsx
-msgid "No cover letters found. Create one or import an existing letter."
-msgstr "Супровідних листів не знайдено. Створіть або імпортуйте існуючий лист."
-
-#. Error shown when AI import endpoint returns no parsed resume data
-#: src/dialogs/resume/import.tsx
-msgid "No data was returned from the AI provider."
-msgstr "Від постачальника ШІ не було отримано жодних даних."
 
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
@@ -4305,6 +4405,10 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "No interviews scheduled."
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "No job yet"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -4350,11 +4454,6 @@ msgstr "Результатів не знайдено."
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "No resume linked."
 msgstr "Резюме не прив'язано."
-
-#: src/routes/dashboard/resumes/-components/grid-view.tsx
-#: src/routes/dashboard/resumes/-components/list-view.tsx
-msgid "No resumes match your search."
-msgstr "Немає резюме, що відповідають вашому пошуку."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
@@ -4445,6 +4544,15 @@ msgstr "Нотатки"
 msgid "Nothing marks a role as ongoing."
 msgstr "Ніщо не позначає посаду як поточну."
 
+#. placeholder {0}: search.q.trim()
+#: src/features/documents/documents-page.tsx
+msgid "Nothing matches “{0}”"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Nothing matches these filters"
+msgstr ""
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "Nothing scheduled yet"
 msgstr ""
@@ -4531,10 +4639,7 @@ msgstr "Перевірено лише перші сторінки."
 msgid "Only you see these"
 msgstr ""
 
-#. Resume card context menu action to open the resume editor
-#. Resume card dropdown action to open the resume editor
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/features/documents/document-actions.tsx
 msgid "Open"
 msgstr "Відкрити"
 
@@ -4558,6 +4663,10 @@ msgstr "Відкрити режим фокусування"
 #: src/routes/agent/-components/resume-pane.tsx
 msgid "Open in builder"
 msgstr "Відкрити в конструкторі"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Open in editor"
+msgstr ""
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Open Integrations Settings"
@@ -4597,6 +4706,10 @@ msgstr "Відкривається в новій вкладці"
 msgid "opens in new tab"
 msgstr "відкриється у новій вкладці"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Opens the editor on your name. Nothing else to fill in first."
+msgstr ""
+
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Optional note for the agent"
 msgstr "Необов'язкова примітка для агента"
@@ -4608,6 +4721,16 @@ msgstr "Необов'язкова примітка для агента…"
 #: src/routes/_home/ats-checker.tsx
 msgid "Optionally, which terms from a job posting already appear."
 msgstr "За бажанням — які терміни з оголошення про вакансію вже присутні."
+
+#: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
+msgid "Options"
+msgstr ""
+
+#. placeholder {0}: document.name
+#: src/features/documents/document-card.tsx
+msgid "Options for {0}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 #: src/features/resume/share/history-tab.tsx
@@ -4647,10 +4770,9 @@ msgid "Page"
 msgstr "Сторінка"
 
 #. Layout editor page label with 1-based page number
-#. placeholder {0}: Math.floor(offset / 20) + 1
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#: src/features/cover-letters/library.tsx
+#. placeholder {0}: targetPageIndex + 1
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -4788,9 +4910,9 @@ msgstr "PDF-знімок, доданий до заявки."
 msgid "PDF text layer"
 msgstr "Текстовий шар PDF"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "PDFs already attached to applications will remain available."
-msgstr "PDF-файли, які вже додано до програм, залишаться доступними."
+#: src/features/documents/documents-page.tsx
+msgid "PDF, Word or JSON. We'll build a resume from it."
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Persian"
@@ -4897,8 +5019,8 @@ msgstr "Надавайте перевагу одній колонці або т�
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/index.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
 #: src/routes/dashboard/settings/preferences.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "Налаштування"
 
@@ -4957,10 +5079,6 @@ msgstr "Попередній перегляд PDF"
 msgid "Previewing {0} · click to apply"
 msgstr ""
 
-#: src/features/cover-letters/library.tsx
-msgid "Previous"
-msgstr "Попередній"
-
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
 msgstr ""
@@ -5008,8 +5126,8 @@ msgid "Proficiency"
 msgstr "Рівень володіння"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
 #: src/routes/dashboard/settings/profile.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "Профіль"
 
@@ -5118,11 +5236,6 @@ msgstr "Переоцінити"
 msgid "Reactive Resume - Go to homepage"
 msgstr "Reactive Resume – перейти на головну сторінку"
 
-#. Import source option for current Reactive Resume JSON format
-#: src/dialogs/resume/import.tsx
-msgid "Reactive Resume (JSON)"
-msgstr "Реактивне резюме (JSON)"
-
 #: src/features/homepage/page.tsx
 msgid "Reactive Resume is free and open source. Amruth and a community of contributors keep it running. If you’d like to support the work, donations help cover hosting and development."
 msgstr "Reactive Resume — безкоштовний і з відкритим кодом. Його розвивають Amruth та спільнота контриб’юторів. Якщо ви хочете підтримати проєкт, пожертви покривають витрати на хостинг і розробку."
@@ -5135,11 +5248,6 @@ msgstr "Reactive Resume — безкоштовний ресурс з відкр�
 #: src/components/ui/copyright.tsx
 msgid "Reactive Resume v<0>{__APP_VERSION__}</0>"
 msgstr "Реактивне резюме v<0>{__APP_VERSION__}</0>"
-
-#. Import source option for legacy Reactive Resume v4 JSON format
-#: src/dialogs/resume/import.tsx
-msgid "Reactive Resume v4 (JSON)"
-msgstr "Реактивне резюме v4 (JSON)"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Read again"
@@ -5191,6 +5299,10 @@ msgstr "Читання сторінки {0} із {1}…"
 msgid "Reading PDF"
 msgstr "Читання PDF"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Reading the file"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Reading the posting…"
 msgstr "Читання оголошення…"
@@ -5198,6 +5310,10 @@ msgstr "Читання оголошення…"
 #: src/features/homepage/ats-playground.tsx
 msgid "Reading this PDF in your browser. Your file is not uploaded."
 msgstr "Читаємо цей PDF у вашому браузері. Ваш файл не завантажується."
+
+#: src/features/resume/import/read-file.ts
+msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
+msgstr ""
 
 #: src/features/resume/stylesheet/status.tsx
 msgid "Ready to activate"
@@ -5300,6 +5416,10 @@ msgstr "Видалити тег"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Remove the password?"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "Rename"
 msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
@@ -5406,6 +5526,7 @@ msgstr "Ресурси"
 msgid "Responsible for working on the design system and helping other teams with their designs."
 msgstr "Відповідаю за роботу над дизайн-системою та за допомогу іншим командам із їхніми макетами."
 
+#: src/features/documents/document-actions.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore"
 msgstr "Відновити"
@@ -5416,6 +5537,11 @@ msgstr "Відновити резюме до стану перед цим пат
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Restore this version"
+msgstr ""
+
+#. placeholder {0}: document.name
+#: src/features/documents/document-actions.tsx
+msgid "Restored “{0}”"
 msgstr ""
 
 #: src/features/resume/share/format.ts
@@ -5432,6 +5558,7 @@ msgid "Restored the version from {0}. Your previous state is saved as “Before 
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/documents/document-card.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/agent/$threadId.tsx
@@ -5472,15 +5599,13 @@ msgstr "Шаблони резюме"
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/homepage/community-stats.tsx
 #: src/features/homepage/languages-showcase.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
-#: src/routes/dashboard/resumes/index.tsx
 msgid "Resumes"
 msgstr "Резюме"
 
 #: src/features/cover-letters/editor-dialog.tsx
-#: src/features/cover-letters/library.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Retry"
@@ -5605,6 +5730,10 @@ msgstr "Формат завантаження зразка"
 msgid "Sample resume"
 msgstr "Зразок резюме"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Sample resume added. Delete it anytime."
+msgstr ""
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Sample resume for {name}"
 msgstr "Зразок резюме для {name}"
@@ -5615,6 +5744,7 @@ msgstr "Без засічок"
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Save"
@@ -5643,16 +5773,11 @@ msgstr "Зберегти зміни"
 msgid "Save changes before previewing, exporting, or changing styling."
 msgstr "Збережіть зміни перед попереднім переглядом, експортом або зміною стилю."
 
-#: src/features/cover-letters/library.tsx
-msgid "Save copy to library"
-msgstr "Зберегти копію в бібліотеці"
-
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Save model"
 msgstr "Зберегти модель"
 
 #: src/features/cover-letters/editor-dialog.tsx
-#: src/features/cover-letters/library.tsx
 msgid "Save resume changes before copying its content or styling."
 msgstr "Збережіть зміни резюме, перш ніж копіювати його вміст або стиль."
 
@@ -5717,7 +5842,8 @@ msgstr "Оцінити мою відповідність"
 msgid "Scoring your fit…"
 msgstr "Оцінюємо вашу відповідність…"
 
-#: src/routes/dashboard/-components/sidebar.tsx
+#: src/features/documents/documents-page.tsx
+#: src/routes/dashboard/-components/app-shell.tsx
 msgid "Search"
 msgstr "Пошук"
 
@@ -5730,13 +5856,13 @@ msgstr "Пошук заявок…"
 msgid "Search commands"
 msgstr "Команди пошуку"
 
-#: src/features/cover-letters/library.tsx
-msgid "Search cover letters"
-msgstr "Пошук супровідних листів"
+#: src/features/documents/documents-page.tsx
+msgid "Search covers titles, tags and linked applications."
+msgstr ""
 
-#: src/features/cover-letters/library.tsx
-msgid "Search cover letters..."
-msgstr "Пошук супровідних листів..."
+#: src/features/documents/documents-page.tsx
+msgid "Search documents"
+msgstr ""
 
 #. Accessible label for icon picker search input
 #. Placeholder text in icon picker search input
@@ -5748,9 +5874,9 @@ msgstr "Пошук іконки"
 msgid "Search for…"
 msgstr "Пошук за запитом…"
 
-#: src/routes/dashboard/resumes/index.tsx
-msgid "Search resumes..."
-msgstr "Пошук резюме..."
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "Search or run…"
+msgstr ""
 
 #: src/components/ui/combobox.tsx
 msgid "Search..."
@@ -5890,10 +6016,6 @@ msgstr "Встановити пароль"
 msgid "Set the document language when exporting."
 msgstr "Вкажіть мову документа під час експорту."
 
-#: src/dialogs/resume/import.tsx
-msgid "Set up a provider"
-msgstr "Налаштувати постачальника"
-
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "Set up an AI provider"
 msgstr "Налаштуйте постачальника послуг штучного інтелекту"
@@ -5911,8 +6033,10 @@ msgid "Set up an AI provider to chat about this resume and apply edits automatic
 msgstr "Налаштуйте постачальника послуг штучного інтелекту для обговорення цього резюме та автоматичного застосування змін."
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/user/dropdown-menu.tsx
 #: src/routes/agent/-components/new-thread-setup.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
+#: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "Налаштування"
 
@@ -6121,7 +6245,7 @@ msgstr "Пропустити та завантажити"
 
 #: src/features/homepage/page.tsx
 #: src/routes/_home/route.tsx
-#: src/routes/dashboard/route.tsx
+#: src/routes/dashboard/-components/app-shell.tsx
 msgid "Skip to main content"
 msgstr "Перейти до основного контенту"
 
@@ -6193,6 +6317,10 @@ msgstr "Щось інше…"
 msgid "Something went wrong"
 msgstr "Щось пішло не так"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Something went wrong while importing. Try again, or start blank."
+msgstr ""
+
 #: src/features/ats-checker/tool.tsx
 msgid "Something went wrong while reading that file. Please try again."
 msgstr "Під час читання цього файлу щось пішло не так. Спробуйте ще раз."
@@ -6212,8 +6340,15 @@ msgstr "Під час входу сталася помилка. Спробуйт
 msgid "Something went wrong. Please try again."
 msgstr "Щось пішло не так. Будь ласка, спробуйте ще раз."
 
+#: src/features/documents/document-actions.tsx
+msgid "Something went wrong. Try again."
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Sort"
+msgstr ""
+
 #: src/routes/dashboard/applications/index.tsx
-#: src/routes/dashboard/resumes/index.tsx
 msgid "Sort by"
 msgstr "Сортувати за"
 
@@ -6319,14 +6454,10 @@ msgstr "Розпочати тему"
 msgid "Start again"
 msgstr "Почати заново"
 
-#: src/dialogs/resume/index.tsx
-msgid "Start building your resume by giving it a name."
-msgstr "Почніть створення резюме з назви."
-
-#: src/routes/dashboard/resumes/-components/cards/create-card.tsx
-#: src/routes/dashboard/resumes/-components/list-view.tsx
-msgid "Start building your resume from scratch"
-msgstr "Почати створення резюме з нуля"
+#: src/features/documents/documents-page.tsx
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start blank"
+msgstr ""
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Start date must be on or before end date."
@@ -6335,6 +6466,14 @@ msgstr "Дата початку має відповідати даті заве�
 #: src/features/ats-checker/messages.ts
 msgid "Start each one with a concrete verb: built, led, reduced, migrated."
 msgstr "Починайте кожен пункт з конкретного дієслова: built, led, reduced, migrated."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start from one you have and link the application."
+msgstr ""
 
 #: src/routes/agent/index.tsx
 msgid "Start new thread"
@@ -6365,10 +6504,13 @@ msgstr ""
 msgid "Statistics"
 msgstr "Статистика"
 
-#: src/dialogs/resume/import.tsx
 #: src/hooks/use-form-blocker.tsx
 msgid "Stay"
 msgstr "Залишитись"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Stay here"
+msgstr ""
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Stays in your browser"
@@ -6418,6 +6560,10 @@ msgstr "Стиль і відомості про відправника онов�
 #: src/routes/_home/-sections/footer.tsx
 msgid "Subreddit"
 msgstr "Сабреддіт"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Suggested from the source and the job. Change it anytime."
+msgstr ""
 
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "Suggestions"
@@ -6472,6 +6618,7 @@ msgstr "Таблиця"
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/table-view.tsx
+#: src/features/documents/document-actions.tsx
 msgid "Tags"
 msgstr "Теги"
 
@@ -6482,6 +6629,14 @@ msgstr "Теги можна використовувати для категор
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 msgstr "Теги надають програмам явний порядок читання. Увімкніть їх під час експорту, якщо ваш інструмент це пропонує."
+
+#: src/features/documents/document-actions.tsx
+msgid "Tags group documents in the library; pick one above the grid to filter by it."
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "Tags…"
+msgstr ""
 
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Tailor my resume"
@@ -6508,7 +6663,6 @@ msgid "Telugu"
 msgstr "Телугу"
 
 #: src/features/cover-letters/editor-dialog.tsx
-#: src/features/cover-letters/library.tsx
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Template"
@@ -6555,6 +6709,10 @@ msgstr "Текст видобуто"
 #: src/features/ats-checker/messages.ts
 msgid "Text is written one character at a time."
 msgstr "Текст записаний по одному символу за раз."
+
+#: src/features/resume/import/read-file.ts
+msgid "text layer found"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Text sits in the header or footer area."
@@ -6618,9 +6776,17 @@ msgstr "API Ключ видалено."
 msgid "The application that sent you here made an invalid authorization request."
 msgstr "Застосунок, який надіслав вас сюди, надіслав недійсний запит авторизації."
 
+#: src/features/documents/document-actions.tsx
+msgid "The application this letter is for."
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "The checks above are mechanical. This asks a language model what a reader would think of your bullets, and suggests rewrites. It produces no score."
 msgstr "Перевірки вище механічні. Ця функція запитує в мовної моделі, що читач подумав би про ваші пункти, і пропонує варіанти переписування. Вона не дає оцінки."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "The copy is linked to the application, so Check and the assistant use its posting."
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "The deep check could not finish. Please try again."
@@ -6630,18 +6796,13 @@ msgstr "Поглиблену перевірку не вдалося заверш
 msgid "The end is before the start."
 msgstr ""
 
-#. Error shown when AI parsing returns invalid resume structure during import
-#: src/dialogs/resume/import.tsx
-msgid "The imported file could not be parsed into a valid resume."
-msgstr "Імпортований файл не вдалося перетворити на коректне резюме."
+#: src/features/documents/new-document-dialog.tsx
+msgid "The file couldn't be read as a resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "Порядок зберігання тексту сильно розходиться з порядком його читання."
-
-#: src/features/cover-letters/library.tsx
-msgid "The original letter stays in your resume. Each copy can be edited independently."
-msgstr "Оригінал листа залишається у вашому резюме. Кожну копію можна редагувати окремо."
 
 #: src/components/layout/not-found-screen.tsx
 msgid "The page you're looking for may have been moved or no longer exists."
@@ -6751,11 +6912,6 @@ msgstr "Ці дати не будуть прочитані правильно."
 msgid "Thinking"
 msgstr "Мислення"
 
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
-msgid "This action cannot be undone."
-msgstr "Цю дію неможливо скасувати."
-
 #: src/features/settings/pages/account.tsx
 msgid "This action cannot be undone. All your data will be permanently deleted."
 msgstr "Цю дію неможливо скасувати. Усі ваші дані буде остаточно видалено."
@@ -6804,10 +6960,6 @@ msgstr "Цей запис не має дат."
 msgid "This entry will be permanently deleted. This can't be undone."
 msgstr "Цей запис буде видалено назавжди. Цю дію не можна скасувати."
 
-#: src/dialogs/resume/import.tsx
-msgid "This feature requires a connected AI provider. Please set one up in the settings."
-msgstr "Ця функція вимагає підключеного постачальника штучного інтелекту. Будь ласка, налаштуйте його в налаштуваннях."
-
 #: src/features/ats-checker/messages.ts
 msgid "This file contains form fields."
 msgstr "Цей файл містить поля форми."
@@ -6848,6 +7000,10 @@ msgstr "Цей файл великий для резюме."
 msgid "This file is larger than many application forms accept."
 msgstr "Цей файл більший, ніж приймають багато форм заявок."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "This file uses a lot of different fonts."
 msgstr "Цей файл використовує багато різних шрифтів."
@@ -6884,14 +7040,6 @@ msgstr "Цей ключ показується лише один раз. Ско�
 msgid "This link is missing its protocol."
 msgstr "Для цього посилання відсутній протокол."
 
-#: src/dialogs/resume/import.tsx
-msgid "This may take a few minutes, depending on the response of the AI provider. Please do not close the window or refresh the page."
-msgstr "Це може зайняти кілька хвилин, залежно від відповіді AI-провайдера. Будь ласка, не закривайте вікно і не оновлюйте сторінку."
-
-#: src/dialogs/resume/import.tsx
-msgid "This may take a moment. Please do not close the window or refresh the page."
-msgstr "Це може зайняти деякий час. Будь ласка, не закривайте вікно та не оновлюйте сторінку."
-
 #: src/features/ats-checker/report/report-view.tsx
 msgid "This measures how faithfully software can extract this file's text. It does not predict whether an application will be rejected, and no tool can. Your file was read in this browser and never uploaded."
 msgstr "Тут вимірюється, наскільки точно програма може видобути текст із цього файлу. Це не передбачає, чи відхилять заявку, і жоден інструмент цього не вміє. Ваш файл прочитано в цьому браузері й ніколи не надіслано на сервер."
@@ -6908,10 +7056,9 @@ msgstr "Ця сторінка має колонки, і текст видобу�
 msgid "This page is very densely packed."
 msgstr "Ця сторінка дуже щільно заповнена."
 
-#. Error shown when a PDF has no extractable text layer during import
-#: src/dialogs/resume/import.tsx
-msgid "This PDF has no readable text. It is likely a scan, so there is nothing to import."
-msgstr "Цей PDF-файл не містить читабельного тексту. Ймовірно, це сканування, тому імпортувати нічого."
+#: src/features/resume/import/read-file.ts
+msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
+msgstr ""
 
 #: src/features/ats-checker/tool.tsx
 #: src/features/homepage/ats-playground.tsx
@@ -6929,10 +7076,6 @@ msgstr "Цей період закінчується раніше, ніж поч
 #: src/libs/resume/ats.ts
 msgid "This period starts in the future."
 msgstr "Цей період починається в майбутньому."
-
-#: src/features/cover-letters/library.tsx
-msgid "This resume has no embedded cover letters."
-msgstr "Це резюме не містить супровідних листів."
 
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked and cannot be updated."
@@ -7105,9 +7248,23 @@ msgstr "Перекласти застосунок"
 msgid "Translations"
 msgstr "Переклади"
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/trash-page.tsx
+#: src/routes/dashboard/-components/app-shell.tsx
+msgid "Trash"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Trash is empty"
+msgstr ""
+
 #. placeholder {0}: result.suggestion
 #: src/features/resume/share/link-tab.tsx
 msgid "Try {0}"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Try a sample"
 msgstr ""
 
 #: src/components/layout/error-screen.tsx
@@ -7119,6 +7276,10 @@ msgstr "Спробуйте ще раз"
 #: src/features/homepage/feature-explorer.tsx
 msgid "Try the settings to see what visitors can access. When you create your resume, you decide how to share it."
 msgstr "Спробуйте налаштування, щоб побачити, до чого матимуть доступ відвідувачі. Із ким ділитися резюме — вирішуєте ви під час його створення."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Try with a sample resume"
+msgstr ""
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Try your PDF"
@@ -7198,7 +7359,8 @@ msgstr "Двофакторну автентифікацію увімкнено."
 msgid "Two-Factor Authentication QR Code"
 msgstr "QR-код з двофакторною автентифікацією"
 
-#: src/dialogs/resume/import.tsx
+#: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Type"
@@ -7239,12 +7401,14 @@ msgstr "Підкреслення"
 msgid "Underline links"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
 #: src/features/homepage/feature-explorer.tsx
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/template-group.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/section-row.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Undo"
 msgstr "Скасувати"
@@ -7253,17 +7417,18 @@ msgstr "Скасувати"
 msgid "Undo stylesheet edit"
 msgstr "Скасувати редагування таблиці стилів"
 
+#: src/features/documents/document-actions.tsx
+msgid "Unlink"
+msgstr ""
+
 #: src/features/settings/authentication/components/hooks.tsx
 msgid "Unlinking your {providerName} account..."
 msgstr "Від'єднання облікового запису {providerName}..."
 
 #. Primary action button label to unlock a password-protected resume
-#. Resume card context menu action to remove edit lock
-#. Resume card dropdown action to remove edit lock
 #: src/features/auth/pages/resume-password.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Unlock"
 msgstr "Розблокувати"
 
@@ -7272,12 +7437,24 @@ msgstr "Розблокувати"
 msgid "Unlock editing"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+msgid "Unlock it first"
+msgstr ""
+
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Unnamed passkey"
 msgstr "Безіменний ключ доступу"
 
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Untitled"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Untitled letter"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Untitled resume"
 msgstr ""
 
 #: src/features/settings/pages/profile.tsx
@@ -7537,6 +7714,10 @@ msgstr ""
 msgid "Vietnamese"
 msgstr "Вʼєтнамська"
 
+#: src/features/documents/documents-page.tsx
+msgid "View"
+msgstr ""
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "View application"
 msgstr ""
@@ -7587,10 +7768,6 @@ msgstr "Хочете отримати другу думку щодо текст�
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Warning"
 msgstr "Попередження"
-
-#: src/dialogs/resume/import.tsx
-msgid "We couldn't detect the format automatically. Choose it above."
-msgstr "Не вдалося визначити формат автоматично. Оберіть його вище."
 
 #: src/components/layout/not-found-screen.tsx
 msgid "We couldn't find that page"
@@ -7665,10 +7842,6 @@ msgstr "Чого це не робить"
 #: src/features/resume/share/download-tab.tsx
 msgid "What to download"
 msgstr ""
-
-#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
-msgid "When locked, the resume cannot be updated or deleted."
-msgstr "Коли резюме заблоковано, його неможливо оновити або видалити."
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Where"
@@ -7825,10 +7998,6 @@ msgstr "Ви скасували вхід до його завершення."
 msgid "You have unsaved changes that will be lost."
 msgstr "У вас є незбережені зміни, які буде втрачено."
 
-#: src/dialogs/resume/import.tsx
-msgid "You'll be taken to the Integrations page. The file you selected won't be imported."
-msgstr "Ви перейдете на сторінку інтеграцій. Вибраний файл не буде імпортовано."
-
 #: src/features/homepage/community-stats.tsx
 msgid "You’re in good company."
 msgstr "Ви в чудовій компанії."
@@ -7946,21 +8115,8 @@ msgid "Your profile has been updated."
 msgstr "Профіль оновлено."
 
 #: src/dialogs/resume/index.tsx
-msgid "Your resume has been created."
-msgstr "Резюме створено."
-
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
-msgid "Your resume has been deleted."
-msgstr "Резюме видалено."
-
-#: src/dialogs/resume/index.tsx
 msgid "Your resume has been duplicated."
 msgstr "Резюме продубльовано."
-
-#: src/dialogs/resume/import.tsx
-msgid "Your resume has been imported."
-msgstr "Резюме імпортовано."
 
 #: src/dialogs/resume/index.tsx
 msgid "Your resume has been updated."
