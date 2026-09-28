@@ -1,11 +1,22 @@
 import z from "zod";
 
-// Pipeline stages are a fixed enum for v1. If per-user custom stages are ever needed,
-// promote this to a table. `rejected` is a terminal stage; `archived` (a boolean on the
-// row) hides an application from the board without deleting it.
-export const applicationStatusSchema = z.enum(["saved", "applied", "screening", "interview", "offer", "rejected"]);
+// Pipeline stages are a fixed enum. If per-user custom stages are ever needed, promote this to a table.
+// `closed` is the terminal stage, with a reason; it replaced the old `rejected` stage and the `archived` flag.
+export const APPLICATION_STATUSES = ["saved", "applied", "screening", "interview", "offer", "closed"] as const;
+
+export const applicationStatusSchema = z.enum(APPLICATION_STATUSES);
 
 export type ApplicationStatus = z.infer<typeof applicationStatusSchema>;
+
+/** A stage as clients may send it: the retired `rejected` stage still arrives from older clients and means closed. */
+export const applicationStatusInputSchema = z.preprocess(
+	(value) => (value === "rejected" ? "closed" : value),
+	applicationStatusSchema,
+);
+
+export const applicationClosedReasonSchema = z.enum(["not-selected", "withdrew", "accepted-other", "no-response"]);
+
+export type ApplicationClosedReason = z.infer<typeof applicationClosedReasonSchema>;
 
 // Ordered stage metadata shared by the API (validation) and the web board (columns/colors).
 export const STAGES = [
@@ -14,7 +25,7 @@ export const STAGES = [
 	{ value: "screening", label: "Screening", color: "oklch(0.64 0.11 200)" },
 	{ value: "interview", label: "Interview", color: "oklch(0.64 0.11 80)" },
 	{ value: "offer", label: "Offer", color: "oklch(0.64 0.11 150)" },
-	{ value: "rejected", label: "Rejected", color: "oklch(0.64 0.11 27)" },
+	{ value: "closed", label: "Closed", color: "oklch(0.64 0.11 27)" },
 ] as const satisfies ReadonlyArray<{ value: ApplicationStatus; label: string; color: string }>;
 
 export const contactSchema = z.object({
@@ -68,7 +79,8 @@ export type InterviewDetails = z.infer<typeof interviewDetailsSchema>;
 export const applicationTimelineEntrySchema = z.discriminatedUnion("type", [
 	timelineBaseSchema.extend({
 		type: z.literal("stage"),
-		stage: applicationStatusSchema,
+		// History written before the closed stage may still say `rejected`.
+		stage: applicationStatusInputSchema,
 	}),
 	timelineBaseSchema.extend({
 		type: z.literal("note"),

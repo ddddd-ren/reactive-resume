@@ -10,6 +10,7 @@ const dbMock = vi.hoisted(() => ({
 	transaction: vi.fn(),
 }));
 const resumeGetByIdMock = vi.hoisted(() => vi.fn());
+const writeVersionMock = vi.hoisted(() => vi.fn());
 const storageDeleteMock = vi.hoisted(() => vi.fn());
 const uploadFileMock = vi.hoisted(() => vi.fn());
 
@@ -39,6 +40,8 @@ vi.mock("drizzle-orm", () => ({
 vi.mock("../resume/service", () => ({
 	resumeService: { getById: resumeGetByIdMock },
 }));
+vi.mock("../resume/version-history", () => ({ writeVersion: writeVersionMock }));
+vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: vi.fn() } }));
 vi.mock("../storage/service", () => ({
 	getStorageService: () => ({ delete: storageDeleteMock }),
 	uploadFile: uploadFileMock,
@@ -81,6 +84,8 @@ beforeEach(() => {
 	dbMock.transaction.mockReset();
 	dbMock.transaction.mockImplementation((callback) => callback(dbMock));
 	resumeGetByIdMock.mockReset();
+	writeVersionMock.mockReset();
+	writeVersionMock.mockResolvedValue({ id: "version-1" });
 	storageDeleteMock.mockReset();
 	uploadFileMock.mockReset();
 	resumeGetByIdMock.mockResolvedValue({ id: "resume-1" });
@@ -94,7 +99,7 @@ beforeEach(() => {
 
 describe("applicationService.create", () => {
 	it("seeds an initial stage timeline entry with the chosen date", async () => {
-		const values = vi.fn(() => Promise.resolve());
+		const values = vi.fn(() => ({ returning: () => Promise.resolve([]) }));
 		dbMock.insert.mockReturnValue({ values });
 
 		await applicationService.create({
@@ -112,7 +117,7 @@ describe("applicationService.create", () => {
 	});
 
 	it("checks linked resume ownership before inserting", async () => {
-		const values = vi.fn(() => Promise.resolve());
+		const values = vi.fn(() => ({ returning: () => Promise.resolve([]) }));
 		dbMock.insert.mockReturnValue({ values });
 
 		await applicationService.create({
@@ -160,6 +165,58 @@ describe("applicationService.update", () => {
 		await applicationService.update({ id: "app-1", userId: "user-1", resumeId: "resume-1" });
 
 		expect(resumeGetByIdMock).toHaveBeenCalledWith({ id: "resume-1", userId: "user-1" });
+	});
+
+	it("keeps a reason when closing, and clears it and the archive flag on any other stage", async () => {
+		setSelectResults([existing], [existing]);
+		const set = captureSet();
+		await applicationService.update({ id: "app-1", userId: "user-1", status: "closed", closedReason: "withdrew" });
+		await applicationService.update({ id: "app-1", userId: "user-1", status: "applied" });
+
+		const [[closing], [reopening]] = set.mock.calls as unknown as [
+			[Record<string, unknown>],
+			[Record<string, unknown>],
+		];
+		expect(closing).toMatchObject({ status: "closed", closedReason: "withdrew" });
+		expect(reopening).toMatchObject({ status: "applied", closedReason: null, archived: false });
+	});
+});
+
+describe("applicationService sent resume", () => {
+	const sentRow = { ...existing, status: "applied" as const, resumeId: "resume-1", sentResumeVersionId: null };
+
+	it("saves the linked resume as a sent version with its Check score once the application is sent", async () => {
+		const data = structuredClone((await import("@reactive-resume/schema/resume/default")).defaultResumeData);
+		resumeGetByIdMock.mockResolvedValue({ id: "resume-1", data });
+		const setSent = vi.fn(() => ({ where: () => ({ returning: () => Promise.resolve([{ ...sentRow }]) }) }));
+		dbMock.update.mockReturnValueOnce({
+			set: vi.fn(() => ({ where: () => ({ returning: () => Promise.resolve([sentRow]) }) })),
+		});
+		dbMock.update.mockReturnValueOnce({ set: setSent });
+
+		await applicationService.update({ id: "app-1", userId: "user-1", status: "applied" });
+
+		expect(writeVersionMock).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ resumeId: "resume-1", kind: "sent", name: "Stripe", data }),
+		);
+		expect(setSent).toHaveBeenCalledWith({ sentResumeVersionId: "version-1", sentCheckScore: expect.any(Number) });
+	});
+
+	it("saves it once, and not before the application is sent", async () => {
+		setSelectResults([existing], [existing]);
+		const set = vi.fn(() => ({
+			where: () => ({ returning: () => Promise.resolve([{ ...sentRow, sentResumeVersionId: "v0" }]) }),
+		}));
+		dbMock.update.mockReturnValue({ set });
+		await applicationService.update({ id: "app-1", userId: "user-1", notes: "again" });
+
+		dbMock.update.mockReturnValue({
+			set: vi.fn(() => ({ where: () => ({ returning: () => Promise.resolve([{ ...sentRow, status: "saved" }]) }) })),
+		});
+		await applicationService.update({ id: "app-1", userId: "user-1", status: "saved" });
+
+		expect(writeVersionMock).not.toHaveBeenCalled();
 	});
 });
 

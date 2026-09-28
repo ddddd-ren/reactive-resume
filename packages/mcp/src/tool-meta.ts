@@ -6,6 +6,7 @@ import type { ToolAnnotations } from "@modelcontextprotocol/sdk/types.js";
 import z from "zod";
 import { resumePatchOperationsSchema } from "@reactive-resume/ai/tools/resume-tool-contracts";
 import {
+	applicationClosedReasonSchema,
 	applicationStatusSchema,
 	contactSchema,
 	interviewDetailsSchema,
@@ -100,7 +101,13 @@ const pdfBase64Schema = z
 const applicationMutableFieldsSchema = {
 	company: z.string().min(1).optional().describe("Company name."),
 	role: z.string().min(1).optional().describe("Role or job title."),
-	status: applicationStatusSchema.optional().describe("Pipeline stage."),
+	status: applicationStatusSchema
+		.optional()
+		.describe("Pipeline stage. `closed` ends the application; say why in `closedReason`."),
+	closedReason: applicationClosedReasonSchema
+		.nullable()
+		.optional()
+		.describe("Why a closed application ended: not-selected, withdrew, accepted-other or no-response."),
 	location: z.string().nullable().optional(),
 	salary: z.string().nullable().optional(),
 	source: z.string().nullable().optional(),
@@ -108,6 +115,7 @@ const applicationMutableFieldsSchema = {
 	jobDescription: z.string().max(20_000).nullable().optional(),
 	notes: z.string().nullable().optional(),
 	resumeId: z.string().nullable().optional(),
+	coverLetterId: z.string().nullable().optional().describe("The saved cover letter sent with the application."),
 	resumeFileUrl: z.string().nullable().optional(),
 	resumeFileName: z.string().nullable().optional(),
 	coverLetterUrl: z.string().nullable().optional(),
@@ -527,11 +535,11 @@ export const TOOL_META = {
 	[T.updateApplication]: {
 		title: "Update Application",
 		description:
-			"Update application fields, move stages, archive/unarchive, edit contacts, follow-up, tags, or linked resume. Provided fields replace existing values, including contact and tag lists.",
+			"Update application fields, move stages (closing takes a reason), edit contacts, follow-up, tags, or the linked resume and letter. Provided fields replace existing values, including contact and tag lists. Once an application with a linked resume reaches Applied, the resume is saved as a sent version.",
 		inputSchema: z.object({
 			id: applicationIdSchema,
 			...applicationMutableFieldsSchema,
-			archived: z.boolean().optional().describe("Whether the application is hidden from active views."),
+			archived: z.boolean().optional().describe("Deprecated: close the application instead. Kept for older clients."),
 		}),
 		annotations: WRITE_DESTRUCTIVE,
 	},
@@ -601,11 +609,12 @@ export const TOOL_META = {
 	},
 	[T.bulkUpdateApplications]: {
 		title: "Bulk Update Applications",
-		description: "Move, archive/unarchive, or add tags to multiple applications.",
+		description: "Move (closing takes a reason) or add tags to multiple applications.",
 		inputSchema: z.object({
 			ids: z.array(z.string()).min(1),
 			status: applicationStatusSchema.optional(),
-			archived: z.boolean().optional(),
+			closedReason: applicationClosedReasonSchema.nullable().optional(),
+			archived: z.boolean().optional().describe("Deprecated: close the applications instead."),
 			addTags: z.array(z.string()).optional(),
 		}),
 		annotations: WRITE_DESTRUCTIVE,

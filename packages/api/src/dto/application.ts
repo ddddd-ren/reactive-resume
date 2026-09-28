@@ -3,6 +3,8 @@ import z from "zod";
 import * as schema from "@reactive-resume/db/schema";
 import {
 	aiMetadataSchema,
+	applicationClosedReasonSchema,
+	applicationStatusInputSchema,
 	applicationStatusSchema,
 	applicationTimelineEntrySchema,
 	contactSchema,
@@ -34,9 +36,19 @@ const applicationSchema = createSelectSchema(schema.application, {
 	role: z.string().trim().min(1).describe("The role / job title."),
 	location: z.string().trim().nullable(),
 	salary: z.string().trim().nullable(),
-	status: applicationStatusSchema.describe("The current pipeline stage."),
-	archived: z.boolean(),
+	status: applicationStatusSchema.describe("The current pipeline stage. `closed` ends it, with a reason."),
+	closedReason: applicationClosedReasonSchema
+		.nullable()
+		.describe("Why a closed application ended: not-selected, withdrew, accepted-other or no-response."),
+	archived: z.boolean().describe("Deprecated: the closed stage replaced it. Kept in step for older clients."),
 	resumeId: z.string().nullable().describe("The linked Reactive Resume, if any."),
+	coverLetterId: z.string().nullable().describe("The linked saved cover letter, if any."),
+	sentResumeVersionId: z
+		.string()
+		.nullable()
+		.describe("The version of the linked resume saved when the application was sent (reached Applied)."),
+	sentCheckScore: z.number().int().nullable().describe("The resume's Check score when it was sent, out of 100."),
+	requirements: z.array(z.string()).describe("What the posting asks for, as read when the application was added."),
 	source: z.string().trim().nullable(),
 	sourceUrl: httpUrlSchema.nullable(),
 	jobDescription: z.string().max(MAX_APPLICATION_JOB_DESCRIPTION_CHARS).nullable(),
@@ -85,13 +97,16 @@ const editableSchema = applicationSchema.pick({
 	followUpNote: true,
 	contacts: true,
 	resumeId: true,
+	coverLetterId: true,
+	requirements: true,
 	tags: true,
 });
 
 const createInputSchema = editableSchema.partial().extend({
 	company: applicationSchema.shape.company,
 	role: applicationSchema.shape.role,
-	status: applicationStatusSchema.optional(),
+	status: applicationStatusInputSchema.optional(),
+	closedReason: applicationClosedReasonSchema.nullable().optional(),
 	stageEnteredAt: timelineDateSchema.optional(),
 });
 
@@ -125,9 +140,15 @@ export const applicationDto = {
 	},
 
 	update: {
-		input: editableSchema
-			.partial()
-			.extend({ id: z.string(), status: applicationStatusSchema.optional(), archived: z.boolean().optional() }),
+		input: editableSchema.partial().extend({
+			id: z.string(),
+			status: applicationStatusInputSchema.optional(),
+			closedReason: applicationClosedReasonSchema
+				.nullable()
+				.optional()
+				.describe("Why the application closed; kept when status stays closed, cleared by any other stage."),
+			archived: z.boolean().optional(),
+		}),
 		output: applicationSchema.omit({ userId: true }),
 	},
 
@@ -204,7 +225,8 @@ export const applicationDto = {
 	bulkUpdate: {
 		input: z.object({
 			ids: z.array(z.string()).min(1).max(200, "Too many items in a single bulk operation"),
-			status: applicationStatusSchema.optional(),
+			status: applicationStatusInputSchema.optional(),
+			closedReason: applicationClosedReasonSchema.nullable().optional(),
 			archived: z.boolean().optional(),
 			addTags: z.array(z.string()).optional(),
 		}),

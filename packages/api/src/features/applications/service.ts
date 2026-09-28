@@ -1,5 +1,6 @@
 import type {
 	AiMetadata,
+	ApplicationClosedReason,
 	ApplicationStatus,
 	ApplicationTimelineEntry,
 	Contact,
@@ -10,8 +11,11 @@ import { ORPCError } from "@orpc/client";
 import { and, arrayContains, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { lintResumeForAts } from "@reactive-resume/resume/ats";
 import { generateId } from "@reactive-resume/utils/string";
+import { coverLetterService } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
+import { writeVersion } from "../resume/version-history";
 import { getStorageService, uploadFile } from "../storage/service";
 
 function timelineDate(value: Date | string): Date {
@@ -112,6 +116,8 @@ type EditableFields = {
 	followUpNote?: string | null | undefined;
 	contacts?: Contact[] | undefined;
 	resumeId?: string | null | undefined;
+	coverLetterId?: string | null | undefined;
+	requirements?: string[] | undefined;
 	tags?: string[] | undefined;
 };
 
@@ -128,6 +134,48 @@ async function requireOwned(id: string, userId: string) {
 async function assertOwnedResume(userId: string, resumeId: string | null | undefined) {
 	if (!resumeId) return;
 	await resumeService.getById({ id: resumeId, userId });
+}
+
+async function assertOwnedCoverLetter(userId: string, coverLetterId: string | null | undefined) {
+	if (!coverLetterId) return;
+	await coverLetterService.getById({ id: coverLetterId, userId });
+}
+
+// Stages at which an application has been sent.
+const SENT_STAGES = new Set<ApplicationStatus>(["applied", "screening", "interview", "offer"]);
+
+type ApplicationRow = typeof schema.application.$inferSelect;
+
+/**
+ * Once an application with a linked resume has been sent (Applied or later), that resume is saved as a "sent"
+ * version, named after the company, with its Check score at the time. The application keeps pointing at it, so it
+ * can open exactly what went out while the resume moves on.
+ */
+async function recordSentResume(row: ApplicationRow): Promise<ApplicationRow> {
+	if (!row.resumeId || row.sentResumeVersionId || !SENT_STAGES.has(row.status)) return row;
+
+	const resume = await resumeService.getById({ id: row.resumeId, userId: row.userId });
+	const version = await writeVersion(db, {
+		resumeId: row.resumeId,
+		userId: row.userId,
+		data: resume.data,
+		kind: "sent",
+		name: row.company,
+	});
+
+	const [updated] = await db
+		.update(schema.application)
+		.set({ sentResumeVersionId: version.id, sentCheckScore: lintResumeForAts(resume.data).score })
+		.where(eq(schema.application.id, row.id))
+		.returning();
+	return updated ?? row;
+}
+
+/** Closing keeps (or takes) a reason; any other stage clears it, and reopens an application that was archived. */
+function stageFields(status: ApplicationStatus | undefined, closedReason: ApplicationClosedReason | null | undefined) {
+	if (status === undefined) return closedReason !== undefined ? { closedReason } : {};
+	if (status === "closed") return closedReason !== undefined ? { closedReason } : {};
+	return { closedReason: null, archived: false };
 }
 
 async function assertOwnedResumes(userId: string, resumeIds: (string | null | undefined)[]) {
@@ -232,25 +280,32 @@ export const applicationService = {
 			company: string;
 			role: string;
 			status?: ApplicationStatus | undefined;
+			closedReason?: ApplicationClosedReason | null | undefined;
 			stageEnteredAt?: string | undefined;
 		},
 	) => {
-		const { userId, status, stageEnteredAt, ...fields } = input;
+		const { userId, status, stageEnteredAt, closedReason, ...fields } = input;
 		const id = generateId();
 		const initialStatus = status ?? "saved";
 		const activity = [stageEntry(initialStatus, stageEnteredAt)];
 
 		await assertOwnedResume(userId, fields.resumeId);
+		await assertOwnedCoverLetter(userId, fields.coverLetterId);
 
-		await db.insert(schema.application).values({
-			id,
-			userId,
-			status: initialStatus,
-			activity,
-			appliedAt: appliedAtFromTimeline(activity, new Date()),
-			...fields,
-		});
+		const [row] = await db
+			.insert(schema.application)
+			.values({
+				id,
+				userId,
+				status: initialStatus,
+				...(initialStatus === "closed" && closedReason ? { closedReason } : {}),
+				activity,
+				appliedAt: appliedAtFromTimeline(activity, new Date()),
+				...fields,
+			})
+			.returning();
 
+		if (row) await recordSentResume(row);
 		return id;
 	},
 
@@ -292,13 +347,15 @@ export const applicationService = {
 			id: string;
 			userId: string;
 			status?: ApplicationStatus | undefined;
+			closedReason?: ApplicationClosedReason | null | undefined;
 			archived?: boolean | undefined;
 		},
 	) => {
 		await requireOwned(input.id, input.userId);
 
-		const { id, userId, status, archived, ...fields } = input;
+		const { id, userId, status, closedReason, archived, ...fields } = input;
 		await assertOwnedResume(userId, fields.resumeId);
+		await assertOwnedCoverLetter(userId, fields.coverLetterId);
 
 		const statusEntry = status !== undefined ? stageEntry(status) : undefined;
 		// Append in SQL so concurrent notes/stage events are not overwritten by a stale array.
@@ -322,13 +379,14 @@ export const applicationService = {
 				...(status !== undefined ? { status } : {}),
 				...(appliedAtExpr ? { appliedAt: appliedAtExpr } : {}),
 				...(archived !== undefined ? { archived } : {}),
+				...stageFields(status, closedReason),
 				...(activityExpr ? { activity: activityExpr } : {}),
 			})
 			.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
 			.returning();
 
 		if (!updated) throw new ORPCError("NOT_FOUND");
-		return stripUserId(updated);
+		return stripUserId(await recordSentResume(updated));
 	},
 
 	attachDocument: async (input: {
@@ -600,6 +658,7 @@ export const applicationService = {
 		userId: string;
 		ids: string[];
 		status?: ApplicationStatus | undefined;
+		closedReason?: ApplicationClosedReason | null | undefined;
 		archived?: boolean | undefined;
 		addTags?: string[] | undefined;
 	}) => {
@@ -639,11 +698,13 @@ export const applicationService = {
 				...(appliedAtExpr ? { appliedAt: appliedAtExpr } : {}),
 				...(activityExpr ? { activity: activityExpr } : {}),
 				...(input.archived !== undefined ? { archived: input.archived } : {}),
+				...stageFields(input.status, input.closedReason),
 				...(tagsExpr ? { tags: tagsExpr } : {}),
 			})
 			.where(scope)
-			.returning({ id: schema.application.id });
+			.returning();
 
+		for (const row of rows) await recordSentResume(row);
 		return { updated: rows.length };
 	},
 

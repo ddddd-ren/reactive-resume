@@ -1,13 +1,16 @@
 import type {
 	AiMetadata,
+	ApplicationClosedReason,
 	ApplicationStatus,
 	ApplicationTimelineEntry,
 	Contact,
 } from "@reactive-resume/schema/applications/data";
+import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import * as pg from "drizzle-orm/pg-core";
 import { generateId } from "@reactive-resume/utils/string";
 import { user } from "./auth";
-import { resume } from "./resume";
+import { coverLetter } from "./cover-letter";
+import { resume, resumeVersion } from "./resume";
 
 // A tracked job application. Points at the live Reactive Resume that was sent (resumeId),
 // which is the reason this lives inside the product rather than a generic tracker.
@@ -29,15 +32,26 @@ export const application = pg.pgTable(
 		salary: pg.text("salary"),
 		// Fixed pipeline stage enum (see applicationStatusSchema); stored as text per repo convention.
 		status: pg.text("status").$type<ApplicationStatus>().notNull().default("saved"),
+		// Why a closed application ended (not selected, withdrew, accepted another offer, no response). Insights use it.
+		closedReason: pg.text("closed_reason").$type<ApplicationClosedReason>(),
+		// Superseded by the closed stage, which absorbed it; kept while older app versions may still read it.
 		archived: pg.boolean("archived").notNull().default(false),
 		// Live link to one of the user's resumes. Kept on resume delete (set null) so the
 		// application history survives.
 		resumeId: pg.text("resume_id").references(() => resume.id, { onDelete: "set null" }),
+		// The saved cover letter sent with this application.
+		// Typed explicitly: cover_letter references application too, and the cycle would defeat inference.
+		coverLetterId: pg.text("cover_letter_id").references((): AnyPgColumn => coverLetter.id, { onDelete: "set null" }),
+		// The linked resume as it was when the application reached Applied, and its Check score then.
+		sentResumeVersionId: pg.text("sent_resume_version_id").references(() => resumeVersion.id, { onDelete: "set null" }),
+		sentCheckScore: pg.smallint("sent_check_score"),
 		source: pg.text("source"),
 		tags: pg.text("tags").array().notNull().default([]),
 		// --- AI reservations (no working AI this pass; see feature AI roadmap) ---
 		sourceUrl: pg.text("source_url"),
 		jobDescription: pg.text("job_description"),
+		// What the posting asks for, as read from it when the application was added.
+		requirements: pg.jsonb("requirements").notNull().$type<string[]>().default([]),
 		matchScore: pg.integer("match_score"),
 		aiMetadata: pg.jsonb("ai_metadata").$type<AiMetadata>(),
 		notes: pg.text("notes"),
