@@ -8,8 +8,7 @@ The ATS checker answers one question: **can software read your resume?**
 It opens your PDF the way a parser would, pulls the text out, and reports what survived and what did not. Everything runs in your browser. The file is never uploaded, nothing is stored, and no account is needed.
 
 <Info>
-  Use it at [rxresu.me/ats-checker](https://rxresu.me/ats-checker), or from the **ATS Check** section in the builder's
-  right sidebar.
+  Use it at [rxresu.me/ats-checker](https://rxresu.me/ats-checker), or from **Check** in the editor.
 </Info>
 
 ## What it measures
@@ -39,39 +38,18 @@ Employment gaps, writing style, and length are reported as **unscored tips**. Th
 
 ## Reading the report
 
-The report has three parts.
+**A score from 0 to 100.** It is the weighted result of five categories: readability, layout, sections, contact details, and dates. A blocking problem puts a hard ceiling on it: a file with no text layer cannot score well just because its margins are tidy. The score reflects how reliably text is extracted, not your chances.
 
-**A score from 0 to 100.** It is the weighted result of five categories: readability, layout, sections, contact details, and dates. A blocking problem puts a hard ceiling on it: a file with no text layer cannot score well just because its margins are tidy.
+**What could cost you a match.** Each category with something to fix opens to say what went wrong and what to do about it. If you pasted a job posting, a last row counts the posting's terms your resume already has and lists the missing ones.
 
-**A category breakdown.** Each category expands into the checks that ran, what failed, and what to do about it. Every finding cites evidence from your file: the text that triggered it and the page it sits on.
+**Your file, two ways.** **Original page** shows the PDF as a person sees it. **As software reads it** shows the text a parser extracts, in the order it comes out, so you can see a sidebar landing in the middle of your experience or icons turning into boxes.
 
-**A denominator you can trust.** The report says "X of Y applicable checks passed" and states how many were skipped. A check is skipped when it cannot honestly run. Section detection only works on resumes written in English, for instance, and some checks need page contents that a very large file may not yield in time.
+## Fixing the issues
 
-## Checking from the builder
+**Fix these in the editor** imports the same file into a free Reactive Resume and opens it in **Check**, with the same issues waiting there. If you aren't signed in, you create an account first; the file waits in your browser meanwhile and is imported as soon as you're back. It's read in your browser, as the check was.
 
-The **ATS Check** section in the builder's right sidebar has two tiers:
+## Checking from the editor
 
-<Steps>
-  <Step title="Live checks">
-    These run as you type, against your resume data rather than a file. They catch missing dates, malformed links,
-    prose in a narrow sidebar, and similar problems before you export anything.
-  </Step>
+**Check** in the editor runs the same kind of checks as you type, against your resume rather than a file, and pins each issue to its line. **Deep check** renders your resume to a PDF in your browser and runs the full file check against those bytes, which is the same file a recruiter would receive.
 
-  <Step title="Deep check">
-    Click **Run deep check** to render your current resume to a PDF in your browser and run the full file check against
-    those bytes, which is the same file a recruiter would receive.
-  </Step>
-</Steps>
-
-## Adding an AI review
-
-Once a report exists, you can ask an AI provider to review the **writing**: weak phrasing, bullets that describe duties rather than outcomes, and where a rewrite would land better.
-
-<Info>
-  The AI review needs your own tested AI provider in **Settings → AI & developer**. See [Using Artificial
-  Intelligence](/guides/using-ai).
-</Info>
-
-It sends the text already extracted from your PDF, plus the job description if you pasted one, to the provider you pick. The PDF file itself is never uploaded.
-
-The AI review returns no score. The deterministic report owns the only number in this feature, and an AI-adjusted score would make it mean less. Treat the review as a second opinion on your writing, not a verdict.
+For a review of the writing itself, use **Check → Writing**, which asks your own AI provider for suggested rewrites. See [Using Artificial Intelligence](/guides/using-ai).
