@@ -9,7 +9,7 @@ import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { assertPdfDownloadReceived } from "../fixtures/offline-font-diagnostic";
 import { classifyRasterMeasurements, locatePdfMarkerBoxes } from "../fixtures/offline-font-markers";
 import { offlineFontScriptSamples, seedOfflineFontResume } from "../fixtures/offline-fonts";
-import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
+import { createSampleResumeFromDashboard, openDownloadDialog, openSidebarSection } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 const diagnosticEnabled = process.env.OFFLINE_FONT_DIAGNOSTIC === "1";
@@ -360,10 +360,12 @@ test.describe("offline font diagnostic", () => {
 		let rasterEvidenceStatus = "not-attempted";
 		try {
 			await page.goto(fixture.builderURL);
-			await openSidebarSection(page, "Export");
-			await page.getByRole("button", { name: /Choose PDF, DOCX, Markdown, or JSON/ }).click();
+			await openDownloadDialog(page);
 			const downloadPromise = page.waitForEvent("download", { timeout: 20_000 });
-			await page.getByRole("button", { name: "Download PDF", exact: true }).click();
+			await page
+				.getByRole("dialog", { name: "Download" })
+				.getByRole("button", { name: "Download PDF", exact: true })
+				.click();
 			const download = await downloadPromise;
 			downloadStatus = "received";
 			const path = testInfo.outputPath("offline-font-browser-download.pdf");

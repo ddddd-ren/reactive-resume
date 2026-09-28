@@ -1,14 +1,11 @@
 import { readFile } from "node:fs/promises";
-import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
+import { createSampleResumeFromDashboard, openDownloadDialog, openSidebarSection } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 test("exports and imports a resume JSON backup", async ({ authPage: page }, testInfo) => {
 	await createSampleResumeFromDashboard(page, testInfo);
 
-	await openSidebarSection(page, "Export");
-
-	// Downloads now live in a dialog: open it, then trigger the JSON export.
-	await page.getByRole("button", { name: /Choose PDF, DOCX, Markdown, or JSON/ }).click();
+	await openDownloadDialog(page);
 	const downloadPromise = page.waitForEvent("download");
 	await page.getByRole("button", { name: "Download JSON" }).click();
 	const download = await downloadPromise;

@@ -2,7 +2,7 @@ import type { Page, TestInfo } from "@playwright/test";
 import { readFile, writeFile } from "node:fs/promises";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { Pool } from "pg";
-import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
+import { createSampleResumeFromDashboard, openDownloadDialog, openSidebarSection } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 const longWord = "Gewerbesteuerdurchführungsverordnung";
@@ -61,10 +61,12 @@ async function seedHyphenationResume(page: Page) {
 }
 
 async function downloadPdfText(page: Page, testInfo: TestInfo, name: string) {
-	await openSidebarSection(page, "Export");
-	await page.getByRole("button", { name: /Choose PDF, DOCX, Markdown, or JSON/ }).click();
+	await openDownloadDialog(page);
 	const pending = page.waitForEvent("download");
-	await page.getByRole("button", { name: "Download PDF", exact: true }).click();
+	await page
+		.getByRole("dialog", { name: "Download" })
+		.getByRole("button", { name: "Download PDF", exact: true })
+		.click();
 	const download = await pending;
 	const path = testInfo.outputPath(`${name}.pdf`);
 	await download.saveAs(path);

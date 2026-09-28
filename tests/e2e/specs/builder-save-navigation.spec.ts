@@ -16,8 +16,8 @@ function waitSave(page: Page) {
 	);
 }
 async function clickDashboardWithoutNavigationWait(page: Page) {
-	const dashboardButton = page.getByRole("button", { name: "Go to resumes dashboard", exact: true });
-	const box = await dashboardButton.boundingBox();
+	const dashboardLink = page.getByRole("link", { name: "Back to documents", exact: true });
+	const box = await dashboardLink.boundingBox();
 	if (!box) throw new Error("Dashboard navigation button is not visible.");
 	await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
 }
@@ -38,7 +38,7 @@ test("retries a failed autosave before leaving the builder", async ({ authPage: 
 		await route.abort("failed");
 	});
 	await page.getByLabel("Name", { exact: true }).fill("Draft recovered before leaving");
-	await expect(page.getByText("Your latest changes could not be saved.", { exact: true })).toBeVisible();
+	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
 	await page.unroute(updateUrl);
 	const arrived = barrier();
 	const release = barrier();
@@ -65,10 +65,10 @@ test("retains the current draft when saving during navigation fails", async ({ a
 		await route.abort("failed");
 	});
 	await page.getByLabel("Name", { exact: true }).fill("Keep unsaved draft");
-	await expect(page.getByText("Your latest changes could not be saved.", { exact: true })).toBeVisible();
+	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
 	await clickDashboardWithoutNavigationWait(page);
 	await expect.poll(() => attempts).toBe(2);
-	await expect(page.getByRole("status").filter({ hasText: "Couldn't save" })).toBeVisible();
+	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
 	expect(page.url()).toBe(url);
 	await expect(page.getByLabel("Name", { exact: true })).toHaveValue("Keep unsaved draft");
 	await page.unroute(updateUrl);

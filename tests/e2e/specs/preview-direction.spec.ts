@@ -2,15 +2,22 @@ import type { Page } from "@playwright/test";
 import { Pool } from "pg";
 import { expect, test } from "../fixtures/test";
 
+// The page is centered in the canvas beside the panel, not in the viewport. The canvas's scrollbar sits on the
+// left in right-to-left layouts, so the center comes from its content box.
 async function expectCenteredPreview(page: Page) {
 	const canvas = page.locator('[aria-hidden="false"] canvas').first();
 	await expect(canvas).toBeVisible();
 	await expect
-		.poll(async () => {
-			const bounds = await canvas.boundingBox();
-			if (!bounds) return Number.POSITIVE_INFINITY;
-			return Math.abs(bounds.x + bounds.width / 2 - (page.viewportSize()?.width ?? 0) / 2);
-		})
+		.poll(() =>
+			canvas.evaluate((element) => {
+				let scroller = element.parentElement;
+				while (scroller && getComputedStyle(scroller).overflowY !== "auto") scroller = scroller.parentElement;
+				if (!scroller) return Number.POSITIVE_INFINITY;
+				const bounds = element.getBoundingClientRect();
+				const center = scroller.getBoundingClientRect().left + scroller.clientLeft + scroller.clientWidth / 2;
+				return Math.abs(bounds.left + bounds.width / 2 - center);
+			}),
+		)
 		.toBeLessThan(1);
 }
 
@@ -37,34 +44,22 @@ for (const uiLanguage of ["English", "Arabic"]) {
 			} finally {
 				await pool.end();
 			}
-			await page.goto(builderUrl);
+			// The editor has no account menu; the UI language comes from the same cookie the language picker sets.
 			if (uiLanguage === "Arabic") {
-				await page.getByRole("button", { name: "Account menu", exact: true }).click();
-				await page.getByRole("menuitem", { name: "Language", exact: true }).click();
-				await page.getByRole("menuitemradio", { name: "Arabic", exact: true }).click();
-				await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
-				await page.reload();
+				await page.context().addCookies([{ name: "locale", value: "ar-SA", url: new URL(builderUrl).origin }]);
 			}
+			await page.goto(builderUrl);
+			await expect(page.locator("html")).toHaveAttribute("dir", uiLanguage === "Arabic" ? "rtl" : "ltr");
 			await expectCenteredPreview(page);
-			const zoom = page.getByRole("button", {
-				name: uiLanguage === "Arabic" ? "مستوى التكبير" : "Zoom level",
-				exact: true,
-			});
+			// The zoom bar's middle button shows "Fit" or the zoom level; its name isn't translated yet.
+			const zoom = page.getByRole("button", { name: "Fit page to width", exact: true });
 			await expect(zoom).toHaveCSS("direction", uiLanguage === "Arabic" ? "rtl" : "ltr");
-			await zoom.click();
-			await page
-				.getByRole("menuitem", {
-					name: uiLanguage === "Arabic" ? "الحجم الفعلي (100%)" : "Actual size (100%)",
-					exact: true,
-				})
-				.click();
-			await expect(zoom).toHaveText("100%");
+			await expect(zoom).not.toHaveText(/%/);
+			await page.getByRole("button", { name: uiLanguage === "Arabic" ? "تصغير" : "Zoom out", exact: true }).click();
+			await expect(zoom).toHaveText(/^\d+%$/);
 			await expectCenteredPreview(page);
 			await zoom.click();
-			await page
-				.getByRole("menuitem", { name: uiLanguage === "Arabic" ? "مناسب للعرض" : "Fit to view", exact: true })
-				.click();
-			await expect(zoom).toHaveText("75%");
+			await expect(zoom).not.toHaveText(/%/);
 			await expectCenteredPreview(page);
 			const direction = await page
 				.locator('[aria-hidden="false"] canvas')

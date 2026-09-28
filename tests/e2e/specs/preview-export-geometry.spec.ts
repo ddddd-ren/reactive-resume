@@ -5,7 +5,7 @@ import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { Pool } from "pg";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateFilename } from "@reactive-resume/utils/file";
-import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
+import { createSampleResumeFromDashboard, openDownloadDialog } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 type CapturedPdfWindow = Window & { resumePdfBytes?: number[] };
@@ -37,7 +37,6 @@ type PreviewPageGeometry = {
 type PreviewGeometry = {
 	devicePixelRatio: number;
 	pages: PreviewPageGeometry[];
-	transform: { matrix: string; scaleX: number; scaleY: number };
 	viewportClip: {
 		clientHeight: number;
 		clientWidth: number;
@@ -72,7 +71,6 @@ const SCENARIOS: GeometryScenario[] = FORMATS.flatMap((format) =>
 // Page count, ink presence, sentinels, and export target remain strict.
 const PDF_COORDINATE_TOLERANCE = 0.05;
 const DOM_LAYOUT_TOLERANCE = 1;
-const TRANSFORM_SCALE_TOLERANCE = 0.005;
 const RASTER_CHANNEL_TOLERANCE = 32;
 const RASTER_MISMATCH_RATIO_LIMIT = 0.02;
 const RASTER_MISMATCH_PIXEL_LIMIT = 200_000;
@@ -322,26 +320,19 @@ async function capturePreviewBytes(page: Page, expectedText: string) {
 	return { bytes, geometry };
 }
 
-async function waitForStablePreview(page: Page, expectedZoom: number) {
+// The page scale sizes the canvases (there's no CSS transform); the page canvas scrolls them.
+async function waitForStablePreview(page: Page, expectedZoom: number, mediaBoxWidth: number) {
 	await page.waitForFunction(
-		({ expectedZoom: targetZoom }) => {
-			const wrapper = document.querySelector<HTMLElement>(".react-transform-wrapper");
-			const content = document.querySelector<HTMLElement>(".react-transform-component");
+		({ expectedWidth }) => {
 			const active = document.querySelector<HTMLElement>(
 				'[aria-hidden="false"][data-resume-preview-template="rhyhorn"]',
 			);
 			const canvases = [...(active?.querySelectorAll<HTMLCanvasElement>('canvas[aria-label^="Resume page"]') ?? [])];
-			if (!wrapper || !content || canvases.length === 0) return false;
+			let scroller = active?.parentElement ?? null;
+			while (scroller && getComputedStyle(scroller).overflowY !== "auto") scroller = scroller.parentElement;
+			if (!scroller || canvases.length === 0) return false;
 
-			const transform = getComputedStyle(content).transform;
-			const matrix = transform === "none" ? new DOMMatrixReadOnly() : new DOMMatrixReadOnly(transform);
 			const signature = JSON.stringify([
-				matrix.a,
-				matrix.b,
-				matrix.c,
-				matrix.d,
-				matrix.e,
-				matrix.f,
 				...canvases.flatMap((canvas) => {
 					const rect = canvas.getBoundingClientRect();
 					return [rect.x, rect.y, rect.width, rect.height, canvas.width, canvas.height, canvas.toDataURL("image/png")];
@@ -354,17 +345,12 @@ async function waitForStablePreview(page: Page, expectedZoom: number) {
 			const count = previous?.signature === signature ? previous.count + 1 : 1;
 			(window as unknown as Record<string, unknown>)[stateKey] = { count, signature };
 
+			const firstWidth = Number.parseFloat(canvases[0]?.style.width ?? "");
 			return (
-				Math.abs(matrix.a - targetZoom) < 0.005 &&
-				Math.abs(matrix.d - targetZoom) < 0.005 &&
-				matrix.b === 0 &&
-				matrix.c === 0 &&
-				wrapper.clientWidth > 0 &&
-				wrapper.clientHeight > 0 &&
-				count >= 3
+				Math.abs(firstWidth - expectedWidth) < 1 && scroller.clientWidth > 0 && scroller.clientHeight > 0 && count >= 3
 			);
 		},
-		{ expectedZoom },
+		{ expectedWidth: mediaBoxWidth * expectedZoom },
 		{ polling: "raf", timeout: 15_000 },
 	);
 }
@@ -373,14 +359,12 @@ function capturePreviewGeometry(page: Page): Promise<PreviewGeometry> {
 	return page.evaluate(() => {
 		const active = document.querySelector<HTMLElement>('[aria-hidden="false"][data-resume-preview-template="rhyhorn"]');
 		if (!active) throw new Error("Missing active Rhyhorn preview layer.");
-		const viewportElement = document.querySelector<HTMLElement>(".react-transform-wrapper");
-		const transformElement = document.querySelector<HTMLElement>(".react-transform-component");
-		if (!viewportElement || !transformElement || !viewportElement.contains(active)) {
-			throw new Error("Missing preview transform wrapper or clipped active layer.");
+		let viewportElement = active.parentElement;
+		while (viewportElement && getComputedStyle(viewportElement).overflowY !== "auto") {
+			viewportElement = viewportElement.parentElement;
 		}
+		if (!viewportElement) throw new Error("Missing the page canvas around the active layer.");
 		const viewportRect = viewportElement.getBoundingClientRect();
-		const transform = getComputedStyle(transformElement).transform;
-		const matrix = transform === "none" ? new DOMMatrixReadOnly() : new DOMMatrixReadOnly(transform);
 		const pages = [...active.querySelectorAll<HTMLCanvasElement>('canvas[aria-label^="Resume page"]')].map((canvas) => {
 			const wrapper = canvas.parentElement;
 			if (!wrapper) throw new Error("Missing preview canvas wrapper.");
@@ -408,7 +392,6 @@ function capturePreviewGeometry(page: Page): Promise<PreviewGeometry> {
 		return {
 			devicePixelRatio: window.devicePixelRatio,
 			pages,
-			transform: { matrix: transform, scaleX: matrix.a, scaleY: matrix.d },
 			viewportClip: {
 				clientHeight: viewportElement.clientHeight,
 				clientWidth: viewportElement.clientWidth,
@@ -544,21 +527,17 @@ function expectSamePdfGeometry(preview: PdfGeometry, downloaded: PdfGeometry, la
 	}
 }
 
-async function setZoom(page: Page, zoom: 75 | 100 | 115) {
-	const zoomLevel = page.getByRole("button", { name: "Zoom level", exact: true });
-	if (zoom === 75) {
-		await expect(zoomLevel).toHaveText("75%");
-		return;
+// At 1920px wide, Fit caps at the 150% maximum; each Zoom out step is 10%.
+const ZOOM_LEVELS = [150, 100, 70] as const;
+
+async function setZoom(page: Page, zoom: (typeof ZOOM_LEVELS)[number]) {
+	const zoomLevel = page.getByRole("button", { name: "Fit page to width", exact: true });
+	await zoomLevel.click();
+	await expect(zoomLevel).toHaveText("Fit");
+	for (let level = 150; level > zoom; level -= 10) {
+		await page.getByRole("button", { name: "Zoom out", exact: true }).click();
 	}
-	if (zoom === 100) {
-		await zoomLevel.click();
-		await page.getByRole("menuitem", { name: "Actual size (100%)", exact: true }).click();
-		await expect(zoomLevel).toHaveText("100%");
-		return;
-	}
-	await setZoom(page, 100);
-	await page.getByRole("button", { name: "Zoom in", exact: true }).click();
-	await expect(zoomLevel).toHaveText("115%");
+	if (zoom !== 150) await expect(zoomLevel).toHaveText(`${zoom}%`);
 }
 
 async function runGeometryMatrix(page: Page, testInfo: TestInfo, scenarios: GeometryScenario[], expectedDpr: number) {
@@ -584,31 +563,32 @@ async function runGeometryMatrix(page: Page, testInfo: TestInfo, scenarios: Geom
 		await writeFile(testInfo.outputPath(`${scenarioName(scenario)}.preview.pdf`), previewBytes);
 		const zoomReports: Array<{ previewGeometry: PreviewGeometry; downloadedPdf: PdfGeometry; zoom: number }> = [];
 
-		for (const zoom of [75, 100, 115] as const) {
+		for (const zoom of ZOOM_LEVELS) {
 			await setZoom(page, zoom);
-			await waitForStablePreview(page, zoom / 100);
+			await waitForStablePreview(page, zoom / 100, previewPdf.pages[0]?.mediaBox.width ?? 0);
 			const previewGeometry = await capturePreviewGeometry(page);
 			expect(previewGeometry.devicePixelRatio).toBe(expectedDpr);
 			expect(previewGeometry.viewport).toEqual({ height: 1000, width: 1920 });
-			expect(previewGeometry.viewportClip.clientWidth).toBe(1920);
-			expect(previewGeometry.viewportClip.clientHeight).toBe(1000);
-			expect(previewGeometry.viewportClip.overflowX).toBe("hidden");
-			expect(previewGeometry.viewportClip.overflowY).toBe("hidden");
-			expect(previewGeometry.viewportClip.scrollWidth).toBeGreaterThanOrEqual(1920);
-			expect(previewGeometry.viewportClip.scrollHeight).toBeGreaterThanOrEqual(1000);
-			expect(Math.abs(previewGeometry.transform.scaleX - zoom / 100)).toBeLessThanOrEqual(TRANSFORM_SCALE_TOLERANCE);
-			expect(Math.abs(previewGeometry.transform.scaleY - zoom / 100)).toBeLessThanOrEqual(TRANSFORM_SCALE_TOLERANCE);
-			expect(previewGeometry.transform.matrix).toMatch(/^matrix/);
+			expect(previewGeometry.viewportClip.clientWidth).toBeGreaterThan(0);
+			expect(previewGeometry.viewportClip.clientHeight).toBeGreaterThan(0);
+			expect(previewGeometry.viewportClip.overflowY).toBe("auto");
+			expect(previewGeometry.viewportClip.scrollWidth).toBeGreaterThanOrEqual(previewGeometry.viewportClip.clientWidth);
+			expect(previewGeometry.viewportClip.scrollHeight).toBeGreaterThanOrEqual(
+				previewGeometry.viewportClip.clientHeight,
+			);
 			const currentFixture = await readPersistedFixture(resumeId);
 			expect(currentFixture.data, `${scenarioName(scenario)} zoom ${zoom} persisted source JSON`).toEqual(data);
 			expect(currentFixture.revision, `${scenarioName(scenario)} zoom ${zoom} persisted source revision`).toBe(
 				persistedFixture.revision,
 			);
 			const pending = page.waitForEvent("download");
-			await openSidebarSection(page, "Export");
-			await page.getByRole("button", { name: "Choose PDF, DOCX, Markdown, or JSON" }).click();
-			await expect(page.getByRole("tab", { name: "Resume", exact: true })).toHaveAttribute("aria-selected", "true");
-			await page.getByRole("button", { name: "Download PDF", exact: true }).click();
+			await openDownloadDialog(page);
+			const downloadDialog = page.getByRole("dialog", { name: "Download" });
+			await expect(downloadDialog.getByRole("tab", { name: "Resume", exact: true })).toHaveAttribute(
+				"aria-selected",
+				"true",
+			);
+			await downloadDialog.getByRole("button", { name: "Download PDF", exact: true }).click();
 			const download = await pending;
 			expect(download.suggestedFilename(), `${scenarioName(scenario)} zoom ${zoom} export target`).toBe(
 				expectedExportFilename,
@@ -630,11 +610,12 @@ async function runGeometryMatrix(page: Page, testInfo: TestInfo, scenarios: Geom
 				expect(pdfPage).toBeDefined();
 				if (!pdfPage) continue;
 				const renderScale = pageGeometry.canvas.width / pageGeometry.canvas.cssWidth;
-				expect(Math.abs(pageGeometry.canvas.cssWidth - pdfPage.mediaBox.width)).toBeLessThanOrEqual(
-					PDF_COORDINATE_TOLERANCE,
+				const scale = zoom / 100;
+				expect(Math.abs(pageGeometry.canvas.cssWidth - pdfPage.mediaBox.width * scale)).toBeLessThanOrEqual(
+					DOM_LAYOUT_TOLERANCE,
 				);
-				expect(Math.abs(pageGeometry.canvas.cssHeight - pdfPage.mediaBox.height)).toBeLessThanOrEqual(
-					PDF_COORDINATE_TOLERANCE,
+				expect(Math.abs(pageGeometry.canvas.cssHeight - pdfPage.mediaBox.height * scale)).toBeLessThanOrEqual(
+					DOM_LAYOUT_TOLERANCE,
 				);
 				expect(renderScale, `${scenarioName(scenario)} measured render scale`).toBeGreaterThan(0);
 				expect(Math.abs(pageGeometry.canvas.width - pageGeometry.canvas.cssWidth * renderScale)).toBeLessThanOrEqual(
@@ -643,15 +624,12 @@ async function runGeometryMatrix(page: Page, testInfo: TestInfo, scenarios: Geom
 				expect(Math.abs(pageGeometry.canvas.height - pageGeometry.canvas.cssHeight * renderScale)).toBeLessThanOrEqual(
 					DOM_LAYOUT_TOLERANCE,
 				);
-				expect(
-					Math.abs(pageGeometry.canvasRect.width - pdfPage.mediaBox.width * previewGeometry.transform.scaleX),
-				).toBeLessThanOrEqual(DOM_LAYOUT_TOLERANCE);
-				expect(
-					Math.abs(pageGeometry.canvasRect.height - pdfPage.mediaBox.height * previewGeometry.transform.scaleY),
-				).toBeLessThanOrEqual(DOM_LAYOUT_TOLERANCE);
-				expect(
-					Math.abs(pageGeometry.canvasRect.width / pageGeometry.canvas.cssWidth - previewGeometry.transform.scaleX),
-				).toBeLessThanOrEqual(TRANSFORM_SCALE_TOLERANCE);
+				expect(Math.abs(pageGeometry.canvasRect.width - pageGeometry.canvas.cssWidth)).toBeLessThanOrEqual(
+					DOM_LAYOUT_TOLERANCE,
+				);
+				expect(Math.abs(pageGeometry.canvasRect.height - pageGeometry.canvas.cssHeight)).toBeLessThanOrEqual(
+					DOM_LAYOUT_TOLERANCE,
+				);
 				expect(pageGeometry.wrapper.width, `${scenarioName(scenario)} wrapper width`).toBeGreaterThan(0);
 				expect(pageGeometry.wrapper.height, `${scenarioName(scenario)} wrapper height`).toBeGreaterThan(0);
 				expect(pageGeometry.canvas.width, `${scenarioName(scenario)} canvas bitmap width`).toBeGreaterThan(0);

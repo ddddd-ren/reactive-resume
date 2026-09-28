@@ -119,8 +119,8 @@ test("sorts Experience once while preserving undo, persistence, later edits, and
 		})
 		.toEqual({ ids: ["current-sort", "older-sort", "unknown-sort"], currentPeriod: "2010 - 2011" });
 
-	await page.getByRole("button", { name: "Resume options" }).click();
-	await page.getByRole("menuitem", { name: "Lock" }).click();
-	await page.getByRole("alertdialog").getByRole("button", { name: "Confirm" }).click();
+	// The document menu locks without asking; unlocking is one click away.
+	await page.getByRole("button", { name: /^Document menu/ }).click();
+	await page.getByRole("menuitem", { name: "Lock editing" }).click();
 	await expect(section.getByRole("button", { name: "Section options" })).toBeDisabled();
 });
