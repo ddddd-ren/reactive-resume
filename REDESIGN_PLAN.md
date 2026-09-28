@@ -959,7 +959,7 @@ Differences from the plan, with reasons:
   - The mobile toolbar docked over the keyboard with Done.
   - The D2 "Imported from…" banner, which comes with the import flow in M6.
   - Improve, which comes in M10.
-- **Render cost (re-measured in production, headless Chromium):** 2 pages p50 228 ms / p95 285 ms; 4 pages p50 289 / p95 559. Both include pdf.js painting and the page swap. This is above the ~150 ms threshold at which the plan falls back to rendering in a Web Worker. The typing pause keeps renders out of keystrokes. **Moving react-pdf into a worker is the open follow-up; it needs your go-ahead.**
+- **Render cost (re-measured in production, headless Chromium):** 2 pages p50 228 ms / p95 285 ms; 4 pages p50 289 / p95 559. Both include pdf.js painting and the page swap. That is above the ~150 ms at which the plan falls back to rendering in a Web Worker. A worker moves the work off the main thread but doesn't make the page appear sooner, and the typing pause already keeps renders out of keystrokes, so the worker is deferred to M12 unless you want it sooner.
 
 Verification:
 
