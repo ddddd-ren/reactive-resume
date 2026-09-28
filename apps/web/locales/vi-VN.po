@@ -113,12 +113,18 @@ msgstr ""
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr ""
 
+#. placeholder {0}: output.skipped.length
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
+msgstr ""
+
 #. placeholder {0}: report.ignored.length
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
 msgstr ""
 
 #. placeholder {0}: proposals.length
+#: src/features/assistant/conversation.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr ""
@@ -190,6 +196,7 @@ msgid "{0} days left"
 msgstr ""
 
 #. placeholder {0}: proposals.length
+#: src/features/assistant/document.ts
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "{0} edits applied"
 msgstr ""
@@ -231,6 +238,12 @@ msgstr "{0} trên {1} kiểm tra áp dụng được đã đạt"
 msgid "{0} of {1} applicable checks passed."
 msgstr "{0} trên {1} kiểm tra áp dụng được đã đạt."
 
+#. placeholder {0}: thread.editsAccepted
+#. placeholder {1}: thread.editsProposed
+#: src/features/assistant/assistant-panel.tsx
+msgid "{0} of {1} edits accepted"
+msgstr ""
+
 #. placeholder {0}: result.found.length
 #. placeholder {1}: result.total
 #: src/features/resume/editor/check/job-match.tsx
@@ -256,6 +269,17 @@ msgstr ""
 #: src/features/ats-checker/report/jd-coverage.tsx
 msgid "{0} of {1} terms found"
 msgstr "Tìm thấy {0} trên {1} từ khóa"
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/conversation.tsx
+msgid "{0} posting"
+msgstr ""
+
+#. placeholder {0}: props.providerLabel
+#. placeholder {1}: getOrpcErrorMessage(error, { fallback: t`an error`, allowServerMessage: true })
+#: src/features/assistant/conversation.tsx
+msgid "{0} returned “{1}”. Your message is kept."
+msgstr ""
 
 #. placeholder {0}: data.basics.name
 #: src/features/homepage/export-playground.tsx
@@ -293,6 +317,11 @@ msgstr ""
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
 msgid "{0}. Issue resolved."
+msgstr ""
+
+#. placeholder {0}: proposals.length
+#: src/features/assistant/conversation.tsx
+msgid "{accepted} of {0} applied"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -385,6 +414,14 @@ msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{passedRules} of {totalRules} checks pass."
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -553,10 +590,6 @@ msgstr "Trình tạo sơ yếu lý lịch mã nguồn mở, miễn phí. Đưa k
 msgid "A free, open-source resume builder. Yours to keep, yours to export, yours to host."
 msgstr "Trình tạo sơ yếu lý lịch mã nguồn mở, miễn phí. Nó là của bạn: giữ lại, xuất ra và tự lưu trữ."
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "A friendly nudge for the recruiter"
-msgstr "Một lời nhắc thân thiện cho nhà tuyển dụng"
-
 #: src/features/ats-checker/messages.ts
 msgid "A full-height gap splits this page into two columns."
 msgstr "Một khoảng trống cao suốt trang chia trang này thành hai cột."
@@ -648,10 +681,6 @@ msgstr ""
 #: src/features/ats-checker/parse-preview.tsx
 msgid "A single-column export keeps every fact. Columns and images are where facts get lost."
 msgstr "Bản xuất một cột giữ lại mọi thông tin. Cột chia và hình ảnh mới là nơi thông tin bị thất lạc."
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "A stretch"
-msgstr "Hơi quá tầm"
 
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
@@ -748,6 +777,10 @@ msgstr "Thêm ghi chú…"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Add a phone number"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Add a result"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -968,10 +1001,6 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Adjust the resume for a remote-first role that values async communication and ownership."
-msgstr "Hãy điều chỉnh sơ yếu lý lịch cho phù hợp với vị trí làm việc từ xa, coi trọng giao tiếp bất đồng bộ và tinh thần trách nhiệm."
-
 #: src/features/settings/integrations/components/ai-section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
@@ -989,26 +1018,9 @@ msgstr "Tiếng Afrikaans"
 msgid "Against the job description"
 msgstr "So với mô tả công việc"
 
-#: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
-msgid "Agent"
-msgstr "Đại lý"
-
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Agent ready"
 msgstr "Đại lý sẵn sàng"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "AI agent setup is unavailable right now. Please try again in a moment."
-msgstr "Hiện tại, việc thiết lập tác nhân AI không khả dụng. Vui lòng thử lại sau một lát."
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "AI agent setup is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured."
-msgstr "Việc thiết lập tác nhân AI sẽ không khả dụng cho đến khi REDIS_URL và ENCRYPTION_SECRET được cấu hình."
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "AI assistant"
-msgstr "Trợ lý AI"
 
 #: src/features/resume/share/format.ts
 msgid "AI edit"
@@ -1106,6 +1118,10 @@ msgstr "Không thể đọc được một font đã nhúng."
 msgid "An entry has no dates"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "an error"
+msgstr ""
+
 #: src/components/layout/error-screen.tsx
 msgid "An unexpected error stopped this page from loading. You can try again or head back."
 msgstr "Đã xảy ra lỗi không mong muốn khiến trang này không thể tải được. Bạn có thể thử lại hoặc quay lại trang trước."
@@ -1119,7 +1135,7 @@ msgstr ""
 msgid "Another of your resumes uses this address."
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Answer in your own words"
 msgstr "Trả lời bằng lời của bạn"
 
@@ -1138,6 +1154,10 @@ msgstr ""
 #: src/features/homepage/feature-explorer.tsx
 msgid "API and MCP access"
 msgstr "Truy cập qua API và MCP"
+
+#: src/features/assistant/provider-setup.tsx
+msgid "API key"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "API Key"
@@ -1207,10 +1227,6 @@ msgstr "Đã thêm hồ sơ ứng tuyển vào quy trình của bạn."
 msgid "Application closed"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Application Copilot"
-msgstr "Copilot hồ sơ ứng tuyển"
-
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Application date from"
 msgstr "Ngày nộp đơn từ"
@@ -1261,22 +1277,9 @@ msgstr "Đã ứng tuyển"
 msgid "Applied today"
 msgstr ""
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Approve"
-msgstr "Phê duyệt"
-
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Approved, waiting for the agent…"
-msgstr "Đã chấp thuận, đang chờ tác nhân…"
-
 #: src/libs/locale.ts
 msgid "Arabic"
 msgstr "Tiếng Ả Rập"
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Archive"
-msgstr "Lưu trữ"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Archived (closes it)"
@@ -1306,16 +1309,40 @@ msgstr "Trí tuệ nhân tạo"
 msgid "As of <0>{formattedDate}</0>."
 msgstr "Kể từ <0>{formattedDate}</0>."
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Ask anything about this resume"
-msgstr "Hãy hỏi bất cứ điều gì về sơ yếu lý lịch này."
+#: src/features/command-palette/pages/ask.tsx
+#: src/features/resume/editor/write/improve.tsx
+msgid "Ask"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Ask for something else…"
+msgstr ""
+
+#: src/features/command-palette/pages/ask.tsx
+msgid "Ask the assistant “{question}”"
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Ask the assistant to work it in"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Ask, or describe a change…"
+msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Aspect Ratio"
 msgstr "Tỷ lệ khung hình"
 
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+#: src/features/assistant/assistant-button.tsx
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/assistant/conversation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 msgid "Assistant"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Assistant conversations"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -1336,6 +1363,10 @@ msgstr "Đính kèm thư xin việc (PDF)"
 msgid "Attach a cover letter file (PDF)"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "Attach a file"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Attach a file instead"
 msgstr ""
@@ -1344,17 +1375,9 @@ msgstr ""
 msgid "Attach a resume file (PDF)"
 msgstr "Đính kèm tệp CV (PDF)"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Attach files"
-msgstr "Đính kèm tệp"
-
-#: src/routes/agent/-components/agent-chat.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Attachment"
 msgstr "Tệp đính kèm"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Attachment uploaded."
-msgstr "Tệp đính kèm đã được tải lên."
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/settings/authentication/index.tsx
@@ -1418,10 +1441,6 @@ msgstr ""
 msgid "Back to now"
 msgstr ""
 
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Back to resumes"
-msgstr "Quay lại trang sơ yếu lý lịch"
-
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
@@ -1437,6 +1456,7 @@ msgstr "Màu nền"
 msgid "Backup codes copied to clipboard."
 msgstr "Mã dự phòng đã được sao chép vào bộ nhớ tạm."
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Base URL"
 msgstr "URL cơ sở"
@@ -1457,10 +1477,6 @@ msgstr "Tiếng Bengal"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr ""
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Blank draft"
-msgstr "Bản nháp trống"
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -1517,6 +1533,7 @@ msgstr "Xây dựng hệ thống thiết kế được sáu nhóm sản phẩm s
 msgid "Bulgarian"
 msgstr "Tiếng Bulgaria"
 
+#: src/features/assistant/document.ts
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "bullet {n}"
 msgstr ""
@@ -1564,10 +1581,6 @@ msgstr ""
 #: src/hooks/use-prompt.tsx
 msgid "Cancel"
 msgstr "Hủy"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Cannot restore; the resume has changed since this edit was applied."
-msgstr "Không thể khôi phục; sơ yếu lý lịch đã thay đổi kể từ khi chỉnh sửa này được áp dụng."
 
 #: src/libs/locale.ts
 msgid "Catalan"
@@ -1620,6 +1633,10 @@ msgstr ""
 msgid "Changed elsewhere"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "Changed the resume directly (an earlier conversation)"
+msgstr ""
+
 #: src/dialogs/resume/index.tsx
 msgid "Changed your mind? Rename your resume to something more descriptive."
 msgstr "Bạn đã đổi ý? Đổi tên sơ yếu lý lịch của bạn thành một cái tên mô tả hơn."
@@ -1632,11 +1649,6 @@ msgstr "Nhật ký thay đổi"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/$threadId.tsx
-msgid "Chat"
-msgstr "Trò chuyện"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
@@ -1651,6 +1663,10 @@ msgstr ""
 msgid "Check again"
 msgstr "Kiểm tra lại"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Check it's accurate."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
 msgstr "Kiểm tra xem tệp đã xuất có chứa mọi thứ bạn mong đợi hay không, và toàn bộ nội dung đều là văn bản có thể chọn được."
@@ -1658,10 +1674,6 @@ msgstr "Kiểm tra xem tệp đã xuất có chứa mọi thứ bạn mong đợ
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Check views"
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Check what an applicant tracking system would miss, and only add keywords you're sure about."
-msgstr "Kiểm tra xem hệ thống theo dõi ứng viên sẽ bỏ sót điều gì, và chỉ thêm những từ khóa bạn chắc chắn."
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1695,6 +1707,10 @@ msgstr "Đang kiểm tra…"
 msgid "Checks by category"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Checks every bullet for action and result"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Chinese (Simplified)"
 msgstr "Tiếng Trung (Giản thể)"
@@ -1716,10 +1732,6 @@ msgstr ""
 msgid "Choose a file to import"
 msgstr ""
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Choose a model and resume draft."
-msgstr "Chọn một mô hình và bản nháp sơ yếu lý lịch."
-
 #: src/features/ats-checker/uploader.tsx
 msgid "Choose a PDF"
 msgstr "Chọn một tệp PDF"
@@ -1733,10 +1745,6 @@ msgstr "Chọn một tệp PDF để đọc văn bản của nó."
 #: src/components/input/rich-input.tsx
 msgid "Choose a preset or custom shade."
 msgstr "Chọn một màu có sẵn hoặc màu tùy chỉnh."
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Choose a resume"
-msgstr "Chọn một bản sơ yếu lý lịch"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
@@ -1823,16 +1831,16 @@ msgstr "Đóng"
 msgid "Close {title}"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Close AI assistant"
-msgstr "Đóng trợ lý AI"
-
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "Close application"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Close application…"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Close the assistant"
 msgstr ""
 
 #: src/features/applications/components/detail/close-dialog.tsx
@@ -1897,9 +1905,9 @@ msgstr "Nhỏ gọn"
 msgid "Company"
 msgstr "Công ty"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Compare this resume against this job posting URL and update the keywords without overselling anything."
-msgstr "So sánh sơ yếu lý lịch này với URL tin tuyển dụng này và cập nhật các từ khóa mà không thổi phồng bất cứ điều gì."
+#: src/features/assistant/assistant-panel.tsx
+msgid "Compares your resume with the posting"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
@@ -1922,13 +1930,22 @@ msgid "Confirm Password"
 msgstr "Xác nhận mật khẩu"
 
 #. Authentication settings action to link a social login provider
+#: src/features/assistant/provider-setup.tsx
 #: src/features/settings/authentication/components/social-provider.tsx
 msgid "Connect"
 msgstr "Kết nối"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Connect an AI provider"
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Connect an application"
 msgstr "Kết nối một ứng dụng"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Connect another…"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Connect through MCP to create and update resumes in a conversation. Or use the API to build your own workflow."
@@ -2008,6 +2025,7 @@ msgstr "Nội dung được trình bày theo dạng lưới."
 #. Final action button after saving backup codes
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/assistant/conversation.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Continue"
 msgstr "Tiếp tục"
@@ -2016,13 +2034,13 @@ msgstr "Tiếp tục"
 msgid "Contribute code"
 msgstr "Đóng góp mã nguồn"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Conversation copied."
-msgstr "Cuộc hội thoại đã được sao chép."
+#: src/features/assistant/conversation.tsx
+msgid "Conversation"
+msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Conversation JSON copied."
-msgstr "Đã sao chép JSON hội thoại."
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Conversations"
+msgstr ""
 
 #: src/features/resume/stylesheet/legacy-banner.tsx
 msgid "Converted stylesheet draft"
@@ -2032,19 +2050,13 @@ msgstr "Bản nháp bảng định kiểu đã chuyển đổi"
 msgid "Copied"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Copied to clipboard."
-msgstr "Đã sao chép vào bảng nhớ tạm."
-
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Copied to Documents"
 msgstr ""
 
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/applications/components/application-ai-copilot.tsx
 #: src/features/resume/share/link-tab.tsx
-#: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy"
 msgstr "Sao chép"
 
@@ -2063,10 +2075,6 @@ msgstr "Sao chép mã Backup"
 #: src/features/documents/document-actions.tsx
 msgid "Copy for a job…"
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Copy JSON"
-msgstr "Sao chép JSON"
 
 #. Accessible label for the button that copies the two-factor secret key
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -2093,6 +2101,10 @@ msgstr "Sao chép khóa bí mật này và sử dụng trong ứng dụng của 
 msgid "Copy to Documents"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "Copy transcript"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "Sửa lại năm, hoặc ghi \"Hiện tại\" cho công việc đang diễn ra."
@@ -2101,16 +2113,11 @@ msgstr "Sửa lại năm, hoặc ghi \"Hiện tại\" cho công việc đang di�
 msgid "Could not complete this connection. Restart the connection from your client and try again."
 msgstr "Không thể hoàn thành kết nối này. Khởi động lại kết nối từ máy khách của bạn và thử lại."
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Could not copy to clipboard. Please copy the text manually."
-msgstr "Không thể sao chép vào clipboard. Vui lòng sao chép văn bản theo cách thủ công."
-
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not generate the DOCX. Please try again."
 msgstr "Không thể tạo tệp DOCX. Vui lòng thử lại."
 
 #: src/features/resume/export/use-resume-export.ts
-#: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Could not generate the PDF. Please try again."
 msgstr "Không thể tạo tệp PDF. Vui lòng thử lại."
@@ -2122,10 +2129,6 @@ msgstr "Không thể chuẩn bị bản mẫu. Vui lòng thử lại."
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
 msgstr "Không thể chuẩn bị sơ yếu lý lịch của bạn để in. Vui lòng thử lại."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Could not restore this patch."
-msgstr "Không thể khôi phục bản vá này."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2152,8 +2155,16 @@ msgstr ""
 msgid "Couldn't add the application. Please try again."
 msgstr "Không thể thêm hồ sơ ứng tuyển. Vui lòng thử lại."
 
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't attach the file."
+msgstr ""
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Couldn't change the design. Try again."
+msgstr ""
+
+#: src/features/assistant/provider-setup.tsx
+msgid "Couldn't connect. Check the key and try again."
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
@@ -2164,12 +2175,20 @@ msgstr ""
 msgid "Couldn't copy the resume."
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't copy the transcript."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't create the document."
 msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Couldn't create the letter."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Couldn't delete it."
 msgstr ""
 
 #: src/features/applications/components/list-view.tsx
@@ -2180,12 +2199,21 @@ msgstr ""
 msgid "Couldn't delete the interview."
 msgstr ""
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Couldn't get a suggestion. Nothing changed."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't import"
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't link the application."
+msgstr ""
+
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't propose these edits: {0}"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -2231,6 +2259,14 @@ msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Couldn't schedule the interview."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Couldn't start the conversation. Try again."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Couldn't switch models."
 msgstr ""
 
 #: src/features/applications/components/list-view.tsx
@@ -2282,10 +2318,6 @@ msgstr "Thư xin việc"
 msgid "Cover letter — {0}"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Cover letter draft"
-msgstr "Bản nháp thư xin việc"
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Cover letter file"
 msgstr ""
@@ -2304,10 +2336,6 @@ msgstr ""
 msgid "Create"
 msgstr "Tạo"
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Create a copy tuned to this job"
-msgstr "Tạo một bản sao được tinh chỉnh cho công việc này"
-
 #: src/features/auth/pages/register.tsx
 msgid "Create a new account"
 msgstr "Tạo tài khoản mới"
@@ -2325,13 +2353,13 @@ msgstr "Tạo sơ yếu lý lịch mới"
 msgid "Create a resume"
 msgstr "Tạo sơ yếu lý lịch"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Create a resume first, then ask about it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
 msgstr ""
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Create from scratch"
-msgstr "Tạo từ đầu"
 
 #. Call-to-action link from login page to account registration page
 #: src/features/auth/pages/login.tsx
@@ -2342,11 +2370,6 @@ msgstr "Tạo ngay bây giờ"
 #: src/features/resume/share/format.ts
 msgid "Created"
 msgstr "Đã tạo"
-
-#. placeholder {0}: result.name
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Created \"{0}\" and linked it to this application."
-msgstr "Đã tạo \"{0}\" và liên kết với hồ sơ ứng tuyển này."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Created “{finalName}”"
@@ -2480,10 +2503,6 @@ msgstr ""
 msgid "Decrease indent"
 msgstr "Giảm độ thụt lề"
 
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Decrease zoom"
-msgstr "Giảm độ phóng to"
-
 #: src/features/resume/editor/write/entries.tsx
 msgid "Degree"
 msgstr "Bằng cấp"
@@ -2495,12 +2514,11 @@ msgstr "Bằng cấp"
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
 msgid "Delete"
 msgstr "Xóa"
 
@@ -2511,6 +2529,11 @@ msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete “{title}”?"
+msgstr ""
+
+#. placeholder {0}: thread.title
+#: src/features/assistant/assistant-panel.tsx
+msgid "Delete {0}"
 msgstr ""
 
 #. placeholder {0}: ids.length
@@ -2555,15 +2578,14 @@ msgstr "Xóa nhà cung cấp"
 msgid "Delete section"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Delete this agent thread?"
-msgstr "Xóa chủ đề thảo luận về tác vụ này?"
-
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Delete this application?"
 msgstr "Xóa đơn ứng tuyển này?"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Delete this conversation?"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Delete this entry?"
@@ -2610,16 +2632,11 @@ msgstr "Đang xóa tài khoản của bạn..."
 msgid "Deleting your API key..."
 msgstr "Đang xoá khoá API của bạn..."
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Denied, waiting for the agent…"
-msgstr "Đã từ chối, đang chờ tác nhân…"
-
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Density"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
-#: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Deny"
 msgstr "Từ chối"
 
@@ -2706,7 +2723,6 @@ msgstr "Ngắt kết nối"
 msgid "Discord"
 msgstr "Discord"
 
-#: src/features/applications/components/application-ai-copilot.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Dismiss"
@@ -2741,6 +2757,11 @@ msgstr ""
 msgid "Don't have an account? <0/>"
 msgstr "Chưa có tài khoản? <0/>"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Don't send {0}"
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 msgid "Donate"
 msgstr "Quyên tặng"
@@ -2748,10 +2769,6 @@ msgstr "Quyên tặng"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Donate to Reactive Resume"
 msgstr "Đóng góp cho Reactive Resume"
-
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Done"
-msgstr "Hoàn tất"
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -2780,7 +2797,6 @@ msgid "Download CSV"
 msgstr "Tải xuống CSV"
 
 #: src/features/resume/public/public-resume.tsx
-#: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Download PDF"
@@ -2843,13 +2859,13 @@ msgstr ""
 msgid "Draft · uses only your resume and the posting"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Draft a cover letter"
-msgstr "Soạn thư xin việc"
+#: src/features/assistant/assistant-panel.tsx
+msgid "Draft a follow-up email"
+msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Draft a follow-up"
-msgstr "Soạn lời nhắc theo dõi"
+#: src/features/assistant/assistant-panel.tsx
+msgid "Draft a summary"
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Draft from the posting"
@@ -2862,10 +2878,6 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Draft kept. Edit anything you like."
 msgstr ""
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Drafting failed."
-msgstr "Soạn thảo thất bại."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Drafting needs an AI provider."
@@ -2924,10 +2936,6 @@ msgstr ""
 msgid "Duplicate"
 msgstr "Tạo bản sao"
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Duplicate as AI draft"
-msgstr "Nhân bản thành bản nháp AI"
-
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate Resume"
 msgstr "Tạo bản sao bản lý lịch"
@@ -2972,6 +2980,7 @@ msgstr ""
 msgid "Edit application"
 msgstr "Chỉnh sửa hồ sơ ứng tuyển"
 
+#: src/features/assistant/document.ts
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit applied"
 msgstr ""
@@ -2989,10 +2998,6 @@ msgstr "Chỉnh sửa nội dung ở chế độ toàn màn hình"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
 msgstr "Sửa ngày"
-
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Edit declined"
-msgstr "Chỉnh sửa bị từ chối"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Edit details…"
@@ -3298,15 +3303,6 @@ msgstr ""
 msgid "Extracted text"
 msgstr "Văn bản được trích xuất"
 
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Failed"
-msgstr "Thất bại"
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Failed to archive thread."
-msgstr "Không thể lưu trữ chủ đề."
-
 #. Fallback toast when creating an API key fails
 #: src/dialogs/api-key/create.tsx
 msgid "Failed to create API key. Please try again."
@@ -3330,11 +3326,6 @@ msgstr "Không thể xóa nhà cung cấp."
 #: src/features/settings/pages/api-keys.tsx
 msgid "Failed to delete the API key. Please try again."
 msgstr "Không thể xóa khóa API. Vui lòng thử lại."
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Failed to delete thread."
-msgstr "Không thể xóa chủ đề."
 
 #. Fallback toast when account deletion fails
 #: src/features/settings/pages/account.tsx
@@ -3411,14 +3402,6 @@ msgstr "Đăng nhập thất bại. Vui lòng thử lại."
 msgid "Failed to sign out. Please try again."
 msgstr "Không thể đăng xuất. Vui lòng thử lại."
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Failed to start agent thread."
-msgstr "Không thể khởi động luồng tác vụ."
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "Failed to start the AI assistant."
-msgstr "Không thể khởi động trợ lý AI."
-
 #. Fallback toast when unlinking a social authentication provider fails
 #: src/features/settings/authentication/components/hooks.tsx
 msgid "Failed to unlink provider. Please try again."
@@ -3427,10 +3410,6 @@ msgstr "Không thể hủy liên kết nhà cung cấp. Vui lòng thử lại."
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Failed to update provider."
 msgstr "Không thể cập nhật nhà cung cấp."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Failed to update thread settings."
-msgstr "Không thể cập nhật cài đặt chủ đề."
 
 #. Fallback toast when changing account password fails
 #: src/dialogs/auth/change-password.tsx
@@ -3441,10 +3420,6 @@ msgstr "Không thể cập nhật mật khẩu của bạn. Vui lòng thử lạ
 #: src/features/settings/pages/profile.tsx
 msgid "Failed to update your profile. Please try again."
 msgstr "Không thể cập nhật hồ sơ của bạn. Vui lòng thử lại."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Failed to upload attachment."
-msgstr "Không thể tải tệp đính kèm lên."
 
 #. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -3522,13 +3497,13 @@ msgstr ""
 msgid "Filter by tag"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Find the weak bullet points and rewrite them with stronger outcomes, numbers, scope, and sharper verbs."
-msgstr "Tìm những gạch đầu dòng còn yếu và viết lại chúng với kết quả rõ hơn, có số liệu, phạm vi và động từ sắc bén hơn."
-
 #: src/features/homepage/page.tsx
 msgid "Find us on GitHub"
 msgstr "Tìm chúng tôi trên GitHub"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Find weak bullets"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
@@ -3594,10 +3569,6 @@ msgstr "Theo dõi"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Follow-up date"
 msgstr "Ngày theo dõi"
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Follow-up draft"
-msgstr "Bản nháp theo dõi"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Follow-up note"
@@ -3709,9 +3680,9 @@ msgstr ""
 msgid "from the assistant or API"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "From your resume and the posting"
-msgstr "Từ sơ yếu lý lịch của bạn và tin tuyển dụng"
+#: src/features/assistant/assistant-panel.tsx
+msgid "From your experience entries"
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Full name"
@@ -3731,16 +3702,11 @@ msgstr "Toàn màn hình"
 msgid "Fullscreen Editor"
 msgstr "Trình chỉnh sửa toàn màn hình"
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Gaps:"
-msgstr "Khoảng trống:"
-
 #: src/dialogs/resume/index.tsx
 msgid "Generate a random name"
 msgstr "Tạo tên ngẫu nhiên"
 
 #: src/features/resume/export/use-resume-export.ts
-#: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Generating your PDF..."
 msgstr "Đang tạo PDF của bạn..."
@@ -4005,6 +3971,10 @@ msgstr "Tôi sử dụng API như thế nào?"
 msgid "How far applications get"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "How well do I fit this role?"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Hungarian"
 msgstr "Tiếng Hungary"
@@ -4012,6 +3982,15 @@ msgstr "Tiếng Hungary"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Hyphenation"
 msgstr "Chia từ"
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can accept one by one."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind}. Suggestions come back as edits you can accept one by one."
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "I design software for teams, from early research to the details people use every day."
@@ -4121,6 +4100,18 @@ msgstr ""
 msgid "Importing"
 msgstr ""
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Improve"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Improve selected line"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Improving…"
+msgstr ""
+
 #. placeholder {0}: suggestion.section
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "In {0}"
@@ -4141,10 +4132,6 @@ msgstr "Tăng khoảng cách thụt lề"
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Tăng khoảng cách dòng để hai dòng không bị hợp nhất thành một."
-
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Increase zoom"
-msgstr "Tăng độ phóng to"
 
 #: src/libs/locale.ts
 msgid "Indonesian"
@@ -4290,6 +4277,10 @@ msgstr ""
 msgid "Items you move here stay for 30 days."
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Its own design ({summary})."
 msgstr ""
@@ -4389,6 +4380,10 @@ msgstr ""
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Giữ dung lượng dưới 2.5 MB, thường bằng cách xóa hoặc thu nhỏ hình ảnh."
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Keep mine"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr ""
@@ -4429,6 +4424,10 @@ msgstr "Hãy giữ vững sự đoàn kết"
 #: src/features/homepage/export-playground.tsx
 msgid "Keep your layout intact. Ready to send, upload, or print."
 msgstr "Giữ nguyên cách bố trí của bạn. Sẵn sàng để gửi, tải lên hoặc in."
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Keeps the most specific parts"
+msgstr ""
 
 #: src/features/resume/editor/check/actions.ts
 msgid "Kept as it is"
@@ -4515,6 +4514,10 @@ msgstr "Bố cục"
 msgid "Lead with the work. Add a concrete detail so someone can picture it."
 msgstr "Bắt đầu bằng kết quả công việc. Thêm một chi tiết cụ thể để người đọc hình dung được."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Leads with why you fit"
+msgstr ""
+
 #: src/hooks/use-form-blocker.tsx
 msgid "Leave"
 msgstr "Rời đi"
@@ -4555,6 +4558,11 @@ msgstr "Độ dài không phải là khuyết điểm, và không có quy tắc 
 msgid "Let's start with what you have"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "letter"
+msgstr ""
+
+#: src/features/assistant/document.ts
 #: src/features/documents/document-card.tsx
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/features/resume/editor/write/entries.tsx
@@ -4605,6 +4613,10 @@ msgstr "Sáng"
 msgid "Light theme"
 msgstr "Chủ đề sáng"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Likely questions, from the posting and your resume"
+msgstr ""
+
 #. placeholder {0}: diagnostic.range.start.line
 #. placeholder {1}: diagnostic.range.start.column
 #: src/features/resume/stylesheet/status.tsx
@@ -4642,9 +4654,9 @@ msgstr "Liên kết Reactive Resume (được khuyến nghị)"
 msgid "Link a Reactive Resume to use AI match scoring and tailoring."
 msgstr "Liên kết một Reactive Resume để dùng tính năng chấm điểm mức độ phù hợp và tinh chỉnh bằng AI."
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
-msgstr "Liên kết một sơ yếu lý lịch và dán mô tả công việc (Biên tập) để chấm điểm mức độ phù hợp và tinh chỉnh một bản sao."
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Link a resume or a letter first"
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
@@ -4755,24 +4767,22 @@ msgstr "Đang tải hồ sơ ứng tuyển…"
 msgid "Loading connection request..."
 msgstr "Đang tải yêu cầu kết nối..."
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Loading conversations…"
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Loading providers…"
 msgstr "Đang tải nhà cung cấp…"
 
 #: src/features/command-palette/pages/resumes.tsx
-#: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Loading resumes…"
 msgstr "Đang tải sơ yếu lý lịch…"
 
 #: src/features/homepage/page.tsx
 msgid "Loading the playground…"
 msgstr "Đang tải khu vực thử nghiệm…"
-
-#: src/features/command-palette/pages/resumes.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Loading threads…"
-msgstr "Đang tải luồng…"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Loading total"
@@ -4840,13 +4850,22 @@ msgstr "Chính"
 msgid "Main navigation"
 msgstr "Điều hướng chính"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Make it more specific"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/resume/editor/write/improve.tsx
+msgid "Make it shorter"
+msgstr ""
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Make it your own"
 msgstr "Biến nó thành của riêng bạn"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Make the experience section about results and cut the vague responsibilities."
-msgstr "Làm cho mục kinh nghiệm nói về kết quả và cắt bớt những trách nhiệm chung chung."
+#: src/features/assistant/assistant-panel.tsx
+msgid "Make the opening stronger"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Make the visible text and the destination match."
@@ -4913,10 +4932,6 @@ msgstr ""
 msgid "Match against a job"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Match scoring failed."
-msgstr "Chấm điểm độ phù hợp thất bại."
-
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Match system theme"
 msgstr ""
@@ -4945,17 +4960,22 @@ msgstr ""
 msgid "Medium impact"
 msgstr "Tác động trung bình"
 
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Missing working resume"
-msgstr "Hồ sơ xin việc bị thiếu"
+#: src/features/assistant/conversation.tsx
+msgid "Message the assistant"
+msgstr ""
 
 #: src/features/homepage/site-footer.tsx
 msgid "MIT License"
 msgstr "Giấy phép MIT"
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Model"
 msgstr "Mô hình"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Model: {providerLabel}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -4968,6 +4988,10 @@ msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "More personal"
+msgstr ""
+
+#: src/features/assistant/provider-setup.tsx
+msgid "More providers and options are in <0>Settings</0>. The rest of the app works fully without AI."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5164,6 +5188,10 @@ msgstr "Việc đăng ký tài khoản mới hiện đang bị tắt trên máy 
 msgid "New Application"
 msgstr "Hồ sơ ứng tuyển mới"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "New conversation"
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter instead"
 msgstr ""
@@ -5195,16 +5223,6 @@ msgstr "Mật khẩu mới"
 msgid "New section"
 msgstr ""
 
-#: src/features/command-palette/pages/resumes.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "New thread"
-msgstr "Chủ đề mới"
-
-#: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
-msgid "New Thread"
-msgstr "Chủ đề mới"
-
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Next issue"
 msgstr ""
@@ -5225,10 +5243,6 @@ msgstr "Mẫu tiếp theo"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "No active applications."
 msgstr ""
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "No AI provider connected"
-msgstr "Chưa kết nối nhà cung cấp AI nào"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No application"
@@ -5265,9 +5279,17 @@ msgstr ""
 msgid "No conventional section headings were found."
 msgstr "Không tìm thấy tiêu đề mục thông thường nào."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "No conversations about this document yet."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
 msgstr "Không tìm thấy ngày tháng nào."
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "no edits"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -5376,10 +5398,6 @@ msgstr "Không thể đọc được văn bản nào từ tệp này."
 #: src/features/homepage/ats-playground.tsx
 msgid "No text found"
 msgstr "Không tìm thấy văn bản"
-
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "No threads yet."
-msgstr "Chưa có chủ đề nào."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "No work experience shows"
@@ -5609,10 +5627,6 @@ msgstr "Mở ứng dụng Email"
 msgid "Open focus mode"
 msgstr "Mở chế độ lấy nét"
 
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Open in builder"
-msgstr "Mở trong trình soạn thảo"
-
 #: src/features/documents/new-document-dialog.tsx
 msgid "Open in editor"
 msgstr ""
@@ -5659,14 +5673,6 @@ msgstr "mở ở tab mới"
 msgid "Opens the editor on your name. Nothing else to fill in first."
 msgstr ""
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Optional note for the agent"
-msgstr "Ghi chú tùy chọn cho tác nhân"
-
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Optional note for the agent…"
-msgstr "Ghi chú tùy chọn cho tác nhân…"
-
 #: src/routes/_home/ats-checker.tsx
 msgid "Optionally, which terms from a job posting already appear."
 msgstr "Tùy chọn, xem những từ khóa nào trong tin tuyển dụng đã xuất hiện sẵn."
@@ -5705,6 +5711,10 @@ msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) in
 msgid "or continue with"
 msgstr "hoặc tiếp tục với"
 
+#: src/features/assistant/conversation.tsx
+msgid "Or in your own words…"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Or upload a resume PDF"
 msgstr "Hoặc tải lên PDF CV"
@@ -5721,6 +5731,15 @@ msgstr "Tổ chức"
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "Định dạng bảng gốc được giữ nguyên. Nội dung này ở chế độ chỉ đọc vì không thể chỉnh sửa một cách an toàn."
+
+#: src/features/assistant/provider-setup.tsx
+msgid "Other · OpenAI-compatible"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/assistant/assistant-panel.tsx
+msgid "Other documents · {0}"
+msgstr ""
 
 #: src/features/ats-checker/report/score-header.tsx
 msgid "out of 100"
@@ -5773,6 +5792,7 @@ msgstr ""
 msgid "Paragraph"
 msgstr "Đoạn văn"
 
+#: src/features/assistant/document.ts
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "paragraph {n}"
 msgstr ""
@@ -5836,6 +5856,10 @@ msgstr ""
 msgid "Passwords do not match."
 msgstr "Mật khẩu không khớp."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Past conversations"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
 msgstr ""
@@ -5867,30 +5891,6 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Pasting fills the fields automatically."
 msgstr "Việc dán sẽ tự động điền các trường."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch applied"
-msgstr "Đã áp dụng bản vá."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch conflicted"
-msgstr "Bản vá bị xung đột"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch failed"
-msgstr "Vá lỗi không thành công"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch pending"
-msgstr "Bản vá đang chờ xử lý"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch rolled back"
-msgstr "Bản vá đã được khôi phục."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch rolled back."
-msgstr "Bản vá đã được hoàn tác."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Pause data flow animation"
@@ -5930,10 +5930,6 @@ msgstr ""
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Photo on the page."
 msgstr ""
-
-#: src/routes/agent/index.tsx
-msgid "Pick a conversation from the sidebar, or start a new thread to work on a draft."
-msgstr "Chọn một cuộc trò chuyện từ thanh bên, hoặc bắt đầu một chủ đề mới để làm việc với bản nháp."
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Pick a language. See it on the page."
@@ -6015,12 +6011,20 @@ msgstr "Ưu tiên bố cục một cột, hoặc chỉ dùng cột bên để ch
 msgid "Preferences"
 msgstr "Tùy chọn"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Prepare a conservative patch that improves clarity without changing the story of my career."
-msgstr "Chuẩn bị một bản sửa thận trọng giúp câu chữ rõ ràng hơn mà không thay đổi câu chuyện sự nghiệp của tôi."
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Prepare for next step"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Prepare me for the interview"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Preparing {label} file…"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Preparing edits…"
 msgstr ""
 
 #: src/features/homepage/export-playground.tsx
@@ -6184,6 +6188,10 @@ msgstr "Nhà xuất bản"
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Đặt một địa chỉ email đơn giản gần đầu trang một. Đây là thông tin mà hầu hết hệ thống dùng để lưu hồ sơ của bạn."
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Put the caret in a line to improve it"
+msgstr ""
+
 #: src/features/resume/share/link-tab.tsx
 msgid "QR code"
 msgstr ""
@@ -6195,10 +6203,6 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Raise the design sheet"
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Raw JSON"
-msgstr "JSON thô"
 
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6224,10 +6228,6 @@ msgstr "Xuất lại với font đã nhúng, rồi kiểm tra xem văn bản có
 msgid "Re-export with fonts embedded, then open the file and check that the text copies out cleanly."
 msgstr "Xuất lại với font đã nhúng, sau đó mở tệp và kiểm tra xem văn bản có sao chép ra sạch sẽ không."
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Re-score"
-msgstr "Chấm điểm lại"
-
 #: src/routes/_home/-sections/header.tsx
 msgid "Reactive Resume - Go to homepage"
 msgstr "Reactive Resume - Về trang chủ"
@@ -6249,15 +6249,19 @@ msgstr "Reactive Resume v<0>{__APP_VERSION__}</0>"
 msgid "Read again"
 msgstr "Đọc lại"
 
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Read an attachment"
-msgstr "Đã đọc tệp đính kèm"
-
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Read the Applying Custom Styles guide."
 msgstr "Hãy đọc hướng dẫn Áp dụng kiểu tùy chỉnh."
 
-#: src/routes/agent/-components/tool-part-card.tsx
+#: src/features/assistant/conversation.tsx
+msgid "Read the attachment"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Read the letter"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 msgid "Read the resume"
 msgstr "Đã đọc sơ yếu lý lịch"
 
@@ -6423,8 +6427,10 @@ msgstr "Từ xa, Kết hợp, một thành phố…"
 msgid "Remove"
 msgstr ""
 
+#. placeholder {0}: attachment.filename
 #. placeholder {0}: contact.name
 #: src/features/applications/components/detail/contacts.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Remove {0}"
 msgstr ""
 
@@ -6498,6 +6504,10 @@ msgstr ""
 msgid "Repeated far more often than the posting itself uses them: {0}. Recruiters notice."
 msgstr "Được lặp lại nhiều hơn hẳn so với chính tin tuyển dụng: {0}. Nhà tuyển dụng sẽ nhận ra điều này."
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Replace"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Replace icon fonts with plain text, then re-export."
 msgstr "Thay thế font biểu tượng bằng văn bản thuần túy, sau đó xuất lại."
@@ -6567,13 +6577,8 @@ msgid "Responsible for working on the design system and helping other teams with
 msgstr "Chịu trách nhiệm phát triển hệ thống thiết kế và hỗ trợ các nhóm khác về thiết kế của họ."
 
 #: src/features/documents/document-actions.tsx
-#: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore"
 msgstr "Khôi phục"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Restore the resume to before this patch?"
-msgstr "Khôi phục sơ yếu lý lịch về trạng thái trước bản vá này?"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Restore this version"
@@ -6597,12 +6602,14 @@ msgstr ""
 msgid "Restored the version from {0}. Your previous state is saved as “Before restore”."
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "resume"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/agent/-components/resume-pane.tsx
-#: src/routes/agent/$threadId.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "Sơ yếu lý lịch"
@@ -6619,10 +6626,6 @@ msgstr "Đã đính kèm sơ yếu lý lịch"
 msgid "Resume content"
 msgstr "Nội dung sơ yếu lý lịch"
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Resume edit"
-msgstr "Chỉnh sửa sơ yếu lý lịch"
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Resume file"
 msgstr "Tệp CV"
@@ -6630,10 +6633,6 @@ msgstr "Tệp CV"
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume not found"
 msgstr "Không tìm thấy sơ yếu lý lịch"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Resume patch"
-msgstr "Bản vá sơ yếu lý lịch"
 
 #: src/features/homepage/template-shelf.tsx
 msgid "Resume templates"
@@ -6647,9 +6646,9 @@ msgstr "Mẫu sơ yếu lý lịch"
 msgid "Resumes"
 msgstr "Sơ yếu lý lịch"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
-#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry"
 msgstr "Thử lại"
@@ -6663,21 +6662,9 @@ msgstr ""
 msgid "Review"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Review edits"
-msgstr "Xem lại các chỉnh sửa"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Review the resume against a job description, and ask me before changing anything you're unsure about."
-msgstr "Xem lại sơ yếu lý lịch đối chiếu với một mô tả công việc, và hỏi tôi trước khi thay đổi bất cứ điều gì bạn không chắc."
-
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Review the writing with AI"
 msgstr "Đánh giá nội dung viết bằng AI"
-
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Review this edit"
-msgstr "Xem lại chỉnh sửa này"
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
@@ -6686,14 +6673,6 @@ msgstr ""
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Reviewing…"
 msgstr "Đang đánh giá…"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Rewrite the summary for a senior engineering manager role, and keep it specific."
-msgstr "Viết lại phần tóm tắt cho vị trí quản lý kỹ thuật cấp cao, và giữ cho nó cụ thể."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Rewrite this resume for a startup founder moving into a product lead role, and show the business impact."
-msgstr "Viết lại sơ yếu lý lịch này cho một nhà sáng lập startup đang chuyển sang vai trò trưởng bộ phận sản phẩm, và thể hiện tác động kinh doanh."
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Rhyhorn sample resume"
@@ -6743,10 +6722,6 @@ msgstr "Chạy lại"
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Run AI review"
 msgstr "Chạy đánh giá bằng AI"
-
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Running…"
-msgstr "Đang chạy…"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -6895,14 +6870,6 @@ msgstr ""
 msgid "School"
 msgstr "Trường"
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Score my fit"
-msgstr "Chấm điểm độ phù hợp của tôi"
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Scoring your fit…"
-msgstr "Đang chấm điểm độ phù hợp của bạn…"
-
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr ""
@@ -6956,6 +6923,10 @@ msgstr "Tìm kiếm..."
 msgid "Search…"
 msgstr "Tìm kiếm…"
 
+#: src/features/assistant/conversation.tsx
+msgid "Searched the web"
+msgstr ""
+
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Secret copied to clipboard."
 msgstr "Mã bí mật đã được sao chép vào clipboard."
@@ -6977,10 +6948,6 @@ msgstr ""
 #: src/features/resume/editor/check/issues.ts
 msgid "Sections use headings systems recognise, and work experience shows."
 msgstr ""
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "See how this resume matches the posting"
-msgstr "Xem sơ yếu lý lịch này khớp với tin tuyển dụng như thế nào"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "See how to connect"
@@ -7004,18 +6971,6 @@ msgstr ""
 msgid "Select {0} at {1}"
 msgstr ""
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Select a resume"
-msgstr "Chọn một bản sơ yếu lý lịch"
-
-#: src/routes/agent/index.tsx
-msgid "Select a thread"
-msgstr "Chọn một chủ đề"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Select an agent model"
-msgstr "Chọn một mô hình tác nhân"
-
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Select an AI provider"
 msgstr "Chọn nhà cung cấp AI"
@@ -7028,13 +6983,9 @@ msgstr "Chọn..."
 msgid "Semantic CSS stylesheet"
 msgstr "Bảng định kiểu CSS ngữ nghĩa"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Send answer"
-msgstr "Gửi câu trả lời"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Send message"
-msgstr "Gửi tin nhắn"
+#: src/features/assistant/conversation.tsx
+msgid "Send"
+msgstr ""
 
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
@@ -7060,6 +7011,30 @@ msgstr "Gửi văn bản đã được trích xuất từ PDF của bạn đến
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Sends the text already extracted from your PDF, plus the job description you pasted, to the AI provider you choose below. The PDF file itself is never uploaded."
 msgstr "Gửi văn bản đã được trích xuất từ PDF của bạn, cùng với mô tả công việc bạn đã dán, đến nhà cung cấp AI mà bạn chọn bên dưới. Tệp PDF không bao giờ được tải lên."
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends this letter to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends this resume to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends your message and the posting to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends your message to {provider} with your key, only when you press send."
+msgstr ""
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -7107,25 +7082,8 @@ msgstr "Đặt mật khẩu"
 msgid "Set the document language when exporting."
 msgstr "Thiết lập ngôn ngữ tài liệu khi xuất."
 
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "Set up an AI provider"
-msgstr "Thiết lập một nhà cung cấp AI"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Set up an AI provider before starting a thread."
-msgstr "Hãy thiết lập một nhà cung cấp AI trước khi bắt đầu một chủ đề."
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Set up an AI provider first."
-msgstr "Hãy thiết lập một nhà cung cấp AI trước."
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "Set up an AI provider to chat about this resume and apply edits automatically."
-msgstr "Thiết lập một hệ thống AI để trò chuyện về bản lý lịch này và tự động chỉnh sửa."
-
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/user/dropdown-menu.tsx
-#: src/routes/agent/-components/new-thread-setup.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
@@ -7168,6 +7126,10 @@ msgstr "Chia sẻ bản xem trước"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Short and direct. Fine if the posting asks for brevity."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Short and polite, for the recruiter"
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -7440,10 +7402,6 @@ msgstr "Một số văn bản bị xoay."
 msgid "Some totals are unavailable right now."
 msgstr "Hiện tại, một số số liệu tổng hợp chưa có sẵn."
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Something else…"
-msgstr "Một lựa chọn khác…"
-
 #: src/components/layout/error-screen.tsx
 msgid "Something went wrong"
 msgstr "Đã xảy ra lỗi"
@@ -7496,12 +7454,7 @@ msgstr "Nguồn"
 msgid "Source Code"
 msgstr "Mã nguồn"
 
-#. placeholder {0}: operation.from
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Source: {0}"
-msgstr "Nguồn: {0}"
-
-#: src/routes/agent/-components/agent-chat.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Sources"
 msgstr "Nguồn"
 
@@ -7573,14 +7526,6 @@ msgstr "Nhấn sao cho chúng tôi trên GitHub, hiện tại có {0} lượt sa
 msgid "Start"
 msgstr ""
 
-#: src/routes/agent/$threadId.tsx
-msgid "Start a new thread"
-msgstr "Bắt đầu một chủ đề mới"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Start a thread"
-msgstr "Bắt đầu một chủ đề"
-
 #: src/features/homepage/feature-explorer.tsx
 msgid "Start again"
 msgstr "Bắt đầu lại"
@@ -7606,10 +7551,6 @@ msgstr ""
 msgid "Start from one you have and link the application."
 msgstr ""
 
-#: src/routes/agent/index.tsx
-msgid "Start new thread"
-msgstr "Bắt đầu chủ đề mới"
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
 msgstr ""
@@ -7622,10 +7563,6 @@ msgstr "Bắt đầu trên trang mới"
 #: src/features/ats-checker/messages.ts
 msgid "Start the resume with your name on its own line."
 msgstr "Bắt đầu sơ yếu lý lịch bằng tên của bạn trên một dòng riêng."
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Start thread"
-msgstr "Bắt đầu chủ đề"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Start typing, or draft from what we know: the {company} posting and your resume."
@@ -7671,13 +7608,14 @@ msgstr ""
 msgid "Still waiting for {provider}… {elapsedSeconds}s"
 msgstr "Vẫn đang chờ {provider}… {elapsedSeconds}s"
 
+#: src/features/assistant/conversation.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Stop"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Stop generation"
-msgstr "Ngừng sản xuất"
+#: src/features/assistant/conversation.tsx
+msgid "Stopped. No edits were proposed."
+msgstr ""
 
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "Strengths"
@@ -7687,9 +7625,9 @@ msgstr "Điểm mạnh"
 msgid "Strike"
 msgstr "Gạch ngang"
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Strong fit"
-msgstr "Rất phù hợp"
+#: src/features/resume/editor/write/improve.tsx
+msgid "Stronger verb"
+msgstr ""
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
@@ -7716,6 +7654,10 @@ msgstr ""
 msgid "Suggestions"
 msgstr "Gợi ý"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Suggests cuts, never deletes on its own"
+msgstr ""
+
 #: src/features/homepage/export-playground.tsx
 #: src/features/resume/editor/write/summary-editor.tsx
 #: src/libs/resume/section-title.ts
@@ -7738,6 +7680,10 @@ msgstr "Hoán đổi ngày bắt đầu và ngày kết thúc."
 #: src/libs/locale.ts
 msgid "Swedish"
 msgstr "Thụy Điển"
+
+#: src/features/assistant/conversation.tsx
+msgid "Switch model"
+msgstr ""
 
 #: src/features/theme/toggle-button.tsx
 msgid "Switch to dark theme"
@@ -7805,21 +7751,14 @@ msgstr ""
 msgid "Tailor a resume"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Tailor my resume"
-msgstr "Tinh chỉnh sơ yếu lý lịch của tôi"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tailor this resume to a product manager job description, and emphasize roadmap ownership, stakeholder communication, and measurable launch outcomes."
-msgstr "Điều chỉnh sơ yếu lý lịch này theo một mô tả công việc quản lý sản phẩm, và nhấn mạnh việc làm chủ lộ trình sản phẩm, giao tiếp với các bên liên quan và kết quả ra mắt đo lường được."
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tailor to the {0} posting"
+msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Tailored vs. base resume"
 msgstr ""
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Tailoring failed."
-msgstr "Tinh chỉnh thất bại."
 
 #: src/features/homepage/page.tsx
 msgid "Take it<0/>with you."
@@ -7855,6 +7794,10 @@ msgstr "Mẫu"
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Test"
 msgstr "Bài kiểm tra"
+
+#: src/features/assistant/provider-setup.tsx
+msgid "Testing the connection…"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Testing…"
@@ -7958,10 +7901,6 @@ msgstr "Nhà cung cấp đăng nhập đó không còn khả dụng trên máy c
 msgid "The {label} file couldn't be generated. Try again, or download PDF instead."
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "The agent needs your input."
-msgstr "Nhân viên cần thông tin đầu vào từ bạn."
-
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API documentation shows how to connect Reactive Resume to your own applications. It covers the endpoints, the request format, and authentication."
 msgstr "Tài liệu API cho thấy cách kết nối Reactive Resume với ứng dụng của riêng bạn. Nó bao gồm các điểm cuối, định dạng yêu cầu và xác thực."
@@ -7976,6 +7915,14 @@ msgstr "Ứng dụng đã đưa bạn đến đây thực hiện một yêu cầ
 
 #: src/features/documents/document-actions.tsx
 msgid "The application this letter is for."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
+msgstr ""
+
+#: src/features/assistant/provider-setup.tsx
+msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
 msgstr ""
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
@@ -8026,6 +7973,10 @@ msgstr ""
 msgid "The letter matches the resume's design again"
 msgstr ""
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "The line changed since you asked, so it wasn't replaced."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "Thứ tự lưu trữ văn bản khác biệt nghiêm trọng so với thứ tự đọc."
@@ -8054,12 +8005,20 @@ msgstr "Mật khẩu bạn đã nhập không đúng"
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "PDF được đọc bởi mã chạy ngay trong tab này. Không có gì được tải lên, không có gì được lưu trữ, và không cần tài khoản. Nếu muốn, bạn có thể mở tab mạng (network) trên trình duyệt để quan sát."
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The posting asks for “{label}”. If it's true for me, work it into my resume where it fits. Ask me first."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "The posting couldn't be read. Fill in the role and company."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The posting saved with this application."
+msgstr ""
+
+#: src/features/assistant/provider-setup.tsx
+msgid "The provider didn't answer. Check the key and the model."
 msgstr ""
 
 #: src/features/auth/pages/error.tsx
@@ -8132,10 +8091,6 @@ msgstr "Phần đầu trang một không trông giống một cái tên."
 msgid "The URL you entered is not valid."
 msgstr "URL bạn đã nhập không hợp lệ."
 
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "The working resume was deleted. This thread is read-only."
-msgstr "Hồ sơ xin việc đã bị xóa. Chủ đề này chỉ có thể đọc."
-
 #. Menu item that opens appearance theme selection submenu
 #: src/features/command-palette/pages/preferences/theme.tsx
 #: src/features/settings/pages/preferences.tsx
@@ -8171,41 +8126,37 @@ msgstr ""
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Thinking"
-msgstr "Suy nghĩ"
+#: src/features/assistant/conversation.tsx
+msgid "Thinking…"
+msgstr ""
 
 #: src/features/settings/pages/account.tsx
 msgid "This action cannot be undone. All your data will be permanently deleted."
 msgstr "Hành động này không thể hoàn tác. Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn."
 
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "This action cannot be undone. It deletes the thread's messages and uploaded attachments."
-msgstr "Không thể hoàn tác hành động này. Nó xóa các tin nhắn của chủ đề và các tệp đính kèm đã tải lên."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This action cannot be undone. It deletes the thread's messages and uploaded attachments. The working resume stays in your dashboard, and you can delete it separately."
-msgstr "Không thể hoàn tác hành động này. Nó xóa các tin nhắn của chủ đề và các tệp đính kèm đã tải lên. Sơ yếu lý lịch đang làm việc vẫn nằm trong bảng điều khiển của bạn, và bạn có thể xóa nó riêng."
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr ""
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "This assistant could not be opened."
-msgstr "Không thể mở trình trợ lý này."
 
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired."
 msgstr "Yêu cầu kết nối này không hợp lệ hoặc đã hết hạn."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "This conversation couldn't be opened."
+msgstr ""
+
 #: src/dialogs/api-key/create.tsx
 msgid "This creates a new API key, which lets other programs read and change your resume data through the Reactive Resume API."
 msgstr "Thao tác này tạo một khóa API mới, cho phép các chương trình khác đọc và thay đổi dữ liệu sơ yếu lý lịch của bạn thông qua API của Reactive Resume."
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "This edit request can no longer be answered."
-msgstr "Không thể trả lời yêu cầu chỉnh sửa này được nữa."
+#: src/features/assistant/assistant-panel.tsx
+msgid "This document"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "This document is locked. Unlock it to get suggestions."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "This entry"
@@ -8364,45 +8315,13 @@ msgstr "Lần đăng nhập này đã hết hạn hoặc đã được sử dụ
 msgid "This step is optional, but recommended."
 msgstr "Bước này là không bắt buộc, nhưng được khuyến nghị."
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This thread is archived. You can't send new messages."
-msgstr "Chủ đề này đã được lưu trữ. Bạn không thể gửi tin nhắn mới."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This thread is read-only"
-msgstr "Chủ đề này chỉ có thể đọc."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This thread is read-only because the working resume or AI provider is unavailable."
-msgstr "Chủ đề này chỉ có thể đọc vì sơ yếu lý lịch đang làm việc hoặc nhà cung cấp AI hiện không khả dụng."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This will roll back this patch and any patches applied after it."
-msgstr "Thao tác này sẽ hoàn tác bản vá này và mọi bản vá được áp dụng sau nó."
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Thread actions"
-msgstr "Hành động luồng"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Thread archived."
-msgstr "Chủ đề đã được lưu trữ."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Thread deleted."
-msgstr "Chủ đề đã bị xóa."
-
-#: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Threads"
 msgstr "Chủ đề"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tighten the skills section so it supports the target role instead of reading like a keyword dump."
-msgstr "Hãy tinh gọn phần kỹ năng để nó hỗ trợ vai trò mục tiêu thay vì chỉ là một danh sách liệt kê từ khóa."
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Tip"
@@ -8428,26 +8347,6 @@ msgstr ""
 #: src/features/resume/share/format.ts
 msgid "Today {time}"
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Toggle resume preview"
-msgstr "Bật/tắt xem trước sơ yếu lý lịch"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Toggle threads"
-msgstr "Bật/tắt chủ đề"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tokens: {threadTokenTotal}"
-msgstr "Token: {threadTokenTotal}"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tokens: {total}"
-msgstr "Token: {total}"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tokens: {total} ({cached} cached)"
-msgstr "Token: {total} ({cached} từ bộ nhớ đệm)"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Tomorrow"
@@ -8475,6 +8374,10 @@ msgstr "Theo dõi công việc bạn đang ứng tuyển và liên kết sơ y�
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Track your first job"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Transcript copied"
 msgstr ""
 
 #: src/features/homepage/page.tsx
@@ -8508,6 +8411,7 @@ msgstr ""
 
 #: src/components/layout/error-screen.tsx
 #: src/features/homepage/ats-playground.tsx
+#: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Try again"
@@ -8636,6 +8540,7 @@ msgstr "Gạch chân"
 msgid "Underline links"
 msgstr ""
 
+#: src/features/assistant/document.ts
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/feature-explorer.tsx
 #: src/features/resume/editor/check/actions.ts
@@ -8718,10 +8623,6 @@ msgstr "Cập nhật mật khẩu"
 msgid "Update Resume"
 msgstr "Cập nhật resume"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Update the project bullets to show leadership, constraints, tradeoffs, and measurable outcomes."
-msgstr "Cập nhật các gạch đầu dòng của dự án để thể hiện khả năng lãnh đạo, ràng buộc, đánh đổi và kết quả đo lường được."
-
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."
 msgstr "Cập nhật chi tiết của hồ sơ ứng tuyển này."
@@ -8754,10 +8655,6 @@ msgstr "Tải lên .csv"
 #: src/routes/_home/ats-checker.tsx
 msgid "Upload a resume and see what an applicant tracking system reads from it. Everything runs in this browser. Your file is never uploaded, and nothing is stored."
 msgstr "Tải lên một sơ yếu lý lịch và xem hệ thống theo dõi ứng viên đọc được gì từ nó. Mọi thứ chạy trong trình duyệt này. Tệp của bạn không bao giờ được tải lên, và không có gì được lưu trữ."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Upload attachments"
-msgstr "Tải lên tệp đính kèm"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Upload picture"
@@ -8884,6 +8781,14 @@ msgstr "Tên người dùng"
 #: src/features/homepage/community-stats.tsx
 msgid "Users"
 msgstr "Người dùng"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Uses facts from your resume"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Uses the linked application"
+msgstr ""
 
 #: src/features/homepage/export-playground.tsx
 msgid "Uses the name, template, color, and type you chose above."
@@ -9024,10 +8929,6 @@ msgstr "Người truy cập cần mật khẩu của bạn để mở bản lý 
 msgid "Volunteer"
 msgstr "Tình nguyện viên"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Waiting for the agent…"
-msgstr "Đang chờ tác nhân…"
-
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr ""
@@ -9047,10 +8948,6 @@ msgstr "Chúng tôi không tìm thấy trang đó."
 #: src/features/auth/pages/error.tsx
 msgid "We couldn't link that provider account. Please try again."
 msgstr "Chúng tôi không thể liên kết tài khoản nhà cung cấp đó. Vui lòng thử lại."
-
-#: src/routes/agent/$threadId.tsx
-msgid "We couldn't open this thread."
-msgstr "Chúng tôi không mở được chủ đề này."
 
 #. placeholder {0}: dates.raw
 #: src/features/resume/editor/write/dates-field.tsx
@@ -9078,10 +8975,6 @@ msgstr "Chúng tôi đã gửi một liên kết xác nhận đến địa chỉ
 msgid "We sent a new verification link to your email address. Open it to verify your account."
 msgstr "Chúng tôi đã gửi một liên kết xác minh mới đến địa chỉ email của bạn. Hãy mở liên kết đó để xác minh tài khoản của bạn."
 
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Web search"
-msgstr "Tìm kiếm trên web"
-
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Website"
 msgstr "Trang web"
@@ -9096,10 +8989,6 @@ msgstr "Những gì trình phân tích cú pháp đọc được"
 msgid "What a person sees"
 msgstr "Những gì con người nhìn thấy"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "What do you want to do?"
-msgstr "Bạn muốn làm gì?"
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "What do you want to rename this section to?"
 msgstr "Bạn muốn đổi tên phần này thành gì?"
@@ -9110,6 +8999,14 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "What it asks for"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What should change?"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "What should we work on?"
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -9228,14 +9125,6 @@ msgstr "Làm việc tại OpenAI"
 msgid "Worked with engineers from idea to launch."
 msgstr "Đã hợp tác với các kỹ sư từ giai đoạn lên ý tưởng cho đến khi ra mắt sản phẩm."
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Working…"
-msgstr "Đang xử lý…"
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Worth a shot"
-msgstr "Đáng để thử"
-
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -9282,9 +9171,17 @@ msgstr "X (Twitter)"
 msgid "Yesterday {time}"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "You"
+msgstr ""
+
 #. placeholder {0}: result.takenBy
 #: src/features/resume/share/link-tab.tsx
 msgid "You already use this for “{0}”."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "You answered: {answer}"
 msgstr ""
 
 #: src/features/auth/pages/login.tsx
@@ -9450,6 +9347,10 @@ msgstr "Số điện thoại của bạn được viết theo định dạng kh�
 msgid "Your profile has been updated."
 msgstr "Hồ sơ của bạn đã được cập nhật."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "your provider"
+msgstr ""
+
 #: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "your resume"
 msgstr ""
@@ -9493,10 +9394,6 @@ msgstr "Phóng"
 #: src/features/resume/editor/chrome.tsx
 msgid "Zoom in"
 msgstr "Phóng to"
-
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Zoom level"
-msgstr "Mức độ phóng to"
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Zoom out"

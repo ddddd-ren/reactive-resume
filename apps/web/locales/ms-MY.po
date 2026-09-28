@@ -113,12 +113,18 @@ msgstr ""
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr ""
 
+#. placeholder {0}: output.skipped.length
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
+msgstr ""
+
 #. placeholder {0}: report.ignored.length
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
 msgstr ""
 
 #. placeholder {0}: proposals.length
+#: src/features/assistant/conversation.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr ""
@@ -190,6 +196,7 @@ msgid "{0} days left"
 msgstr ""
 
 #. placeholder {0}: proposals.length
+#: src/features/assistant/document.ts
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "{0} edits applied"
 msgstr ""
@@ -231,6 +238,12 @@ msgstr "{0} daripada {1} semakan berkaitan lulus"
 msgid "{0} of {1} applicable checks passed."
 msgstr "{0} daripada {1} semakan berkaitan lulus."
 
+#. placeholder {0}: thread.editsAccepted
+#. placeholder {1}: thread.editsProposed
+#: src/features/assistant/assistant-panel.tsx
+msgid "{0} of {1} edits accepted"
+msgstr ""
+
 #. placeholder {0}: result.found.length
 #. placeholder {1}: result.total
 #: src/features/resume/editor/check/job-match.tsx
@@ -256,6 +269,17 @@ msgstr ""
 #: src/features/ats-checker/report/jd-coverage.tsx
 msgid "{0} of {1} terms found"
 msgstr "{0} daripada {1} istilah ditemui"
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/conversation.tsx
+msgid "{0} posting"
+msgstr ""
+
+#. placeholder {0}: props.providerLabel
+#. placeholder {1}: getOrpcErrorMessage(error, { fallback: t`an error`, allowServerMessage: true })
+#: src/features/assistant/conversation.tsx
+msgid "{0} returned “{1}”. Your message is kept."
+msgstr ""
 
 #. placeholder {0}: data.basics.name
 #: src/features/homepage/export-playground.tsx
@@ -293,6 +317,11 @@ msgstr ""
 #. placeholder {0}: issue.fix.done
 #: src/features/resume/editor/check/actions.ts
 msgid "{0}. Issue resolved."
+msgstr ""
+
+#. placeholder {0}: proposals.length
+#: src/features/assistant/conversation.tsx
+msgid "{accepted} of {0} applied"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -385,6 +414,14 @@ msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{passedRules} of {totalRules} checks pass."
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -553,10 +590,6 @@ msgstr "Pembina resume percuma dan sumber terbuka. Letakkan pengalaman anda pada
 msgid "A free, open-source resume builder. Yours to keep, yours to export, yours to host."
 msgstr "Pembina resume percuma dan sumber terbuka. Ia milik anda: simpan, eksport dan hoskan sendiri."
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "A friendly nudge for the recruiter"
-msgstr "Satu dorongan mesra untuk perekrut"
-
 #: src/features/ats-checker/messages.ts
 msgid "A full-height gap splits this page into two columns."
 msgstr "Jurang setinggi penuh membahagikan halaman ini kepada dua lajur."
@@ -648,10 +681,6 @@ msgstr ""
 #: src/features/ats-checker/parse-preview.tsx
 msgid "A single-column export keeps every fact. Columns and images are where facts get lost."
 msgstr "Eksport satu lajur mengekalkan setiap maklumat. Lajur berbilang dan imej ialah tempat maklumat hilang."
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "A stretch"
-msgstr "Regangan"
 
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
@@ -748,6 +777,10 @@ msgstr "Tambah nota…"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Add a phone number"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Add a result"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -968,10 +1001,6 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Adjust the resume for a remote-first role that values async communication and ownership."
-msgstr "Laraskan resume untuk peranan jarak jauh yang mengutamakan komunikasi dan pemilikan asinkron."
-
 #: src/features/settings/integrations/components/ai-section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
@@ -989,26 +1018,9 @@ msgstr "Afrikaans"
 msgid "Against the job description"
 msgstr "Berbanding dengan penerangan kerja"
 
-#: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
-msgid "Agent"
-msgstr "Ejen"
-
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Agent ready"
 msgstr "Ejen sedia"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "AI agent setup is unavailable right now. Please try again in a moment."
-msgstr "Persediaan ejen AI tidak tersedia sekarang. Sila cuba lagi sebentar lagi."
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "AI agent setup is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured."
-msgstr "Persediaan ejen AI tidak tersedia sehingga REDIS_URL dan ENCRYPTION_SECRET dikonfigurasikan."
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "AI assistant"
-msgstr "Pembantu AI"
 
 #: src/features/resume/share/format.ts
 msgid "AI edit"
@@ -1106,6 +1118,10 @@ msgstr "Fon terbenam tidak dapat dibaca."
 msgid "An entry has no dates"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "an error"
+msgstr ""
+
 #: src/components/layout/error-screen.tsx
 msgid "An unexpected error stopped this page from loading. You can try again or head back."
 msgstr "Ralat yang tidak dijangka telah menghalang halaman ini daripada dimuatkan. Anda boleh cuba lagi atau kembali."
@@ -1119,7 +1135,7 @@ msgstr ""
 msgid "Another of your resumes uses this address."
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Answer in your own words"
 msgstr "Jawab dengan perkataan anda sendiri"
 
@@ -1138,6 +1154,10 @@ msgstr ""
 #: src/features/homepage/feature-explorer.tsx
 msgid "API and MCP access"
 msgstr "Akses API dan MCP"
+
+#: src/features/assistant/provider-setup.tsx
+msgid "API key"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "API Key"
@@ -1207,10 +1227,6 @@ msgstr "Permohonan ditambahkan ke pipeline anda."
 msgid "Application closed"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Application Copilot"
-msgstr "Copilot Permohonan"
-
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Application date from"
 msgstr "Tarikh permohonan dari"
@@ -1261,22 +1277,9 @@ msgstr "Dimohon"
 msgid "Applied today"
 msgstr ""
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Approve"
-msgstr "Luluskan"
-
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Approved, waiting for the agent…"
-msgstr "Diluluskan, menunggu ejen…"
-
 #: src/libs/locale.ts
 msgid "Arabic"
 msgstr "Bahasa Arab"
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Archive"
-msgstr "Arkibkan"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Archived (closes it)"
@@ -1306,16 +1309,40 @@ msgstr "Kecerdasan Buatan"
 msgid "As of <0>{formattedDate}</0>."
 msgstr "Setakat <0>{formattedDate}</0>."
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Ask anything about this resume"
-msgstr "Tanya apa-apa sahaja tentang resume ini"
+#: src/features/command-palette/pages/ask.tsx
+#: src/features/resume/editor/write/improve.tsx
+msgid "Ask"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Ask for something else…"
+msgstr ""
+
+#: src/features/command-palette/pages/ask.tsx
+msgid "Ask the assistant “{question}”"
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Ask the assistant to work it in"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Ask, or describe a change…"
+msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Aspect Ratio"
 msgstr "Nisbah Aspek"
 
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+#: src/features/assistant/assistant-button.tsx
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/assistant/conversation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 msgid "Assistant"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Assistant conversations"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -1336,6 +1363,10 @@ msgstr "Lampirkan surat lamaran (PDF)"
 msgid "Attach a cover letter file (PDF)"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "Attach a file"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Attach a file instead"
 msgstr ""
@@ -1344,17 +1375,9 @@ msgstr ""
 msgid "Attach a resume file (PDF)"
 msgstr "Lampirkan fail resume (PDF)"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Attach files"
-msgstr "Lampirkan fail"
-
-#: src/routes/agent/-components/agent-chat.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Attachment"
 msgstr "Lampiran"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Attachment uploaded."
-msgstr "Lampiran dimuat naik."
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/settings/authentication/index.tsx
@@ -1418,10 +1441,6 @@ msgstr ""
 msgid "Back to now"
 msgstr ""
 
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Back to resumes"
-msgstr "Kembali ke resume"
-
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
@@ -1437,6 +1456,7 @@ msgstr "Warna Latar Belakang"
 msgid "Backup codes copied to clipboard."
 msgstr "Kod sandaran disalin ke papan keratan."
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Base URL"
 msgstr "URL Asas"
@@ -1457,10 +1477,6 @@ msgstr "Bengali"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr ""
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Blank draft"
-msgstr "Draf kosong"
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -1517,6 +1533,7 @@ msgstr "Membina sistem reka bentuk yang digunakan oleh enam pasukan produk."
 msgid "Bulgarian"
 msgstr "Bulgarian"
 
+#: src/features/assistant/document.ts
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "bullet {n}"
 msgstr ""
@@ -1564,10 +1581,6 @@ msgstr ""
 #: src/hooks/use-prompt.tsx
 msgid "Cancel"
 msgstr "Batal"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Cannot restore; the resume has changed since this edit was applied."
-msgstr "Tidak dapat memulihkan; resume telah berubah sejak suntingan ini digunakan."
 
 #: src/libs/locale.ts
 msgid "Catalan"
@@ -1620,6 +1633,10 @@ msgstr ""
 msgid "Changed elsewhere"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "Changed the resume directly (an earlier conversation)"
+msgstr ""
+
 #: src/dialogs/resume/index.tsx
 msgid "Changed your mind? Rename your resume to something more descriptive."
 msgstr "Berubah fikiran? Tukar nama resume anda kepada sesuatu yang lebih deskriptif."
@@ -1632,11 +1649,6 @@ msgstr "Log Perubahan"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/$threadId.tsx
-msgid "Chat"
-msgstr "Sembang"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
@@ -1651,6 +1663,10 @@ msgstr ""
 msgid "Check again"
 msgstr "Semak semula"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Check it's accurate."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
 msgstr "Semak fail yang dieksport mengandungi semua yang anda jangkakan, dan semuanya adalah teks yang boleh dipilih."
@@ -1658,10 +1674,6 @@ msgstr "Semak fail yang dieksport mengandungi semua yang anda jangkakan, dan sem
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Check views"
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Check what an applicant tracking system would miss, and only add keywords you're sure about."
-msgstr "Periksa apa yang akan terlepas oleh sistem penjejakan pemohon, dan tambah hanya kata kunci yang anda yakin."
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1695,6 +1707,10 @@ msgstr "Menyemak…"
 msgid "Checks by category"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Checks every bullet for action and result"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Chinese (Simplified)"
 msgstr "Cina (Ringkas)"
@@ -1716,10 +1732,6 @@ msgstr ""
 msgid "Choose a file to import"
 msgstr ""
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Choose a model and resume draft."
-msgstr "Pilih model dan draf resume."
-
 #: src/features/ats-checker/uploader.tsx
 msgid "Choose a PDF"
 msgstr "Pilih satu PDF"
@@ -1733,10 +1745,6 @@ msgstr "Pilih fail PDF untuk membaca teksnya."
 #: src/components/input/rich-input.tsx
 msgid "Choose a preset or custom shade."
 msgstr "Pilih pratetap atau rona tersuai."
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Choose a resume"
-msgstr "Pilih resume"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
@@ -1823,16 +1831,16 @@ msgstr "tutup"
 msgid "Close {title}"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Close AI assistant"
-msgstr "Tutup pembantu AI"
-
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "Close application"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Close application…"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Close the assistant"
 msgstr ""
 
 #: src/features/applications/components/detail/close-dialog.tsx
@@ -1897,9 +1905,9 @@ msgstr "Padat"
 msgid "Company"
 msgstr "Syarikat"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Compare this resume against this job posting URL and update the keywords without overselling anything."
-msgstr "Bandingkan resume ini dengan URL iklan pekerjaan ini dan kemas kini kata kuncinya tanpa melebih-lebihkan apa-apa."
+#: src/features/assistant/assistant-panel.tsx
+msgid "Compares your resume with the posting"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
@@ -1922,13 +1930,22 @@ msgid "Confirm Password"
 msgstr "Sahkan kata laluan"
 
 #. Authentication settings action to link a social login provider
+#: src/features/assistant/provider-setup.tsx
 #: src/features/settings/authentication/components/social-provider.tsx
 msgid "Connect"
 msgstr "Sambung"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Connect an AI provider"
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Connect an application"
 msgstr "Sambungkan aplikasi"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Connect another…"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Connect through MCP to create and update resumes in a conversation. Or use the API to build your own workflow."
@@ -2008,6 +2025,7 @@ msgstr "Kandungan disusun dalam grid."
 #. Final action button after saving backup codes
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/assistant/conversation.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Continue"
 msgstr "Teruskan"
@@ -2016,13 +2034,13 @@ msgstr "Teruskan"
 msgid "Contribute code"
 msgstr "Sumbangkan kod"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Conversation copied."
-msgstr "Perbualan disalin."
+#: src/features/assistant/conversation.tsx
+msgid "Conversation"
+msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Conversation JSON copied."
-msgstr "JSON perbualan disalin."
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Conversations"
+msgstr ""
 
 #: src/features/resume/stylesheet/legacy-banner.tsx
 msgid "Converted stylesheet draft"
@@ -2032,19 +2050,13 @@ msgstr "Draf helaian gaya yang ditukar"
 msgid "Copied"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Copied to clipboard."
-msgstr "Disalin ke papan keratan."
-
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Copied to Documents"
 msgstr ""
 
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/applications/components/application-ai-copilot.tsx
 #: src/features/resume/share/link-tab.tsx
-#: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy"
 msgstr "Salin"
 
@@ -2063,10 +2075,6 @@ msgstr "Salin Kod Sandaran"
 #: src/features/documents/document-actions.tsx
 msgid "Copy for a job…"
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Copy JSON"
-msgstr "Salin JSON"
 
 #. Accessible label for the button that copies the two-factor secret key
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -2093,6 +2101,10 @@ msgstr "Salin kunci rahsia ini dan gunakan dalam aplikasi anda untuk mengakses d
 msgid "Copy to Documents"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "Copy transcript"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "Betulkan tahun, atau tulis \"Present\" untuk kerja yang sedang berjalan."
@@ -2101,16 +2113,11 @@ msgstr "Betulkan tahun, atau tulis \"Present\" untuk kerja yang sedang berjalan.
 msgid "Could not complete this connection. Restart the connection from your client and try again."
 msgstr "Tidak dapat melengkapkan sambungan ini. Mulakan semula sambungan daripada pelanggan anda dan cuba lagi."
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Could not copy to clipboard. Please copy the text manually."
-msgstr "Tidak dapat menyalin ke papan keratan. Sila salin teks secara manual."
-
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not generate the DOCX. Please try again."
 msgstr "Tidak dapat menjana DOCX. Sila cuba lagi."
 
 #: src/features/resume/export/use-resume-export.ts
-#: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Could not generate the PDF. Please try again."
 msgstr "Tidak dapat menjana PDF. Sila cuba lagi."
@@ -2122,10 +2129,6 @@ msgstr "Tidak dapat menyediakan contoh. Sila cuba lagi."
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
 msgstr "Tidak dapat menyediakan resume anda untuk dicetak. Sila cuba lagi."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Could not restore this patch."
-msgstr "Tidak dapat memulihkan tampalan ini."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2152,8 +2155,16 @@ msgstr ""
 msgid "Couldn't add the application. Please try again."
 msgstr "Tidak dapat menambahkan permohonan. Sila cuba lagi."
 
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't attach the file."
+msgstr ""
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Couldn't change the design. Try again."
+msgstr ""
+
+#: src/features/assistant/provider-setup.tsx
+msgid "Couldn't connect. Check the key and try again."
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
@@ -2164,12 +2175,20 @@ msgstr ""
 msgid "Couldn't copy the resume."
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't copy the transcript."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't create the document."
 msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Couldn't create the letter."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Couldn't delete it."
 msgstr ""
 
 #: src/features/applications/components/list-view.tsx
@@ -2180,12 +2199,21 @@ msgstr ""
 msgid "Couldn't delete the interview."
 msgstr ""
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Couldn't get a suggestion. Nothing changed."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't import"
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't link the application."
+msgstr ""
+
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't propose these edits: {0}"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -2231,6 +2259,14 @@ msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Couldn't schedule the interview."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Couldn't start the conversation. Try again."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Couldn't switch models."
 msgstr ""
 
 #: src/features/applications/components/list-view.tsx
@@ -2282,10 +2318,6 @@ msgstr "Surat Iringan"
 msgid "Cover letter — {0}"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Cover letter draft"
-msgstr "Draf surat iringan"
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Cover letter file"
 msgstr ""
@@ -2304,10 +2336,6 @@ msgstr ""
 msgid "Create"
 msgstr "Cipta"
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Create a copy tuned to this job"
-msgstr "Buat salinan yang ditala pada kerja ini"
-
 #: src/features/auth/pages/register.tsx
 msgid "Create a new account"
 msgstr "Cipta akaun baharu"
@@ -2325,13 +2353,13 @@ msgstr "Cipta resume baharu"
 msgid "Create a resume"
 msgstr "Cipta resume"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Create a resume first, then ask about it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
 msgstr ""
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Create from scratch"
-msgstr "Cipta dari awal"
 
 #. Call-to-action link from login page to account registration page
 #: src/features/auth/pages/login.tsx
@@ -2342,11 +2370,6 @@ msgstr "Buat satu sekarang"
 #: src/features/resume/share/format.ts
 msgid "Created"
 msgstr "Dicipta"
-
-#. placeholder {0}: result.name
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Created \"{0}\" and linked it to this application."
-msgstr "Mencipta \"{0}\" dan memautkannya ke permohonan ini."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Created “{finalName}”"
@@ -2480,10 +2503,6 @@ msgstr ""
 msgid "Decrease indent"
 msgstr "Kurangkan inden"
 
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Decrease zoom"
-msgstr "Kurangkan zum"
-
 #: src/features/resume/editor/write/entries.tsx
 msgid "Degree"
 msgstr "Ijazah"
@@ -2495,12 +2514,11 @@ msgstr "Ijazah"
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
 msgid "Delete"
 msgstr "Padam"
 
@@ -2511,6 +2529,11 @@ msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete “{title}”?"
+msgstr ""
+
+#. placeholder {0}: thread.title
+#: src/features/assistant/assistant-panel.tsx
+msgid "Delete {0}"
 msgstr ""
 
 #. placeholder {0}: ids.length
@@ -2555,15 +2578,14 @@ msgstr "Padam pembekal"
 msgid "Delete section"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Delete this agent thread?"
-msgstr "Padamkan thread ejen ini?"
-
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Delete this application?"
 msgstr "Padam permohonan ini?"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Delete this conversation?"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Delete this entry?"
@@ -2610,16 +2632,11 @@ msgstr "Memadam akaun anda..."
 msgid "Deleting your API key..."
 msgstr "Memadam kunci API anda..."
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Denied, waiting for the agent…"
-msgstr "Ditolak, menunggu ejen…"
-
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Density"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
-#: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Deny"
 msgstr "Tolak"
 
@@ -2706,7 +2723,6 @@ msgstr "Putuskan sambungan"
 msgid "Discord"
 msgstr "Discord"
 
-#: src/features/applications/components/application-ai-copilot.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Dismiss"
@@ -2741,6 +2757,11 @@ msgstr ""
 msgid "Don't have an account? <0/>"
 msgstr "Tiada akaun? <0/>"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Don't send {0}"
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 msgid "Donate"
 msgstr "Derma"
@@ -2748,10 +2769,6 @@ msgstr "Derma"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Donate to Reactive Resume"
 msgstr "Derma kepada Reactive Resume"
-
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Done"
-msgstr "Selesai"
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -2780,7 +2797,6 @@ msgid "Download CSV"
 msgstr "Muat turun CSV"
 
 #: src/features/resume/public/public-resume.tsx
-#: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Download PDF"
@@ -2843,13 +2859,13 @@ msgstr ""
 msgid "Draft · uses only your resume and the posting"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Draft a cover letter"
-msgstr "Draf surat iringan"
+#: src/features/assistant/assistant-panel.tsx
+msgid "Draft a follow-up email"
+msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Draft a follow-up"
-msgstr "Draf susulan"
+#: src/features/assistant/assistant-panel.tsx
+msgid "Draft a summary"
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Draft from the posting"
@@ -2862,10 +2878,6 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Draft kept. Edit anything you like."
 msgstr ""
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Drafting failed."
-msgstr "Merangka failed."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Drafting needs an AI provider."
@@ -2924,10 +2936,6 @@ msgstr ""
 msgid "Duplicate"
 msgstr "Duplikat"
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Duplicate as AI draft"
-msgstr "Duplikasi sebagai draf AI"
-
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate Resume"
 msgstr "Duplikat Resume"
@@ -2972,6 +2980,7 @@ msgstr ""
 msgid "Edit application"
 msgstr "Edit permohonan"
 
+#: src/features/assistant/document.ts
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit applied"
 msgstr ""
@@ -2989,10 +2998,6 @@ msgstr "Sunting kandungan dalam mod skrin penuh"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
 msgstr "Edit tarikh"
-
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Edit declined"
-msgstr "Suntingan ditolak"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Edit details…"
@@ -3298,15 +3303,6 @@ msgstr ""
 msgid "Extracted text"
 msgstr "Teks yang diekstrak"
 
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Failed"
-msgstr "Gagal"
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Failed to archive thread."
-msgstr "Gagal mengarkibkan thread."
-
 #. Fallback toast when creating an API key fails
 #: src/dialogs/api-key/create.tsx
 msgid "Failed to create API key. Please try again."
@@ -3330,11 +3326,6 @@ msgstr "Gagal memadam pembekal."
 #: src/features/settings/pages/api-keys.tsx
 msgid "Failed to delete the API key. Please try again."
 msgstr "Gagal memadam kunci API. Sila cuba lagi."
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Failed to delete thread."
-msgstr "Gagal memadamkan thread."
 
 #. Fallback toast when account deletion fails
 #: src/features/settings/pages/account.tsx
@@ -3411,14 +3402,6 @@ msgstr "Gagal log masuk. Sila cuba lagi."
 msgid "Failed to sign out. Please try again."
 msgstr "Gagal log keluar. Sila cuba lagi."
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Failed to start agent thread."
-msgstr "Gagal memulakan thread ejen."
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "Failed to start the AI assistant."
-msgstr "Gagal memulakan pembantu AI."
-
 #. Fallback toast when unlinking a social authentication provider fails
 #: src/features/settings/authentication/components/hooks.tsx
 msgid "Failed to unlink provider. Please try again."
@@ -3427,10 +3410,6 @@ msgstr "Gagal menyahpaut penyedia. Sila cuba lagi."
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Failed to update provider."
 msgstr "Gagal mengemas kini pembekal."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Failed to update thread settings."
-msgstr "Gagal mengemas kini tetapan bebenang."
 
 #. Fallback toast when changing account password fails
 #: src/dialogs/auth/change-password.tsx
@@ -3441,10 +3420,6 @@ msgstr "Gagal mengemas kini kata laluan anda. Sila cuba lagi."
 #: src/features/settings/pages/profile.tsx
 msgid "Failed to update your profile. Please try again."
 msgstr "Gagal mengemas kini profil anda. Sila cuba lagi."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Failed to upload attachment."
-msgstr "Gagal memuat naik lampiran."
 
 #. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -3522,13 +3497,13 @@ msgstr ""
 msgid "Filter by tag"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Find the weak bullet points and rewrite them with stronger outcomes, numbers, scope, and sharper verbs."
-msgstr "Cari poin yang lemah dan tulis semula dengan hasil yang lebih kukuh, angka, skop dan kata kerja yang lebih tajam."
-
 #: src/features/homepage/page.tsx
 msgid "Find us on GitHub"
 msgstr "Cari kami di GitHub"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Find weak bullets"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
@@ -3594,10 +3569,6 @@ msgstr "Susulan"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Follow-up date"
 msgstr "Tarikh susulan"
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Follow-up draft"
-msgstr "Draf susulan"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Follow-up note"
@@ -3709,9 +3680,9 @@ msgstr ""
 msgid "from the assistant or API"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "From your resume and the posting"
-msgstr "Dari resume dan siaran anda"
+#: src/features/assistant/assistant-panel.tsx
+msgid "From your experience entries"
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Full name"
@@ -3731,16 +3702,11 @@ msgstr "Skrin Penuh"
 msgid "Fullscreen Editor"
 msgstr "Penyunting Skrin Penuh"
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Gaps:"
-msgstr "Jurang:"
-
 #: src/dialogs/resume/index.tsx
 msgid "Generate a random name"
 msgstr "Jana nama rawak"
 
 #: src/features/resume/export/use-resume-export.ts
-#: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Generating your PDF..."
 msgstr "Menjana PDF anda..."
@@ -4005,6 +3971,10 @@ msgstr "Bagaimanakah saya menggunakan API?"
 msgid "How far applications get"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "How well do I fit this role?"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Hungarian"
 msgstr "Hungary"
@@ -4012,6 +3982,15 @@ msgstr "Hungary"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Hyphenation"
 msgstr "Penggunaan tanda hubung"
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can accept one by one."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind}. Suggestions come back as edits you can accept one by one."
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "I design software for teams, from early research to the details people use every day."
@@ -4121,6 +4100,18 @@ msgstr ""
 msgid "Importing"
 msgstr ""
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Improve"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Improve selected line"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Improving…"
+msgstr ""
+
 #. placeholder {0}: suggestion.section
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "In {0}"
@@ -4141,10 +4132,6 @@ msgstr "Tingkatkan inden"
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Tingkatkan jarak baris supaya dua baris tidak bercantum menjadi satu."
-
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Increase zoom"
-msgstr "Tingkatkan zum"
 
 #: src/libs/locale.ts
 msgid "Indonesian"
@@ -4290,6 +4277,10 @@ msgstr ""
 msgid "Items you move here stay for 30 days."
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Its own design ({summary})."
 msgstr ""
@@ -4389,6 +4380,10 @@ msgstr ""
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Kekalkan di bawah 2.5 MB, biasanya dengan membuang atau mengecilkan imej."
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Keep mine"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr ""
@@ -4429,6 +4424,10 @@ msgstr "Kekal bersama"
 #: src/features/homepage/export-playground.tsx
 msgid "Keep your layout intact. Ready to send, upload, or print."
 msgstr "Kekalkan susun atur anda seadanya. Sedia untuk dihantar, dimuat naik atau dicetak."
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Keeps the most specific parts"
+msgstr ""
 
 #: src/features/resume/editor/check/actions.ts
 msgid "Kept as it is"
@@ -4515,6 +4514,10 @@ msgstr "Tataletak"
 msgid "Lead with the work. Add a concrete detail so someone can picture it."
 msgstr "Mulakan dengan hasil kerja. Tambah butiran yang konkrit supaya seseorang dapat membayangkannya."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Leads with why you fit"
+msgstr ""
+
 #: src/hooks/use-form-blocker.tsx
 msgid "Leave"
 msgstr "Tinggalkan"
@@ -4555,6 +4558,11 @@ msgstr "Panjang bukan kecacatan, dan tiada peraturan satu halaman yang universal
 msgid "Let's start with what you have"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "letter"
+msgstr ""
+
+#: src/features/assistant/document.ts
 #: src/features/documents/document-card.tsx
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/features/resume/editor/write/entries.tsx
@@ -4605,6 +4613,10 @@ msgstr "Cerah"
 msgid "Light theme"
 msgstr "Tema cerah"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Likely questions, from the posting and your resume"
+msgstr ""
+
 #. placeholder {0}: diagnostic.range.start.line
 #. placeholder {1}: diagnostic.range.start.column
 #: src/features/resume/stylesheet/status.tsx
@@ -4642,9 +4654,9 @@ msgstr "Pautkan Reactive Resume (disyorkan)"
 msgid "Link a Reactive Resume to use AI match scoring and tailoring."
 msgstr "Pautkan sebuah Reactive Resume untuk menggunakan pemarkahan padanan dan penyesuaian AI."
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
-msgstr "Pautkan resume dan tampal penerangan kerja (Sunting) untuk menilai kesesuaian anda dan menyesuaikan salinan."
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Link a resume or a letter first"
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
@@ -4755,24 +4767,22 @@ msgstr "Memuatkan permohonan…"
 msgid "Loading connection request..."
 msgstr "Memuatkan permintaan sambungan..."
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Loading conversations…"
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Loading providers…"
 msgstr "Memuatkan pembekal…"
 
 #: src/features/command-palette/pages/resumes.tsx
-#: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Loading resumes…"
 msgstr "Memuatkan resume…"
 
 #: src/features/homepage/page.tsx
 msgid "Loading the playground…"
 msgstr "Memuatkan taman permainan…"
-
-#: src/features/command-palette/pages/resumes.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Loading threads…"
-msgstr "Memuatkan thread…"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Loading total"
@@ -4840,13 +4850,22 @@ msgstr "Utama"
 msgid "Main navigation"
 msgstr "Navigasi utama"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Make it more specific"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/resume/editor/write/improve.tsx
+msgid "Make it shorter"
+msgstr ""
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Make it your own"
 msgstr "Jadikan ia milik anda"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Make the experience section about results and cut the vague responsibilities."
-msgstr "Jadikan bahagian pengalaman berfokus pada hasil dan buang tanggungjawab yang kabur."
+#: src/features/assistant/assistant-panel.tsx
+msgid "Make the opening stronger"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Make the visible text and the destination match."
@@ -4913,10 +4932,6 @@ msgstr ""
 msgid "Match against a job"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Match scoring failed."
-msgstr "Pemarkahan perlawanan failed."
-
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Match system theme"
 msgstr ""
@@ -4945,17 +4960,22 @@ msgstr ""
 msgid "Medium impact"
 msgstr "Kesan sederhana"
 
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Missing working resume"
-msgstr "Resume kerja yang hilang"
+#: src/features/assistant/conversation.tsx
+msgid "Message the assistant"
+msgstr ""
 
 #: src/features/homepage/site-footer.tsx
 msgid "MIT License"
 msgstr "Lesen MIT"
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Model"
 msgstr "Model"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Model: {providerLabel}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -4968,6 +4988,10 @@ msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "More personal"
+msgstr ""
+
+#: src/features/assistant/provider-setup.tsx
+msgid "More providers and options are in <0>Settings</0>. The rest of the app works fully without AI."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -5164,6 +5188,10 @@ msgstr "Pendaftaran akaun baharu kini dilumpuhkan pada pelayan ini."
 msgid "New Application"
 msgstr "Permohonan Baharu"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "New conversation"
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter instead"
 msgstr ""
@@ -5195,16 +5223,6 @@ msgstr "Kata Laluan Baharu"
 msgid "New section"
 msgstr ""
 
-#: src/features/command-palette/pages/resumes.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "New thread"
-msgstr "Thread baharu"
-
-#: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
-msgid "New Thread"
-msgstr "Thread Baharu"
-
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Next issue"
 msgstr ""
@@ -5225,10 +5243,6 @@ msgstr "Templat seterusnya"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "No active applications."
 msgstr ""
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "No AI provider connected"
-msgstr "Tiada penyedia AI disambungkan"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No application"
@@ -5265,9 +5279,17 @@ msgstr ""
 msgid "No conventional section headings were found."
 msgstr "Tiada tajuk bahagian konvensional ditemui."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "No conversations about this document yet."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
 msgstr "Tiada tarikh ditemui."
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "no edits"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No education section was found."
@@ -5376,10 +5398,6 @@ msgstr "Tiada teks dapat dibaca daripada fail ini."
 #: src/features/homepage/ats-playground.tsx
 msgid "No text found"
 msgstr "Tiada teks ditemui"
-
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "No threads yet."
-msgstr "Tiada thread lagi."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "No work experience shows"
@@ -5609,10 +5627,6 @@ msgstr "Buka Klien E-mel"
 msgid "Open focus mode"
 msgstr "Buka mod fokus"
 
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Open in builder"
-msgstr "Buka dalam pembina"
-
 #: src/features/documents/new-document-dialog.tsx
 msgid "Open in editor"
 msgstr ""
@@ -5659,14 +5673,6 @@ msgstr "dibuka dalam tab baharu"
 msgid "Opens the editor on your name. Nothing else to fill in first."
 msgstr ""
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Optional note for the agent"
-msgstr "Nota pilihan untuk ejen"
-
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Optional note for the agent…"
-msgstr "Nota pilihan untuk ejen…"
-
 #: src/routes/_home/ats-checker.tsx
 msgid "Optionally, which terms from a job posting already appear."
 msgstr "Secara pilihan, istilah mana daripada iklan kerja yang sudah muncul."
@@ -5705,6 +5711,10 @@ msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) in
 msgid "or continue with"
 msgstr "atau teruskan dengan"
 
+#: src/features/assistant/conversation.tsx
+msgid "Or in your own words…"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Or upload a resume PDF"
 msgstr "Atau muat naik PDF resume"
@@ -5721,6 +5731,15 @@ msgstr "Organisasi"
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "Pemformatan jadual asal dikekalkan. Kandungan ini adalah baca sahaja kerana ia tidak boleh diedit dengan selamat."
+
+#: src/features/assistant/provider-setup.tsx
+msgid "Other · OpenAI-compatible"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/assistant/assistant-panel.tsx
+msgid "Other documents · {0}"
+msgstr ""
 
 #: src/features/ats-checker/report/score-header.tsx
 msgid "out of 100"
@@ -5773,6 +5792,7 @@ msgstr ""
 msgid "Paragraph"
 msgstr "Perenggan"
 
+#: src/features/assistant/document.ts
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "paragraph {n}"
 msgstr ""
@@ -5836,6 +5856,10 @@ msgstr ""
 msgid "Passwords do not match."
 msgstr "Kata laluan tidak sepadan."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Past conversations"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
 msgstr ""
@@ -5867,30 +5891,6 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Pasting fills the fields automatically."
 msgstr "Menampal akan mengisi medan secara automatik."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch applied"
-msgstr "Tampalan telah digunakan"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch conflicted"
-msgstr "Tampalan bercanggah"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch failed"
-msgstr "Tampalan gagal"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch pending"
-msgstr "Tampalan sedang menunggu"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch rolled back"
-msgstr "Tampalan digulung ke belakang"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Patch rolled back."
-msgstr "Tampalan digulung ke belakang."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Pause data flow animation"
@@ -5930,10 +5930,6 @@ msgstr ""
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Photo on the page."
 msgstr ""
-
-#: src/routes/agent/index.tsx
-msgid "Pick a conversation from the sidebar, or start a new thread to work on a draft."
-msgstr "Pilih perbualan dari bar sisi, atau mulakan thread baharu untuk mengusahakan draf."
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Pick a language. See it on the page."
@@ -6015,12 +6011,20 @@ msgstr "Utamakan satu lajur, atau kekalkan lajur sisi kepada senarai pendek dan 
 msgid "Preferences"
 msgstr "Keutamaan"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Prepare a conservative patch that improves clarity without changing the story of my career."
-msgstr "Sediakan tampalan yang berhati-hati yang meningkatkan kejelasan tanpa mengubah kisah kerjaya saya."
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Prepare for next step"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Prepare me for the interview"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Preparing {label} file…"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Preparing edits…"
 msgstr ""
 
 #: src/features/homepage/export-playground.tsx
@@ -6184,6 +6188,10 @@ msgstr "Penerbit"
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Letakkan alamat e-mel biasa berhampiran bahagian atas halaman pertama. Itulah yang digunakan kebanyakan sistem untuk memfailkan anda."
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Put the caret in a line to improve it"
+msgstr ""
+
 #: src/features/resume/share/link-tab.tsx
 msgid "QR code"
 msgstr ""
@@ -6195,10 +6203,6 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Raise the design sheet"
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Raw JSON"
-msgstr "JSON mentah"
 
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
@@ -6224,10 +6228,6 @@ msgstr "Eksport semula dengan fon dibenamkan, dan semak teks disalin keluar deng
 msgid "Re-export with fonts embedded, then open the file and check that the text copies out cleanly."
 msgstr "Eksport semula dengan fon dibenamkan, kemudian buka fail dan semak teks disalin keluar dengan bersih."
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Re-score"
-msgstr "Skor semula"
-
 #: src/routes/_home/-sections/header.tsx
 msgid "Reactive Resume - Go to homepage"
 msgstr "Reactive Resume - Pergi ke laman utama"
@@ -6249,15 +6249,19 @@ msgstr "Resume Reaktif v<0>{__APP_VERSION__}</0>"
 msgid "Read again"
 msgstr "Baca semula"
 
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Read an attachment"
-msgstr "Membaca lampiran"
-
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Read the Applying Custom Styles guide."
 msgstr "Baca panduan Menggunakan Gaya Tersuai."
 
-#: src/routes/agent/-components/tool-part-card.tsx
+#: src/features/assistant/conversation.tsx
+msgid "Read the attachment"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Read the letter"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 msgid "Read the resume"
 msgstr "Membaca resume"
 
@@ -6423,8 +6427,10 @@ msgstr "Jauh, Hibrid, sebuah bandar…"
 msgid "Remove"
 msgstr ""
 
+#. placeholder {0}: attachment.filename
 #. placeholder {0}: contact.name
 #: src/features/applications/components/detail/contacts.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Remove {0}"
 msgstr ""
 
@@ -6498,6 +6504,10 @@ msgstr ""
 msgid "Repeated far more often than the posting itself uses them: {0}. Recruiters notice."
 msgstr "Diulang jauh lebih kerap daripada iklan itu sendiri menggunakannya: {0}. Perekrut perasan."
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Replace"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Replace icon fonts with plain text, then re-export."
 msgstr "Gantikan fon ikon dengan teks biasa, kemudian eksport semula."
@@ -6567,13 +6577,8 @@ msgid "Responsible for working on the design system and helping other teams with
 msgstr "Bertanggungjawab mengusahakan sistem reka bentuk dan membantu pasukan lain dengan reka bentuk mereka."
 
 #: src/features/documents/document-actions.tsx
-#: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore"
 msgstr "Pulihkan"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Restore the resume to before this patch?"
-msgstr "Pulihkan resume ke keadaan sebelum tampalan ini?"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Restore this version"
@@ -6597,12 +6602,14 @@ msgstr ""
 msgid "Restored the version from {0}. Your previous state is saved as “Before restore”."
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "resume"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/agent/-components/resume-pane.tsx
-#: src/routes/agent/$threadId.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "Resume"
@@ -6619,10 +6626,6 @@ msgstr "Resume dilampirkan"
 msgid "Resume content"
 msgstr "Kandungan resume"
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Resume edit"
-msgstr "Suntingan resume"
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Resume file"
 msgstr "Fail resume"
@@ -6630,10 +6633,6 @@ msgstr "Fail resume"
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume not found"
 msgstr "Resume tidak ditemui"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Resume patch"
-msgstr "Tampalan resume"
 
 #: src/features/homepage/template-shelf.tsx
 msgid "Resume templates"
@@ -6647,9 +6646,9 @@ msgstr "Templat resume"
 msgid "Resumes"
 msgstr "Resume"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
-#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry"
 msgstr "Cuba semula"
@@ -6663,21 +6662,9 @@ msgstr ""
 msgid "Review"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Review edits"
-msgstr "Semak suntingan"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Review the resume against a job description, and ask me before changing anything you're unsure about."
-msgstr "Semak resume berbanding perihal pekerjaan, dan tanya saya sebelum mengubah apa-apa yang anda tidak pasti."
-
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Review the writing with AI"
 msgstr "Ulas penulisan dengan AI"
-
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Review this edit"
-msgstr "Semak suntingan ini"
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
@@ -6686,14 +6673,6 @@ msgstr ""
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Reviewing…"
 msgstr "Mengulas…"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Rewrite the summary for a senior engineering manager role, and keep it specific."
-msgstr "Tulis semula ringkasan untuk peranan pengurus kejuruteraan kanan, dan kekalkan ia spesifik."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Rewrite this resume for a startup founder moving into a product lead role, and show the business impact."
-msgstr "Tulis semula resume ini untuk seorang pengasas syarikat permulaan yang beralih ke peranan ketua produk, dan tunjukkan impak perniagaannya."
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Rhyhorn sample resume"
@@ -6743,10 +6722,6 @@ msgstr "Jalankan semula"
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Run AI review"
 msgstr "Jalankan ulasan AI"
-
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Running…"
-msgstr "Sedang berjalan…"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -6895,14 +6870,6 @@ msgstr ""
 msgid "School"
 msgstr "Sekolah"
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Score my fit"
-msgstr "Skor saya sesuai"
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Scoring your fit…"
-msgstr "Menjaringkan kesesuaian anda…"
-
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr ""
@@ -6956,6 +6923,10 @@ msgstr "Cari..."
 msgid "Search…"
 msgstr "Cari…"
 
+#: src/features/assistant/conversation.tsx
+msgid "Searched the web"
+msgstr ""
+
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Secret copied to clipboard."
 msgstr "Rahsia disalin ke papan keratan."
@@ -6977,10 +6948,6 @@ msgstr ""
 #: src/features/resume/editor/check/issues.ts
 msgid "Sections use headings systems recognise, and work experience shows."
 msgstr ""
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "See how this resume matches the posting"
-msgstr "Lihat bagaimana resume ini sepadan dengan siaran"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "See how to connect"
@@ -7004,18 +6971,6 @@ msgstr ""
 msgid "Select {0} at {1}"
 msgstr ""
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Select a resume"
-msgstr "Pilih resume"
-
-#: src/routes/agent/index.tsx
-msgid "Select a thread"
-msgstr "Pilih thread"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Select an agent model"
-msgstr "Pilih model ejen"
-
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Select an AI provider"
 msgstr "Pilih penyedia AI"
@@ -7028,13 +6983,9 @@ msgstr "Pilih..."
 msgid "Semantic CSS stylesheet"
 msgstr "Helaian gaya CSS semantik"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Send answer"
-msgstr "Hantar jawapan"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Send message"
-msgstr "Hantar mesej"
+#: src/features/assistant/conversation.tsx
+msgid "Send"
+msgstr ""
 
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
@@ -7060,6 +7011,30 @@ msgstr "Menghantar teks yang telah diekstrak daripada PDF anda kepada penyedia A
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Sends the text already extracted from your PDF, plus the job description you pasted, to the AI provider you choose below. The PDF file itself is never uploaded."
 msgstr "Menghantar teks yang telah diekstrak daripada PDF anda, ditambah penerangan kerja yang anda tampal, kepada penyedia AI yang anda pilih di bawah. Fail PDF itu sendiri tidak pernah dimuat naik."
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends this letter to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends this resume to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends your message and the posting to {provider} with your key, only when you press send."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Sends your message to {provider} with your key, only when you press send."
+msgstr ""
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -7107,25 +7082,8 @@ msgstr "Tetapkan Kata Laluan"
 msgid "Set the document language when exporting."
 msgstr "Tetapkan bahasa dokumen semasa mengeksport."
 
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "Set up an AI provider"
-msgstr "Sediakan penyedia AI"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Set up an AI provider before starting a thread."
-msgstr "Sediakan penyedia AI sebelum memulakan thread."
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Set up an AI provider first."
-msgstr "Sediakan penyedia AI terlebih dahulu."
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "Set up an AI provider to chat about this resume and apply edits automatically."
-msgstr "Sediakan penyedia AI untuk berbual tentang resume ini dan gunakan suntingan secara automatik."
-
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/user/dropdown-menu.tsx
-#: src/routes/agent/-components/new-thread-setup.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
@@ -7168,6 +7126,10 @@ msgstr "Pratonton perkongsian"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Short and direct. Fine if the posting asks for brevity."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Short and polite, for the recruiter"
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -7440,10 +7402,6 @@ msgstr "Sesetengah teks diputar."
 msgid "Some totals are unavailable right now."
 msgstr "Sesetengah jumlah tidak tersedia sekarang."
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Something else…"
-msgstr "Sesuatu yang lain…"
-
 #: src/components/layout/error-screen.tsx
 msgid "Something went wrong"
 msgstr "Ada yang tidak kena"
@@ -7496,12 +7454,7 @@ msgstr "Sumber"
 msgid "Source Code"
 msgstr "Kod Sumber"
 
-#. placeholder {0}: operation.from
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "Source: {0}"
-msgstr "Sumber: {0}"
-
-#: src/routes/agent/-components/agent-chat.tsx
+#: src/features/assistant/conversation.tsx
 msgid "Sources"
 msgstr "Sumber"
 
@@ -7573,14 +7526,6 @@ msgstr "Berikan bintang kepada kami di GitHub, kini {0} bintang (dibuka dalam ta
 msgid "Start"
 msgstr ""
 
-#: src/routes/agent/$threadId.tsx
-msgid "Start a new thread"
-msgstr "Mulakan thread baharu"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Start a thread"
-msgstr "Mulakan thread"
-
 #: src/features/homepage/feature-explorer.tsx
 msgid "Start again"
 msgstr "Mula semula"
@@ -7606,10 +7551,6 @@ msgstr ""
 msgid "Start from one you have and link the application."
 msgstr ""
 
-#: src/routes/agent/index.tsx
-msgid "Start new thread"
-msgstr "Mulakan thread baharu"
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
 msgstr ""
@@ -7622,10 +7563,6 @@ msgstr "Mulakan pada halaman baharu"
 #: src/features/ats-checker/messages.ts
 msgid "Start the resume with your name on its own line."
 msgstr "Mulakan resume dengan nama anda pada baris tersendiri."
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Start thread"
-msgstr "Mulakan thread"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Start typing, or draft from what we know: the {company} posting and your resume."
@@ -7671,13 +7608,14 @@ msgstr ""
 msgid "Still waiting for {provider}… {elapsedSeconds}s"
 msgstr "Masih menunggu {provider}… {elapsedSeconds}s"
 
+#: src/features/assistant/conversation.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Stop"
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Stop generation"
-msgstr "Hentikan penjanaan"
+#: src/features/assistant/conversation.tsx
+msgid "Stopped. No edits were proposed."
+msgstr ""
 
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "Strengths"
@@ -7687,9 +7625,9 @@ msgstr "Kekuatan"
 msgid "Strike"
 msgstr "Coret"
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Strong fit"
-msgstr "Kuat sesuai"
+#: src/features/resume/editor/write/improve.tsx
+msgid "Stronger verb"
+msgstr ""
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
@@ -7716,6 +7654,10 @@ msgstr ""
 msgid "Suggestions"
 msgstr "Cadangan"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Suggests cuts, never deletes on its own"
+msgstr ""
+
 #: src/features/homepage/export-playground.tsx
 #: src/features/resume/editor/write/summary-editor.tsx
 #: src/libs/resume/section-title.ts
@@ -7738,6 +7680,10 @@ msgstr "Tukar tarikh mula dan tamat."
 #: src/libs/locale.ts
 msgid "Swedish"
 msgstr "Sweden"
+
+#: src/features/assistant/conversation.tsx
+msgid "Switch model"
+msgstr ""
 
 #: src/features/theme/toggle-button.tsx
 msgid "Switch to dark theme"
@@ -7805,21 +7751,14 @@ msgstr ""
 msgid "Tailor a resume"
 msgstr ""
 
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Tailor my resume"
-msgstr "Tailori resume saya"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tailor this resume to a product manager job description, and emphasize roadmap ownership, stakeholder communication, and measurable launch outcomes."
-msgstr "Sesuaikan resume ini dengan perihal pekerjaan pengurus produk, dan tekankan pemilikan peta jalan, komunikasi pihak berkepentingan serta hasil pelancaran yang boleh diukur."
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tailor to the {0} posting"
+msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Tailored vs. base resume"
 msgstr ""
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Tailoring failed."
-msgstr "Penyesuaian gagal."
 
 #: src/features/homepage/page.tsx
 msgid "Take it<0/>with you."
@@ -7855,6 +7794,10 @@ msgstr "Templat"
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Test"
 msgstr "Ujian"
+
+#: src/features/assistant/provider-setup.tsx
+msgid "Testing the connection…"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Testing…"
@@ -7958,10 +7901,6 @@ msgstr "Penyedia log masuk itu tidak lagi tersedia pada pelayan ini."
 msgid "The {label} file couldn't be generated. Try again, or download PDF instead."
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "The agent needs your input."
-msgstr "Ejen memerlukan input anda."
-
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API documentation shows how to connect Reactive Resume to your own applications. It covers the endpoints, the request format, and authentication."
 msgstr "Dokumentasi API menunjukkan cara menyambungkan Reactive Resume kepada aplikasi anda sendiri. Ia merangkumi titik akhir, format permintaan dan pengesahan."
@@ -7976,6 +7915,14 @@ msgstr "Aplikasi yang menghantar anda ke sini membuat permintaan kebenaran yang 
 
 #: src/features/documents/document-actions.tsx
 msgid "The application this letter is for."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
+msgstr ""
+
+#: src/features/assistant/provider-setup.tsx
+msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
 msgstr ""
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
@@ -8026,6 +7973,10 @@ msgstr ""
 msgid "The letter matches the resume's design again"
 msgstr ""
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "The line changed since you asked, so it wasn't replaced."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "Susunan teks disimpan sangat berbeza daripada susunan ia dibaca."
@@ -8054,12 +8005,20 @@ msgstr "Kata laluan yang anda masukkan adalah tidak betul"
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "PDF dibaca oleh kod yang berjalan dalam tab ini. Tiada apa-apa dimuat naik, tiada apa-apa disimpan, dan tiada akaun diperlukan. Buka tab rangkaian pelayar anda dan perhatikan, jika anda mahu."
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The posting asks for “{label}”. If it's true for me, work it into my resume where it fits. Ask me first."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "The posting couldn't be read. Fill in the role and company."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The posting saved with this application."
+msgstr ""
+
+#: src/features/assistant/provider-setup.tsx
+msgid "The provider didn't answer. Check the key and the model."
 msgstr ""
 
 #: src/features/auth/pages/error.tsx
@@ -8132,10 +8091,6 @@ msgstr "Bahagian atas halaman pertama tidak kelihatan seperti nama."
 msgid "The URL you entered is not valid."
 msgstr "URL yang anda masukkan tidak sah."
 
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "The working resume was deleted. This thread is read-only."
-msgstr "Resume kerja telah dipadamkan. Utas ini bersifat baca sahaja."
-
 #. Menu item that opens appearance theme selection submenu
 #: src/features/command-palette/pages/preferences/theme.tsx
 #: src/features/settings/pages/preferences.tsx
@@ -8171,41 +8126,37 @@ msgstr ""
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr ""
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Thinking"
-msgstr "Berfikir"
+#: src/features/assistant/conversation.tsx
+msgid "Thinking…"
+msgstr ""
 
 #: src/features/settings/pages/account.tsx
 msgid "This action cannot be undone. All your data will be permanently deleted."
 msgstr "Tindakan ini tidak boleh dibatalkan. Semua data anda akan dipadamkan secara kekal."
 
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "This action cannot be undone. It deletes the thread's messages and uploaded attachments."
-msgstr "Tindakan ini tidak boleh dibatalkan. Ia memadam mesej thread dan lampiran yang dimuat naik."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This action cannot be undone. It deletes the thread's messages and uploaded attachments. The working resume stays in your dashboard, and you can delete it separately."
-msgstr "Tindakan ini tidak boleh dibatalkan. Ia memadam mesej thread dan lampiran yang dimuat naik. Resume kerja kekal dalam papan pemuka anda, dan anda boleh memadamnya secara berasingan."
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr ""
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "This assistant could not be opened."
-msgstr "Pembantu ini tidak dapat dibuka."
 
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired."
 msgstr "Permintaan sambungan ini tidak sah atau telah tamat tempoh."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "This conversation couldn't be opened."
+msgstr ""
+
 #: src/dialogs/api-key/create.tsx
 msgid "This creates a new API key, which lets other programs read and change your resume data through the Reactive Resume API."
 msgstr "Ini mencipta kunci API baharu, yang membolehkan program lain membaca dan mengubah data resume anda melalui API Reactive Resume."
 
-#: src/routes/agent/-components/patch-approval-card.tsx
-msgid "This edit request can no longer be answered."
-msgstr "Permintaan suntingan ini tidak lagi boleh dijawab."
+#: src/features/assistant/assistant-panel.tsx
+msgid "This document"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "This document is locked. Unlock it to get suggestions."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "This entry"
@@ -8364,45 +8315,13 @@ msgstr "Percubaan log masuk ini telah tamat tempoh atau telah digunakan. Sila mu
 msgid "This step is optional, but recommended."
 msgstr "Langkah ini adalah pilihan, tetapi digalakkan."
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This thread is archived. You can't send new messages."
-msgstr "Thread ini telah diarkibkan. Anda tidak boleh menghantar mesej baharu."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This thread is read-only"
-msgstr "Utas ini hanya untuk bacaan sahaja"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This thread is read-only because the working resume or AI provider is unavailable."
-msgstr "Utas ini hanya untuk bacaan sahaja kerana resume kerja atau penyedia AI tidak tersedia."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "This will roll back this patch and any patches applied after it."
-msgstr "Ini akan menggulung ke belakang tampalan ini dan semua tampalan yang digunakan selepasnya."
-
-#: src/routes/agent/-components/agent-chat.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-msgid "Thread actions"
-msgstr "Tindakan thread"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Thread archived."
-msgstr "Thread diarkibkan."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Thread deleted."
-msgstr "Utas dipadamkan."
-
-#: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-#: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Threads"
 msgstr "Thread"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tighten the skills section so it supports the target role instead of reading like a keyword dump."
-msgstr "Ketatkan bahagian kemahiran supaya ia menyokong peranan sasaran dan bukannya terbaca seperti lambakan kata kunci."
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Tip"
@@ -8428,26 +8347,6 @@ msgstr ""
 #: src/features/resume/share/format.ts
 msgid "Today {time}"
 msgstr ""
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Toggle resume preview"
-msgstr "Togol pratonton resume"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Toggle threads"
-msgstr "Togol thread"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tokens: {threadTokenTotal}"
-msgstr "Token: {threadTokenTotal}"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tokens: {total}"
-msgstr "Token: {total}"
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Tokens: {total} ({cached} cached)"
-msgstr "Token: {total} ({cached} dalam cache)"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Tomorrow"
@@ -8475,6 +8374,10 @@ msgstr "Jejaki pekerjaan yang anda mohon dan pautkan resume yang anda hantar."
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Track your first job"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Transcript copied"
 msgstr ""
 
 #: src/features/homepage/page.tsx
@@ -8508,6 +8411,7 @@ msgstr ""
 
 #: src/components/layout/error-screen.tsx
 #: src/features/homepage/ats-playground.tsx
+#: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Try again"
@@ -8636,6 +8540,7 @@ msgstr "Garis Bawah"
 msgid "Underline links"
 msgstr ""
 
+#: src/features/assistant/document.ts
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/feature-explorer.tsx
 #: src/features/resume/editor/check/actions.ts
@@ -8718,10 +8623,6 @@ msgstr "Kemas Kini Kata Laluan"
 msgid "Update Resume"
 msgstr "Kemas Kini Resume"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Update the project bullets to show leadership, constraints, tradeoffs, and measurable outcomes."
-msgstr "Kemas kini poin projek untuk menunjukkan kepimpinan, kekangan, pertukaran nilai dan hasil yang boleh diukur."
-
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."
 msgstr "Kemas kini butiran permohonan ini."
@@ -8754,10 +8655,6 @@ msgstr "Muat naik .csv"
 #: src/routes/_home/ats-checker.tsx
 msgid "Upload a resume and see what an applicant tracking system reads from it. Everything runs in this browser. Your file is never uploaded, and nothing is stored."
 msgstr "Muat naik resume dan lihat apa yang dibaca oleh sistem penjejakan pemohon daripadanya. Semuanya berjalan dalam pelayar ini. Fail anda tidak pernah dimuat naik, dan tiada apa-apa yang disimpan."
-
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Upload attachments"
-msgstr "Muat naik lampiran"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Upload picture"
@@ -8884,6 +8781,14 @@ msgstr "Nama pengguna"
 #: src/features/homepage/community-stats.tsx
 msgid "Users"
 msgstr "Pengguna"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Uses facts from your resume"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Uses the linked application"
+msgstr ""
 
 #: src/features/homepage/export-playground.tsx
 msgid "Uses the name, template, color, and type you chose above."
@@ -9024,10 +8929,6 @@ msgstr "Pelawat memerlukan kata laluan anda untuk membuka resume itu."
 msgid "Volunteer"
 msgstr "Sukarelawan"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Waiting for the agent…"
-msgstr "Menunggu ejen…"
-
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr ""
@@ -9047,10 +8948,6 @@ msgstr "Kami tidak dapat menemui halaman itu"
 #: src/features/auth/pages/error.tsx
 msgid "We couldn't link that provider account. Please try again."
 msgstr "Kami tidak dapat memautkan akaun penyedia itu. Sila cuba lagi."
-
-#: src/routes/agent/$threadId.tsx
-msgid "We couldn't open this thread."
-msgstr "Kami tidak dapat membuka thread ini."
 
 #. placeholder {0}: dates.raw
 #: src/features/resume/editor/write/dates-field.tsx
@@ -9078,10 +8975,6 @@ msgstr "Kami telah menghantar pautan pengesahan ke alamat emel baharu anda. Buka
 msgid "We sent a new verification link to your email address. Open it to verify your account."
 msgstr "Kami telah menghantar pautan pengesahan baharu ke alamat emel anda. Buka pautan itu untuk mengesahkan akaun anda."
 
-#: src/routes/agent/-components/tool-part-card.tsx
-msgid "Web search"
-msgstr "Carian web"
-
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Website"
 msgstr "Laman web"
@@ -9096,10 +8989,6 @@ msgstr "Apa yang penghurai baca"
 msgid "What a person sees"
 msgstr "Apa yang seseorang lihat"
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "What do you want to do?"
-msgstr "Apa yang anda mahu lakukan?"
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "What do you want to rename this section to?"
 msgstr "Apakah nama baharu yang anda mahu berikan kepada seksyen ini?"
@@ -9110,6 +8999,14 @@ msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "What it asks for"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What should change?"
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "What should we work on?"
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -9228,14 +9125,6 @@ msgstr "Kerja OpenAI"
 msgid "Worked with engineers from idea to launch."
 msgstr "Bekerja dengan jurutera daripada idea hingga pelancaran."
 
-#: src/routes/agent/-components/agent-chat.tsx
-msgid "Working…"
-msgstr "Bekerja…"
-
-#: src/features/applications/components/application-ai-copilot.tsx
-msgid "Worth a shot"
-msgstr "Berbaloi"
-
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -9282,9 +9171,17 @@ msgstr "X (Twitter)"
 msgid "Yesterday {time}"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "You"
+msgstr ""
+
 #. placeholder {0}: result.takenBy
 #: src/features/resume/share/link-tab.tsx
 msgid "You already use this for “{0}”."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "You answered: {answer}"
 msgstr ""
 
 #: src/features/auth/pages/login.tsx
@@ -9450,6 +9347,10 @@ msgstr "Nombor telefon anda ditulis dalam bentuk yang luar biasa."
 msgid "Your profile has been updated."
 msgstr "Profil anda telah dikemas kini."
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "your provider"
+msgstr ""
+
 #: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "your resume"
 msgstr ""
@@ -9493,10 +9394,6 @@ msgstr "Zum"
 #: src/features/resume/editor/chrome.tsx
 msgid "Zoom in"
 msgstr "Zum dalam"
-
-#: src/routes/agent/-components/resume-pane.tsx
-msgid "Zoom level"
-msgstr "Tahap zum"
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Zoom out"
