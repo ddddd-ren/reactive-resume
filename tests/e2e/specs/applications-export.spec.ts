@@ -43,8 +43,9 @@ test("exports filtered or all owned applications with an inclusive date range", 
 			);
 		}
 		await page.goto("/dashboard/applications");
-		await page.getByPlaceholder("Search applications…").fill("Alpha");
-		await page.getByRole("button", { name: "Export CSV", exact: true }).click();
+		await page.getByPlaceholder("Search role, company or contact").fill("Alpha");
+		await page.getByRole("button", { name: "Import or export CSV" }).click();
+		await page.getByRole("menuitem", { name: "Export to CSV…" }).click();
 		const sheet = page.getByRole("dialog", { name: "Export applications" });
 		await sheet.getByLabel("Application date from").fill("2026-08-03");
 		await sheet.getByLabel("Application date to").fill("2026-08-03");
@@ -60,9 +61,10 @@ test("exports filtered or all owned applications with an inclusive date range", 
 		expect(csv).toContain('"Applied (2026-08-03)"');
 		expect(csv).toContain('"Quoted ""note""\nSecond line"');
 
-		await page.getByRole("button", { name: "Export CSV", exact: true }).click();
+		await page.getByRole("button", { name: "Import or export CSV" }).click();
+		await page.getByRole("menuitem", { name: "Export to CSV…" }).click();
 		await sheet.getByLabel("Applications to export").click();
-		await page.getByRole("option", { name: "All applications (including archived)" }).click();
+		await page.getByRole("option", { name: "All applications (including closed)" }).click();
 		await expect(sheet.getByText("2 applications to export")).toBeVisible();
 		await sheet.getByLabel("Application date from").fill("2026-08-04");
 		await expect(sheet.getByRole("button", { name: "Download CSV" })).toBeDisabled();
@@ -80,7 +82,7 @@ test("exports filtered or all owned applications with an inclusive date range", 
 		await page.reload();
 		await expect(page.getByRole("heading", { name: "Applications", exact: true })).toBeVisible();
 		const title = await page.getByRole("heading", { name: "Applications", exact: true }).boundingBox();
-		const exportButton = await page.getByRole("button", { name: "Export CSV", exact: true }).boundingBox();
+		const exportButton = await page.getByRole("button", { name: "Import or export CSV" }).boundingBox();
 		if (!title || !exportButton) throw new Error("Application header is not visible");
 		const overlaps =
 			title.x < exportButton.x + exportButton.width &&
@@ -89,7 +91,8 @@ test("exports filtered or all owned applications with an inclusive date range", 
 			title.y + title.height > exportButton.y;
 		expect(overlaps).toBe(false);
 		await page.screenshot({ path: testInfo.outputPath("mobile-header.png"), animations: "disabled" });
-		await page.getByRole("button", { name: "Export CSV", exact: true }).click();
+		await page.getByRole("button", { name: "Import or export CSV" }).click();
+		await page.getByRole("menuitem", { name: "Export to CSV…" }).click();
 		await expect(sheet.getByRole("button", { name: "Download CSV" })).toBeVisible();
 		await page.screenshot({ path: testInfo.outputPath("mobile-export.png"), animations: "disabled" });
 	} finally {
