@@ -308,7 +308,14 @@ export const TOOL_META = {
 		inputSchema: z.object({
 			id: resumeIdSchema,
 			name: z.string().min(1).max(64).optional().describe("Display name for the resume."),
-			slug: z.string().min(1).max(64).optional().describe("URL-friendly slug; must stay unique among your resumes."),
+			slug: z
+				.string()
+				.min(1)
+				.max(64)
+				.optional()
+				.describe(
+					"New URL slug: lowercase letters and numbers joined by single dashes (e.g. 'product-designer'), unique among your resumes. The old address keeps redirecting for 30 days.",
+				),
 			tags: z.array(z.string()).optional().describe("Replace the resume's tags (omit to leave unchanged)."),
 			isPublic: z
 				.boolean()

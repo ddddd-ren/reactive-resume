@@ -38,6 +38,8 @@ function errorHint(error: unknown): string {
 
 	// Check codes before statuses: RESUME_SLUG_ALREADY_EXISTS is thrown with status 400.
 	if (code === "RESUME_SLUG_ALREADY_EXISTS") return "\n\nHint: The slug is already in use. Try a different one.";
+	if (code === "INVALID_SLUG")
+		return "\n\nHint: Use lowercase letters and numbers joined by single dashes, e.g. 'product-designer'.";
 	if (code === "RESUME_LOCKED") return `\n\nHint: This resume is locked. Use \`${unlockResume}\` first.`;
 	// Every tool shares this handler, so the wording stays entity-agnostic: `NOT_FOUND` is
 	// thrown by the application procedures too, and resume-flavoured advice misdirects there.

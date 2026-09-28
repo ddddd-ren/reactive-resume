@@ -1,4 +1,4 @@
-import { generateId, generateRandomName, slugify } from "@reactive-resume/utils/string";
+import { generateId, generateRandomName } from "@reactive-resume/utils/string";
 import { protectedProcedure } from "../../context";
 import { resumeDto } from "../../dto/resume";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
@@ -51,7 +51,7 @@ export const crudRouter = {
 			operationId: "createResume",
 			summary: "Create a new resume",
 			description:
-				"Creates a new resume with the given name, slug, and tags. Optionally initializes the resume with sample data by setting withSampleData to true. The slug must be unique across the user's resumes. Returns the ID of the newly created resume. Requires authentication.",
+				"Creates a new resume with the given name and tags. The slug (its public address) is optional: when omitted it is generated from the name and made unique across the user's resumes; when given it must be unique too. Optionally initializes the resume with sample data by setting withSampleData to true. Returns the ID of the newly created resume. Requires authentication.",
 			successDescription: "The ID of the newly created resume.",
 		})
 		.input(resumeDto.create.input)
@@ -66,7 +66,7 @@ export const crudRouter = {
 		.handler(({ context, input }) =>
 			resumeService.create({
 				name: input.name,
-				slug: input.slug,
+				...(input.slug ? { slug: input.slug } : {}),
 				tags: input.tags,
 				locale: context.locale,
 				userId: context.user.id,
@@ -100,26 +100,15 @@ export const crudRouter = {
 		})
 		.handler(async ({ context, input }) => {
 			const id = generateId();
-			const data = input.data;
-			const name = generateRandomName();
-			const slug = slugify(name);
 
 			await resumeService.create({
 				id,
-				name,
-				slug,
+				name: generateRandomName(),
 				tags: [],
-				data,
+				data: input.data,
 				locale: context.locale,
 				userId: context.user.id,
-			});
-
-			// Milestone checkpoint for the imported document (best-effort).
-			await resumeService.versions.snapshot({
-				resumeId: id,
-				userId: context.user.id,
-				data,
-				label: "Imported",
+				origin: "import",
 			});
 
 			return id;
@@ -221,7 +210,7 @@ export const crudRouter = {
 			operationId: "duplicateResume",
 			summary: "Duplicate a resume",
 			description:
-				"Creates a copy of an existing resume with the same data. Optionally override the name, slug, and tags for the duplicate. If not provided, the original resume's name, slug, and tags are used. Returns the ID of the duplicated resume. Requires authentication.",
+				"Creates a copy of an existing resume with the same data, and the given name and tags. The slug is optional: when omitted it is generated from the name and made unique across the user's resumes. Returns the ID of the duplicated resume. Requires authentication.",
 			successDescription: "The ID of the duplicated resume.",
 		})
 		.input(resumeDto.duplicate.input)
@@ -234,7 +223,7 @@ export const crudRouter = {
 			return resumeService.create({
 				userId: context.user.id,
 				name: input.name ?? original.name,
-				slug: input.slug ?? original.slug,
+				...(input.slug ? { slug: input.slug } : {}),
 				tags: input.tags ?? original.tags,
 				locale: context.locale,
 				data,

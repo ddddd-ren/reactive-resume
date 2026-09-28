@@ -20,6 +20,18 @@ const resumeSchema = createSelectSchema(schema.resume, {
 	updatedAt: z.date().describe("The date and time the resume was last updated."),
 });
 
+const versionSchema = z.object({
+	id: z.string().describe("The ID of the version."),
+	kind: z
+		.enum(schema.RESUME_VERSION_KINDS)
+		.describe(
+			"What made the version: created, import, auto (an editing session's autosave), named, before-restore, restored, ai (an AI or API edit) or sent.",
+		),
+	name: z.string().nullable().describe("The user's name for a named version."),
+	label: z.string().describe("A short English description of the version."),
+	createdAt: z.date().describe("When this state was saved."),
+});
+
 export const resumeDto = {
 	list: {
 		input: z
@@ -49,9 +61,12 @@ export const resumeDto = {
 	},
 
 	create: {
-		input: resumeSchema
-			.pick({ name: true, slug: true, tags: true })
-			.extend({ withSampleData: z.boolean().default(false) }),
+		input: resumeSchema.pick({ name: true, tags: true }).extend({
+			slug: resumeSchema.shape.slug
+				.optional()
+				.describe("The slug of the resume. Generated from the name, and made unique, when omitted."),
+			withSampleData: z.boolean().default(false),
+		}),
 		output: z.string().describe("The ID of the created resume."),
 	},
 
@@ -64,8 +79,34 @@ export const resumeDto = {
 		input: resumeSchema
 			.pick({ name: true, slug: true, tags: true, data: true, isPublic: true, showDownloadButtons: true })
 			.partial()
-			.extend({ id: z.string(), data: writableResumeDataSchema.optional() }),
+			.extend({
+				id: z.string(),
+				data: writableResumeDataSchema.optional(),
+				sessionId: z
+					.string()
+					.max(64)
+					.optional()
+					.describe(
+						"Identifies one editing session. Saves that share it keep one autosave version, refreshed at most every two minutes.",
+					),
+			}),
 		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+	},
+
+	checkSlug: {
+		input: z.object({
+			resumeId: z.string().describe("The ID of the resume the slug is for."),
+			slug: z.string().max(64).describe("The slug to check."),
+		}),
+		output: z.object({
+			status: z
+				.enum(["available", "current", "invalid", "taken"])
+				.describe(
+					"available: free to use. current: this resume's slug already. invalid: not lowercase letters, numbers and single dashes. taken: another of the user's resumes uses it.",
+				),
+			takenBy: z.string().optional().describe("The name of the resume that uses the slug, when taken."),
+			suggestion: z.string().optional().describe("A slug that would work instead."),
+		}),
 	},
 
 	setLocked: {
@@ -99,7 +140,11 @@ export const resumeDto = {
 	},
 
 	duplicate: {
-		input: resumeSchema.pick({ id: true, name: true, slug: true, tags: true }),
+		input: resumeSchema.pick({ id: true, name: true, tags: true }).extend({
+			slug: resumeSchema.shape.slug
+				.optional()
+				.describe("The slug of the copy. Generated from the name, and made unique, when omitted."),
+		}),
 		output: z.string().describe("The ID of the duplicated resume."),
 	},
 
@@ -110,13 +155,40 @@ export const resumeDto = {
 
 	listVersions: {
 		input: z.object({ resumeId: z.string().describe("The ID of the resume whose version history to list.") }),
-		output: z.array(
-			z.object({
-				id: z.string().describe("The ID of the version snapshot."),
-				label: z.string().describe("A short description of what triggered the snapshot."),
-				createdAt: z.date().describe("The date and time the snapshot was taken."),
-			}),
-		),
+		output: z.array(versionSchema),
+	},
+
+	getVersion: {
+		input: z.object({
+			resumeId: z.string().describe("The ID of the resume the version belongs to."),
+			versionId: z.string().describe("The ID of the version."),
+		}),
+		output: versionSchema.extend({ data: resumeDataSchema }),
+	},
+
+	createVersion: {
+		input: z.object({
+			resumeId: z.string().describe("The ID of the resume to name a version of."),
+			name: z.string().trim().min(1).max(80).describe("The version's name, e.g. 'Sent to Lumen'."),
+		}),
+		output: versionSchema,
+	},
+
+	renameVersion: {
+		input: z.object({
+			resumeId: z.string().describe("The ID of the resume the version belongs to."),
+			versionId: z.string().describe("The ID of the named version."),
+			name: z.string().trim().min(1).max(80).describe("The version's new name."),
+		}),
+		output: versionSchema,
+	},
+
+	deleteVersion: {
+		input: z.object({
+			resumeId: z.string().describe("The ID of the resume the version belongs to."),
+			versionId: z.string().describe("The ID of the named version."),
+		}),
+		output: z.void(),
 	},
 
 	restoreVersion: {

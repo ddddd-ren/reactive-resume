@@ -81,8 +81,32 @@ vi.mock("./access", () => ({
 vi.mock("../storage/service", () => ({
 	getStorageService: () => ({ delete: storageDeleteMock }),
 }));
+// Version history and slugs have their own tests; here they only need to be called at the right moments.
+const versionHistoryMock = vi.hoisted(() => ({
+	writeVersion: vi.fn(),
+	saveSessionVersion: vi.fn(),
+	getVersion: vi.fn(),
+	listVersions: vi.fn(),
+	renameVersion: vi.fn(),
+	deleteVersion: vi.fn(),
+}));
+vi.mock("./version-history", () => versionHistoryMock);
+const recordSlugChangeMock = vi.hoisted(() => vi.fn());
+vi.mock("./slugs", () => ({
+	SLUG_PATTERN: /^[a-z0-9]+(-[a-z0-9]+)*$/,
+	checkSlug: vi.fn(),
+	findFreeSlug: vi.fn(async () => "generated-slug"),
+	matchesSlug: (slug: string) => ["slug", slug],
+	recordSlugChange: recordSlugChangeMock,
+}));
 
 const { resumeService } = await import("./service");
+const { parseStoredResumeData } = await import("./resume-data-validation");
+
+// A lookup by username and slug: `select().from().innerJoin().where().orderBy().limit()` resolving to `rows`.
+const slugLookup = (rows: unknown[]) => ({
+	from: () => ({ innerJoin: () => ({ where: () => ({ orderBy: () => ({ limit: async () => rows }) }) }) }),
+});
 
 // A `db.update(...).set(...).where(...).returning(...)` chain that resolves to `rows`.
 const createUpdateChain = (rows: unknown[]) => {
@@ -175,23 +199,9 @@ const createResumeRow = (data: ResumeData, updatedAt = new Date()) => ({
 
 const createRestoreHarness = (currentData: ResumeData, restoredData: ResumeData) => {
 	const currentRow = createResumeRow(currentData);
-	const versionLookup = {
-		from: () => ({
-			innerJoin: () => ({ where: () => Promise.resolve([{ data: restoredData }]) }),
-		}),
-	};
-	const versionRetention = {
-		from: () => ({ where: () => ({ orderBy: () => ({ limit: () => [] }) }) }),
-	};
-	dbMock.select
-		.mockReturnValueOnce(createSelectChain([currentRow]))
-		.mockReturnValueOnce(versionLookup)
-		.mockReturnValueOnce(versionRetention)
-		.mockReturnValueOnce(versionRetention);
-
-	const snapshotValues = vi.fn(() => Promise.resolve());
-	dbMock.insert.mockReturnValue({ values: snapshotValues });
-	dbMock.delete.mockReturnValue({ where: () => Promise.resolve() });
+	dbMock.select.mockReturnValueOnce(createSelectChain([currentRow]));
+	versionHistoryMock.getVersion.mockImplementationOnce(async () => ({ data: parseStoredResumeData(restoredData) }));
+	const snapshotValues = versionHistoryMock.writeVersion;
 
 	const lockedSelect = createLockedSelectChain([
 		{
@@ -228,6 +238,10 @@ beforeEach(() => {
 	grantResumeAccessMock.mockReset();
 	hasResumeAccessMock.mockReset();
 	storageDeleteMock.mockReset();
+	for (const mock of Object.values(versionHistoryMock)) mock.mockReset();
+	versionHistoryMock.writeVersion.mockResolvedValue({ id: "v" });
+	versionHistoryMock.saveSessionVersion.mockResolvedValue(undefined);
+	recordSlugChangeMock.mockReset();
 	hashMock.mockResolvedValue("hashed-password");
 	publishResumeUpdatedMock.mockResolvedValue(undefined);
 	storageDeleteMock.mockResolvedValue(true);
@@ -318,38 +332,17 @@ describe("create", () => {
 	});
 });
 
-describe("versions.snapshot", () => {
-	it("persists normalized data in version snapshots", async () => {
+describe("create", () => {
+	it("generates a unique slug from the name and starts History with the document's origin", async () => {
 		const values = vi.fn((_input: unknown) => Promise.resolve());
 		dbMock.insert.mockReturnValueOnce({ values });
-		dbMock.select.mockReturnValueOnce({
-			from: () => ({ where: () => ({ orderBy: () => ({ limit: () => [] }) }) }),
-		});
-		dbMock.delete.mockReturnValueOnce({ where: () => Promise.resolve() });
 
-		await resumeService.versions.snapshot({
-			resumeId: "r1",
-			userId: "u1",
-			data: createOverlappingRendererSafeResumeData(),
-			label: "Manual",
-		});
+		await resumeService.create({ userId: "u1", name: "My Resume", tags: [], locale: "en-US", origin: "import" });
 
-		expect(values).toHaveBeenCalledWith(
-			expect.objectContaining({
-				data: expect.objectContaining({
-					customSections: [
-						expect.objectContaining({
-							items: [
-								expect.objectContaining({
-									content: "<p>Renderer-irrelevant overlap must survive.</p>",
-									roles: [],
-									website: { url: "", label: "", inlineLink: false },
-								}),
-							],
-						}),
-					],
-				}),
-			}),
+		expect(values).toHaveBeenCalledWith(expect.objectContaining({ slug: "generated-slug" }));
+		expect(versionHistoryMock.writeVersion).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ userId: "u1", kind: "import" }),
 		);
 	});
 });
@@ -402,19 +395,11 @@ describe("versions.restore", () => {
 				},
 			}),
 		};
-		const versionLookup = {
-			from: () => ({
-				innerJoin: () => ({
-					where: () => {
-						callOrder.push("versionLookup");
-						return Promise.resolve([{ data: createSemanticResumeData() }]);
-					},
-				}),
-			}),
-		};
-		dbMock.select.mockImplementation((selection: Record<string, unknown>) =>
-			Object.hasOwn(selection, "isLocked") ? currentLookup : versionLookup,
-		);
+		versionHistoryMock.getVersion.mockImplementation(() => {
+			callOrder.push("versionLookup");
+			return Promise.resolve({ data: createSemanticResumeData() });
+		});
+		dbMock.select.mockReturnValue(currentLookup);
 		await expect(
 			resumeService.versions.restore({
 				resumeId: "r1",
@@ -424,7 +409,7 @@ describe("versions.restore", () => {
 		).rejects.toMatchObject({ code: "RESUME_LOCKED" });
 
 		expect(callOrder).toEqual(["getById"]);
-		expect(dbMock.insert).not.toHaveBeenCalled();
+		expect(versionHistoryMock.writeVersion).not.toHaveBeenCalled();
 		expect(dbMock.transaction).not.toHaveBeenCalled();
 	});
 
@@ -442,6 +427,19 @@ describe("versions.restore", () => {
 		expect(snapshotValues).not.toHaveBeenCalled();
 		expect(set).not.toHaveBeenCalled();
 		expect(dbMock.transaction).not.toHaveBeenCalled();
+	});
+
+	it("saves the current state as Before restore first, then marks the restore", async () => {
+		const currentData = createSemanticResumeData();
+		createRestoreHarness(currentData, createSemanticResumeData());
+
+		await resumeService.versions.restore({ resumeId: "r1", versionId: "v1", userId: "u1" });
+
+		expect(versionHistoryMock.writeVersion.mock.calls.map(([, input]) => input.kind)).toEqual([
+			"before-restore",
+			"restored",
+		]);
+		expect(versionHistoryMock.saveSessionVersion).not.toHaveBeenCalled();
 	});
 
 	it("normalizes a valid historical snapshot before persistence", async () => {
@@ -482,6 +480,55 @@ describe("update", () => {
 			expect(result.data).toEqual(defaultResumeData);
 		},
 	);
+
+	const updateHarness = (existing: { slug: string }) => {
+		const row = { ...createResumeRow(defaultResumeData), slug: existing.slug };
+		const select = createLockedSelectChain([{ data: defaultResumeData, isLocked: false, slug: existing.slug }]);
+		const update = createUpdateChain([row]);
+		const tx = { select: () => select.chain, update: () => update.chain };
+		dbMock.transaction.mockImplementationOnce(async (callback: (tx: unknown) => Promise<unknown>) => callback(tx));
+		return { tx, update };
+	};
+
+	it("keeps the old address as a redirect when the slug changes", async () => {
+		const { tx, update } = updateHarness({ slug: "old-address" });
+
+		await resumeService.update({ id: "r1", userId: "u1", slug: "new-address" });
+
+		expect(recordSlugChangeMock).toHaveBeenCalledWith(tx, {
+			userId: "u1",
+			resumeId: "r1",
+			from: "old-address",
+			to: "new-address",
+		});
+		expect(update.set).toHaveBeenCalledWith({ slug: "new-address" });
+	});
+
+	it("rejects a new slug outside the pattern, but accepts an unchanged legacy one", async () => {
+		updateHarness({ slug: "Legacy_Slug" });
+		await expect(resumeService.update({ id: "r1", userId: "u1", slug: "Not Valid" })).rejects.toMatchObject({
+			code: "INVALID_SLUG",
+			status: 400,
+		});
+
+		const { update } = updateHarness({ slug: "Legacy_Slug" });
+		await resumeService.update({ id: "r1", userId: "u1", name: "Renamed", slug: "Legacy_Slug" });
+		expect(update.set).toHaveBeenCalledWith({ name: "Renamed", slug: "Legacy_Slug" });
+		expect(recordSlugChangeMock).not.toHaveBeenCalled();
+	});
+
+	it("passes the editing session to the autosave version, and skips it for restores", async () => {
+		updateHarness({ slug: "s" });
+		await resumeService.update({ id: "r1", userId: "u1", data: defaultResumeData, sessionId: "visit-1" });
+		expect(versionHistoryMock.saveSessionVersion).toHaveBeenCalledWith(
+			expect.objectContaining({ resumeId: "r1", userId: "u1", sessionId: "visit-1" }),
+		);
+
+		versionHistoryMock.saveSessionVersion.mockClear();
+		updateHarness({ slug: "s" });
+		await resumeService.update({ id: "r1", userId: "u1", data: defaultResumeData, skipAutoSnapshot: true });
+		expect(versionHistoryMock.saveSessionVersion).not.toHaveBeenCalled();
+	});
 
 	it("throws RESUME_LOCKED when the pre-read reports the resume is locked", async () => {
 		const select = createLockedSelectChain([{ data: defaultResumeData, isLocked: true, updatedAt: new Date() }]);
@@ -901,9 +948,7 @@ describe("removePassword", () => {
 
 describe("verifyPassword", () => {
 	it("throws INVALID_PASSWORD when no matching row is found", async () => {
-		dbMock.select.mockReturnValueOnce({
-			from: () => ({ innerJoin: () => ({ where: () => Promise.resolve([]) }) }),
-		});
+		dbMock.select.mockReturnValueOnce(slugLookup([]));
 
 		await expect(resumeService.verifyPassword({ slug: "s", username: "u", password: "p" })).rejects.toMatchObject({
 			code: "INVALID_PASSWORD",
@@ -911,9 +956,7 @@ describe("verifyPassword", () => {
 	});
 
 	it("throws INVALID_PASSWORD when bcrypt.compare returns false", async () => {
-		dbMock.select.mockReturnValueOnce({
-			from: () => ({ innerJoin: () => ({ where: () => Promise.resolve([{ id: "r1", password: "hash" }]) }) }),
-		});
+		dbMock.select.mockReturnValueOnce(slugLookup([{ id: "r1", password: "hash" }]));
 		compareMock.mockResolvedValueOnce(false);
 
 		await expect(resumeService.verifyPassword({ slug: "s", username: "u", password: "p" })).rejects.toMatchObject({
@@ -922,9 +965,7 @@ describe("verifyPassword", () => {
 	});
 
 	it("returns true and grants access when bcrypt.compare returns true", async () => {
-		dbMock.select.mockReturnValueOnce({
-			from: () => ({ innerJoin: () => ({ where: () => Promise.resolve([{ id: "r1", password: "hash" }]) }) }),
-		});
+		dbMock.select.mockReturnValueOnce(slugLookup([{ id: "r1", password: "hash" }]));
 		compareMock.mockResolvedValueOnce(true);
 		const responseHeaders = new Headers();
 
@@ -1013,7 +1054,7 @@ describe("sharing preferences", () => {
 			showDownloadButtons,
 			passwordHash: null,
 		};
-		dbMock.select.mockReturnValue({ from: () => ({ innerJoin: () => ({ where: () => Promise.resolve([row]) }) }) });
+		dbMock.select.mockReturnValue(slugLookup([row]));
 		const increment = vi.spyOn(resumeService.statistics, "increment").mockResolvedValue();
 		try {
 			const result = await resumeService.getBySlug({
@@ -1106,7 +1147,7 @@ describe("root public-only lookup", () => {
 			hasPassword: false,
 			passwordHash: null,
 		};
-		dbMock.select.mockReturnValue({ from: () => ({ innerJoin: () => ({ where: async () => [row] }) }) });
+		dbMock.select.mockReturnValue(slugLookup([row]));
 		await expect(
 			resumeService.getBySlug({
 				username: "owner",
@@ -1128,7 +1169,7 @@ it("rejects a different resume reusing the resolved root slug", async () => {
 		hasPassword: false,
 		passwordHash: null,
 	};
-	dbMock.select.mockReturnValue({ from: () => ({ innerJoin: () => ({ where: async () => [row] }) }) });
+	dbMock.select.mockReturnValue(slugLookup([row]));
 	await expect(
 		resumeService.getBySlug({
 			username: "owner",

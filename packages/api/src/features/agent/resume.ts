@@ -1,5 +1,6 @@
 import type { JsonPatchOperation } from "@reactive-resume/resume/patch";
 import { slugify } from "@reactive-resume/utils/string";
+import { pickFreeSlug } from "../resume/slugs";
 
 const AI_DRAFT_SUFFIX = " - AI Draft";
 
@@ -11,18 +12,7 @@ export function buildAgentDraftResumeName(sourceName: string) {
 }
 
 export function buildUniqueAgentDraftSlug(sourceName: string, existingSlugs: Set<string>) {
-	const base = slugify(buildAgentDraftResumeName(sourceName));
-	if (!existingSlugs.has(base)) return base;
-
-	let index = 2;
-	let candidate = `${base}-${index}`;
-
-	while (existingSlugs.has(candidate)) {
-		index += 1;
-		candidate = `${base}-${index}`;
-	}
-
-	return candidate;
+	return pickFreeSlug(slugify(buildAgentDraftResumeName(sourceName)), existingSlugs);
 }
 
 function decodeJsonPointerSegment(segment: string) {

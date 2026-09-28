@@ -1,4 +1,5 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { sql } from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
@@ -43,6 +44,23 @@ export const resume = pg.pgTable(
 	],
 );
 
+/**
+ * What made a version: created or imported (the first entry), an editing session's autosave, a version the
+ * user named, the state saved before a restore, the restore itself, an AI edit, or a sent application.
+ */
+export const RESUME_VERSION_KINDS = [
+	"created",
+	"import",
+	"auto",
+	"named",
+	"before-restore",
+	"restored",
+	"ai",
+	"sent",
+] as const;
+
+export type ResumeVersionKind = (typeof RESUME_VERSION_KINDS)[number];
+
 export const resumeVersion = pg.pgTable(
 	"resume_version",
 	{
@@ -59,12 +77,46 @@ export const resumeVersion = pg.pgTable(
 			.text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		// Immutable snapshot of the resume data at a milestone (template change, import, AI edit, manual save).
+		// Snapshot of the resume data. A session's autosave is refreshed while the session lasts; the rest are immutable.
 		data: pg.jsonb("data").notNull().$type<ResumeData>(),
+		// English description kept for API clients and rows written before `kind`; the UI labels versions by `kind`.
 		label: pg.text("label").notNull(),
+		kind: pg.text("kind", { enum: RESUME_VERSION_KINDS }).notNull().default("auto"),
+		// The user's name for a `named` version.
+		name: pg.text("name"),
+		// The editing session an `auto` version belongs to (one row per session).
+		sessionId: pg.text("session_id"),
+		// When this state was saved (a session's autosave moves forward as the session goes on).
 		createdAt: pg.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	},
-	(t) => [pg.index().on(t.resumeId, t.createdAt.desc())],
+	(t) => [
+		pg.index().on(t.resumeId, t.createdAt.desc()),
+		pg.uniqueIndex("resume_version_session_unique").on(t.resumeId, t.sessionId).where(sql`${t.kind} = 'auto'`),
+	],
+);
+
+/** A resume's previous public address, kept for 30 days after a rename so shared links keep working. */
+export const resumeSlugRedirect = pg.pgTable(
+	"resume_slug_redirect",
+	{
+		id: pg
+			.text("id")
+			.notNull()
+			.primaryKey()
+			.$defaultFn(() => generateId()),
+		slug: pg.text("slug").notNull(),
+		resumeId: pg
+			.text("resume_id")
+			.notNull()
+			.references(() => resume.id, { onDelete: "cascade" }),
+		userId: pg
+			.text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		expiresAt: pg.timestamp("expires_at", { withTimezone: true }).notNull(),
+		createdAt: pg.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+	},
+	(t) => [pg.unique().on(t.userId, t.slug), pg.index().on(t.resumeId)],
 );
 
 export const resumeStatistics = pg.pgTable("resume_statistics", {

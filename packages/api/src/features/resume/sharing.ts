@@ -13,7 +13,7 @@ export const sharingRouter = {
 			operationId: "getResumeBySlug",
 			summary: "Get public resume by username and slug",
 			description:
-				"Returns a publicly shared resume identified by the owner's username and the resume's slug. If the resume is password-protected and the viewer has not yet verified the password, a 401 error with code NEED_PASSWORD is returned. No authentication required for public resumes; if authenticated as the owner, private resumes are also accessible.",
+				"Returns a publicly shared resume identified by the owner's username and the resume's slug. A slug the resume had within the last 30 days still finds it; the response carries the current slug, so clients can redirect. If the resume is password-protected and the viewer has not yet verified the password, a 401 error with code NEED_PASSWORD is returned. No authentication required for public resumes; if authenticated as the owner, private resumes are also accessible.",
 			successDescription: "The public resume with its full data.",
 		})
 		.input(resumeDto.getBySlug.input)
@@ -25,6 +25,21 @@ export const sharingRouter = {
 				...(context.user?.id ? { currentUserId: context.user.id } : {}),
 			}),
 		),
+
+	checkSlug: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/resumes/{resumeId}/slug-check",
+			tags: ["Resume Sharing"],
+			operationId: "checkResumeSlug",
+			summary: "Check a resume address",
+			description:
+				"Checks whether a slug can be a resume's public address: lowercase letters and numbers in groups joined by single dashes, and not used by another of the user's resumes. When it can't, suggests one that works. Requires authentication.",
+			successDescription: "Whether the slug is available, and a suggestion when it isn't.",
+		})
+		.input(resumeDto.checkSlug.input)
+		.output(resumeDto.checkSlug.output)
+		.handler(({ input, context }) => resumeService.checkSlug({ ...input, userId: context.user.id })),
 
 	setPassword: protectedProcedure
 		.route({
