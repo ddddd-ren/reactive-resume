@@ -171,7 +171,7 @@ export function AgentThreadSidebar({ activeThreadId = null, className }: AgentTh
 						<Trans>Threads</Trans>
 					</div>
 				</div>
-				<Button size="sm" variant="ghost" nativeButton={false} render={<Link to="/dashboard/resumes" />}>
+				<Button size="sm" variant="ghost" nativeButton={false} render={<Link to="/dashboard" />}>
 					<ArrowLeftIcon />
 					<Trans>Back to resumes</Trans>
 				</Button>

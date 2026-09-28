@@ -61,17 +61,23 @@ export function CoverLetterEditorDialog({
 			cancelText: t`Keep editing`,
 		});
 	};
+	// Closing can navigate (Documents keeps the open letter in the URL); once decided, the blocker lets it through.
+	const closing = useRef(false);
+	const close = () => {
+		closing.current = true;
+		onClose();
+	};
 	const requestClose = async () => {
-		if (await canClose()) onClose();
+		if (await canClose()) close();
 	};
 	useBlocker({
-		shouldBlockFn: async () => !(await canClose()),
+		shouldBlockFn: async () => !closing.current && !(await canClose()),
 		enableBeforeUnload: editState.dirty || editState.pending || busy,
 	});
 
 	const remember = (letter: CoverLetter) => {
 		queryClient.setQueryData(orpc.coverLetters.getById.queryKey({ input: { id: letter.id } }), letter);
-		void queryClient.invalidateQueries({ queryKey: orpc.coverLetters.list.key() });
+		void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 	};
 	const run = async (action: () => Promise<void>) => {
 		if (running.current) return;
@@ -121,7 +127,7 @@ export function CoverLetterEditorDialog({
 						<Button onClick={() => void query.refetch()}>
 							<Trans>Retry</Trans>
 						</Button>
-						<Button variant="secondary" onClick={onClose}>
+						<Button variant="secondary" onClick={close}>
 							<Trans>Close</Trans>
 						</Button>
 					</div>
@@ -146,7 +152,7 @@ export function CoverLetterEditorDialog({
 									disabled={disabled || busy}
 									run={run}
 									onUpdated={remember}
-									onDeleted={onClose}
+									onDeleted={close}
 								/>
 							)}
 						/>
@@ -235,7 +241,7 @@ function CoverLetterActions({
 						onClick={() =>
 							void run(async () => {
 								await orpc.coverLetters.duplicate.call({ id: letter.id });
-								await queryClient.invalidateQueries({ queryKey: orpc.coverLetters.list.key() });
+								await queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 								toast.add({ type: "success", description: t`Copy saved to your cover-letter library.` });
 							})
 						}
@@ -245,22 +251,19 @@ function CoverLetterActions({
 					<Button
 						type="button"
 						variant="danger"
-						onClick={() =>
-							void run(async () => {
-								if (
-									!(await confirm(t`Delete this cover letter?`, {
-										description: t`PDFs already attached to applications will remain available.`,
-										confirmText: t`Delete`,
-									}))
-								)
-									return;
+						// Undoable from Trash (30 days), so it doesn't ask first. The editor closes once the action is done.
+						onClick={async () => {
+							let trashed = false;
+							await run(async () => {
 								await orpc.coverLetters.delete.call({ id: letter.id, expectedRevision: letter.revision });
-								await queryClient.invalidateQueries({ queryKey: orpc.coverLetters.list.key() });
-								onDeleted();
-							})
-						}
+								await queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
+								toast.add({ description: t`“${letter.name}” moved to Trash` });
+								trashed = true;
+							});
+							if (trashed) onDeleted();
+						}}
 					>
-						<Trans>Delete</Trans>
+						<Trans>Move to Trash</Trans>
 					</Button>
 				</div>
 				<div className="space-y-2">

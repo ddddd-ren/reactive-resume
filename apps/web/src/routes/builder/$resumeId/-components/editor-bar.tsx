@@ -69,8 +69,7 @@ function BackLink() {
 			<TooltipTrigger
 				render={
 					<Link
-						to="/dashboard/resumes"
-						search={{ sort: "lastUpdatedAt", tags: [] }}
+						to="/dashboard"
 						aria-label={label}
 						className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
 					/>

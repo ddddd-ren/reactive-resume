@@ -124,7 +124,7 @@ function RouteComponent() {
 	const setUrlSearch = (patch: Partial<Search>) => void navigate({ search: (prev: Search) => ({ ...prev, ...patch }) });
 
 	return (
-		<div className="flex h-[calc(100dvh-2rem)] flex-col gap-4">
+		<div className="flex h-dvh flex-col gap-4 p-4 max-sm:h-[calc(100dvh-52px)]">
 			<DashboardHeader
 				className="max-sm:flex-col max-sm:gap-y-3"
 				icon={BriefcaseIcon}

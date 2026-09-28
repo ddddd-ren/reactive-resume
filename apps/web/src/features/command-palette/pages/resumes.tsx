@@ -62,10 +62,9 @@ export function ResumesCommandGroup() {
 		matchesSearch(search, [thread.title, thread.resumeName, thread.providerLabel]),
 	);
 
-	const onCreate = async () => {
-		await navigate({ to: "/dashboard/resumes" });
-		openDialog("resume.create", undefined);
+	const onCreate = () => {
 		reset();
+		openDialog("document.new", undefined);
 	};
 
 	const onNavigate = async (path: string) => {

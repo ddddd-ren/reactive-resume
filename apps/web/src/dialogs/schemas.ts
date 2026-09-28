@@ -1,16 +1,14 @@
 import type { ReactNode } from "react";
+import type { NewDocumentDialogData } from "@/features/documents/new-document-dialog";
 
 type EmptyDialog<T extends string> = { [K in T]: { type: K; data?: undefined } }[T];
 
 export type DialogSchema =
-	| EmptyDialog<
-			| "auth.change-password"
-			| "auth.two-factor.enable"
-			| "auth.two-factor.disable"
-			| "api-key.create"
-			| "resume.create"
-			| "resume.import"
-	  >
+	| EmptyDialog<"auth.change-password" | "auth.two-factor.enable" | "auth.two-factor.disable" | "api-key.create">
+	| {
+			type: "document.new";
+			data?: NewDocumentDialogData | undefined;
+	  }
 	| {
 			type: "resume.update";
 			data: { id: string; name: string; slug: string; tags: string[] };

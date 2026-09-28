@@ -23,6 +23,7 @@ vi.mock("@/libs/orpc/client", () => ({
 			setLocked: { mutationOptions: () => ({}) },
 			update: { call: vi.fn(() => new Promise(() => undefined)) },
 		},
+		coverLetters: { copyEmbedded: { mutationOptions: () => ({}) } },
 	},
 	streamClient: { resume: { updates: { subscribe: vi.fn() } } },
 }));

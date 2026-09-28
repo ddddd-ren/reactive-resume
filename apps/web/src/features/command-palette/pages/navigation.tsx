@@ -9,12 +9,15 @@ import {
 	OpenAiLogoIcon,
 	PlusIcon,
 	ReadCvLogoIcon,
+	SealCheckIcon,
 	ShieldCheckIcon,
+	TrashIcon,
 	UserCircleIcon,
 	UserGearIcon,
 } from "@phosphor-icons/react";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { CommandItem } from "@reactive-resume/ui/components/command";
+import { useDialogStore } from "@/dialogs/store";
 import { useCommandPaletteStore } from "../store";
 import { BaseCommandGroup } from "./base";
 
@@ -39,12 +42,44 @@ export function NavigationCommandGroup() {
 
 				<CommandItem
 					disabled={!session}
-					keywords={[t`Resumes`]}
-					value="navigation.resumes"
-					onSelect={() => onNavigate("/dashboard/resumes")}
+					keywords={[t`Documents`, t`Resumes`, t`Cover letters`]}
+					value="navigation.documents"
+					onSelect={() => onNavigate("/dashboard")}
 				>
 					<ReadCvLogoIcon />
-					<Trans>Resumes</Trans>
+					<Trans>Documents</Trans>
+				</CommandItem>
+
+				<CommandItem
+					disabled={!session}
+					keywords={[t`New document`, t`Create`, t`Import`]}
+					value="navigation.documents.new"
+					onSelect={() => {
+						reset();
+						useDialogStore.getState().openDialog("document.new", undefined);
+					}}
+				>
+					<PlusIcon />
+					<Trans>New document</Trans>
+				</CommandItem>
+
+				<CommandItem
+					disabled={!session}
+					keywords={[t`Trash`, t`Deleted`]}
+					value="navigation.trash"
+					onSelect={() => onNavigate("/dashboard/trash")}
+				>
+					<TrashIcon />
+					<Trans>Trash</Trans>
+				</CommandItem>
+
+				<CommandItem
+					keywords={[t`ATS Checker`, t`Check a PDF`]}
+					value="navigation.ats-checker"
+					onSelect={() => onNavigate("/ats-checker")}
+				>
+					<SealCheckIcon />
+					<Trans>ATS Checker</Trans>
 				</CommandItem>
 
 				<CommandItem

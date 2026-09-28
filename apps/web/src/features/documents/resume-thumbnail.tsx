@@ -1,25 +1,19 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { RefObject } from "react";
 import type { ResumeThumbnailSize } from "@/features/resume/preview/resume-thumbnail.shared";
-import type { RouterOutput } from "@/libs/orpc/client";
-import { FileTextIcon } from "@phosphor-icons/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { Spinner } from "@reactive-resume/ui/components/spinner";
-import { cn } from "@reactive-resume/utils/style";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { createPdfFirstPageImageUrl, releaseThumbnailUrls } from "@/features/resume/preview/pdf-thumbnail";
 import { getResumeThumbnailCacheKey, getResumeThumbnailSize } from "@/features/resume/preview/resume-thumbnail.shared";
 import { orpc } from "@/libs/orpc/client";
 
-type ResumeListItem = RouterOutput["resume"]["list"][number];
-
 type ThumbnailState = { status: "error" | "idle" | "loading" } | { status: "ready"; url: string };
 
 type ResumeThumbnailProps = {
-	isLocked: boolean;
-	resume: ResumeListItem;
+	resume: { id: string; updatedAt: Date };
 };
 
 const throwIfAborted = (signal: AbortSignal) => {
@@ -149,7 +143,8 @@ function useResumeThumbnail(
 	return { status: "loading" };
 }
 
-export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
+/** The resume's first page, rendered once it scrolls near view and cached until it changes. */
+export function ResumeThumbnail({ resume }: ResumeThumbnailProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const isInView = useInView(containerRef, { amount: 0.1, margin: "240px" });
 	const size = useThumbnailSize(containerRef, isInView);
@@ -166,13 +161,7 @@ export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 	const hasFailed = resumeIsError || thumbnail.status === "error";
 
 	return (
-		<div
-			ref={containerRef}
-			className={cn(
-				"relative size-full overflow-hidden bg-muted/40 transition-[filter] duration-200 ease-out-strong",
-				isLocked && "blur-xs",
-			)}
-		>
+		<div ref={containerRef} className="relative size-full overflow-hidden bg-white">
 			{thumbnail.status === "ready" ? (
 				<div
 					aria-hidden
@@ -180,13 +169,12 @@ export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 					style={{ backgroundImage: `url(${thumbnail.url})` }}
 				/>
 			) : hasFailed ? (
-				<div className="absolute inset-0 flex items-center justify-center">
-					<FileTextIcon weight="thin" className="size-12 opacity-40" />
+				<div className="absolute inset-0 flex items-center justify-center text-ink-3">
+					<Icon name="description" size={24} />
 				</div>
 			) : (
-				<div className="absolute inset-0 flex items-center justify-center">
-					<Spinner className="size-8 text-muted-foreground" />
-				</div>
+				// Loading: a sunken placeholder at the page's real size, so nothing jumps.
+				<div className="absolute inset-0 animate-pulse bg-sunken" />
 			)}
 		</div>
 	);

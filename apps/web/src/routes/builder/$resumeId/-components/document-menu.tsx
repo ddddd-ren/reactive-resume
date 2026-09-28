@@ -17,7 +17,6 @@ import { useDialogStore } from "@/dialogs/store";
 import { useCurrentBuilderResumeSelector, useCurrentResume, usePatchResume } from "@/features/resume/builder/draft";
 import { SaveStatus } from "@/features/resume/editor/save-status";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
-import { useConfirm } from "@/hooks/use-confirm";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { InformationSectionBuilder } from "../-sidebar/right/sections/information";
@@ -86,7 +85,6 @@ type DocumentMenuItemsProps = {
 };
 
 function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
-	const confirm = useConfirm();
 	const navigate = useNavigate();
 	const { openDialog } = useDialogStore();
 	const resume = useCurrentResume();
@@ -94,7 +92,8 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 	const { onPrint } = useResumeExport(resume);
 	const { id, name, slug, tags, isLocked } = resume;
 
-	const { mutate: deleteResume } = useMutation(orpc.resume.delete.mutationOptions());
+	const { mutate: trashResume } = useMutation(orpc.documents.trash.mutationOptions());
+	const { mutate: restoreResume } = useMutation(orpc.documents.restore.mutationOptions());
 	const { mutate: setLockedResume } = useMutation(orpc.resume.setLocked.mutationOptions());
 
 	// Locking is reversible, so it doesn't ask for confirmation.
@@ -114,23 +113,27 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 		);
 	};
 
-	// ponytail: permanent delete with a confirmation until Trash exists (plan M6), then this moves to Trash with undo.
-	const handleDelete = async () => {
-		const confirmation = await confirm(t`Are you sure you want to delete this resume?`, {
-			description: t`This action cannot be undone.`,
-		});
-		if (!confirmation) return;
-
-		const toastId = toast.add({ type: "loading", description: t`Deleting your resume...` });
-		deleteResume(
-			{ id },
+	// Undoable, so it doesn't ask first: the resume waits in Trash for 30 days.
+	const handleTrash = () => {
+		trashResume(
+			{ type: "resume", id },
 			{
 				onSuccess: () => {
-					toast.add({ type: "success", description: t`Your resume has been deleted.`, id: toastId });
-					void navigate({ to: "/dashboard/resumes", search: { sort: "lastUpdatedAt", tags: [] } });
+					void navigate({ to: "/dashboard" });
+					toast.add({
+						description: t`“${name}” moved to Trash`,
+						actionProps: {
+							children: t`Undo`,
+							onClick: () =>
+								restoreResume(
+									{ type: "resume", id },
+									{ onError: (error) => toast.add({ type: "error", description: getResumeErrorMessage(error) }) },
+								),
+						},
+					});
 				},
 				onError: (error) => {
-					toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });
+					toast.add({ type: "error", description: getResumeErrorMessage(error) });
 				},
 			},
 		);
@@ -164,9 +167,9 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 				<Trans>Print</Trans>
 			</DropdownMenuItem>
 			<DropdownMenuSeparator />
-			<DropdownMenuItem variant="destructive" disabled={isLocked} onClick={handleDelete}>
+			<DropdownMenuItem variant="destructive" disabled={isLocked} onClick={handleTrash}>
 				<Icon name="delete" />
-				<Trans>Delete…</Trans>
+				<Trans>Move to Trash</Trans>
 			</DropdownMenuItem>
 		</DropdownMenuContent>
 	);

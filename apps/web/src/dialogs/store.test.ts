@@ -23,7 +23,7 @@ describe("useDialogStore", () => {
 
 		it("clears any existing onBeforeClose handler", () => {
 			useDialogStore.setState({ onBeforeClose: () => true });
-			useDialogStore.getState().openDialog("resume.create", undefined);
+			useDialogStore.getState().openDialog("document.new", undefined);
 
 			expect(useDialogStore.getState().onBeforeClose).toBeNull();
 		});
@@ -69,7 +69,7 @@ describe("useDialogStore", () => {
 			useDialogStore.getState().closeDialog();
 			vi.advanceTimersByTime(100);
 
-			useDialogStore.getState().openDialog("resume.create", undefined);
+			useDialogStore.getState().openDialog("document.new", undefined);
 			const onBeforeClose = () => false;
 			useDialogStore.getState().setOnBeforeClose(onBeforeClose);
 			if (closing) useDialogStore.getState().closeDialog();
@@ -77,7 +77,7 @@ describe("useDialogStore", () => {
 
 			expect(useDialogStore.getState()).toMatchObject({
 				open: !closing,
-				activeDialog: { type: "resume.create" },
+				activeDialog: { type: "document.new" },
 				onBeforeClose,
 			});
 

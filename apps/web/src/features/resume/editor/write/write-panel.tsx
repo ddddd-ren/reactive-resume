@@ -52,7 +52,7 @@ export function WritePanel() {
 				</p>
 
 				{isEmpty && !locked ? (
-					<StartSuggestions onImport={() => openDialog("resume.import", undefined)} />
+					<StartSuggestions onImport={() => openDialog("document.new", undefined)} />
 				) : (
 					<Outline locked={locked} page={page} />
 				)}

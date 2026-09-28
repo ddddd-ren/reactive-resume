@@ -90,6 +90,7 @@ export const iconNames = [
 	"school",
 	"search",
 	"search_off",
+	"sell",
 	"settings",
 	"short_text",
 	"sticky_note_2",

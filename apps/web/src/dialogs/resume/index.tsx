@@ -1,14 +1,11 @@
-import type { RouterInput } from "@/libs/orpc/client";
 import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { CaretDownIcon, MagicWandIcon, PencilSimpleLineIcon, PlusIcon, TestTubeIcon } from "@phosphor-icons/react";
+import { MagicWandIcon, PencilSimpleLineIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { useRef } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
-import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
 import {
 	DialogContent,
 	DialogDescription,
@@ -16,16 +13,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@reactive-resume/ui/components/dropdown-menu";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { generateId, generateRandomName } from "@reactive-resume/utils/string";
+import { generateRandomName } from "@reactive-resume/utils/string";
 import { ChipInput } from "@/components/input/chip-input";
 import { usePatchResume } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
@@ -47,124 +38,6 @@ const defaultValues: FormValues = {
 	name: "",
 	tags: [],
 };
-
-export function CreateResumeDialog(_: DialogProps<"resume.create">) {
-	const navigate = useNavigate();
-	const closeDialog = useDialogStore((state) => state.closeDialog);
-	// Skip the unsaved-changes guard when we close as a result of a successful create.
-	const didCreateRef = useRef(false);
-
-	const { mutate: createResume, isPending } = useMutation(orpc.resume.create.mutationOptions());
-
-	const form = useAppForm({
-		defaultValues: {
-			id: generateId(),
-			name: "",
-			tags: [] as string[],
-		},
-		validators: { onSubmit: formSchema },
-		onSubmit: ({ value }) => {
-			const toastId = toast.add({ type: "loading", description: t`Creating your resume...` });
-
-			createResume(value, {
-				onSuccess: (id) => {
-					didCreateRef.current = true;
-					toast.add({ type: "success", description: t`Your resume has been created.`, id: toastId });
-					closeDialog();
-					void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
-				},
-				onError: (error) => {
-					toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });
-				},
-			});
-		},
-	});
-
-	useFormBlocker(form, {
-		shouldBlock: () => !didCreateRef.current && form.state.isDirty && !form.state.isSubmitting,
-	});
-
-	const onCreateSampleResume = () => {
-		const values = form.state.values;
-		const randomName = generateRandomName();
-
-		const data = {
-			name: values.name || randomName,
-			tags: values.tags,
-			withSampleData: true,
-		} satisfies RouterInput["resume"]["create"];
-
-		const toastId = toast.add({ type: "loading", description: t`Creating your resume...` });
-
-		createResume(data, {
-			onSuccess: (id) => {
-				didCreateRef.current = true;
-				toast.add({ type: "success", description: t`Your resume has been created.`, id: toastId });
-				closeDialog();
-				void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
-			},
-			onError: (error) => {
-				toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });
-			},
-		});
-	};
-
-	return (
-		<DialogContent>
-			<DialogHeader>
-				<DialogTitle className="flex items-center gap-x-2">
-					<PlusIcon />
-					<Trans>Create a new resume</Trans>
-				</DialogTitle>
-				<DialogDescription>
-					<Trans>Start building your resume by giving it a name.</Trans>
-				</DialogDescription>
-			</DialogHeader>
-
-			<form
-				className="space-y-4"
-				onSubmit={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					void form.handleSubmit();
-				}}
-			>
-				<ResumeForm form={form} />
-
-				<DialogFooter>
-					<ButtonGroup
-						aria-label={t({
-							comment: "Accessible label for create-resume split button group",
-							message: "Create resume with options",
-						})}
-						className="gap-x-px rtl:flex-row-reverse"
-					>
-						<Button type="submit" disabled={isPending}>
-							<Trans>Create</Trans>
-						</Button>
-
-						<DropdownMenu>
-							<DropdownMenuTrigger
-								render={
-									<Button size="icon" disabled={isPending}>
-										<CaretDownIcon />
-									</Button>
-								}
-							/>
-
-							<DropdownMenuContent align="end" className="w-fit">
-								<DropdownMenuItem onClick={onCreateSampleResume}>
-									<TestTubeIcon />
-									<Trans>Create a Sample Resume</Trans>
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</ButtonGroup>
-				</DialogFooter>
-			</form>
-		</DialogContent>
-	);
-}
 
 export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);

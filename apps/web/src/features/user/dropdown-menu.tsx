@@ -17,6 +17,7 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useTheme } from "@/features/theme/provider";
 import { authClient } from "@/libs/auth/client";
@@ -72,6 +73,11 @@ export function UserDropdownMenu({ children }: Props) {
 			<DropdownMenuTrigger render={children({ session: session as AuthSession })} />
 
 			<DropdownMenuContent align="start" side="top">
+				<DropdownMenuItem onClick={() => void router.navigate({ to: "/dashboard/settings/profile" })}>
+					<Icon name="settings" />
+					<Trans>Settings</Trans>
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>

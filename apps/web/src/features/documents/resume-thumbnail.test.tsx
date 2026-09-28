@@ -34,13 +34,6 @@ vi.mock("@/libs/orpc/client", () => ({
 
 const resume: ComponentProps<typeof ResumeThumbnail>["resume"] = {
 	id: "thumbnail-test",
-	name: "Resume",
-	slug: "resume",
-	tags: [],
-	isLocked: false,
-	isPublic: false,
-	showDownloadButtons: true,
-	createdAt: new Date(0),
 	updatedAt: new Date(0),
 };
 let resize: () => void;
@@ -87,7 +80,7 @@ function setup() {
 	});
 	const ui = () => (
 		<QueryClientProvider client={client}>
-			<ResumeThumbnail resume={currentResume} isLocked={false} />
+			<ResumeThumbnail resume={currentResume} />
 		</QueryClientProvider>
 	);
 	const result = render(ui());
@@ -136,7 +129,7 @@ it("reuses rendered image after card hide and remount", async () => {
 
 	const remounted = render(
 		<QueryClientProvider client={view.client}>
-			<ResumeThumbnail resume={resume} isLocked={false} />
+			<ResumeThumbnail resume={resume} />
 		</QueryClientProvider>,
 	);
 	await waitFor(() =>
