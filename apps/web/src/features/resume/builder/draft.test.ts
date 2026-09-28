@@ -10,6 +10,8 @@ import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import {
 	isEditableElementFocused,
+	readUnsavedResumeData,
+	shouldCoalesceEdit,
 	useBuilderResumeUpdateSubscription,
 	useResumeCleanup,
 	useResumeStore,
@@ -420,9 +422,9 @@ describe("builder resume autosave", () => {
 		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({ id: initial.id, data: latest.data });
 	});
 
-	it("keeps the latest draft data and shows a persistent toast when saving fails", async () => {
+	it("keeps the latest draft on this device and reports Not saved when saving fails", async () => {
 		const initial = makeResume("resume-failure");
-		orpcMocks.updateResume.mockRejectedValue(new Error("network down"));
+		orpcMocks.updateResume.mockRejectedValue(new Error("server down"));
 		useResumeStore.getState().initialize(initial);
 
 		useResumeStore.getState().updateResumeData((draft) => {
@@ -433,10 +435,64 @@ describe("builder resume autosave", () => {
 		await flushMicrotasks();
 
 		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Unsaved Name");
-		expect(toastMocks.add).toHaveBeenCalledWith(
-			expect.objectContaining({ type: "error", description: "Your latest changes could not be saved.", timeout: 0 }),
-		);
+		expect(useResumeStore.getState().saveStatus).toBe("error");
+		expect(readUnsavedResumeData("resume-failure")?.basics.name).toBe("Unsaved Name");
 		expect(orpcMocks.patchResume).not.toHaveBeenCalled();
+	});
+
+	it("reports offline, keeps the draft on this device and sends it when the connection returns", async () => {
+		const initial = makeResume("resume-offline");
+		const onLine = vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+		orpcMocks.updateResume.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+		useResumeStore.getState().initialize(initial);
+
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Written offline";
+		});
+		vi.advanceTimersByTime(500);
+		await flushMicrotasks();
+
+		expect(useResumeStore.getState().saveStatus).toBe("offline");
+		expect(readUnsavedResumeData("resume-offline")?.basics.name).toBe("Written offline");
+
+		onLine.mockReturnValue(true);
+		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) =>
+			Promise.resolve({ ...makeResume(input.id), data: input.data }),
+		);
+		window.dispatchEvent(new Event("online"));
+		await flushMicrotasks();
+		await flushMicrotasks();
+
+		expect(orpcMocks.updateResume).toHaveBeenLastCalledWith(
+			expect.objectContaining({ id: "resume-offline" }),
+			expect.anything(),
+		);
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
+		expect(readUnsavedResumeData("resume-offline")).toBeUndefined();
+		onLine.mockRestore();
+	});
+
+	it("restores changes kept on this device when the editor opens again", async () => {
+		const initial = makeResume("resume-restore");
+		window.localStorage.setItem(
+			"reactive-resume:unsaved:resume-restore",
+			JSON.stringify({ data: withBasicsName(initial, "Kept locally").data, storedAt: 1 }),
+		);
+		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) =>
+			Promise.resolve({ ...makeResume(input.id), data: input.data }),
+		);
+
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Kept locally");
+		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
+			expect.objectContaining({ id: "resume-restore" }),
+			expect.anything(),
+		);
+		expect(toastMocks.add).toHaveBeenCalledWith(
+			expect.objectContaining({ description: "Restored changes that hadn't been saved yet." }),
+		);
 	});
 });
 
@@ -536,6 +592,86 @@ describe("builder resume undo/redo", () => {
 		store().redo();
 		expect(store().resume?.data.basics.name).toBe("Second");
 		expect(store().canRedo).toBe(false);
+	});
+
+	it("merges typing in one field into one step, but not edits to different fields", () => {
+		const store = useResumeStore.getState;
+		store().initialize(makeResume("undo-fields"));
+
+		store().updateResumeData(
+			(draft) => {
+				draft.basics.name = "J";
+			},
+			{ coalesceKey: "basics.name" },
+		);
+		store().updateResumeData(
+			(draft) => {
+				draft.basics.name = "Jo";
+			},
+			{ coalesceKey: "basics.name" },
+		);
+		store().updateResumeData(
+			(draft) => {
+				draft.basics.headline = "Designer";
+			},
+			{ coalesceKey: "basics.headline" },
+		);
+
+		expect(store().undoStack.length).toBe(2);
+		store().undo();
+		expect(store().resume?.data.basics.headline).toBe(defaultResumeData.basics.headline);
+		expect(store().resume?.data.basics.name).toBe("Jo");
+		store().undo();
+		expect(store().resume?.data.basics.name).toBe(defaultResumeData.basics.name);
+	});
+
+	it("keeps structural actions as steps of their own", () => {
+		const store = useResumeStore.getState;
+		store().initialize(makeResume("undo-structural"));
+
+		store().updateResumeData((draft) => {
+			draft.basics.name = "A";
+		});
+		store().updateResumeData(
+			(draft) => {
+				draft.sections.skills.hidden = true;
+			},
+			{ newStep: true },
+		);
+		store().updateResumeData((draft) => {
+			draft.basics.name = "B";
+		});
+
+		expect(store().undoStack.length).toBe(3);
+	});
+
+	it("keeps 200 steps and drops the oldest beyond that", () => {
+		const store = useResumeStore.getState;
+		store().initialize(makeResume("undo-depth"));
+
+		for (let index = 0; index < 205; index++) {
+			store().updateResumeData(
+				(draft) => {
+					draft.basics.name = `Name ${index}`;
+				},
+				{ newStep: true },
+			);
+		}
+
+		expect(store().undoStack.length).toBe(200);
+	});
+
+	it("stores steps as shared references instead of deep copies", () => {
+		const store = useResumeStore.getState;
+		store().initialize(makeResume("undo-shared"));
+		const before = store().resume?.data;
+
+		store().updateResumeData((draft) => {
+			draft.basics.name = "Changed";
+		});
+
+		expect(store().undoStack[0]).toBe(before);
+		expect(store().resume?.data.sections).toBe(before?.sections);
 	});
 
 	it("restores the exact authored Experience order with one undo after a one-shot sort", () => {
@@ -803,5 +939,28 @@ describe("resume update stream subscription", () => {
 
 		expect(orpcMocks.getResumeById).toHaveBeenCalledWith({ id: initial.id });
 		expect(useResumeStore.getState().resume?.data.metadata.stylesheet).toEqual(remote.data.metadata.stylesheet);
+	});
+});
+
+describe("shouldCoalesceEdit", () => {
+	const previous = { at: 1_000, key: "basics.name", canCoalesce: true };
+
+	it("merges the same field within a second", () => {
+		expect(shouldCoalesceEdit(previous, { at: 1_900, key: "basics.name", newStep: false })).toBe(true);
+		expect(shouldCoalesceEdit(previous, { at: 2_100, key: "basics.name", newStep: false })).toBe(false);
+	});
+
+	it("never merges across fields, into a new step, or after a structural action", () => {
+		expect(shouldCoalesceEdit(previous, { at: 1_100, key: "basics.headline", newStep: false })).toBe(false);
+		expect(shouldCoalesceEdit(previous, { at: 1_100, key: "basics.name", newStep: true })).toBe(false);
+		expect(
+			shouldCoalesceEdit({ ...previous, canCoalesce: false }, { at: 1_100, key: "basics.name", newStep: false }),
+		).toBe(false);
+	});
+
+	it("keeps the shorter window for edits without a field key", () => {
+		const keyless = { at: 1_000, key: undefined, canCoalesce: true };
+		expect(shouldCoalesceEdit(keyless, { at: 1_400, key: undefined, newStep: false })).toBe(true);
+		expect(shouldCoalesceEdit(keyless, { at: 1_600, key: undefined, newStep: false })).toBe(false);
 	});
 });
