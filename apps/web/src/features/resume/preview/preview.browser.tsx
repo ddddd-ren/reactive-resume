@@ -11,7 +11,7 @@ import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { EASE_OUT_STRONG } from "@/libs/motion";
-import { usePreviewPausedStore, useResumeData } from "../builder/draft";
+import { isEditableElementFocused, usePreviewPausedStore, useResumeData } from "../builder/draft";
 import { PdfCanvasDocument, PdfCanvasPage } from "./pdf-canvas";
 import { ResumePreviewLoader } from "./preview.shared";
 import { getResumePreviewGapValue, getResumePreviewPageCount } from "./preview.shared.utils";
@@ -29,6 +29,9 @@ type PreviewPdf = {
 };
 
 const UPDATE_DEBOUNCE_MS = 100;
+// While a field has focus the page waits for a pause in typing, so rendering (about 230 ms for two pages,
+// on the main thread) doesn't compete with keystrokes.
+const TYPING_DEBOUNCE_MS = 250;
 // Incoming layer fades in over the old one; the old layer holds at full opacity until the incoming one is opaque,
 // then drops out. Fading both at once dips the page towards the background mid-swap.
 const INCOMING_TRANSITION = { duration: 0.15, ease: EASE_OUT_STRONG };
@@ -132,7 +135,7 @@ export function ResumePreviewClient({
 
 		let cancelled = false;
 		const requestId = ++requestIdRef.current;
-		const delay = hasPreviewRef.current ? UPDATE_DEBOUNCE_MS : 0;
+		const delay = !hasPreviewRef.current ? 0 : isEditableElementFocused() ? TYPING_DEBOUNCE_MS : UPDATE_DEBOUNCE_MS;
 
 		const generatePdfPreview = async () => {
 			try {

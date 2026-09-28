@@ -19,14 +19,9 @@ import { AiReviewCard } from "@/features/ats-checker/ai-review/ai-review-card";
 import { AtsPdfReportView } from "@/features/ats-checker/report/report-view";
 import { blobToPdfFile, runAtsCheck } from "@/features/ats-checker/run-ats-check";
 import { useResumeData } from "@/features/resume/builder/draft";
-import { getScrollBehavior } from "@/features/resume/builder/section-recovery";
+import { getScrollBehavior, revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
-import {
-	atsFindingItemElementId,
-	getAtsFindingLocation,
-	getAtsFindingMessage,
-	getAtsFindingTarget,
-} from "@/libs/resume/ats";
+import { getAtsFindingLocation, getAtsFindingMessage, getAtsFindingTarget } from "@/libs/resume/ats";
 import { useEditorMode } from "../../../-components/use-editor-mode";
 import { useSectionStore } from "../../../-store/section";
 import { SectionBase } from "../shared/section-base";
@@ -115,14 +110,28 @@ function LiveLintTier() {
 			const target = getAtsFindingTarget(pointer, data);
 			if (!target) return;
 
-			// Content findings open Write, design findings open Design; then the field scrolls into view.
-			setMode(target.side === "left" ? "write" : "design");
-			setCollapsed(target.section, false);
+			// Content findings open the entry in Write; design findings open their section in Design.
+			if (target.side === "left") {
+				const customIndex = target.section === "custom" ? Number(pointer.split("/")[2]) : -1;
+				const sectionId = customIndex >= 0 ? data?.customSections[customIndex]?.id : target.section;
+				if (!sectionId) return;
+				setMode("write");
+				revealSelectionInPanel(
+					sectionId === "basics" || sectionId === "picture"
+						? { kind: "header" }
+						: target.itemId
+							? { kind: "item", sectionId, itemId: target.itemId }
+							: { kind: "section", sectionId },
+				);
+				return;
+			}
 
+			setMode("design");
+			setCollapsed(target.section, false);
 			requestAnimationFrame(() => {
-				const item = target.itemId ? document.getElementById(atsFindingItemElementId(target.itemId)) : null;
-				const destination = item ?? document.getElementById(`sidebar-${target.section}`);
-				destination?.scrollIntoView({ block: "start", inline: "nearest", behavior: getScrollBehavior() });
+				document
+					.getElementById(`sidebar-${target.section}`)
+					?.scrollIntoView({ block: "start", inline: "nearest", behavior: getScrollBehavior() });
 			});
 		},
 		[data, setCollapsed, setMode],

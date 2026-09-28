@@ -66,6 +66,7 @@ vi.mock("../shared/section-base", () => ({
 }));
 
 const { AtsCheckSectionBuilder } = await import("./ats-check");
+const { useEditorStore } = await import("@/features/resume/editor/store");
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
@@ -150,7 +151,7 @@ describe("AtsCheckSectionBuilder", () => {
 		expect(screen.getByText("1 note")).toBeTruthy();
 	});
 
-	it("opens the owning sidebar section when a finding's location is clicked", () => {
+	it("opens what a finding is about in Write when its location is clicked", () => {
 		resumeState.data = makeResume((data) => {
 			data.basics.email = "";
 		});
@@ -159,7 +160,7 @@ describe("AtsCheckSectionBuilder", () => {
 		fireEvent.click(screen.getByRole("button", { name: /Basics/ }));
 
 		expect(editorModeState.setMode).toHaveBeenCalledWith("write");
-		expect(sectionState.setCollapsed).toHaveBeenCalledWith("basics", false);
+		expect(useEditorStore.getState()).toMatchObject({ selection: { kind: "header" }, basicsOpen: true });
 	});
 
 	it("points typography findings at the right sidebar", () => {

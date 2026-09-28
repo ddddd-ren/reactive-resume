@@ -9,8 +9,8 @@ import { cn } from "@reactive-resume/utils/style";
 import { useCurrentBuilderResumeSelector } from "@/features/resume/builder/draft";
 import { PageOverlay } from "@/features/resume/editor/page-overlay";
 import { useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "@/features/resume/editor/store";
+import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
 import { ResumePreview } from "@/features/resume/preview/preview";
-import { revealSelectionInPanel } from "./reveal-selection";
 import { useEditorMode } from "./use-editor-mode";
 
 // Page widths in PDF points; 1pt renders as 1 CSS px at 100%.

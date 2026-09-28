@@ -35,8 +35,6 @@ import {
 import { match } from "ts-pattern";
 import { cn } from "@reactive-resume/utils/style";
 
-export { defaultSectionIconNames } from "@reactive-resume/schema/resume/section-icons";
-
 export type LeftSidebarSection = "picture" | "basics" | "summary" | SectionType | "custom";
 
 // CustomSectionType values that are not in SectionType (used in custom sections only)

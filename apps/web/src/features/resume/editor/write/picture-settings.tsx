@@ -42,15 +42,6 @@ import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
-import { SectionBase } from "../shared/section-base";
-
-export function PictureSectionBuilder() {
-	return (
-		<SectionBase type="picture">
-			<PictureSectionForm />
-		</SectionBase>
-	);
-}
 
 type PicturePreviewControlsProps = {
 	fileInputRef: React.RefObject<HTMLInputElement | null>;
@@ -502,7 +493,8 @@ type CropState = {
 	imageSrc: string;
 };
 
-function PictureSectionForm() {
+/** Every photo option: upload with crop, address, show or hide, delete, fit, size, rotation, shape, border and shadow. */
+export function PictureSettings() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const appOrigin = typeof window === "undefined" ? "" : window.location.origin;
 

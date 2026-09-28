@@ -414,7 +414,7 @@ const parsedTablesMatchSource = (sourceTables: readonly string[], tables: readon
 	);
 };
 
-const hasUnsupportedTableMarkup = (html: string) => {
+export const hasUnsupportedTableMarkup = (html: string) => {
 	if (typeof DOMParser === "undefined") return false;
 	const tableMarkers = tableMarkersFrom(html);
 	if (tableMarkers.length === 0) return false;
@@ -491,7 +491,7 @@ const StyledTableCell = TableCell.extend({
 	},
 });
 
-const extensions = [
+export const richInputExtensions = [
 	StarterKit.configure({
 		heading: false,
 		paragraph: false,
@@ -551,7 +551,7 @@ export function RichInput({
 
 	const editor = useEditor({
 		...options,
-		extensions,
+		extensions: richInputExtensions,
 		textDirection,
 		content: value,
 		editable: requestedEditable && !hasUnsupportedTable,

@@ -9,6 +9,7 @@ import { debounce, isEqual } from "es-toolkit";
 import { useCallback, useEffect, useState } from "react";
 import { immer } from "zustand/middleware/immer";
 import { create } from "zustand/react";
+import { syncResumeDates } from "@reactive-resume/schema/resume/dates";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { orpc, streamClient } from "@/libs/orpc/client";
 
@@ -551,6 +552,9 @@ export const useResumeStore = create<ResumeStore>()(
 				}
 
 				fn(state.resume.data as WritableDraft<ResumeData>);
+				// The server keeps dates and their legacy text in step on save; doing the same here keeps its
+				// echo identical to the draft, so an autosave never reads as an outside change.
+				syncResumeDates(state.resume.data as ResumeData, currentResume.data);
 				state.saveStatus = "saving";
 				state.canUndo = state.undoStack.length > 0;
 				state.canRedo = state.redoStack.length > 0;

@@ -45,6 +45,7 @@ vi.mock("@reactive-resume/ui/components/toast", () => ({
 }));
 
 vi.mock("../builder/draft", () => ({
+	isEditableElementFocused: () => false,
 	useResumeData: () => previewMock.builderResumeData,
 	usePreviewPausedStore: (selector: (state: { paused: boolean }) => unknown) => selector({ paused: false }),
 }));

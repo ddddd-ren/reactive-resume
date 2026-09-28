@@ -3,7 +3,8 @@ import { Fragment } from "react";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { OfflineBanner } from "@/features/resume/editor/save-status";
 import { useEditorStore } from "@/features/resume/editor/store";
-import { BuilderWritePanel } from "../-sidebar/left";
+import { selectionFromPanelElement } from "@/features/resume/editor/write/reveal";
+import { WritePanel } from "@/features/resume/editor/write/write-panel";
 import { AtsCheckSectionBuilder } from "../-sidebar/right/sections/ats-check";
 import { CustomStylesSectionBuilder } from "../-sidebar/right/sections/custom-styles";
 import { DesignSectionBuilder } from "../-sidebar/right/sections/design";
@@ -12,7 +13,6 @@ import { PageSectionBuilder } from "../-sidebar/right/sections/page";
 import { TemplateSectionBuilder } from "../-sidebar/right/sections/template";
 import { TypographySectionBuilder } from "../-sidebar/right/sections/typography";
 import { BareSectionChrome } from "../-sidebar/right/shared/section-base";
-import { selectionFromPanelElement } from "./reveal-selection";
 
 // Until the Design mode is rebuilt (M4), it hosts the existing design sections in this order.
 const DESIGN_SECTIONS = [
@@ -48,7 +48,7 @@ function CheckPanel() {
 	);
 }
 
-function WritePanel() {
+function WriteMode() {
 	const select = useEditorStore((state) => state.select);
 
 	return (
@@ -56,11 +56,13 @@ function WritePanel() {
 		// biome-ignore lint/a11y/noStaticElementInteractions: not an interactive element, see above.
 		<div
 			onFocus={(event) => {
+				// Fields only: buttons (an entry's title, the chevrons) change the selection themselves.
+				if (!event.target.matches("input, textarea, select, [contenteditable='true']")) return;
 				const selection = selectionFromPanelElement(event.target);
 				if (selection) select(selection);
 			}}
 		>
-			<BuilderWritePanel />
+			<WritePanel />
 		</div>
 	);
 }
@@ -69,7 +71,7 @@ export function ModePanel({ mode }: { mode: EditorMode }) {
 	return (
 		<>
 			<OfflineBanner className="mx-4 mt-4 w-auto" />
-			{mode === "design" ? <DesignPanel /> : mode === "check" ? <CheckPanel /> : <WritePanel />}
+			{mode === "design" ? <DesignPanel /> : mode === "check" ? <CheckPanel /> : <WriteMode />}
 		</>
 	);
 }

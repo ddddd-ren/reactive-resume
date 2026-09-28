@@ -24,6 +24,14 @@ type EditorStore = {
 	shareOpen: boolean;
 	downloadOpen: boolean;
 	assistantOpen: boolean;
+	/** Write: sections open in the outline. */
+	openSections: readonly string[];
+	/** Write: sections added this visit that are still empty (a summary before any text), so they stay listed. */
+	addedSections: readonly string[];
+	/** Write: a new draft whose first field takes focus once it renders. */
+	focusEntryId: string | null;
+	/** Write: the Basics card. It collapses when an entry is picked on the page. */
+	basicsOpen: boolean;
 	select: (selection: EditorSelection | null) => void;
 	setZoom: (zoom: number | "fit") => void;
 	setDrawerOpen: (open: boolean) => void;
@@ -31,6 +39,10 @@ type EditorStore = {
 	setShareOpen: (open: boolean) => void;
 	setDownloadOpen: (open: boolean) => void;
 	setAssistantOpen: (open: boolean) => void;
+	setSectionOpen: (sectionId: string, open: boolean) => void;
+	markSectionAdded: (sectionId: string) => void;
+	setFocusEntry: (entryId: string | null) => void;
+	setBasicsOpen: (open: boolean) => void;
 	reset: () => void;
 };
 
@@ -54,6 +66,10 @@ const initialState = {
 	shareOpen: false,
 	downloadOpen: false,
 	assistantOpen: false,
+	openSections: [],
+	addedSections: [],
+	focusEntryId: null,
+	basicsOpen: true,
 } as const;
 
 export const useEditorStore = create<EditorStore>()((set) => ({
@@ -65,5 +81,19 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 	setShareOpen: (shareOpen) => set({ shareOpen }),
 	setDownloadOpen: (downloadOpen) => set({ downloadOpen }),
 	setAssistantOpen: (assistantOpen) => set({ assistantOpen }),
+	setSectionOpen: (sectionId, open) =>
+		set((state) => {
+			const isOpen = state.openSections.includes(sectionId);
+			if (isOpen === open) return state;
+			return {
+				openSections: open ? [...state.openSections, sectionId] : state.openSections.filter((id) => id !== sectionId),
+			};
+		}),
+	markSectionAdded: (sectionId) =>
+		set((state) =>
+			state.addedSections.includes(sectionId) ? state : { addedSections: [...state.addedSections, sectionId] },
+		),
+	setFocusEntry: (focusEntryId) => set({ focusEntryId }),
+	setBasicsOpen: (basicsOpen) => set({ basicsOpen }),
 	reset: () => set(initialState),
 }));
