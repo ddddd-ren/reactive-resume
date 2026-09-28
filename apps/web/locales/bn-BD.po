@@ -31,13 +31,12 @@ msgid "“{0}” hidden"
 msgstr ""
 
 #. placeholder {0}: document.name
-#. placeholder {0}: letter.name
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/documents/document-actions.tsx
 msgid "“{0}” moved to Trash"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
 msgstr ""
 
@@ -372,8 +371,12 @@ msgstr ""
 msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "{pairing} type"
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -412,6 +415,10 @@ msgstr ""
 #. placeholder {0}: formatRelativeTime(document.updatedAt, formatter)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "{words, plural, one {# word} other {# words}}"
 msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
@@ -462,6 +469,10 @@ msgstr "১ বছর"
 msgid "10–11 recommended"
 msgstr ""
 
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "2 files"
+msgstr ""
+
 #: src/features/resume/editor/write/summary-editor.tsx
 msgid "2–3 sentences reads best"
 msgstr ""
@@ -494,8 +505,16 @@ msgstr "৬ মাস"
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr ""
 
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "A city and country let roles be matched to where you are."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "A comfortable length, and it fits on one page."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -1066,6 +1085,11 @@ msgstr "ইতিমধ্যে একটি অ্যাকাউন্ট আ
 msgid "Also check the exported PDF"
 msgstr ""
 
+#. placeholder {0}: linkedLetter.company
+#: src/features/resume/share/download-tab.tsx
+msgid "Also download the {0} cover letter"
+msgstr ""
+
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Also shows the icons on skills, profiles and interests."
 msgstr ""
@@ -1170,7 +1194,6 @@ msgid "Appears on the page once it has an organization."
 msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Application"
@@ -1325,10 +1348,6 @@ msgstr "একটি জীবনবৃত্তান্ত ফাইল সং
 msgid "Attach files"
 msgstr "ফাইলগুলো সংযুক্ত করুন"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Attach PDF"
-msgstr "পিডিএফ সংযুক্ত করুন"
-
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment"
 msgstr "সংযুক্তি"
@@ -1391,7 +1410,7 @@ msgid "Back to authentication settings"
 msgstr "প্রমাণীকরণ সেটিংসে ফিরে যান"
 
 #: src/features/documents/trash-page.tsx
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Back to documents"
 msgstr ""
 
@@ -1565,7 +1584,12 @@ msgstr "সার্টিফিকেশনসমূহ"
 
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Change"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Change it in Design."
 msgstr ""
 
 #: src/routes/_home/-sections/header.tsx
@@ -1580,12 +1604,20 @@ msgstr "ভাষা পরিবর্তন করুন…"
 msgid "Change the follow-up…"
 msgstr ""
 
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Change the resume's design"
+msgstr ""
+
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change theme to…"
 msgstr "থিম পরিবর্তন করে… করুন"
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Change this timeline entry."
+msgstr ""
+
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Changed elsewhere"
 msgstr ""
 
 #: src/dialogs/resume/index.tsx
@@ -1596,10 +1628,6 @@ msgstr "মত বদলেছেন? আপনার জীবনবৃত্�
 #: src/routes/_home/-sections/footer.tsx
 msgid "Changelog"
 msgstr "চেঞ্জলগ"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Changes are shared between your library and the resume builder."
-msgstr "পরিবর্তনগুলি আপনার লাইব্রেরি এবং জীবনবৃত্তান্ত নির্মাতার মধ্যে ভাগ করা হয়৷"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
@@ -1706,10 +1734,13 @@ msgstr "লেখা পড়ার জন্য একটি PDF ফাইল 
 msgid "Choose a preset or custom shade."
 msgstr "একটি প্রিসেট বা কাস্টম শেড নির্বাচন করুন।"
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Choose a resume"
 msgstr "একটি জীবনবৃত্তান্ত বেছে নিন"
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Choose a resume template"
@@ -1722,10 +1753,6 @@ msgstr ""
 #: src/features/homepage/template-shelf.tsx
 msgid "Choose a template"
 msgstr "টেমপ্লেট বেছে নিন"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Choose an application"
-msgstr "একটি অ্যাপ্লিকেশন চয়ন করুন"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Choose an application…"
@@ -1786,10 +1813,9 @@ msgid "Client ID"
 msgstr "ক্লায়েন্ট আইডি"
 
 #: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/cover-letters/editor-dialog.tsx
-#: src/features/cover-letters/editor.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Close"
 msgstr "বন্ধ"
 
@@ -1867,6 +1893,7 @@ msgstr "সংক্ষিপ্ত"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Company"
 msgstr "কোম্পানি"
 
@@ -1969,7 +1996,6 @@ msgstr "যোগাযোগ"
 msgid "Contain"
 msgstr "ধারণ করে"
 
-#: src/features/cover-letters/editor.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "বিষয়বস্তু"
@@ -2038,17 +2064,9 @@ msgstr "ব্যাকআপ কোড কপি করুন"
 msgid "Copy for a job…"
 msgstr ""
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Copy from resume"
-msgstr "জীবনবৃত্তান্ত থেকে কপি"
-
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy JSON"
 msgstr "JSON কপি করুন"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Copy saved to your cover-letter library."
-msgstr "কপি আপনার কভার-লেটার লাইব্রেরিতে সংরক্ষিত।"
 
 #. Accessible label for the button that copies the two-factor secret key
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -2079,10 +2097,6 @@ msgstr ""
 msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "বছরটি সংশোধন করুন, অথবা চলমান কাজের জন্য \"Present\" লিখুন।"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Could not complete this action. Please try again."
-msgstr "এই ক্রিয়াটি সম্পূর্ণ করা যায়নি৷ আবার চেষ্টা করুন."
-
 #: src/features/auth/pages/consent.tsx
 msgid "Could not complete this connection. Restart the connection from your client and try again."
 msgstr "এই সংযোগ সম্পূর্ণ করা যায়নি. আপনার ক্লায়েন্ট থেকে সংযোগ পুনরায় চালু করুন এবং আবার চেষ্টা করুন."
@@ -2097,12 +2111,9 @@ msgstr "DOCX তৈরি করা যায়নি। অনুগ্রহ 
 
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/agent/-components/resume-pane.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Could not generate the PDF. Please try again."
 msgstr "PDF তৈরি করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Could not load this cover letter."
-msgstr "এই কভার লেটার লোড করা যায়নি."
 
 #: src/features/homepage/export-playground.tsx
 msgid "Could not prepare the sample. Please try again."
@@ -2115,10 +2126,6 @@ msgstr "আপনার জীবনবৃত্তান্ত ছাপার 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Could not restore this patch."
 msgstr "এই প্যাচটি পুনরুদ্ধার করা সম্ভব হয়নি।"
-
-#: src/features/cover-letters/editor.tsx
-msgid "Could not save the cover letter. Please try again."
-msgstr "কভার লেটার সংরক্ষণ করা যায়নি. আবার চেষ্টা করুন."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2144,6 +2151,10 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't add the application. Please try again."
 msgstr "আবেদনটি যোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।"
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Couldn't change the design. Try again."
+msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Couldn't copy the letter. Save and try again."
@@ -2183,6 +2194,10 @@ msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Couldn't reach your AI provider. Its key may have expired."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Couldn't save that change. Try again."
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
@@ -2421,6 +2436,7 @@ msgstr "ডার্ক থিম"
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/write/dates-field.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Date"
 msgstr "তারিখ"
 
@@ -2450,6 +2466,14 @@ msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Dates won't be read"
+msgstr ""
+
+#: src/features/letters/compose.ts
+msgid "Dear {name},"
+msgstr ""
+
+#: src/features/letters/compose.ts
+msgid "Dear hiring team,"
 msgstr ""
 
 #: src/components/input/rich-input.tsx
@@ -2622,6 +2646,9 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Design"
 msgstr "ডিজাইন"
 
@@ -2665,13 +2692,9 @@ msgstr "টু‑ফ্যাক্টর প্রমাণীকরণ বন�
 msgid "Disabling two-factor authentication..."
 msgstr "টু‑ফ্যাক্টর প্রমাণীকরণ বন্ধ করা হচ্ছে..."
 
-#: src/features/cover-letters/editor-dialog.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Discard"
 msgstr "বাতিল করুন"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Discard unsaved changes?"
-msgstr "অসংরক্ষিত পরিবর্তনগুলি বাতিল করবেন?"
 
 #. Authentication settings action to unlink a connected social login provider
 #: src/features/settings/authentication/components/social-provider.tsx
@@ -2684,6 +2707,7 @@ msgid "Discord"
 msgstr "ডিসকর্ড"
 
 #: src/features/applications/components/application-ai-copilot.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Dismiss"
 msgstr "খারিজ করুন"
@@ -2693,6 +2717,7 @@ msgid "Docs"
 msgstr "ডকুমেন্টেশন"
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Document menu: {name}"
 msgstr ""
 
@@ -2733,12 +2758,13 @@ msgstr "সম্পন্ন"
 #: src/features/homepage/languages-showcase.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Download"
 msgstr "ডাউনলোড"
 
-#. placeholder {0}: selected.label
 #: src/features/resume/share/download-tab.tsx
-msgid "Download {0}"
+msgid "Download {label}"
 msgstr ""
 
 #: src/features/settings/pages/account.tsx
@@ -2753,10 +2779,10 @@ msgstr "CSV হিসাবে অ্যাপ্লিকেশনের বি
 msgid "Download CSV"
 msgstr "CSV ডাউনলোড করুন"
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/resume/public/public-resume.tsx
 #: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Download PDF"
 msgstr "PDF ডাউনলোড করুন"
 
@@ -2785,7 +2811,16 @@ msgid "Download them"
 msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Downloaded {file}"
+msgstr ""
+
+#: src/features/resume/share/download-tab.tsx
+msgid "Downloaded {file} and the cover letter"
+msgstr ""
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Downloaded your resume and this letter"
 msgstr ""
 
 #: src/features/resume/share/link-tab.tsx
@@ -2796,6 +2831,18 @@ msgstr ""
 msgid "Draft · not printed"
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft · uses only the posting"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft · uses only your resume"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft · uses only your resume and the posting"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Draft a cover letter"
 msgstr "একটি কভার লেটারের খসড়া তৈরি করুন"
@@ -2804,9 +2851,38 @@ msgstr "একটি কভার লেটারের খসড়া তৈ�
 msgid "Draft a follow-up"
 msgstr "একটি ফলো-আপের খসড়া তৈরি করুন"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft from the posting"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft from your resume"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft kept. Edit anything you like."
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Drafting failed."
 msgstr "খসড়া প্রণয়ন ব্যর্থ হয়েছে।"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Drafting needs an AI provider."
+msgstr ""
+
+#. placeholder {0}: draft.provider
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Drafting stopped: {0} didn't respond. Nothing on the page changed."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Drafting stopped. Nothing on the page changed."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Drafting…"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "drag · ⌥↑↓"
@@ -2841,10 +2917,10 @@ msgid "Drop to import"
 msgstr ""
 
 #: src/dialogs/resume/index.tsx
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Duplicate"
 msgstr "ডুপ্লিকেট"
 
@@ -2861,6 +2937,7 @@ msgid "Duplicate your resume to create a new one, just like the original."
 msgstr "মূলটির মতোই একটি নতুন জীবনবৃত্তান্ত তৈরি করতে আপনার জীবনবৃত্তান্ত ডুপ্লিকেট করুন।"
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Duplicated"
 msgstr ""
 
@@ -2908,10 +2985,6 @@ msgstr "রঙ সম্পাদনা করুন {0}"
 #: src/components/input/rich-input.tsx
 msgid "Edit content in fullscreen mode"
 msgstr "ফুলস্ক্রিন মোডে বিষয়বস্তু সম্পাদনা করুন"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Edit cover letter"
-msgstr "কভার লেটার সম্পাদনা করুন"
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
@@ -2986,10 +3059,12 @@ msgid "Editing session"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Editor mode"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Editor views"
 msgstr ""
 
@@ -3064,10 +3139,6 @@ msgstr "ইংরেজি"
 #: src/libs/locale.ts
 msgid "English (United Kingdom)"
 msgstr "ইংরেজি (যুক্তরাজ্য)"
-
-#: src/features/cover-letters/editor.tsx
-msgid "Enter a name for this cover letter."
-msgstr "এই কভার লেটারের জন্য একটি নাম লিখুন।"
 
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Enter a name for your passkey."
@@ -3186,10 +3257,6 @@ msgstr "ডেটা এক্সপোর্ট"
 #: src/features/ats-checker/messages.ts
 msgid "Export from the original document instead of scanning or screenshotting it."
 msgstr "স্ক্যান বা স্ক্রিনশট নেওয়ার বদলে মূল ডকুমেন্ট থেকে এক্সপোর্ট করুন।"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Export JSON"
-msgstr "JSON রপ্তানি করুন"
 
 #: src/features/settings/pages/account.tsx
 msgid "Export my data"
@@ -3439,6 +3506,10 @@ msgstr ""
 msgid "Fill in the role and company. The posting is saved with the application."
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Filled from the application. The greeting follows the name."
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Filled in what we could from the posting."
 msgstr "পোস্টটি থেকে যতটুকু পেরেছি, ততটুকু পূরণ করেছি।"
@@ -3467,12 +3538,12 @@ msgstr ""
 msgid "Finnish"
 msgstr "ফিনিশ"
 
+#: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Fit"
 msgstr "ফিট"
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Fit page to width"
 msgstr ""
 
@@ -3552,6 +3623,10 @@ msgstr "ফন্টের ওজন"
 msgid "Font Weights"
 msgstr "ফন্টের ওজনসমূহ"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "For"
+msgstr ""
+
 #: src/features/homepage/export-playground.tsx
 msgid "For a few more edits"
 msgstr "আরও কিছু সম্পাদনার জন্য"
@@ -3617,6 +3692,7 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Free-form"
 msgstr "মুক্ত-ফর্ম"
 
@@ -3624,6 +3700,10 @@ msgstr "মুক্ত-ফর্ম"
 #: src/libs/locale.ts
 msgid "French"
 msgstr "ফরাসি"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "From"
+msgstr ""
 
 #: src/features/resume/share/format.ts
 msgid "from the assistant or API"
@@ -3661,6 +3741,7 @@ msgstr "একটি এলোমেলো নাম জেনারেট ক�
 
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/agent/-components/resume-pane.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Generating your PDF..."
 msgstr "আপনার PDF তৈরি হচ্ছে..."
 
@@ -3676,6 +3757,10 @@ msgstr "লেখা নিয়ে দ্বিতীয় মতামত �
 #: src/features/homepage/site-footer.tsx
 msgid "Get Started"
 msgstr "চলুন শুরু করা যাক"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
+msgstr ""
 
 #. Authentication provider display name in account settings
 #. Brand name label for GitHub social sign-in button
@@ -3838,7 +3923,7 @@ msgstr "আইকন লুকান"
 msgid "Hide Link Underline"
 msgstr "লিঙ্ক আন্ডারলাইন লুকান"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Hide panel"
 msgstr ""
 
@@ -3863,10 +3948,6 @@ msgstr "পাসওয়ার্ড লুকান"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Hide picture"
 msgstr "ছবি লুকান"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Hide preview"
-msgstr "পূর্বরূপ লুকান"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Hide Section Icons"
@@ -3900,13 +3981,15 @@ msgstr "হিন্দি"
 msgid "Hiring manager"
 msgstr ""
 
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-msgid "Hiring team, {0}"
+#: src/features/letters/compose.ts
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Hiring team"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "History"
 msgstr ""
 
@@ -4207,6 +4290,10 @@ msgstr ""
 msgid "Items you move here stay for 30 days."
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Its own design ({summary})."
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Japanese"
 msgstr "জাপানি"
@@ -4274,6 +4361,7 @@ msgid "Kannada"
 msgstr "কন্নড়"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Keep"
 msgstr ""
 
@@ -4288,10 +4376,6 @@ msgstr "একটিই ঠিকানা রাখুন, যাতে কো�
 #: src/features/auth/pages/consent.tsx
 msgid "Keep access when you are not using the application."
 msgstr "আপনি যখন অ্যাপ্লিকেশন ব্যবহার করছেন না তখন অ্যাক্সেস রাখুন।"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Keep editing"
-msgstr "সম্পাদনা করতে থাকুন"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Keep editing in Word, Google Docs, or Pages. Layout may differ from the PDF."
@@ -4325,7 +4409,7 @@ msgstr "রানিং হেড সংক্ষিপ্ত রাখুন, �
 msgid "Keep the company, role, resume, and follow-up date together. Switch between a board, table, and insights in the app."
 msgstr "কোম্পানি, পদ, জীবনবৃত্তান্ত ও ফলোআপের তারিখ একসাথে রাখুন। অ্যাপে বোর্ড, টেবিল ও অন্তর্দৃষ্টির মধ্যে বদল করে নিন।"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Keep the panel beside the page"
 msgstr ""
 
@@ -4365,6 +4449,10 @@ msgstr "কীওয়ার্ডসমূহ"
 #: src/libs/locale.ts
 msgid "Khmer"
 msgstr "খেমার"
+
+#: src/features/letters/compose.ts
+msgid "Kind regards,"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Know where things stand"
@@ -4455,6 +4543,10 @@ msgstr "বাম দিকে অ্যালাইন"
 msgid "Legal"
 msgstr "আইনি"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Length"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "দৈর্ঘ্য কোনো ত্রুটি নয়, এবং সর্বজনীন এক-পৃষ্ঠার নিয়ম বলে কিছু নেই। যে পৃষ্ঠাগুলো তাদের জায়গা অর্জন করে তা রাখুন।"
@@ -4468,11 +4560,17 @@ msgstr ""
 #: src/features/resume/editor/write/entries.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
 msgstr "লেটার"
 
-#: src/features/applications/components/detail/sent-documents.tsx
-msgid "Letter created with the recipient filled in"
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter body"
+msgstr ""
+
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Letter details"
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
@@ -4554,6 +4652,7 @@ msgid "Link address"
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Link an application"
 msgstr ""
 
@@ -4591,6 +4690,14 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Linked resume"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Linked to the resume again"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Linked. Name, email, phone and city update when the resume does."
 msgstr ""
 
 #. Authentication provider display name in account settings
@@ -4682,6 +4789,7 @@ msgstr "অবস্থান"
 
 #: src/features/documents/document-actions.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Lock editing"
 msgstr ""
 
@@ -4796,6 +4904,11 @@ msgstr ""
 msgid "Markdown shortcuts on"
 msgstr ""
 
+#. placeholder {0}: resume?.name ?? t`the resume`
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Match “{0}”"
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Match against a job"
 msgstr ""
@@ -4810,6 +4923,14 @@ msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Match this posting"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Matches the resume ({summary})."
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Matching the resume"
 msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
@@ -4837,11 +4958,16 @@ msgid "Model"
 msgstr "মডেল"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "More download formats"
 msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "More personal"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -4859,6 +4985,10 @@ msgstr "বেশিরভাগ বুলেট আপনি যা করে�
 #: src/features/ats-checker/messages.ts
 msgid "Most entries have no dates."
 msgstr "বেশিরভাগ এন্ট্রিতে কোনো তারিখ নেই।"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Most recruiters read 180–320 words. The shaded band shows the range."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Most systems file candidates by email address."
@@ -4917,9 +5047,9 @@ msgstr "ইন্টারভিউতে যান"
 msgid "Move to offer"
 msgstr "অফারে যান"
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/documents/document-actions.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Move to Trash"
 msgstr ""
 
@@ -4950,7 +5080,6 @@ msgstr ""
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/ats-checker/parse-preview.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/cover-letters/editor.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -4960,6 +5089,10 @@ msgstr ""
 #: src/features/settings/pages/profile.tsx
 msgid "Name"
 msgstr "নাম"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Name or team"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5097,6 +5230,10 @@ msgstr ""
 msgid "No AI provider connected"
 msgstr "কোনো এআই সরবরাহকারী সংযুক্ত নেই"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "No application"
+msgstr ""
+
 #. placeholder {0}: query.trim()
 #: src/routes/dashboard/applications/index.tsx
 msgid "No applications match “{0}”."
@@ -5107,6 +5244,7 @@ msgid "No applications yet"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr ""
 
@@ -5203,6 +5341,10 @@ msgstr ""
 msgid "No results found."
 msgstr "কোন ফলাফল খুঁজে পাওয়া যায়নি।"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "No resume"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "এখনো কোনো জীবনবৃত্তান্ত জমা পড়েনি।"
@@ -5289,6 +5431,7 @@ msgid "Not in your resume · add only if true"
 msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Not saved"
 msgstr ""
 
@@ -5374,6 +5517,10 @@ msgstr "ওড়িয়া"
 msgid "Off. Only you can see this resume."
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Off. The letter keeps its own copy of your details."
+msgstr ""
+
 #: src/features/applications/stages.ts
 #: src/features/homepage/feature-explorer.tsx
 msgid "Offer"
@@ -5435,6 +5582,7 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Open"
 msgstr "খুলুন"
@@ -5444,6 +5592,7 @@ msgid "Open {title}"
 msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Open AI settings"
 msgstr ""
 
@@ -5584,6 +5733,7 @@ msgstr ""
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Page"
 msgstr "পৃষ্ঠা"
 
@@ -5598,10 +5748,12 @@ msgid "Page {0}"
 msgstr "পৃষ্ঠা {0}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page 1 · {formatLabel}"
 msgstr ""
 
@@ -5744,10 +5896,6 @@ msgstr "প্যাচটি ফিরিয়ে নেওয়া হয়
 msgid "Pause data flow animation"
 msgstr "ডেটা প্রবাহের অ্যানিমেশন থামান"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "PDF snapshot attached to the application."
-msgstr "আবেদনপত্রের সাথে PDF স্ক্রিনশট সংযুক্ত।"
-
 #: src/features/homepage/ats-playground.tsx
 msgid "PDF text layer"
 msgstr "PDF-এর টেক্সট স্তর"
@@ -5871,9 +6019,8 @@ msgstr "পছন্দসমূহ"
 msgid "Prepare a conservative patch that improves clarity without changing the story of my career."
 msgstr "এমন একটি সংযত প্যাচ তৈরি করুন যা স্পষ্টতা বাড়ায় কিন্তু আমার কর্মজীবনের গল্প বদলায় না।"
 
-#. placeholder {0}: selected.label
 #: src/features/resume/share/download-tab.tsx
-msgid "Preparing {0} file…"
+msgid "Preparing {label} file…"
 msgstr ""
 
 #: src/features/homepage/export-playground.tsx
@@ -5885,6 +6032,7 @@ msgid "Preparing your resume for printing..."
 msgstr "আপনার জীবনবৃত্তান্ত মুদ্রণের জন্য প্রস্তুত করা হচ্ছে..."
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Preparing…"
 msgstr ""
 
@@ -5913,12 +6061,9 @@ msgstr "প্রিভিউ ও এক্সপোর্ট মূল স্�
 msgid "Preview and export keep valid styles and ignore invalid styles."
 msgstr "প্রিভিউ ও এক্সপোর্ট বৈধ স্টাইল রাখে এবং অবৈধ স্টাইল উপেক্ষা করে।"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Preview PDF"
-msgstr "প্রিভিউ পিডিএফ"
-
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Previewing {0} · click to apply"
 msgstr ""
 
@@ -6204,13 +6349,17 @@ msgstr "এতে আপনার নাম লিখতে প্রস্ত�
 msgid "Reason"
 msgstr ""
 
-#: src/features/cover-letters/editor.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Recipient"
 msgstr "প্রাপক"
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
+msgstr ""
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
@@ -6258,9 +6407,9 @@ msgstr ""
 msgid "Released under the <0>MIT License</0>."
 msgstr "MIT লাইসেন্সের অধীনে প্রকাশিত</0>"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Reload latest version"
-msgstr "সর্বশেষ সংস্করণ রিলোড করুন"
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Reload"
+msgstr ""
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Remember your password? <0/>"
@@ -6316,6 +6465,10 @@ msgstr ""
 msgid "Rename"
 msgstr ""
 
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Rename letter"
+msgstr ""
+
 #: src/features/resume/share/history-tab.tsx
 msgid "Rename version"
 msgstr ""
@@ -6323,6 +6476,7 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename…"
 msgstr ""
 
@@ -6344,10 +6498,6 @@ msgstr ""
 msgid "Repeated far more often than the posting itself uses them: {0}. Recruiters notice."
 msgstr "বিজ্ঞপ্তিটি নিজে যতবার এগুলো ব্যবহার করে তার চেয়ে অনেক বেশিবার পুনরাবৃত্তি হয়েছে: {0}। নিয়োগকারীরা এটি লক্ষ্য করেন।"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Replace"
-msgstr "প্রতিস্থাপন করুন"
-
 #: src/features/ats-checker/messages.ts
 msgid "Replace icon fonts with plain text, then re-export."
 msgstr "আইকন ফন্টের বদলে সাধারণ টেক্সট ব্যবহার করুন, তারপর পুনরায় এক্সপোর্ট করুন।"
@@ -6355,10 +6505,6 @@ msgstr "আইকন ফন্টের বদলে সাধারণ টে�
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "টেবিলের বদলে সাধারণ অনুচ্ছেদ ও তালিকা ব্যবহার করুন। সেলগুলো স্টোরেজ ক্রমে এক্সট্র্যাক্ট হয়, পড়ার ক্রমে নয়।"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Replace the attached cover letter?"
-msgstr "সংযুক্ত কভার লেটারটি কি প্রতিস্থাপন করবেন?"
 
 #: src/features/homepage/page.tsx
 msgid "Report a bug"
@@ -6457,8 +6603,13 @@ msgstr ""
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/agent/$threadId.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "জীবনবৃত্তান্ত"
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Resume + letter"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume attached"
@@ -6496,14 +6647,15 @@ msgstr "রিজ্যুমের টেমপ্লেটসমূহ"
 msgid "Resumes"
 msgstr "জীবনবৃত্তান্তসমূহ"
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/agent/-components/agent-chat.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry"
 msgstr "পুনরায় চেষ্টা করুন"
 
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry saving"
 msgstr ""
 
@@ -6668,22 +6820,13 @@ msgid "Save changes"
 msgstr "পরিবর্তনগুলি সংরক্ষণ করুন"
 
 #: src/dialogs/resume/index.tsx
-#: src/features/cover-letters/editor.tsx
 #: src/features/settings/pages/profile.tsx
 msgid "Save Changes"
 msgstr "পরিবর্তনগুলো সংরক্ষণ করুন"
 
-#: src/features/cover-letters/editor.tsx
-msgid "Save changes before previewing, exporting, or changing styling."
-msgstr "প্রিভিউ, এক্সপোর্ট বা স্টাইলিং পরিবর্তন করার আগে পরিবর্তনগুলো সংরক্ষণ করুন।"
-
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Save model"
 msgstr "মডেল সংরক্ষণ করুন"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Save resume changes before copying its content or styling."
-msgstr "কন্টেন্ট বা স্টাইলিং অনুলিপি করার আগে রিজ্যুমের পরিবর্তনগুলি সংরক্ষণ করুন।"
 
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
@@ -6699,6 +6842,7 @@ msgstr ""
 
 #: src/features/applications/stages.ts
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Saved"
 msgstr "সংরক্ষিত"
 
@@ -6715,6 +6859,7 @@ msgid "Saving is taking longer than expected. Your changes are still open."
 msgstr "সংরক্ষণ প্রত্যাশার চেয়ে বেশি সময় নিচ্ছে। আপনার পরিবর্তনগুলি এখনও খোলা আছে।"
 
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Saving…"
 msgstr "… সংরক্ষণ করা হচ্ছে"
 
@@ -6900,9 +7045,9 @@ msgstr "পাসওয়ার্ড রিসেটের ইমেইল প
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "পোর্টফোলিও র‍্যাপারের বদলে জীবনবৃত্তান্তটি নিজেই পাঠান।"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Sender details"
-msgstr "প্রেরকের বিবরণ"
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sender details copied into the letter"
+msgstr ""
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Sending password reset email..."
@@ -6995,14 +7140,17 @@ msgid "Shadow Width"
 msgstr "শেডোর প্রস্থ"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Share & export"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Share sections"
 msgstr ""
 
@@ -7017,6 +7165,14 @@ msgstr "শেয়ারিং"
 #: src/features/homepage/feature-explorer.tsx
 msgid "Sharing preview"
 msgstr "প্রিভিউ শেয়ার করা হচ্ছে"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Short and direct. Fine if the posting asks for brevity."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Shorter"
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
@@ -7058,7 +7214,7 @@ msgstr "শিরোনামে লিঙ্ক দেখান"
 msgid "Show on page"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Show panel"
 msgstr ""
 
@@ -7216,6 +7372,7 @@ msgid "Skip to main content"
 msgstr "মূল বিষয়বস্তুতে যান"
 
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Skip to the page"
 msgstr ""
 
@@ -7314,6 +7471,8 @@ msgstr "কিছু একটা ভুল হয়েছে। অনুগ�
 
 #: src/features/applications/use-application-actions.ts
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Something went wrong. Try again."
 msgstr ""
 
@@ -7468,6 +7627,22 @@ msgstr "জীবনবৃত্তান্তটি আপনার নাম 
 msgid "Start thread"
 msgstr "থ্রেড শুরু করুন"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or draft from what we know: the {company} posting and your resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or draft from what we know: the {company} posting."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or draft from what we know: your resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing. To draft one, link a resume or an application first."
+msgstr ""
+
 #: src/features/resume/editor/write/add-section.tsx
 msgid "Start with the sections most resumes have."
 msgstr ""
@@ -7496,6 +7671,10 @@ msgstr ""
 msgid "Still waiting for {provider}… {elapsedSeconds}s"
 msgstr "এখনও {provider}… {elapsedSeconds}এর জন্য অপেক্ষা করছি"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Stop"
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Stop generation"
 msgstr "প্রজন্ম বন্ধ করুন"
@@ -7519,14 +7698,6 @@ msgstr "স্টাইলশিট সম্পাদক"
 #: src/features/resume/stylesheet/status.tsx
 msgid "Stylesheet has fatal errors"
 msgstr "স্টাইলশিটে মারাত্মক ত্রুটি রয়েছে"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Styling and sender details are copied. Future resume edits apply only when you refresh."
-msgstr "স্টাইলিং এবং প্রেরকের বিবরণ অনুলিপি করা হয়েছে। ভবিষ্যতে রিজুমের সম্পাদনাগুলি শুধুমাত্র রিফ্রেশ করলেই প্রয়োগ হবে।"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Styling and sender details refreshed from the selected resume."
-msgstr "নির্বাচিত রিজ্যুম থেকে স্টাইলিং এবং প্রেরকের বিবরণ আপডেট করা হয়েছে।"
 
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
@@ -7662,15 +7833,19 @@ msgstr "তামিল"
 msgid "Telugu"
 msgstr "তেলেগু"
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
+#: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Template"
 msgstr "টেমপ্লেট"
 
 #. placeholder {0}: templates[template].name
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Template changed to {0}"
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Template, type and colors follow the resume, so the pair always matches."
 msgstr ""
 
 #: src/features/homepage/site-footer.tsx
@@ -7779,9 +7954,8 @@ msgstr "সেই প্রদানকারী অ্যাকাউন্ট�
 msgid "That sign-in provider is no longer available on this server."
 msgstr "সেই সাইন-ইন প্রদানকারী এই সার্ভারে আর উপলব্ধ নেই।"
 
-#. placeholder {0}: selected.label
 #: src/features/resume/share/download-tab.tsx
-msgid "The {0} file couldn't be generated. Try again, or download PDF instead."
+msgid "The {label} file couldn't be generated. Try again, or download PDF instead."
 msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
@@ -7830,6 +8004,26 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "The file couldn't be read as a resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "The greeting follows the name."
+msgstr ""
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "The letter as it is"
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "The letter keeps a design of its own."
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "The letter keeps this design as its own"
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "The letter matches the resume's design again"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -7895,6 +8089,11 @@ msgstr ""
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "আপনার বাকি চাকরির খোঁজও।"
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "the resume"
+msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
@@ -8000,10 +8199,6 @@ msgstr "এই সহকারীকে খোলা যায়নি।"
 msgid "This connection request is invalid or has expired."
 msgstr "এই সংযোগ অনুরোধটি অবৈধ বা মেয়াদোত্তীর্ণ।"
 
-#: src/features/cover-letters/editor.tsx
-msgid "This cover letter changed elsewhere. Your edits are still here. Reload the latest version before saving again."
-msgstr "এই কভার লেটারটি অন্যত্র পরিবর্তিত হয়েছে। আপনার সম্পাদনাগুলো এখনও এখানে আছে। আবার সংরক্ষণ করার আগে সর্বশেষ সংস্করণটি পুনরায় লোড করুন।"
-
 #: src/dialogs/api-key/create.tsx
 msgid "This creates a new API key, which lets other programs read and change your resume data through the Reactive Resume API."
 msgstr "এটি একটি নতুন API কী তৈরি করে, যা অন্য প্রোগ্রামগুলোকে Reactive Resume API-এর মাধ্যমে আপনার জীবনবৃত্তান্তের ডেটা পড়তে ও বদলাতে দেয়।"
@@ -8087,6 +8282,18 @@ msgstr "এটি জীবনবৃত্তান্তের জন্য এ
 #: src/dialogs/api-key/create.tsx
 msgid "This key is shown only once. Copy it before you close this dialog."
 msgstr "এই কী কেবল একবারই দেখানো হয়। এই ডায়ালগ বন্ধ করার আগে সেটি কপি করে নিন।"
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "This letter and “{resumeName}” as two PDFs, named to match."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is locked. Unlock it from its menu to edit."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter keeps its recipient as written."
+msgstr ""
 
 #: src/features/ats-checker/report/report-view.tsx
 msgid "This measures how faithfully software can extract this file's text. It does not predict whether an application will be rejected, and no tool can. Your file was read in this browser and never uploaded."
@@ -8205,6 +8412,10 @@ msgstr "টিপ"
 msgid "Title"
 msgstr "শিরোনাম"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "To"
+msgstr ""
+
 #: src/features/settings/pages/account.tsx
 msgid "To delete your account, type the confirmation text below, then click the button."
 msgstr "আপনার অ্যাকাউন্ট মুছতে, নিচে নিশ্চিতকরণের লেখাটি টাইপ করুন, তারপর বোতামে ক্লিক করুন।"
@@ -8298,6 +8509,7 @@ msgstr ""
 #: src/components/layout/error-screen.tsx
 #: src/features/homepage/ats-playground.tsx
 #: src/features/resume/share/download-tab.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Try again"
 msgstr "আবার চেষ্টা করুন"
 
@@ -8435,6 +8647,7 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "পূর্বাবস্থায় ফেরান"
 
@@ -8463,6 +8676,7 @@ msgstr "আনলক করুন"
 
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Unlock editing"
 msgstr ""
 
@@ -8617,6 +8831,11 @@ msgstr "৬ থেকে ৬৪ অক্ষরের মধ্যে ব্য�
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Use color {color}"
 msgstr "রঙ ব্যবহার করুন {color}"
+
+#. placeholder {0}: resume?.name ?? t`the resume`
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Use details from “{0}”"
+msgstr ""
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Use lowercase letters, numbers and single dashes."
@@ -8776,6 +8995,7 @@ msgstr ""
 #. placeholder {1}: getVersionTitle(viewing)
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Viewing {0} · {1} · read-only"
 msgstr ""
 
@@ -8984,6 +9204,10 @@ msgstr ""
 msgid "Width"
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Word"
 msgstr ""
@@ -9014,6 +9238,8 @@ msgstr "চেষ্টা করে দেখা যেতে পারে।"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Write"
 msgstr ""
 
@@ -9032,6 +9258,10 @@ msgstr "প্রতিটি ভূমিকা একটি স্পষ্ট
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."
 msgstr "এটি কোনো বিশেষ স্পেসিং ছাড়া একটানা এক টুকরো হিসেবে লিখুন।"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Write it myself"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognised as a link."
@@ -9115,6 +9345,7 @@ msgid "Your bullets are drawn with unusual characters."
 msgstr "আপনার বুলেটগুলো অস্বাভাবিক অক্ষর দিয়ে আঁকা।"
 
 #: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your changes are saved automatically."
 msgstr "আপনার পরিবর্তনগুলো স্বয়ংক্রিয়ভাবে সংরক্ষণ করা হয়।"
 
@@ -9134,9 +9365,17 @@ msgstr "আপনার ডেটা এক্সপোর্ট করা হ�
 msgid "Your dates are written several different ways."
 msgstr "আপনার তারিখগুলো বিভিন্ন উপায়ে লেখা হয়েছে।"
 
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your details changed on the resume. The letter updated too."
+msgstr ""
+
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your edit is in."
 msgstr "আপনার সম্পাদনা যুক্ত হয়েছে।"
+
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your email address changed on the resume. The letter updated too."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
@@ -9154,6 +9393,10 @@ msgstr "আপনার ফাইল এখানেই থাকে"
 msgid "Your headings look the same as your body text."
 msgstr "আপনার শিরোনামগুলো মূল টেক্সটের মতোই দেখাচ্ছে।"
 
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your headline changed on the resume. The letter updated too."
+msgstr ""
+
 #: src/features/resume/stylesheet/legacy-banner.tsx
 msgid "Your legacy styles stay active until you activate this Semantic CSS draft."
 msgstr "আপনি এই Semantic CSS খসড়া সক্রিয় না করা পর্যন্ত আপনার পুরোনো স্টাইলগুলোই চালু থাকবে।"
@@ -9161,6 +9404,10 @@ msgstr "আপনি এই Semantic CSS খসড়া সক্রিয় �
 #: src/features/ats-checker/messages.ts
 msgid "Your lines are packed very tightly."
 msgstr "আপনার লাইন খুব শক্তভাবে প্যাক করা হয়."
+
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your location changed on the resume. The letter updated too."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your margins are very narrow."
@@ -9170,6 +9417,14 @@ msgstr "আপনার মার্জিন খুবই সংকীর্ণ
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"
 msgstr "আপনার নাম"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Your name and contact details come from a resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your name changed on the resume. The letter updated too."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your name is missing"
@@ -9183,6 +9438,10 @@ msgstr "আপনার পাসওয়ার্ড রিসেট করা
 msgid "Your password has been updated."
 msgstr "আপনার পাসওয়ার্ড আপডেট করা হয়েছে।"
 
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your phone number changed on the resume. The letter updated too."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."
 msgstr "আপনার ফোন নম্বর অস্বাভাবিক আকারে লেখা।"
@@ -9190,6 +9449,10 @@ msgstr "আপনার ফোন নম্বর অস্বাভাবিক
 #: src/features/settings/pages/profile.tsx
 msgid "Your profile has been updated."
 msgstr "আপনার প্রোফাইল আপডেট করা হয়েছে।"
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "your resume"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
@@ -9211,10 +9474,6 @@ msgstr "আপনার জীবনবৃত্তান্তের লিঙ�
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "আপনার জীবনবৃত্তান্তে \"I\" এবং \"my\" ব্যবহার করা হয়েছে।"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Your saved cover letter will remain unchanged."
-msgstr "আপনার সংরক্ষিত কভার লেটার অপরিবর্তিত থাকবে।"
-
 #: src/features/homepage/ats-playground.tsx
 msgid "Your selected file"
 msgstr "আপনার নির্বাচিত ফাইল"
@@ -9231,7 +9490,7 @@ msgstr "আপনার লেখা প্লেইন-টেক্সট ড�
 msgid "Zoom"
 msgstr "জুম"
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Zoom in"
 msgstr "জুম ইন"
 
@@ -9239,7 +9498,7 @@ msgstr "জুম ইন"
 msgid "Zoom level"
 msgstr "জুম স্তর"
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Zoom out"
 msgstr "জুম আউট"
 

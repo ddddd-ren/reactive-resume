@@ -31,13 +31,12 @@ msgid "“{0}” hidden"
 msgstr ""
 
 #. placeholder {0}: document.name
-#. placeholder {0}: letter.name
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/documents/document-actions.tsx
 msgid "“{0}” moved to Trash"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
 msgstr ""
 
@@ -372,8 +371,12 @@ msgstr ""
 msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "{pairing} type"
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -412,6 +415,10 @@ msgstr ""
 #. placeholder {0}: formatRelativeTime(document.updatedAt, formatter)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "{words, plural, one {# word} other {# words}}"
 msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
@@ -462,6 +469,10 @@ msgstr "1 rok"
 msgid "10–11 recommended"
 msgstr ""
 
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "2 files"
+msgstr ""
+
 #: src/features/resume/editor/write/summary-editor.tsx
 msgid "2–3 sentences reads best"
 msgstr ""
@@ -494,8 +505,16 @@ msgstr "6 měsíců"
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr ""
 
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "A city and country let roles be matched to where you are."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "A comfortable length, and it fits on one page."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -1066,6 +1085,11 @@ msgstr "Máte již účet? <0/>"
 msgid "Also check the exported PDF"
 msgstr ""
 
+#. placeholder {0}: linkedLetter.company
+#: src/features/resume/share/download-tab.tsx
+msgid "Also download the {0} cover letter"
+msgstr ""
+
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Also shows the icons on skills, profiles and interests."
 msgstr ""
@@ -1170,7 +1194,6 @@ msgid "Appears on the page once it has an organization."
 msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Application"
@@ -1325,10 +1348,6 @@ msgstr "Přiložit soubor životopisu (PDF)"
 msgid "Attach files"
 msgstr "Přiložit soubory"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Attach PDF"
-msgstr "Přiložit PDF"
-
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment"
 msgstr "Příloha"
@@ -1391,7 +1410,7 @@ msgid "Back to authentication settings"
 msgstr "Zpět na nastavení ověřování"
 
 #: src/features/documents/trash-page.tsx
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Back to documents"
 msgstr ""
 
@@ -1565,7 +1584,12 @@ msgstr "Osvědčení"
 
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Change"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Change it in Design."
 msgstr ""
 
 #: src/routes/_home/-sections/header.tsx
@@ -1580,12 +1604,20 @@ msgstr "Změnit jazyk na…"
 msgid "Change the follow-up…"
 msgstr ""
 
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Change the resume's design"
+msgstr ""
+
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change theme to…"
 msgstr "Změnit téma na…"
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Change this timeline entry."
+msgstr ""
+
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Changed elsewhere"
 msgstr ""
 
 #: src/dialogs/resume/index.tsx
@@ -1596,10 +1628,6 @@ msgstr "Rozmysleli jste si to? Přejmenujte svůj životopis na něco výstižn�
 #: src/routes/_home/-sections/footer.tsx
 msgid "Changelog"
 msgstr "Protokol změn"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Changes are shared between your library and the resume builder."
-msgstr "Změny jsou sdíleny mezi vaší knihovnou a tvůrcem životopisů."
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
@@ -1706,10 +1734,13 @@ msgstr "Pro čtení textu vyberte soubor PDF."
 msgid "Choose a preset or custom shade."
 msgstr "Vyberte si přednastavený nebo vlastní odstín."
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Choose a resume"
 msgstr "Vyberte si životopis"
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Choose a resume template"
@@ -1722,10 +1753,6 @@ msgstr ""
 #: src/features/homepage/template-shelf.tsx
 msgid "Choose a template"
 msgstr "Vyberte šablonu"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Choose an application"
-msgstr "Vyberte aplikaci"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Choose an application…"
@@ -1786,10 +1813,9 @@ msgid "Client ID"
 msgstr "ID klienta"
 
 #: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/cover-letters/editor-dialog.tsx
-#: src/features/cover-letters/editor.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Close"
 msgstr "Zavřít"
 
@@ -1867,6 +1893,7 @@ msgstr "Kompaktní"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Company"
 msgstr "Společnost"
 
@@ -1969,7 +1996,6 @@ msgstr "Kontakty"
 msgid "Contain"
 msgstr "obsahovat"
 
-#: src/features/cover-letters/editor.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Obsah"
@@ -2038,17 +2064,9 @@ msgstr "Zkopírovat záložní kódy"
 msgid "Copy for a job…"
 msgstr ""
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Copy from resume"
-msgstr "Zkopírujte ze životopisu"
-
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy JSON"
 msgstr "Kopírovat JSON"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Copy saved to your cover-letter library."
-msgstr "Kopie uložena do vaší knihovny úvodních dopisů."
 
 #. Accessible label for the button that copies the two-factor secret key
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -2079,10 +2097,6 @@ msgstr ""
 msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "Opravte rok, nebo pro probíhající práci napište „současnost“."
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Could not complete this action. Please try again."
-msgstr "Tuto akci nelze dokončit. Zkuste to prosím znovu."
-
 #: src/features/auth/pages/consent.tsx
 msgid "Could not complete this connection. Restart the connection from your client and try again."
 msgstr "Toto připojení nelze dokončit. Restartujte připojení ze svého klienta a zkuste to znovu."
@@ -2097,12 +2111,9 @@ msgstr "Nepodařilo se vytvořit DOCX. Zkuste to prosím znovu."
 
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/agent/-components/resume-pane.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Could not generate the PDF. Please try again."
 msgstr "Nepodařilo se vytvořit PDF. Zkuste to prosím znovu."
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Could not load this cover letter."
-msgstr "Tento průvodní dopis se nepodařilo načíst."
 
 #: src/features/homepage/export-playground.tsx
 msgid "Could not prepare the sample. Please try again."
@@ -2115,10 +2126,6 @@ msgstr "Nepodařilo se připravit váš životopis k tisku. Zkuste to prosím zn
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Could not restore this patch."
 msgstr "Tuto záplatu se nepodařilo obnovit."
-
-#: src/features/cover-letters/editor.tsx
-msgid "Could not save the cover letter. Please try again."
-msgstr "Motivační dopis se nepodařilo uložit. Zkuste to prosím znovu."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2144,6 +2151,10 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't add the application. Please try again."
 msgstr "Žádost se nepodařilo přidat. Zkuste to prosím znovu."
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Couldn't change the design. Try again."
+msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Couldn't copy the letter. Save and try again."
@@ -2183,6 +2194,10 @@ msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Couldn't reach your AI provider. Its key may have expired."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Couldn't save that change. Try again."
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
@@ -2421,6 +2436,7 @@ msgstr "Tmavý motiv"
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/write/dates-field.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Date"
 msgstr "Datum"
 
@@ -2450,6 +2466,14 @@ msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Dates won't be read"
+msgstr ""
+
+#: src/features/letters/compose.ts
+msgid "Dear {name},"
+msgstr ""
+
+#: src/features/letters/compose.ts
+msgid "Dear hiring team,"
 msgstr ""
 
 #: src/components/input/rich-input.tsx
@@ -2622,6 +2646,9 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Design"
 msgstr "Design"
 
@@ -2665,13 +2692,9 @@ msgstr "Deaktivovat dvoufázové ověření"
 msgid "Disabling two-factor authentication..."
 msgstr "Deaktivace dvoufázového ověření…"
 
-#: src/features/cover-letters/editor-dialog.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Discard"
 msgstr "Zahodit"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Discard unsaved changes?"
-msgstr "Zahodit neuložené změny?"
 
 #. Authentication settings action to unlink a connected social login provider
 #: src/features/settings/authentication/components/social-provider.tsx
@@ -2684,6 +2707,7 @@ msgid "Discord"
 msgstr "Discord"
 
 #: src/features/applications/components/application-ai-copilot.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Dismiss"
 msgstr "Propustit"
@@ -2693,6 +2717,7 @@ msgid "Docs"
 msgstr "Dokumentace"
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Document menu: {name}"
 msgstr ""
 
@@ -2733,12 +2758,13 @@ msgstr "Hotovo"
 #: src/features/homepage/languages-showcase.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Download"
 msgstr "Stáhnout"
 
-#. placeholder {0}: selected.label
 #: src/features/resume/share/download-tab.tsx
-msgid "Download {0}"
+msgid "Download {label}"
 msgstr ""
 
 #: src/features/settings/pages/account.tsx
@@ -2753,10 +2779,10 @@ msgstr "Stáhněte si podrobnosti o aplikaci, kontakty, poznámky a historii ča
 msgid "Download CSV"
 msgstr "Stáhnout CSV"
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/resume/public/public-resume.tsx
 #: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Download PDF"
 msgstr "Stáhnout PDF"
 
@@ -2785,7 +2811,16 @@ msgid "Download them"
 msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Downloaded {file}"
+msgstr ""
+
+#: src/features/resume/share/download-tab.tsx
+msgid "Downloaded {file} and the cover letter"
+msgstr ""
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Downloaded your resume and this letter"
 msgstr ""
 
 #: src/features/resume/share/link-tab.tsx
@@ -2796,6 +2831,18 @@ msgstr ""
 msgid "Draft · not printed"
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft · uses only the posting"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft · uses only your resume"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft · uses only your resume and the posting"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Draft a cover letter"
 msgstr "Napište motivační dopis"
@@ -2804,9 +2851,38 @@ msgstr "Napište motivační dopis"
 msgid "Draft a follow-up"
 msgstr "Navrhněte následnou akci"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft from the posting"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft from your resume"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Draft kept. Edit anything you like."
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Drafting failed."
 msgstr "Návrh selhal."
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Drafting needs an AI provider."
+msgstr ""
+
+#. placeholder {0}: draft.provider
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Drafting stopped: {0} didn't respond. Nothing on the page changed."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Drafting stopped. Nothing on the page changed."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Drafting…"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "drag · ⌥↑↓"
@@ -2841,10 +2917,10 @@ msgid "Drop to import"
 msgstr ""
 
 #: src/dialogs/resume/index.tsx
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Duplicate"
 msgstr "Duplikovat"
 
@@ -2861,6 +2937,7 @@ msgid "Duplicate your resume to create a new one, just like the original."
 msgstr "Duplikujte svůj životopis a vytvořte nový, který bude stejný jako původní."
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Duplicated"
 msgstr ""
 
@@ -2908,10 +2985,6 @@ msgstr "Upravit barvu {0}"
 #: src/components/input/rich-input.tsx
 msgid "Edit content in fullscreen mode"
 msgstr "Úprava obsahu v celoobrazovkovém režimu"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Edit cover letter"
-msgstr "Upravit průvodní dopis"
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
@@ -2986,10 +3059,12 @@ msgid "Editing session"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Editor mode"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Editor views"
 msgstr ""
 
@@ -3064,10 +3139,6 @@ msgstr "Angličtina"
 #: src/libs/locale.ts
 msgid "English (United Kingdom)"
 msgstr "Angličtina (Spojené království)"
-
-#: src/features/cover-letters/editor.tsx
-msgid "Enter a name for this cover letter."
-msgstr "Zadejte název tohoto průvodního dopisu."
 
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Enter a name for your passkey."
@@ -3186,10 +3257,6 @@ msgstr "Exportovat data"
 #: src/features/ats-checker/messages.ts
 msgid "Export from the original document instead of scanning or screenshotting it."
 msgstr "Exportujte z původního dokumentu, místo abyste jej skenovali nebo fotili obrazovku."
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Export JSON"
-msgstr "Exportujte JSON"
 
 #: src/features/settings/pages/account.tsx
 msgid "Export my data"
@@ -3439,6 +3506,10 @@ msgstr ""
 msgid "Fill in the role and company. The posting is saved with the application."
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Filled from the application. The greeting follows the name."
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Filled in what we could from the posting."
 msgstr "Doplnili jsme, co se z příspěvku dalo."
@@ -3467,12 +3538,12 @@ msgstr ""
 msgid "Finnish"
 msgstr "Finština"
 
+#: src/features/resume/editor/chrome.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Fit"
 msgstr "Vhodné"
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Fit page to width"
 msgstr ""
 
@@ -3552,6 +3623,10 @@ msgstr "Tloušťka písma"
 msgid "Font Weights"
 msgstr "Tloušťky písma"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "For"
+msgstr ""
+
 #: src/features/homepage/export-playground.tsx
 msgid "For a few more edits"
 msgstr "Pro pár dalších úprav"
@@ -3617,6 +3692,7 @@ msgstr ""
 #: src/features/resume/editor/design/style-groups.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Free-form"
 msgstr "Volný formát"
 
@@ -3624,6 +3700,10 @@ msgstr "Volný formát"
 #: src/libs/locale.ts
 msgid "French"
 msgstr "Francouzština"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "From"
+msgstr ""
 
 #: src/features/resume/share/format.ts
 msgid "from the assistant or API"
@@ -3661,6 +3741,7 @@ msgstr "Vygenerovat náhodný název"
 
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/agent/-components/resume-pane.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Generating your PDF..."
 msgstr "Generujeme vaše PDF..."
 
@@ -3676,6 +3757,10 @@ msgstr "Získejte druhý názor na svůj text, sdílejte životopis a sledujte, 
 #: src/features/homepage/site-footer.tsx
 msgid "Get Started"
 msgstr "Začít"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
+msgstr ""
 
 #. Authentication provider display name in account settings
 #. Brand name label for GitHub social sign-in button
@@ -3838,7 +3923,7 @@ msgstr "Skrýt ikony"
 msgid "Hide Link Underline"
 msgstr "Skrýt podtržení odkazu"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Hide panel"
 msgstr ""
 
@@ -3863,10 +3948,6 @@ msgstr "Skrýt heslo"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Hide picture"
 msgstr "Skrýt obrázek"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Hide preview"
-msgstr "Skrýt náhled"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Hide Section Icons"
@@ -3900,13 +3981,15 @@ msgstr "Hindština"
 msgid "Hiring manager"
 msgstr ""
 
-#. placeholder {0}: application.company
-#: src/features/applications/components/detail/sent-documents.tsx
-msgid "Hiring team, {0}"
+#: src/features/letters/compose.ts
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Hiring team"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "History"
 msgstr ""
 
@@ -4207,6 +4290,10 @@ msgstr ""
 msgid "Items you move here stay for 30 days."
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Its own design ({summary})."
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Japanese"
 msgstr "Japonština"
@@ -4274,6 +4361,7 @@ msgid "Kannada"
 msgstr "Kannadština"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Keep"
 msgstr ""
 
@@ -4288,10 +4376,6 @@ msgstr "Ponechte jedinou adresu, aby software nemusel hádat, kterou použít."
 #: src/features/auth/pages/consent.tsx
 msgid "Keep access when you are not using the application."
 msgstr "Ponechte si přístup, když aplikaci nepoužíváte."
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Keep editing"
-msgstr "Pokračujte v úpravách"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Keep editing in Word, Google Docs, or Pages. Layout may differ from the PDF."
@@ -4325,7 +4409,7 @@ msgstr "Udržujte záhlaví krátká, nebo je vynechte. Opakují se i v extrahov
 msgid "Keep the company, role, resume, and follow-up date together. Switch between a board, table, and insights in the app."
 msgstr "Mějte firmu, pozici, životopis a datum připomenutí pohromadě. V aplikaci přepínejte mezi nástěnkou, tabulkou a přehledy."
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Keep the panel beside the page"
 msgstr ""
 
@@ -4365,6 +4449,10 @@ msgstr "Klíčová slova"
 #: src/libs/locale.ts
 msgid "Khmer"
 msgstr "Khmerština"
+
+#: src/features/letters/compose.ts
+msgid "Kind regards,"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Know where things stand"
@@ -4455,6 +4543,10 @@ msgstr "Zarovnat vlevo"
 msgid "Legal"
 msgstr "Právní informace"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Length"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Délka není vadou a neexistuje univerzální pravidlo jedné stránky. Ponechte stránky, které si své místo zaslouží."
@@ -4468,11 +4560,17 @@ msgstr ""
 #: src/features/resume/editor/write/entries.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
 msgstr "Letter"
 
-#: src/features/applications/components/detail/sent-documents.tsx
-msgid "Letter created with the recipient filled in"
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter body"
+msgstr ""
+
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Letter details"
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
@@ -4554,6 +4652,7 @@ msgid "Link address"
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Link an application"
 msgstr ""
 
@@ -4591,6 +4690,14 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Linked resume"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Linked to the resume again"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Linked. Name, email, phone and city update when the resume does."
 msgstr ""
 
 #. Authentication provider display name in account settings
@@ -4682,6 +4789,7 @@ msgstr "Lokalita"
 
 #: src/features/documents/document-actions.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Lock editing"
 msgstr ""
 
@@ -4796,6 +4904,11 @@ msgstr ""
 msgid "Markdown shortcuts on"
 msgstr ""
 
+#. placeholder {0}: resume?.name ?? t`the resume`
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Match “{0}”"
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Match against a job"
 msgstr ""
@@ -4810,6 +4923,14 @@ msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Match this posting"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Matches the resume ({summary})."
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Matching the resume"
 msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
@@ -4837,11 +4958,16 @@ msgid "Model"
 msgstr "Model"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "More download formats"
 msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "More personal"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -4859,6 +4985,10 @@ msgstr "Většina odrážek začíná výplňovými slovy místo tím, co jste u
 #: src/features/ats-checker/messages.ts
 msgid "Most entries have no dates."
 msgstr "Většina položek nemá data."
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Most recruiters read 180–320 words. The shaded band shows the range."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Most systems file candidates by email address."
@@ -4917,9 +5047,9 @@ msgstr "Přesunout do pohovoru"
 msgid "Move to offer"
 msgstr "Přesunout do nabídky"
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/documents/document-actions.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Move to Trash"
 msgstr ""
 
@@ -4950,7 +5080,6 @@ msgstr ""
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/ats-checker/parse-preview.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/cover-letters/editor.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -4960,6 +5089,10 @@ msgstr ""
 #: src/features/settings/pages/profile.tsx
 msgid "Name"
 msgstr "Název"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Name or team"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5097,6 +5230,10 @@ msgstr ""
 msgid "No AI provider connected"
 msgstr "Není připojen žádný poskytovatel umělé inteligence"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "No application"
+msgstr ""
+
 #. placeholder {0}: query.trim()
 #: src/routes/dashboard/applications/index.tsx
 msgid "No applications match “{0}”."
@@ -5107,6 +5244,7 @@ msgid "No applications yet"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr ""
 
@@ -5203,6 +5341,10 @@ msgstr ""
 msgid "No results found."
 msgstr "Nebyly nalezeny žádné výsledky."
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "No resume"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "Zatím žádné životopisy."
@@ -5289,6 +5431,7 @@ msgid "Not in your resume · add only if true"
 msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Not saved"
 msgstr ""
 
@@ -5374,6 +5517,10 @@ msgstr "Udijština"
 msgid "Off. Only you can see this resume."
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Off. The letter keeps its own copy of your details."
+msgstr ""
+
 #: src/features/applications/stages.ts
 #: src/features/homepage/feature-explorer.tsx
 msgid "Offer"
@@ -5435,6 +5582,7 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Open"
 msgstr "Otevřít"
@@ -5444,6 +5592,7 @@ msgid "Open {title}"
 msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Open AI settings"
 msgstr ""
 
@@ -5584,6 +5733,7 @@ msgstr ""
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Page"
 msgstr "Stránka"
 
@@ -5598,10 +5748,12 @@ msgid "Page {0}"
 msgstr "Stránka {0}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page 1 · {formatLabel}"
 msgstr ""
 
@@ -5744,10 +5896,6 @@ msgstr "Patch vrácen zpět."
 msgid "Pause data flow animation"
 msgstr "Pozastavit animaci toku dat"
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "PDF snapshot attached to the application."
-msgstr "Snímek ve formátu PDF přiložený k aplikaci."
-
 #: src/features/homepage/ats-playground.tsx
 msgid "PDF text layer"
 msgstr "Textová vrstva PDF"
@@ -5871,9 +6019,8 @@ msgstr "Předvolby"
 msgid "Prepare a conservative patch that improves clarity without changing the story of my career."
 msgstr "Připravte konzervativní úpravu, která zlepší srozumitelnost, aniž by změnila příběh mé kariéry."
 
-#. placeholder {0}: selected.label
 #: src/features/resume/share/download-tab.tsx
-msgid "Preparing {0} file…"
+msgid "Preparing {label} file…"
 msgstr ""
 
 #: src/features/homepage/export-playground.tsx
@@ -5885,6 +6032,7 @@ msgid "Preparing your resume for printing..."
 msgstr "Příprava životopisu k tisku..."
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Preparing…"
 msgstr ""
 
@@ -5913,12 +6061,9 @@ msgstr "Náhled a export se vrátí k základním stylům."
 msgid "Preview and export keep valid styles and ignore invalid styles."
 msgstr "Náhled a export zachovají platné styly a neplatné ignorují."
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Preview PDF"
-msgstr "Náhled PDF"
-
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Previewing {0} · click to apply"
 msgstr ""
 
@@ -6204,13 +6349,17 @@ msgstr "Připraveni na něj podepsat se svým jménem?"
 msgid "Reason"
 msgstr ""
 
-#: src/features/cover-letters/editor.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Recipient"
 msgstr "Příjemce"
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
+msgstr ""
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
@@ -6258,9 +6407,9 @@ msgstr ""
 msgid "Released under the <0>MIT License</0>."
 msgstr "Vydáno pod <0>licencí MIT</0>."
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Reload latest version"
-msgstr "Znovu načtěte nejnovější verzi"
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Reload"
+msgstr ""
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Remember your password? <0/>"
@@ -6316,6 +6465,10 @@ msgstr ""
 msgid "Rename"
 msgstr ""
 
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Rename letter"
+msgstr ""
+
 #: src/features/resume/share/history-tab.tsx
 msgid "Rename version"
 msgstr ""
@@ -6323,6 +6476,7 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename…"
 msgstr ""
 
@@ -6344,10 +6498,6 @@ msgstr ""
 msgid "Repeated far more often than the posting itself uses them: {0}. Recruiters notice."
 msgstr "Opakuje se mnohem častěji, než je používá samotná nabídka: {0}. Náboráři si toho všimnou."
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Replace"
-msgstr "Vyměňte"
-
 #: src/features/ats-checker/messages.ts
 msgid "Replace icon fonts with plain text, then re-export."
 msgstr "Nahraďte ikonová písma prostým textem a poté znovu exportujte."
@@ -6355,10 +6505,6 @@ msgstr "Nahraďte ikonová písma prostým textem a poté znovu exportujte."
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Nahraďte tabulky prostými odstavci a seznamy. Buňky se extrahují v pořadí uložení, nikoli v pořadí čtení."
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Replace the attached cover letter?"
-msgstr "Nahradit přiložený průvodní dopis?"
 
 #: src/features/homepage/page.tsx
 msgid "Report a bug"
@@ -6457,8 +6603,13 @@ msgstr ""
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/agent/$threadId.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "Životopis"
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Resume + letter"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume attached"
@@ -6496,14 +6647,15 @@ msgstr "Šablony životopisu"
 msgid "Resumes"
 msgstr "Životopisy"
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/agent/-components/agent-chat.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry"
 msgstr "Zkusit znovu"
 
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry saving"
 msgstr ""
 
@@ -6668,22 +6820,13 @@ msgid "Save changes"
 msgstr "Uložit změny"
 
 #: src/dialogs/resume/index.tsx
-#: src/features/cover-letters/editor.tsx
 #: src/features/settings/pages/profile.tsx
 msgid "Save Changes"
 msgstr "Uložit změny"
 
-#: src/features/cover-letters/editor.tsx
-msgid "Save changes before previewing, exporting, or changing styling."
-msgstr "Před zobrazením náhledu, exportem nebo změnou stylu uložte změny."
-
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Save model"
 msgstr "Uložit model"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Save resume changes before copying its content or styling."
-msgstr "Uložte změny životopisu před zkopírováním jeho obsahu nebo stylu."
 
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
@@ -6699,6 +6842,7 @@ msgstr ""
 
 #: src/features/applications/stages.ts
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Saved"
 msgstr "Uloženo"
 
@@ -6715,6 +6859,7 @@ msgid "Saving is taking longer than expected. Your changes are still open."
 msgstr "Ukládání trvá déle, než se očekávalo. Vaše změny jsou stále otevřené."
 
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Saving…"
 msgstr "Ukládání…"
 
@@ -6900,9 +7045,9 @@ msgstr "Odeslat e-mail pro obnovení hesla"
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "Odešlete samotný životopis, nikoli obal portfolia."
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Sender details"
-msgstr "Podrobnosti o odesílateli"
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sender details copied into the letter"
+msgstr ""
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Sending password reset email..."
@@ -6995,14 +7140,17 @@ msgid "Shadow Width"
 msgstr "Šířka stínu"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Share & export"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Share sections"
 msgstr ""
 
@@ -7017,6 +7165,14 @@ msgstr "Sdílení"
 #: src/features/homepage/feature-explorer.tsx
 msgid "Sharing preview"
 msgstr "Náhled sdílení"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Short and direct. Fine if the posting asks for brevity."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Shorter"
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
@@ -7058,7 +7214,7 @@ msgstr "Zobrazit odkaz v nadpisu"
 msgid "Show on page"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Show panel"
 msgstr ""
 
@@ -7216,6 +7372,7 @@ msgid "Skip to main content"
 msgstr "Přeskočit na hlavní obsah"
 
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Skip to the page"
 msgstr ""
 
@@ -7314,6 +7471,8 @@ msgstr "Něco se pokazilo. Zkuste to prosím znovu."
 
 #: src/features/applications/use-application-actions.ts
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Something went wrong. Try again."
 msgstr ""
 
@@ -7468,6 +7627,22 @@ msgstr "Začněte životopis svým jménem na samostatném řádku."
 msgid "Start thread"
 msgstr "Založit vlákno"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or draft from what we know: the {company} posting and your resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or draft from what we know: the {company} posting."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or draft from what we know: your resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing. To draft one, link a resume or an application first."
+msgstr ""
+
 #: src/features/resume/editor/write/add-section.tsx
 msgid "Start with the sections most resumes have."
 msgstr ""
@@ -7496,6 +7671,10 @@ msgstr ""
 msgid "Still waiting for {provider}… {elapsedSeconds}s"
 msgstr "Stále čekám na {provider}… {elapsedSeconds}s"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Stop"
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Stop generation"
 msgstr "Zastavit generování"
@@ -7519,14 +7698,6 @@ msgstr "Editor stylů"
 #: src/features/resume/stylesheet/status.tsx
 msgid "Stylesheet has fatal errors"
 msgstr "Stylový list obsahuje fatální chyby"
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Styling and sender details are copied. Future resume edits apply only when you refresh."
-msgstr "Styl a podrobnosti o odesílateli se zkopírují. Budoucí úpravy životopisu se použijí pouze po obnovení."
-
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Styling and sender details refreshed from the selected resume."
-msgstr "Styl a podrobnosti o odesílateli byly obnoveny z vybraného životopisu."
 
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
@@ -7662,15 +7833,19 @@ msgstr "Tamilština"
 msgid "Telugu"
 msgstr "Telugština"
 
-#: src/features/cover-letters/editor-dialog.tsx
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
+#: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Template"
 msgstr "Šablona"
 
 #. placeholder {0}: templates[template].name
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Template changed to {0}"
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Template, type and colors follow the resume, so the pair always matches."
 msgstr ""
 
 #: src/features/homepage/site-footer.tsx
@@ -7779,9 +7954,8 @@ msgstr "Tento účet poskytovatele používá jinou e-mailovou adresu než váš
 msgid "That sign-in provider is no longer available on this server."
 msgstr "Tento poskytovatel přihlášení už na tomto serveru není dostupný."
 
-#. placeholder {0}: selected.label
 #: src/features/resume/share/download-tab.tsx
-msgid "The {0} file couldn't be generated. Try again, or download PDF instead."
+msgid "The {label} file couldn't be generated. Try again, or download PDF instead."
 msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
@@ -7830,6 +8004,26 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "The file couldn't be read as a resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "The greeting follows the name."
+msgstr ""
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "The letter as it is"
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "The letter keeps a design of its own."
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "The letter keeps this design as its own"
+msgstr ""
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "The letter matches the resume's design again"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -7895,6 +8089,11 @@ msgstr ""
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "I zbytek vašeho<0/>hledání práce."
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "the resume"
+msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
@@ -8000,10 +8199,6 @@ msgstr "Tohoto asistenta se nepodařilo otevřít."
 msgid "This connection request is invalid or has expired."
 msgstr "Tento požadavek na připojení je neplatný nebo jeho platnost vypršela."
 
-#: src/features/cover-letters/editor.tsx
-msgid "This cover letter changed elsewhere. Your edits are still here. Reload the latest version before saving again."
-msgstr "Tento průvodní dopis se změnil jinde. Vaše úpravy jsou stále zde. Před uložením znovu načtěte nejnovější verzi."
-
 #: src/dialogs/api-key/create.tsx
 msgid "This creates a new API key, which lets other programs read and change your resume data through the Reactive Resume API."
 msgstr "Tím se vytvoří nový API klíč, který jiným programům umožní číst a měnit data vašich životopisů přes API Reactive Resume."
@@ -8087,6 +8282,18 @@ msgstr "Toto není běžná velikost stránky pro životopis."
 #: src/dialogs/api-key/create.tsx
 msgid "This key is shown only once. Copy it before you close this dialog."
 msgstr "Tento klíč se zobrazí jen jednou. Zkopírujte si jej, než toto okno zavřete."
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "This letter and “{resumeName}” as two PDFs, named to match."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is locked. Unlock it from its menu to edit."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter keeps its recipient as written."
+msgstr ""
 
 #: src/features/ats-checker/report/report-view.tsx
 msgid "This measures how faithfully software can extract this file's text. It does not predict whether an application will be rejected, and no tool can. Your file was read in this browser and never uploaded."
@@ -8205,6 +8412,10 @@ msgstr "Tip"
 msgid "Title"
 msgstr "Název"
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "To"
+msgstr ""
+
 #: src/features/settings/pages/account.tsx
 msgid "To delete your account, type the confirmation text below, then click the button."
 msgstr "Chcete-li smazat účet, zadejte níže potvrzovací text a klikněte na tlačítko."
@@ -8298,6 +8509,7 @@ msgstr ""
 #: src/components/layout/error-screen.tsx
 #: src/features/homepage/ats-playground.tsx
 #: src/features/resume/share/download-tab.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Try again"
 msgstr "Zkuste to znovu"
 
@@ -8435,6 +8647,7 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "Zpět"
 
@@ -8463,6 +8676,7 @@ msgstr "Odemknout"
 
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Unlock editing"
 msgstr ""
 
@@ -8617,6 +8831,11 @@ msgstr "Zadejte 6 až 64 znaků."
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Use color {color}"
 msgstr "Použijte barvu {color}"
+
+#. placeholder {0}: resume?.name ?? t`the resume`
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Use details from “{0}”"
+msgstr ""
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Use lowercase letters, numbers and single dashes."
@@ -8776,6 +8995,7 @@ msgstr ""
 #. placeholder {1}: getVersionTitle(viewing)
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Viewing {0} · {1} · read-only"
 msgstr ""
 
@@ -8984,6 +9204,10 @@ msgstr ""
 msgid "Width"
 msgstr ""
 
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Word"
 msgstr ""
@@ -9014,6 +9238,8 @@ msgstr "Stojí za to vyzkoušet"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Write"
 msgstr ""
 
@@ -9032,6 +9258,10 @@ msgstr "Zapište každou roli jako jasný řádek s pozicí a firmou, s daty ved
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."
 msgstr "Napište to jako jeden nepřerušený celek, bez zvláštního rozestupu."
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Write it myself"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognised as a link."
@@ -9115,6 +9345,7 @@ msgid "Your bullets are drawn with unusual characters."
 msgstr "Vaše odrážky jsou vykresleny neobvyklými znaky."
 
 #: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your changes are saved automatically."
 msgstr "Vaše změny se ukládají automaticky."
 
@@ -9134,9 +9365,17 @@ msgstr "Vaše data byla exportována."
 msgid "Your dates are written several different ways."
 msgstr "Vaše data jsou zapsána několika různými způsoby."
 
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your details changed on the resume. The letter updated too."
+msgstr ""
+
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your edit is in."
 msgstr "Vaše úprava je hotová."
+
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your email address changed on the resume. The letter updated too."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
@@ -9154,6 +9393,10 @@ msgstr "Váš soubor zůstává zde"
 msgid "Your headings look the same as your body text."
 msgstr "Vaše nadpisy vypadají stejně jako běžný text."
 
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your headline changed on the resume. The letter updated too."
+msgstr ""
+
 #: src/features/resume/stylesheet/legacy-banner.tsx
 msgid "Your legacy styles stay active until you activate this Semantic CSS draft."
 msgstr "Vaše původní styly zůstávají aktivní, dokud neaktivujete tento koncept Semantic CSS."
@@ -9161,6 +9404,10 @@ msgstr "Vaše původní styly zůstávají aktivní, dokud neaktivujete tento ko
 #: src/features/ats-checker/messages.ts
 msgid "Your lines are packed very tightly."
 msgstr "Vaše linky jsou nabité velmi pevně."
+
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your location changed on the resume. The letter updated too."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your margins are very narrow."
@@ -9170,6 +9417,14 @@ msgstr "Vaše okraje jsou velmi úzké."
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"
 msgstr "Vaše jméno"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Your name and contact details come from a resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your name changed on the resume. The letter updated too."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your name is missing"
@@ -9183,6 +9438,10 @@ msgstr "Vaše heslo bylo obnoveno. Nyní se můžete přihlásit novým heslem."
 msgid "Your password has been updated."
 msgstr "Vaše heslo bylo aktualizováno."
 
+#: src/routes/builder/letter/-components/letter-shell.tsx
+msgid "Your phone number changed on the resume. The letter updated too."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your phone number is written in an unusual shape."
 msgstr "Vaše telefonní číslo je zapsáno v neobvyklém formátu."
@@ -9190,6 +9449,10 @@ msgstr "Vaše telefonní číslo je zapsáno v neobvyklém formátu."
 #: src/features/settings/pages/profile.tsx
 msgid "Your profile has been updated."
 msgstr "Váš profil byl aktualizován."
+
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "your resume"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
@@ -9211,10 +9474,6 @@ msgstr "Odkaz na váš životopis"
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "Váš životopis používá „já“ a „můj“."
 
-#: src/features/cover-letters/editor-dialog.tsx
-msgid "Your saved cover letter will remain unchanged."
-msgstr "Váš uložený průvodní dopis zůstane nezměněn."
-
 #: src/features/homepage/ats-playground.tsx
 msgid "Your selected file"
 msgstr "Vámi vybraný soubor"
@@ -9231,7 +9490,7 @@ msgstr "Vaše slova jako prostý textový dokument s nadpisy, seznamy a odkazy."
 msgid "Zoom"
 msgstr "Přiblížení"
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Zoom in"
 msgstr "Přiblížit"
 
@@ -9239,7 +9498,7 @@ msgstr "Přiblížit"
 msgid "Zoom level"
 msgstr "Úroveň přiblížení"
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+#: src/features/resume/editor/chrome.tsx
 msgid "Zoom out"
 msgstr "Oddálit"
 
