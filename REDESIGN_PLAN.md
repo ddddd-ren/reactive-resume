@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 is done; see §11.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 and M1 are done; see §11 and §12.
 
 Inputs:
 
@@ -860,4 +860,35 @@ Decisions:
 - Templates that merge main and sidebar into one region (Bronzor, Scizor) qualify section keys with their origin (`main:experience`); the key parser strips it.
 - `page-map.integration.test.tsx` renders every template and checks the header and every experience entry are mapped inside the page bounds, so a template change that drops the tags fails CI.
 - Page-map entries are item-level, as planned. Field-level boxes would still need a text-layout patch; nothing in the spec requires them.
+
+---
+
+## 12. Milestone log
+
+### M0 · Preparation and spikes (done 28 Sep 2026)
+
+- Integration branch `redesign/desk-and-paper`; handoff folder at the repo root and in `.gitignore`.
+- Page map in `packages/pdf` (§11), with an integration test over all 15 templates.
+
+### M1 · Tokens, theming, primitives (done 28 Sep 2026)
+
+What changed:
+
+- **Tokens:** Desk & Paper tokens in `packages/ui/src/styles/globals.css` (light on `:root`, dark on `.dark`), exposed to Tailwind under their spec names (`bg-surface`, `text-ink-2`, `bg-accent-soft`, `shadow-e2`, `duration-standard`, `ease-enter`, `rounded-xl`…). The old shadcn names resolve to the new tokens until M12. About 100 hard-coded palette classes became semantic tokens; company initial tiles became neutral as in the spec.
+- **Fonts:** Newsreader (optical sizes), Hanken Grotesk and JetBrains Mono via `@fontsource-variable`; IBM Plex left the UI package (email templates still use it). The Insights PNG export inlines Hanken Grotesk.
+- **Icons:** `Icon` renders a self-hosted Material Symbols Rounded subset (101 glyphs, 36 KB). `pnpm icons:build` validates names against Google's codepoints and rebuilds it; a unit test keeps the manifest and the list in sync. The UI package no longer uses Phosphor; icons inside resumes still do.
+- **Theme:** Light, Dark and System (new default). System follows the OS live; an inline script in `index.html` sets the theme before first paint; the loader and `theme-color` follow the theme.
+- **Primitives** restyled to the spec: Button (primary, secondary, ghost, danger, link; sm, default, lg and icon sizes; `loading`), inputs and input groups (accent focus ring), Label, Checkbox, Switch plus the new `SwitchRow`, Badge (neutral, accent, solid, warn, danger, info, outline, inverse), Tabs (segmented and underline, plus `TabsCount`), Slider, Toggle, ButtonGroup, Dialog, AlertDialog, Sheet (side and bottom with grabber), Popover, Tooltip, dropdown and context menus (shared styles), Combobox, Command (52px search row, ↵ hint), Toast (one at a time, bottom center, Undo action), Alert (info, success, warn, error; only errors are announced), Empty, Avatar, Accordion, Skeleton (no pulse), Spinner (CSS ring, `decorative`), Form messages (error icon). New: `Icon`, `IconButton`, `SegmentedControl`, `RadioGroup`, `NativeSelect`.
+- **Fixes:** `DirectionProvider` now receives the locale's direction, so Base UI components follow right-to-left layouts.
+- **Docs:** `DESIGN.md` rewritten for Desk & Paper; `GLOSSARY.md` has the redesign terms; catalogs extracted.
+
+Differences from the plan, with reasons:
+
+- `FileDropZone`, the step list, the structured date input and the radio card are built with their first screens (M6, M6, M3 and M5), so their APIs follow real use rather than guesses.
+- The Motion (JS) mirrors of the new durations are added in M2, where the first animation uses them; knip rejects unused exports.
+- Button variant names now match the spec (`primary`, `secondary`, `danger`); every call site was updated through the type checker. Badge variants are semantic (`neutral`, `accent`, `warn`, `danger`, `info`…).
+- The icon build script reads `names.ts` as text because Turborepo boundaries don't let tooling depend on the browser-only UI package.
+- Turborepo adds an "agent guidance" block to `AGENTS.md` whenever it runs under an AI agent; it is left out of these commits. Setting `"agentGuidance": false` in `turbo.json` stops it (your call).
+
+Verification: typecheck for ui, web, pdf, schema and tooling; tests for ui (361), web (963), schema (132) and tooling (109); `turbo boundaries`, knip, Biome and markdownlint clean. Checked in the browser against an isolated database: sign-up, dashboard, the create dialog and its menu, the builder with a sample resume (preview renders), toasts and the command bar, in light and dark.
 

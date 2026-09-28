@@ -210,6 +210,40 @@ section, above.
 **Public URL** — the shareable address of a published resume. Use one term consistently; the
 English strings say "public URL" rather than "public link".
 
+## Redesigned workspace
+
+These terms arrive with the redesigned interface (see `DESIGN.md`).
+
+**Documents** — the library that holds resumes and cover letters together. A plural noun, not the
+verb "to document".
+
+**Trash** — where deleted documents wait 30 days before they're removed for good. A place (noun),
+like a recycle bin. Not the verb "to trash".
+
+**Write · Design · Check** — the three modes of the editor, shown side by side as a switch. Each is
+the name of a mode, so translate them as short, parallel labels. **Write** is editing the content,
+**Design** is choosing how the resume looks (a noun here), and **Check** is reviewing whether
+software can read it (a noun here, like "review"), not a bank cheque or a checkmark.
+
+**Share & export** — the sheet with the public link, downloads and version history.
+
+**Assistant** — the AI panel beside the page. It replaces both the "AI agent" page and the "AI
+assistant" sheet, so there is now only one AI term.
+
+**Proposed edit** — a change the assistant or Check suggests but hasn't made. It becomes part of the
+resume only when the person accepts it. **Accept** and **Reject** are imperative verbs on buttons;
+**Out of date** means the line was edited by hand after the suggestion was made.
+
+**Version** — a saved state of a document in its history, which can be previewed and restored. Not
+a software release.
+
+**Next step** — the next thing to do for a job application, such as an interview or a follow-up.
+
+**Closed** — the final stage of an application, whatever the outcome (not selected, withdrawn,
+another offer accepted, no response). Not "shut" or "locked".
+
+**System** — in Appearance, the option that follows the operating system's light or dark setting.
+
 ## Verbs that read as adjectives or nouns
 
 Button labels and `aria-label` strings are usually **imperative verbs**: they say what the
