@@ -41,15 +41,10 @@ msgstr "(åpnes i ny fane)"
 msgid "{0, plural, one {# application to export} other {# applications to export}}"
 msgstr "{0, plural, one {# søknad å eksportere} other {# søknader å eksportere}}"
 
-#. placeholder {0}: section.items.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-msgid "{0, plural, one {# item} other {# items}}"
-msgstr "{0, plural, one {# element} other {# elementer}}"
-
-#. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "{0, plural, one {# role} other {# roles}}"
-msgstr "{0, plural, one {# rolle} other {# roller}}"
+#. placeholder {0}: state?.characters ?? 0
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "{0, plural, one {# character} other {# characters}}"
+msgstr ""
 
 #. placeholder {0}: insights.total
 #: src/features/applications/components/insights-view.tsx
@@ -115,10 +110,19 @@ msgstr "{0} hoppet over (ugyldige eller manglende data)"
 msgid "{0} to fix"
 msgstr "{0} å fikse"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "{column, plural, one {# Column} other {# Columns}}"
-msgstr "{column, plural, one {# kolonne} other {# kolonner}}"
+#. placeholder {0}: title || t`Untitled`
+#. placeholder {1}: index + 1
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "{0}, entry {1} of {count}"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{column, plural, one {# column} other {# columns}}"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{count, plural, one {# entry} other {# entries}}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "{count, plural, one {# error} other {# errors}}"
@@ -152,6 +156,18 @@ msgstr "{passedRules} av {totalRules} kontroller bestått"
 msgid "{sectionTitle} · Item {itemNumber}"
 msgstr "{sectionTitle} · Element {itemNumber}"
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{title} cleared"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{title} deleted"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{toCheck, plural, one {# to check} other {# to check}}"
+msgstr ""
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "+{extra} more"
 msgstr ""
@@ -176,9 +192,9 @@ msgstr "<ul><li>Designet responsive nettsteder og mobilopplevelser for små bedr
 msgid "<ul><li>Led research and interface design for a collaborative planning tool.</li><li>Built a shared component library with engineers and documented accessibility patterns.</li><li>Tested prototypes with customers and used their feedback to simplify onboarding.</li></ul>"
 msgstr "<ul><li>Ledet research og grensesnittdesign for et samarbeidsbasert planleggingsverktøy.</li><li>Bygde et felles komponentbibliotek sammen med ingeniører og dokumenterte tilgjengelighetsmønstre.</li><li>Testet prototyper med kunder og brukte tilbakemeldingene deres for å forenkle oppstartsprosessen.</li></ul>"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "1 Column / Inline"
-msgstr "1 kolonne / på linje"
+#: src/features/resume/editor/write/section-row.tsx
+msgid "1 column, inline"
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "1 interview"
@@ -191,6 +207,10 @@ msgstr "1 måned"
 #: src/dialogs/api-key/create.tsx
 msgid "1 year"
 msgstr "1 år"
+
+#: src/features/resume/editor/write/summary-editor.tsx
+msgid "2–3 sentences reads best"
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "2015 to 2019"
@@ -356,12 +376,9 @@ msgstr "Aktiver semantisk CSS"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/table-view.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Add"
 msgstr "Legg til"
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Add a custom field"
-msgstr "Legg til egendefinert felt"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Add a job you're applying to and link the resume you sent. Move it across the board as you hear back."
@@ -376,62 +393,9 @@ msgstr "Legg til et nøkkelord..."
 msgid "Add a label to the URL"
 msgstr "Legg til en etikett for URL-en"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new award"
-msgstr "Legg til en ny pris"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new certification"
-msgstr "Legg til en ny sertifisering"
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-msgid "Add a new custom section"
-msgstr "Legg til en ny egendefinert seksjon"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new education"
-msgstr "Legg til en ny utdanning"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new experience"
-msgstr "Legg til en ny erfaring"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new interest"
-msgstr "Legg til en ny interesse"
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Add a new item"
-msgstr "Legg til nytt element"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new language"
-msgstr "Legg til et nytt språk"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new profile"
-msgstr "Legg til en ny profil"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new project"
-msgstr "Legg til et nytt prosjekt"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new publication"
-msgstr "Legg til en ny publikasjon"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new reference"
-msgstr "Legg til en ny referanse"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new skill"
-msgstr "Legg til en ny ferdighet"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new volunteer experience"
-msgstr "Legg til en ny frivillig erfaring"
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Add a link"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Add a note…"
@@ -453,6 +417,10 @@ msgstr "Legg til en seksjon med overskriften \"Experience\" eller \"Work Experie
 msgid "Add a tag and press Enter…"
 msgstr "Legg til en tagg og trykk Enter…"
 
+#: src/features/resume/editor/write/fields.tsx
+msgid "Add an @ and the domain, like name@example.com"
+msgstr ""
+
 #: src/libs/resume/ats.ts
 msgid "Add an entry, or use projects and volunteer work to show equivalent history."
 msgstr "Legg til en oppføring, eller bruk prosjekter og frivillig arbeid for å vise tilsvarende erfaring."
@@ -471,26 +439,57 @@ msgstr "Legg til søknad"
 msgid "Add at least a city and country so roles can be matched to your region."
 msgstr "Legg til minst by og land, slik at roller kan matches med regionen din."
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add award"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add certification"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Add contact"
 msgstr "Legg til kontakt"
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add cover letter"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add education"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Add entry"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add experience"
+msgstr ""
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Add field"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Add figures where you have them: volumes, percentages, timeframes, team sizes."
 msgstr "Legg til tall der du har dem: volum, prosentandeler, tidsrammer, teamstørrelser."
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add interest"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Add keyword"
 msgstr "Legg til nøkkelord"
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add language"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
 msgid "Add link"
 msgstr "Legg til lenke"
-
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Add multiple roles to show career progression at the same company."
-msgstr "Legg til flere roller for å vise karriereutvikling i samme selskap."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -504,16 +503,40 @@ msgstr "Legg til ett med landkode; enkelte søknadsskjemaer krever det før du k
 msgid "Add Page"
 msgstr "Legg til side"
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add profile"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add project"
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Add Provider"
 msgstr "Legg til leverandør"
 
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Add Role"
-msgstr "Legg til rolle"
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add publication"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add reference"
+msgstr ""
+
+#: src/features/resume/editor/write/entries.tsx
+msgid "Add role"
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Add screening calls and technical interviews to see them here and on the calendar."
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Add section"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add skill"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -524,6 +547,18 @@ msgstr "Legg til litt luft mellom seksjonene, slik at en person kan skumlese den
 msgid "Add tag"
 msgstr "Legg til tag"
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add text"
+msgstr ""
+
+#: src/features/resume/editor/write/fields.tsx
+msgid "Add the domain after the @, like {name}@example.com"
+msgstr ""
+
+#: src/features/resume/editor/write/fields.tsx
+msgid "Add the domain ending, like {domain}.com"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Add to pipeline"
 msgstr "Legg til pipeline"
@@ -531,6 +566,10 @@ msgstr "Legg til pipeline"
 #: src/features/ats-checker/messages.ts
 msgid "Add two or three lines at the top describing what you do."
 msgstr "Legg til to eller tre linjer øverst som beskriver hva du gjør."
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add volunteering"
+msgstr ""
 
 #: src/libs/resume/ats.ts
 msgid "Add your full name under Basics."
@@ -713,6 +752,34 @@ msgstr "App"
 msgid "App language"
 msgstr "Appspråk"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a company."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a language."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a name."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a network."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a school."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a title."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has an organization."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Application"
@@ -807,14 +874,6 @@ msgstr "Er du sikker på at du vil lukke denne dialogen?"
 msgid "Are you sure you want to delete this API key?"
 msgstr "Er du sikker på at du vil slette denne API-nøkkelen?"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-msgid "Are you sure you want to delete this custom section?"
-msgstr "Er du sikker på at du vil slette denne egendefinerte seksjonen?"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-msgid "Are you sure you want to delete this item?"
-msgstr "Er du sikker på at du vil slette dette elementet?"
-
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Are you sure you want to delete this resume?"
@@ -832,13 +891,9 @@ msgstr "Er du sikker på at du vil låse denne CV-en?"
 msgid "Are you sure you want to remove password protection?"
 msgstr "Er du sikker på at du vil fjerne passordbeskyttelsen?"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Are you sure you want to reset this section?"
-msgstr "Er du sikker på at du vil tilbakestille denne seksjonen?"
-
-#: src/dialogs/resume/sections/education.tsx
-msgid "Area of Study"
-msgstr "Studiefelt"
+#: src/features/resume/editor/write/entries.tsx
+msgid "Area of study"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Artificial Intelligence"
@@ -852,7 +907,7 @@ msgstr "Per <0>{formattedDate}</0>."
 msgid "Ask anything about this resume"
 msgstr "Spør om hva som helst om denne CV-en"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Aspect Ratio"
 msgstr "Størrelsesforhold"
 
@@ -909,12 +964,10 @@ msgstr "Autofyll mislyktes."
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Unngå kraftig sperring, og eksporter på nytt."
 
-#: src/dialogs/resume/sections/award.tsx
-msgctxt "(noun) person, organization, or entity that gives an award"
+#: src/features/resume/editor/write/entries.tsx
 msgid "Awarder"
-msgstr "Prisgiver"
+msgstr ""
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Awards"
@@ -960,6 +1013,7 @@ msgstr "Sikkerhetskopieringskoder kopiert til utklippstavlen."
 msgid "Base URL"
 msgstr "Basis-URL"
 
+#: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
 msgid "Basics"
 msgstr "Grunnleggende"
@@ -990,14 +1044,15 @@ msgid "Body"
 msgstr "Brødtekst"
 
 #: src/components/input/rich-input.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Bold"
 msgstr "Fet"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border Radius"
 msgstr "Kantradius"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border Width"
 msgstr "Kantbredde"
 
@@ -1034,7 +1089,8 @@ msgstr "Masseoppdatering failed. Vennligst prøv again."
 msgid "Bullet List"
 msgstr "Punktliste"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/skill-keyword-layout-menu.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "Punktliste"
 
@@ -1050,14 +1106,9 @@ msgstr ""
 
 #. API key deletion confirmation dialog cancel action in settings
 #. Account deletion confirmation dialog cancel action in account settings
-#. Confirmation dialog button label to abort deleting a custom section in resume builder
-#. Confirmation dialog button label to abort deleting a section item in resume builder
-#. Confirmation dialog button label to abort resetting a resume section
 #. Profile settings form action to discard unsaved edits
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/section-item-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/export-applications-sheet.tsx
@@ -1065,15 +1116,12 @@ msgstr ""
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/homepage/ats-playground.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 #: src/features/settings/pages/account.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-prompt.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Cancel"
 msgstr "Avbryt"
@@ -1090,7 +1138,6 @@ msgstr "Katalansk"
 msgid "Center Align"
 msgstr "Midtstill"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Certifications"
@@ -1212,10 +1259,6 @@ msgstr "Velg en CV"
 msgid "Choose a resume template"
 msgstr "Velg en CV-mal"
 
-#: src/dialogs/resume/sections/cover-letter.tsx
-msgid "Choose a saved cover letter"
-msgstr "Velg et lagret følgebrev"
-
 #: src/features/homepage/template-shelf.tsx
 msgid "Choose a template"
 msgstr "Velg en mal"
@@ -1260,6 +1303,14 @@ msgstr "Tøm"
 msgid "Clear filters"
 msgstr "Tøm filtre"
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Clear formatting"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Clear section"
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 msgid "Clear selection"
 msgstr "Fjern valg"
@@ -1277,6 +1328,10 @@ msgstr "Klient-ID"
 msgid "Close"
 msgstr "Lukk"
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Close {title}"
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Close AI assistant"
 msgstr "Lukk AI-assistenten"
@@ -1285,8 +1340,7 @@ msgstr "Lukk AI-assistenten"
 msgid "Color"
 msgstr "Farge"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Columns"
 msgstr "Kolonner"
 
@@ -1314,8 +1368,8 @@ msgstr "Fellesskap"
 msgid "Compact"
 msgstr "Kompakt"
 
-#: src/dialogs/resume/sections/experience.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Company"
 msgstr "Firma"
 
@@ -1389,12 +1443,10 @@ msgstr "Kontaktinformasjon"
 msgid "Contacts"
 msgstr "Kontakter"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Contain"
 msgstr "Tilpass"
 
-#: src/dialogs/resume/sections/cover-letter.tsx
-#: src/dialogs/resume/sections/summary-item.tsx
 #: src/features/cover-letters/editor.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
@@ -1564,8 +1616,8 @@ msgstr "Kunne ikke lagre følgebrevet. Prøv igjen."
 msgid "Could not set up two-factor authentication."
 msgstr "Kunne ikke sette opp tofaktorautentisering."
 
-#. placeholder {0}: unresolvedLabels.join(", ")
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#. placeholder {0}: unresolved.join(", ")
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Could not sort these items; they stayed at the end: {0}."
 msgstr "Kunne ikke sortere disse elementene; de ble stående til slutt: {0}."
 
@@ -1630,7 +1682,7 @@ msgstr "Tell etter kilde"
 msgid "Counted separately from the parse score. Coverage does not predict anything."
 msgstr "Telles separat fra parse-poengsummen. Dekning forutsier ingenting."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Cover"
 msgstr "Fyll"
 
@@ -1641,12 +1693,8 @@ msgstr "Fyll"
 msgid "Cover letter"
 msgstr "Følgebrev"
 
-#. Fallback title for a custom cover letter item in resume builder when recipient is empty
-#. Fallback title for a custom cover letter item in resume builder when recipient is unavailable
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 msgid "Cover Letter"
 msgstr "Følgebrev"
 
@@ -1662,21 +1710,6 @@ msgstr "Følgebrev"
 #. Create API key dialog submit action
 #: src/dialogs/api-key/create.tsx
 #: src/dialogs/resume/index.tsx
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/cover-letter.tsx
-#: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/skill.tsx
-#: src/dialogs/resume/sections/summary-item.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
 #: src/features/cover-letters/library.tsx
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Create"
@@ -1695,72 +1728,12 @@ msgstr "Opprett ny konto"
 msgid "Create a new API key"
 msgstr "Opprett en ny API-nøkkel"
 
-#: src/dialogs/resume/sections/award.tsx
-msgid "Create a new award"
-msgstr "Opprett en ny pris"
-
-#: src/dialogs/resume/sections/certification.tsx
-msgid "Create a new certification"
-msgstr "Opprett en ny sertifisering"
-
-#: src/dialogs/resume/sections/cover-letter.tsx
-msgid "Create a new cover letter"
-msgstr "Opprett et nytt følgebrev"
-
-#: src/dialogs/resume/sections/custom.tsx
-msgid "Create a new custom section"
-msgstr "Opprett en ny egendefinert seksjon"
-
-#: src/dialogs/resume/sections/education.tsx
-msgid "Create a new education"
-msgstr "Opprett en ny utdanning"
-
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Create a new experience"
-msgstr "Opprett en ny erfaring"
-
-#: src/dialogs/resume/sections/interest.tsx
-msgid "Create a new interest"
-msgstr "Opprett en ny interesse"
-
-#: src/dialogs/resume/sections/language.tsx
-msgid "Create a new language"
-msgstr "Opprett et nytt språk"
-
-#: src/dialogs/resume/sections/profile.tsx
-msgid "Create a new profile"
-msgstr "Opprett en ny profil"
-
-#: src/dialogs/resume/sections/project.tsx
-msgid "Create a new project"
-msgstr "Opprett et nytt prosjekt"
-
-#: src/dialogs/resume/sections/publication.tsx
-msgid "Create a new publication"
-msgstr "Opprett en ny publikasjon"
-
-#: src/dialogs/resume/sections/reference.tsx
-msgid "Create a new reference"
-msgstr "Opprett en ny referanse"
-
 #: src/dialogs/resume/index.tsx
 #: src/features/command-palette/pages/resumes.tsx
 #: src/routes/dashboard/resumes/-components/cards/create-card.tsx
 #: src/routes/dashboard/resumes/-components/list-view.tsx
 msgid "Create a new resume"
 msgstr "Opprett en ny CV"
-
-#: src/dialogs/resume/sections/skill.tsx
-msgid "Create a new skill"
-msgstr "Opprett en ny ferdighet"
-
-#: src/dialogs/resume/sections/summary-item.tsx
-msgid "Create a new summary item"
-msgstr "Opprett et nytt sammendragspunkt"
-
-#: src/dialogs/resume/sections/volunteer.tsx
-msgid "Create a new volunteer experience"
-msgstr "Opprett en ny frivillig erfaring"
 
 #: src/features/homepage/page.tsx
 msgid "Create a resume"
@@ -1805,11 +1778,11 @@ msgstr "Oppretter API-nøkkelen din..."
 msgid "Creating your resume..."
 msgstr "Oppretter CV-en din..."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and Upload"
 msgstr "Beskjær og last opp"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop picture"
 msgstr "Beskjær bilde"
 
@@ -1842,6 +1815,10 @@ msgstr "Egendefinert"
 msgid "Custom OAuth"
 msgstr "Egendefinert OAuth"
 
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Custom section"
+msgstr ""
+
 #: src/libs/resume/section.tsx
 msgid "Custom Sections"
 msgstr "Tilpassede seksjoner"
@@ -1872,9 +1849,7 @@ msgstr "Mørkt tema"
 msgid "Dashboard"
 msgstr "Dashbord"
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/publication.tsx
+#: src/features/resume/editor/write/dates-field.tsx
 msgid "Date"
 msgstr "Dato"
 
@@ -1888,6 +1863,7 @@ msgstr "Søknadsdato"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
+#: src/features/resume/editor/write/dates-field.tsx
 msgid "Dates"
 msgstr "Datoer"
 
@@ -1907,13 +1883,11 @@ msgstr "Dypsjekk"
 msgid "Default template"
 msgstr "Standardmal"
 
-#: src/dialogs/resume/sections/education.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Degree"
 msgstr "Grad"
 
 #. API key deletion confirmation dialog confirm action in settings
-#. Destructive confirmation button label when deleting a custom section in resume builder
-#. Destructive confirmation button label when deleting a section item in resume builder
 #. Passkey row action to remove the selected passkey
 #. Resume card context menu destructive action to remove a resume
 #. Resume card dropdown destructive action to remove a resume
@@ -1922,12 +1896,11 @@ msgstr "Grad"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/table-view.tsx
 #: src/features/cover-letters/editor-dialog.tsx
+#: src/features/resume/editor/write/entry-card.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Delete"
@@ -1938,6 +1911,10 @@ msgstr "Slett"
 msgid "Delete Account"
 msgstr "Slett konto"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Delete entry"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game the search."
 msgstr "Slett det. Skjulte nøkkelord blir tolket som et bevisst forsøk på å manipulere søket."
@@ -1946,13 +1923,17 @@ msgstr "Slett det. Skjulte nøkkelord blir tolket som et bevisst forsøk på å 
 msgid "Delete Page"
 msgstr "Slett side"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Delete picture"
 msgstr "Slett bilde"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Delete provider"
 msgstr "Slett leverandør"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Delete section"
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
@@ -2019,16 +2000,14 @@ msgstr "Beskriv hver rolle med korte punkter. Sammenhengende avsnitt er vanskeli
 msgid "Describe what you did so the entry contributes keywords for matching."
 msgstr "Beskriv hva du gjorde, slik at oppføringen bidrar med nøkkelord for matching."
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Description"
 msgstr "Beskrivelse"
+
+#. placeholder {0}: index + 1
+#: src/features/resume/editor/write/entries.tsx
+msgid "Description of role {0}"
+msgstr ""
 
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
@@ -2174,6 +2153,10 @@ msgstr "Last ned eksempel-PDF"
 msgid "Downloads"
 msgstr "Nedlastinger"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Draft · not printed"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Draft a cover letter"
 msgstr "Lag et følgebrev"
@@ -2186,11 +2169,15 @@ msgstr "Lag utkast til en oppfølging"
 msgid "Drafting failed."
 msgstr "Utkastet mislyktes."
 
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "drag · ⌥↑↓"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Dra og slipp seksjoner her for å flytte dem mellom kolonner"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Dra for å flytte bildet og bruk glidebryteren til å zoome før opplasting."
 
@@ -2206,9 +2193,8 @@ msgstr "Dropp pronomenene og start med verbet. Det er konvensjonen i de fleste m
 #. Resume card dropdown action to create a copy
 #: src/dialogs/resume/index.tsx
 #: src/features/cover-letters/editor-dialog.tsx
+#: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Duplicate"
@@ -2245,6 +2231,7 @@ msgstr "Tidligere versjoner beholdes; byggerens angrehistorikk nullstilles."
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Edit"
 msgstr "Redigere"
 
@@ -2303,6 +2290,10 @@ msgstr ""
 msgid "Edit keyword"
 msgstr "Rediger nøkkelord"
 
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Edit link"
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Edit model"
 msgstr "Rediger modell"
@@ -2319,10 +2310,6 @@ msgstr "Kan redigeres i Word, Google Docs og Pages."
 msgid "Editing"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
-msgid "Editing is disabled until you unlock it."
-msgstr "Redigering er deaktivert inntil du låser den opp."
-
 #: src/components/input/chip-input.tsx
 msgid "Editing keyword..."
 msgstr "Redigerer nøkkelord..."
@@ -2335,7 +2322,6 @@ msgstr ""
 msgid "Editor views"
 msgstr ""
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/languages-showcase.tsx
 #: src/features/homepage/resume-sculpture.tsx
@@ -2344,7 +2330,7 @@ msgstr ""
 msgid "Education"
 msgstr "Utdanning"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Email"
 msgstr "E-post"
 
@@ -2374,10 +2360,6 @@ msgstr "Bygg inn alle skrifter ved eksport, slik at tegnene blir riktig gjengitt
 msgid "Enable 2FA"
 msgstr "Aktiver 2FA"
 
-#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
-msgid "Enable editing"
-msgstr "Aktiver redigering"
-
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enable Two-Factor Authentication"
 msgstr "Aktiver tofaktorautentisering"
@@ -2389,6 +2371,10 @@ msgstr "Aktivert"
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enabling two-factor authentication…"
 msgstr "Aktivering av tofaktorautentisering…"
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "End"
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 #: src/libs/locale.ts
@@ -2415,6 +2401,10 @@ msgstr "Skriv inn et nytt passord for kontoen din"
 msgid "Enter a valid email address."
 msgstr "Skriv inn en gyldig e-postadresse."
 
+#: src/features/resume/editor/write/fields.tsx
+msgid "Enter a web address, like example.com"
+msgstr ""
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account"
 msgstr "Skriv inn en av de lagrede sikkerhetskopikodene for å få tilgang til kontoen din"
@@ -2422,10 +2412,6 @@ msgstr "Skriv inn en av de lagrede sikkerhetskopikodene for å få tilgang til k
 #: src/features/auth/pages/resume-password.tsx
 msgid "Enter the password the resume owner shared with you."
 msgstr "Skriv inn passordet som eieren av CV-en delte med deg."
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Enter the URL to link to"
-msgstr "Skriv inn URL-en det skal lenkes til"
 
 #: src/components/input/rich-input.tsx
 msgid "Enter the URL you want to link to:"
@@ -2446,6 +2432,14 @@ msgstr "Skriv inn passordet ditt for å bekrefte oppsettet av tofaktorautentiser
 #: src/dialogs/auth/disable-two-factor.tsx
 msgid "Enter your password to disable two-factor authentication. Your account will be less secure without 2FA enabled."
 msgstr "Skriv inn passordet ditt for å deaktivere tofaktorautentisering. Kontoen din vil være mindre sikker uten aktivert 2FA."
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Entry deleted"
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Entry options"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Error"
@@ -2471,7 +2465,6 @@ msgstr "Gå ut av fokusmodus"
 msgid "Exit Fullscreen"
 msgstr "Avslutt fullskjerm"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/feature-explorer.tsx
 #: src/features/homepage/languages-showcase.tsx
@@ -2691,7 +2684,7 @@ msgid "Failed to upload attachment."
 msgstr "Kunne ikke laste opp vedlegget."
 
 #. Fallback toast when uploading profile picture for resume fails
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Failed to upload picture. Please try again."
 msgstr "Kunne ikke laste opp bilde. Prøv igjen."
 
@@ -2719,6 +2712,11 @@ msgstr "Kritisk feil"
 #: src/features/homepage/site-footer.tsx
 msgid "Features"
 msgstr "Funksjoner"
+
+#. placeholder {0}: index + 1
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Field {0}"
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Fifteen templates, all free. Pick one you like. You can change the type, color, and layout in the editor."
@@ -2756,8 +2754,8 @@ msgstr "Finn oss på GitHub"
 msgid "Finnish"
 msgstr "Finsk"
 
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Fit"
 msgstr "Tilpasning"
 
@@ -2773,7 +2771,7 @@ msgstr "Passer inn i arbeidsflyten din"
 msgid "Flatten the form so the text is part of the page."
 msgstr "Flat ut skjemaet slik at teksten blir en del av siden."
 
-#: src/dialogs/resume/sections/language.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Fluency"
 msgstr "Språkferdighet"
 
@@ -2847,6 +2845,10 @@ msgstr "Format"
 msgid "Format stylesheet"
 msgstr "Formater stilark"
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Formatting"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Free-form"
@@ -2860,6 +2862,10 @@ msgstr "Fransk"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "From your resume and the posting"
 msgstr "Fra din CV og innlegget"
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Full name"
+msgstr ""
 
 #: src/features/resume/export/download-dialog.tsx
 msgid "Full resume data for backup or import."
@@ -2948,7 +2954,7 @@ msgstr "Gå til…"
 msgid "Google"
 msgstr "Google"
 
-#: src/dialogs/resume/sections/education.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Grade"
 msgstr "Karakter"
 
@@ -2964,6 +2970,10 @@ msgstr "Gresk"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Grid"
 msgstr "Rutenett"
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Have a resume already? <0>Import it</0>"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgctxt "Headings or Titles (H1, H2, H3, H4, H5, H6)"
@@ -2995,7 +3005,7 @@ msgid "Heading 6"
 msgstr "Overskrift 6"
 
 #: src/features/ats-checker/parse-preview.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Headline"
 msgstr "Overskrift"
 
@@ -3016,25 +3026,22 @@ msgid "Here's your new API key"
 msgstr "Her er din nye API-nøkkel"
 
 #: src/components/level/combobox.tsx
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/skill.tsx
+#: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/editor/write/entry-card.tsx
 msgid "Hidden"
 msgstr "Skjult"
 
-#: src/features/resume/builder/section-recovery.tsx
-msgid "Hidden sections"
-msgstr "Skjulte seksjoner"
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "Hidden sections keep their content but aren't printed or shared. Fields save as you type."
+msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Hide"
-msgstr "Skjul"
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Hide {title} from the page"
+msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Hide heading"
-msgstr "Skjul overskrift"
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Hide from page"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Hide Icons"
@@ -3066,7 +3073,7 @@ msgstr ""
 msgid "Hide password"
 msgstr "Skjul passord"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Hide picture"
 msgstr "Skjul bilde"
 
@@ -3119,6 +3126,14 @@ msgstr "Jeg designer programvare for team, fra tidlig research til detaljene fol
 msgid "Icon"
 msgstr "Ikon"
 
+#: src/features/resume/editor/write/entries.tsx
+msgid "Icon colour"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Icon…"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Hvis det kommer fra en skanning, er det forventet. Fjern det ellers; rekrutterere tolker det som nøkkelordspamming."
@@ -3159,10 +3174,6 @@ msgstr "Importer failed. Sjekk CSV og prøv again."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Import from CSV"
 msgstr "Importer fra CSV"
-
-#: src/dialogs/resume/sections/cover-letter.tsx
-msgid "Import from library"
-msgstr "Importer fra bibliotek"
 
 #: src/features/cover-letters/library.tsx
 msgid "Import JSON"
@@ -3219,7 +3230,7 @@ msgstr "Indonesisk"
 msgid "Information"
 msgstr "Informasjon"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/skill-keyword-layout-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "På linje"
 
@@ -3248,7 +3259,6 @@ msgstr "Integrasjoner"
 msgid "Interaction design"
 msgstr "Interaksjonsdesign"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Interests"
@@ -3278,7 +3288,7 @@ msgstr ""
 msgid "Invalid AI provider configuration."
 msgstr "Ugyldig konfigurasjon av AI-leverandør."
 
-#: src/dialogs/resume/sections/certification.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Issuer"
 msgstr "Utsteder"
 
@@ -3295,6 +3305,7 @@ msgid "Italian"
 msgstr "Italiensk"
 
 #: src/components/input/rich-input.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Italic"
 msgstr "Kursiv"
 
@@ -3382,6 +3393,10 @@ msgstr "Fortsett å redigere i Word, Google Docs eller Pages. Utformingen kan av
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Hold den under 2,5 MB, vanligvis ved å fjerne eller krympe bilder."
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Keep on one page"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "Ta vare på private notater om denne CV-en her. Ingen andre kan se dem."
@@ -3423,12 +3438,11 @@ msgstr "Behold utformingen intakt. Klar til å sende, laste opp eller skrive ut.
 msgid "Key"
 msgstr "Nøkkel"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/skill-keyword-layout-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
 msgstr "Oppsett for nøkkelord"
 
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/skill.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Keywords"
 msgstr "Nøkkelord"
 
@@ -3452,20 +3466,19 @@ msgid "Label"
 msgstr "Etikett"
 
 #. Preset button for setting picture aspect ratio to landscape orientation
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Landscape"
 msgstr "Liggende"
 
 #. Menu item that opens language selection submenu
-#: src/dialogs/resume/sections/language.tsx
 #: src/features/command-palette/pages/preferences/language.tsx
+#: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/pages/preferences.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Language"
 msgstr "Språk"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/resume-sculpture.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
@@ -3521,9 +3534,13 @@ msgstr "Forlat"
 msgid "Leave at least half an inch around the page."
 msgstr "La det være minst en halv tomme margin rundt siden."
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Leave empty to reset the title to the original."
 msgstr "La være tom for å tilbakestille tittelen til originalen."
+
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Leave it empty to remove the link."
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "Leave to set up an AI provider?"
@@ -3541,13 +3558,13 @@ msgstr "Juridisk"
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Lengde er ikke en feil, og det finnes ingen universell enside-regel. Behold sidene som fortjener plassen."
 
+#: src/features/resume/editor/write/entries.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Letter"
 msgstr "Brev"
 
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/skill.tsx
+#: src/features/resume/editor/write/entries.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Level"
 msgstr "Nivå"
@@ -3585,6 +3602,11 @@ msgstr "Linje {0}, kolonne {1}"
 msgid "Line Height"
 msgstr "Linjehøyde"
 
+#: src/features/resume/editor/write/fields.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Link"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
 msgstr "Koble til en Reactive Resume (anbefalt)"
@@ -3596,6 +3618,11 @@ msgstr "Koble til en CV fra Reactive Resume for å bruke AI-treffscore og -tilpa
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
 msgstr "Koble til en CV og lim inn stillingsbeskrivelsen (Rediger) for å måle hvor godt du passer og tilpasse en kopi."
+
+#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Link address"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Linked Reactive Resume"
@@ -3674,13 +3701,11 @@ msgstr "Laster total"
 msgid "Loading…"
 msgstr "Laster…"
 
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/table-view.tsx
 #: src/features/ats-checker/parse-preview.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Location"
 msgstr "Sted"
 
@@ -3693,6 +3718,10 @@ msgstr "Lås"
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Lock editing"
+msgstr ""
+
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "Locked. Unlock to edit."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -3754,6 +3783,10 @@ msgstr "Malayalam"
 msgid "Many bullets start with the same phrase."
 msgstr "Mange punkter starter med samme frase."
 
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Mar 2022"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Marathi"
 msgstr "Marathi"
@@ -3769,6 +3802,10 @@ msgstr "Marg (vertikal)"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Mark rejected"
 msgstr "Mark avviste"
+
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Markdown shortcuts on"
+msgstr ""
 
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Match scoring failed."
@@ -3808,6 +3845,10 @@ msgstr ""
 msgid "More download formats…"
 msgstr ""
 
+#: src/features/resume/editor/write/fields.tsx
+msgid "More options"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "More than one email address appears."
 msgstr "Mer enn én e-postadresse forekommer."
@@ -3832,6 +3873,14 @@ msgstr "De fleste systemer sorterer kandidater etter e-post. Legg til en under G
 msgid "Move all content inside the page boundaries and re-export."
 msgstr "Flytt alt innhold innenfor sidegrensene og eksporter på nytt."
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Move down"
+msgstr ""
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Move field up"
+msgstr ""
+
 #: src/libs/resume/ats.ts
 msgid "Move it into the main column and keep the sidebar for short lists."
 msgstr "Flytt den til hovedkolonnen, og bruk sidestolpen til korte lister."
@@ -3839,6 +3888,14 @@ msgstr "Flytt den til hovedkolonnen, og bruk sidestolpen til korte lister."
 #: src/features/ats-checker/messages.ts
 msgid "Move real content into the body of the page; some software discards the margins."
 msgstr "Flytt reelt innhold inn i selve sideområdet; enkelte programmer forkaster margene."
+
+#: src/features/resume/editor/write/entries.tsx
+msgid "Move role down"
+msgstr ""
+
+#: src/features/resume/editor/write/entries.tsx
+msgid "Move role up"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Move section to another column or page"
@@ -3850,7 +3907,6 @@ msgstr "Flytt fase"
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Move to"
 msgstr "Flytt til"
@@ -3863,6 +3919,14 @@ msgstr "Flytt til intervju"
 msgid "Move to offer"
 msgstr "Flytt til tilbud"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Move to…"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Move up"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Move your email and phone number to the top of page one."
 msgstr "Flytt e-postadressen og telefonnummeret ditt til toppen av side én."
@@ -3871,25 +3935,16 @@ msgstr "Flytt e-postadressen og telefonnummeret ditt til toppen av side én."
 msgid "Moved to"
 msgstr "Flyttet til"
 
-#. Placeholder text for custom link URL field in resume builder
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Must start with https://"
-msgstr "Må starte med https://"
-
 #. Label for full name input on registration form
 #: src/dialogs/api-key/create.tsx
 #: src/dialogs/resume/index.tsx
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/skill.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/ats-checker/parse-preview.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/cover-letters/editor.tsx
 #: src/features/cover-letters/library.tsx
+#: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/pages/profile.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "Navn"
@@ -3910,7 +3965,7 @@ msgstr "Navn hjelper deg å skille passnøkler fra hverandre hvis du registrerer
 msgid "Nepali"
 msgstr "Nepali"
 
-#: src/dialogs/resume/sections/profile.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Network"
 msgstr "Nettverk"
 
@@ -3931,7 +3986,10 @@ msgstr "Ny søknad"
 msgid "New Line"
 msgstr "Ny linje"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "New page"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New Page"
 msgstr "Ny side"
@@ -3942,9 +4000,9 @@ msgstr "Ny side"
 msgid "New Password"
 msgstr "Nytt passord"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-msgid "New Section"
-msgstr "Ny seksjon"
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "New section"
+msgstr ""
 
 #: src/features/applications/components/table-view.tsx
 msgid "New tag…"
@@ -4053,6 +4111,10 @@ msgstr "Ingen passnøkler registrert ennå."
 #: src/features/ats-checker/messages.ts
 msgid "No phone number was found."
 msgstr "Ingen telefonnummer ble funnet."
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "No photo. Most ATS ignore photos; some regions expect one."
+msgstr ""
 
 #: src/routes/_home/ats-checker.tsx
 msgid "No prediction of whether you will be rejected. No tool can do that."
@@ -4183,6 +4245,10 @@ msgstr "Ingenting å fikse. De gjenværende sidene var rett og slett ikke dekket
 msgid "Nothing to suggest."
 msgstr "Ingenting å foreslå."
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Numbered list"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "Odia"
@@ -4231,6 +4297,10 @@ msgstr "Kun de første sidene ble sjekket."
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Open"
 msgstr "Åpne"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Open {title}"
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Open design library"
@@ -4295,7 +4365,7 @@ msgstr "Valgfri merknad til agenten…"
 msgid "Optionally, which terms from a job posting already appear."
 msgstr "Eventuelt hvilke begreper fra en stillingsannonse som allerede forekommer."
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Options for {title}"
 msgstr "Alternativer for {title}"
 
@@ -4312,11 +4382,12 @@ msgstr "Eller last opp en CV-PDF"
 msgid "Ordered List"
 msgstr "Nummerert liste"
 
-#: src/dialogs/resume/sections/volunteer.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
 msgstr "Organisasjon"
 
 #: src/components/input/rich-input.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "Den opprinnelige tabellformateringen beholdes. Dette innholdet er skrivebeskyttet fordi det ikke kan redigeres på en trygg måte."
 
@@ -4332,9 +4403,10 @@ msgstr "Side"
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: Math.floor(offset / 20) + 1
 #. placeholder {0}: pageIndex + 1
-#. placeholder {0}: targetPageIndex + 1
+#. placeholder {0}: row.page + 1
 #: src/features/cover-letters/library.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "Side {0}"
@@ -4470,26 +4542,27 @@ msgstr "PDF-tekstlag"
 msgid "PDFs already attached to applications will remain available."
 msgstr "PDF-er som allerede er lagt ved søknader, forblir tilgjengelige."
 
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
-msgid "Period"
-msgstr "Periode"
-
 #: src/libs/locale.ts
 msgid "Persian"
 msgstr "Persisk"
 
-#: src/dialogs/resume/sections/reference.tsx
 #: src/features/ats-checker/parse-preview.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Phone"
 msgstr "Telefon"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Phone (optional)"
 msgstr "Telefon (valgfritt)"
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Photo hidden from the page."
+msgstr ""
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Photo on the page."
+msgstr ""
 
 #: src/routes/agent/index.tsx
 msgid "Pick a conversation from the sidebar, or start a new thread to work on a draft."
@@ -4552,7 +4625,7 @@ msgid "Polish"
 msgstr "Polsk"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Portrait"
 msgstr "Stående"
 
@@ -4564,8 +4637,7 @@ msgstr "Portugisisk (Brasil)"
 msgid "Portuguese (Portugal)"
 msgstr "Portugisisk (Portugal)"
 
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/reference.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Posisjon"
 
@@ -4598,6 +4670,10 @@ msgstr "Klargjøring av CV-en din for utskrift..."
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Preparing…"
+msgstr ""
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Present"
 msgstr ""
 
 #: src/components/input/color-picker.tsx
@@ -4671,7 +4747,7 @@ msgstr "Produktdesigner"
 msgid "Product strategy"
 msgstr "Produktstrategi"
 
-#: src/dialogs/resume/sections/skill.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "Ferdighetsnivå"
 
@@ -4681,7 +4757,6 @@ msgstr "Ferdighetsnivå"
 msgid "Profile"
 msgstr "Profil"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Profiles"
@@ -4691,7 +4766,6 @@ msgstr "Profiler"
 msgid "Progress Bar"
 msgstr "Fremdriftslinje"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/resume-sculpture.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
@@ -4723,13 +4797,12 @@ msgstr "Leverandørmodell"
 msgid "Public"
 msgstr "Offentlig"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "Publikasjoner"
 
-#: src/dialogs/resume/sections/publication.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
 msgstr "Utgiver"
 
@@ -4870,8 +4943,8 @@ msgstr "Klar til aktivering med advarsler"
 msgid "Ready to put your name on it?"
 msgstr "Klar til å sette navnet ditt på den?"
 
-#: src/dialogs/resume/sections/cover-letter.tsx
 #: src/features/cover-letters/editor.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Recipient"
 msgstr "Mottaker"
 
@@ -4887,7 +4960,6 @@ msgstr "Rektangel (full bredde)"
 msgid "Redo stylesheet edit"
 msgstr "Gjør om redigeringen av stilark"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "References"
@@ -4917,10 +4989,6 @@ msgstr "Husker du passordet ditt? <0/>"
 msgid "Remote, Hybrid, a city…"
 msgstr "Eksternt, hybrid, en by…"
 
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Remove"
-msgstr "Fjern"
-
 #. Screen reader label for button that removes a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
 msgid "Remove {chip}"
@@ -4930,9 +4998,9 @@ msgstr "Fjern {chip}"
 msgid "Remove contact"
 msgstr "Fjern kontakt"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Remove custom field"
-msgstr "Fjern tilpasset felt"
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Remove field"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Remove file"
@@ -4946,6 +5014,10 @@ msgstr "Fjern lenken"
 msgid "Remove Password"
 msgstr "Fjern passord"
 
+#: src/features/resume/editor/write/entries.tsx
+msgid "Remove role"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Remove tag"
 msgstr "Fjern tagg"
@@ -4954,10 +5026,7 @@ msgstr "Fjern tagg"
 msgid "Removing password protection..."
 msgstr "Fjerner passordbeskyttelse..."
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Rename"
-msgstr "Endre navn"
-
+#: src/features/resume/editor/write/section-row.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Rename…"
 msgstr ""
@@ -4966,13 +5035,14 @@ msgstr ""
 msgid "Renders your current resume to PDF and runs the full file check in your browser. Nothing is uploaded."
 msgstr "Gjengir den nåværende CV-en din som PDF og kjører hele filkontrollen i nettleseren din. Ingenting lastes opp."
 
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Reorder"
-msgstr "Omorganiser"
+#. placeholder {0}: title || t`Untitled`
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Reorder {0}"
+msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Reorder custom field"
-msgstr "Endre rekkefølgen på det tilpassede feltet"
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Reorder {title}"
+msgstr ""
 
 #. placeholder {0}: jd.stuffedTerms.join(", ")
 #: src/features/ats-checker/report/jd-coverage.tsx
@@ -5020,10 +5090,8 @@ msgstr "Sender verifiserings-e-post på nytt..."
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "Reserver store bokstaver til korte overskrifter. De bremser lesingen og kan hindre søk som skiller mellom store og små bokstaver."
 
-#. Destructive confirmation button label when resetting a resume section
 #: src/features/homepage/ats-playground.tsx
 #: src/features/homepage/feature-explorer.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Reset"
 msgstr "Tilbakestill"
 
@@ -5172,6 +5240,11 @@ msgstr "Høyrejuster"
 msgid "Role (optional)"
 msgstr "Rolle (valgfritt)"
 
+#. placeholder {0}: index + 1
+#: src/features/resume/editor/write/entries.tsx
+msgid "Role {0}"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Role / title"
 msgstr "Rolle/tittel"
@@ -5180,15 +5253,11 @@ msgstr "Rolle/tittel"
 msgid "Role A–Z"
 msgstr "Rolle A–Z"
 
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Role Progression"
-msgstr "Rolleutvikling"
-
 #: src/libs/locale.ts
 msgid "Romanian"
 msgstr "Rumensk"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Rotation"
 msgstr "Rotasjon"
 
@@ -5261,21 +5330,6 @@ msgid "Save changes"
 msgstr "Lagre endringer"
 
 #: src/dialogs/resume/index.tsx
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/cover-letter.tsx
-#: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/skill.tsx
-#: src/dialogs/resume/sections/summary-item.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
 #: src/features/cover-letters/editor.tsx
 #: src/features/settings/pages/profile.tsx
 msgid "Save Changes"
@@ -5339,7 +5393,7 @@ msgstr ""
 msgid "Schedule interview"
 msgstr ""
 
-#: src/dialogs/resume/sections/education.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "Skole"
 
@@ -5399,19 +5453,14 @@ msgstr "Søk…"
 msgid "Secret copied to clipboard."
 msgstr "Hemmelighet kopiert til utklippstavlen."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Section options"
-msgstr "Seksjonsalternativer"
-
-#: src/dialogs/resume/sections/custom.tsx
-msgid "Section Type"
-msgstr "Seksjonstype"
-
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
 msgid "Sections"
 msgstr "Seksjoner"
+
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "Sections · print order"
+msgstr ""
 
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "See how this resume matches the posting"
@@ -5560,7 +5609,7 @@ msgstr "Innstillinger"
 msgid "Setup Authenticator App"
 msgstr "Sett opp autentiseringsapp"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Shadow Width"
 msgstr "Skyggebredde"
 
@@ -5580,21 +5629,14 @@ msgstr "Deling"
 msgid "Sharing preview"
 msgstr "Forhåndsvisning av deling"
 
-#: src/features/resume/builder/section-recovery.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Show"
-msgstr "Vis"
-
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #: src/features/applications/components/board.tsx
 msgid "Show {0} more"
 msgstr "Vis {0} mer"
 
-#: src/features/resume/builder/section-recovery.tsx
-msgid "Show {title} section"
-msgstr "Vis seksjonen {title}"
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Show {title} on the page"
+msgstr ""
 
 #: src/features/homepage/languages-showcase.test.tsx
 #: src/features/homepage/languages-showcase.tsx
@@ -5605,22 +5647,17 @@ msgstr "Vis alle språk"
 msgid "Show Download Buttons"
 msgstr "Vis nedlastingsknapper"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Vis overskrift"
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
+#: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
 msgstr "Vis lenke i tittel"
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Show on page"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Show panel"
@@ -5644,7 +5681,7 @@ msgstr ""
 msgid "Show password"
 msgstr "Vis passord"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Show picture"
 msgstr "Vis bilde"
 
@@ -5659,6 +5696,7 @@ msgid "Showing {0} of {1}"
 msgstr "Viser {0} av {1}"
 
 #. Layout editor column label for the secondary sidebar area
+#: src/features/resume/editor/write/outline.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "Sidepanel"
@@ -5745,11 +5783,10 @@ msgstr "Enkeltkolonne med overskrifter i store bokstaver og en primærfarget top
 msgid "Single-column; polished and serious for senior or enterprise-level positions."
 msgstr "Enkolonners; polert og seriøs for senior- eller virksomhetsnivåstillinger."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Size"
 msgstr "Størrelse"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/languages-showcase.tsx
 #: src/features/homepage/resume-sculpture.tsx
@@ -5758,7 +5795,7 @@ msgstr "Størrelse"
 msgid "Skills"
 msgstr "Ferdigheter"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Skip and Upload"
 msgstr "Hopp over og last opp"
 
@@ -5860,7 +5897,7 @@ msgstr "Noe gikk galt. Vennligst prøv igjen."
 msgid "Sort by"
 msgstr "Sorter etter"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Sort by date"
 msgstr "Sorter etter dato"
 
@@ -5920,7 +5957,7 @@ msgstr "Spre sidene"
 
 #. Preset button for setting picture aspect ratio to square
 #: src/components/level/combobox.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Square"
 msgstr "Firkant"
 
@@ -5945,6 +5982,10 @@ msgstr "Gi oss en stjerne på GitHub (åpnes i ny fane)"
 #: src/components/input/github-stars-button.tsx
 msgid "Star us on GitHub, currently {0} stars (opens in new tab)"
 msgstr "Gi oss en stjerne på GitHub, for øyeblikket {0} stjerner (åpnes i ny fane)"
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Start"
+msgstr ""
 
 #: src/routes/agent/$threadId.tsx
 msgid "Start a new thread"
@@ -5979,6 +6020,10 @@ msgstr "Start hvert punkt med et konkret verb: bygde, ledet, reduserte, migrerte
 msgid "Start new thread"
 msgstr "Start ny tråd"
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Start on a new page"
+msgstr ""
+
 #. Layout editor toggle that forces a section to begin on a new page
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Start on new page"
@@ -5991,6 +6036,10 @@ msgstr "Start CV-en med navnet ditt på egen linje."
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Start thread"
 msgstr "Start tråd"
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Start with the sections most resumes have."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Statistics"
@@ -6050,13 +6099,10 @@ msgstr "Subreddit"
 msgid "Suggestions"
 msgstr "Forslag"
 
-#. Fallback title for a custom summary item in resume builder when content is empty
-#. Fallback title for a custom summary item in resume builder when content is unavailable
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
+#: src/features/resume/editor/write/summary-editor.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 msgid "Summary"
 msgstr "Sammendrag"
 
@@ -6168,6 +6214,10 @@ msgstr "Testing…"
 msgid "Testing… {elapsedSeconds}s"
 msgstr "Testing… {elapsedSeconds}s"
 
+#: src/features/resume/editor/write/entries.tsx
+msgid "Text"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
 msgid "Text alignment"
 msgstr "Tekstjustering"
@@ -6245,6 +6295,10 @@ msgstr "Kontrollene over er mekaniske. Dette spør en språkmodell om hva en les
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "The deep check could not finish. Please try again."
 msgstr "Dypsjekken kunne ikke fullføres. Prøv igjen."
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "The end is before the start."
+msgstr ""
 
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
@@ -6550,10 +6604,6 @@ msgstr "Denne perioden begynner i fremtiden."
 msgid "This resume has no embedded cover letters."
 msgstr "Denne CV-en har ingen innebygde følgebrev."
 
-#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
-msgid "This resume is locked"
-msgstr "Denne CV-en er låst"
-
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked and cannot be updated."
 msgstr "Denne CV-en er låst og kan ikke oppdateres."
@@ -6614,10 +6664,6 @@ msgstr "Denne tråden er skrivebeskyttet"
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "Denne tråden er skrivebeskyttet fordi den fungerende CV-en eller AI-leverandøren ikke er tilgjengelig."
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "This will remove all items from this section."
-msgstr "Dette vil fjerne alle elementer fra denne seksjonen."
-
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "This will roll back this patch and any patches applied after it."
 msgstr "Dette vil rulle tilbake denne oppdateringen og alle oppdateringer som er brukt etter den."
@@ -6654,10 +6700,7 @@ msgstr "Tidslinje"
 msgid "Tip"
 msgstr "Tips"
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/publication.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Title"
 msgstr "Tittel"
 
@@ -6669,7 +6712,6 @@ msgstr "For å slette kontoen din, skriv bekreftelsesteksten nedenfor og klikk d
 msgid "Today"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-base.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/shared/section-base.tsx
 msgid "Toggle {sectionTitle} section"
 msgstr "Aktiver/deaktiver {sectionTitle} -seksjonen"
@@ -6849,6 +6891,8 @@ msgstr "Understrek"
 
 #: src/dialogs/resume/template/gallery.tsx
 #: src/features/homepage/feature-explorer.tsx
+#: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/section-row.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Undo"
 msgstr "Angre"
@@ -6865,11 +6909,13 @@ msgstr "Fjerner koblingen til {providerName}-kontoen din..."
 #. Resume card context menu action to remove edit lock
 #. Resume card dropdown action to remove edit lock
 #: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Unlock"
 msgstr "Lås opp"
 
+#: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Unlock editing"
 msgstr ""
@@ -6878,6 +6924,10 @@ msgstr ""
 msgid "Unnamed passkey"
 msgstr "Navnløs passnøkkel"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Untitled"
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "Ubekreftet"
@@ -6885,71 +6935,6 @@ msgstr "Ubekreftet"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr ""
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-msgid "Update"
-msgstr "Oppdater"
-
-#: src/dialogs/resume/sections/award.tsx
-msgid "Update an existing award"
-msgstr "Oppdater en eksisterende pris"
-
-#: src/dialogs/resume/sections/certification.tsx
-msgid "Update an existing certification"
-msgstr "Oppdater en eksisterende sertifisering"
-
-#: src/dialogs/resume/sections/cover-letter.tsx
-msgid "Update an existing cover letter"
-msgstr "Oppdater et eksisterende følgebrev"
-
-#: src/dialogs/resume/sections/custom.tsx
-msgid "Update an existing custom section"
-msgstr "Oppdater en eksisterende egendefinert seksjon"
-
-#: src/dialogs/resume/sections/education.tsx
-msgid "Update an existing education"
-msgstr "Oppdater en eksisterende utdanning"
-
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Update an existing experience"
-msgstr "Oppdater en eksisterende erfaring"
-
-#: src/dialogs/resume/sections/interest.tsx
-msgid "Update an existing interest"
-msgstr "Oppdater en eksisterende interesse"
-
-#: src/dialogs/resume/sections/language.tsx
-msgid "Update an existing language"
-msgstr "Oppdater et eksisterende språk"
-
-#: src/dialogs/resume/sections/profile.tsx
-msgid "Update an existing profile"
-msgstr "Oppdater en eksisterende profil"
-
-#: src/dialogs/resume/sections/project.tsx
-msgid "Update an existing project"
-msgstr "Oppdater et eksisterende prosjekt"
-
-#: src/dialogs/resume/sections/publication.tsx
-msgid "Update an existing publication"
-msgstr "Oppdater en eksisterende publikasjon"
-
-#: src/dialogs/resume/sections/reference.tsx
-msgid "Update an existing reference"
-msgstr "Oppdater en eksisterende referanse"
-
-#: src/dialogs/resume/sections/skill.tsx
-msgid "Update an existing skill"
-msgstr "Oppdater en eksisterende ferdighet"
-
-#: src/dialogs/resume/sections/summary-item.tsx
-msgid "Update an existing summary item"
-msgstr "Oppdater et eksisterende sammendragspunkt"
-
-#: src/dialogs/resume/sections/volunteer.tsx
-msgid "Update an existing volunteer experience"
-msgstr "Oppdater en eksisterende frivillig erfaring"
 
 #. Primary action button to submit changed password
 #: src/dialogs/auth/change-password.tsx
@@ -7001,11 +6986,11 @@ msgstr "Last opp en CV og se hva et søkersporingssystem leser ut av den. Alt kj
 msgid "Upload attachments"
 msgstr "Last opp vedlegg"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Upload picture"
 msgstr "Last opp bilde"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading picture…"
 msgstr "Laster opp bilde…"
 
@@ -7014,7 +6999,7 @@ msgid "Uploading…"
 msgstr "Laster opp …"
 
 #. Form field label for the generated public resume link in sharing settings
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "URL"
 msgstr "URL"
@@ -7026,6 +7011,10 @@ msgstr "Bruk"
 #: src/libs/resume/ats.ts
 msgid "Use a line height of at least 1.15 so lines are not merged together."
 msgstr "Bruk linjeavstand på minst 1,15 slik at linjene ikke slås sammen."
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Use a month and year, like Mar 2022, or just a year."
+msgstr ""
 
 #: src/libs/resume/ats.ts
 msgid "Use a plain address such as name@example.com, with no surrounding text."
@@ -7098,8 +7087,8 @@ msgid "User research"
 msgstr "Brukerresearch"
 
 #. Label for username input on registration form
-#: src/dialogs/resume/sections/profile.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/pages/profile.tsx
 msgid "Username"
 msgstr "Brukernavn"
@@ -7202,7 +7191,6 @@ msgstr "Visninger"
 msgid "Visitors need your password to open the resume."
 msgstr "Besøkende trenger passordet ditt for å åpne CV-en."
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -7241,9 +7229,19 @@ msgstr "Vi kunne ikke koble den leverandørkontoen. Prøv igjen."
 msgid "We couldn't open this thread."
 msgstr "Vi klarte ikke å åpne denne tråden."
 
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "We couldn't read \"{0}\". Enter the dates so they sort and print consistently."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "We couldn't read your profile from the provider."
 msgstr "Vi kunne ikke lese profilen din fra leverandøren."
+
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "We read \"{0}\". Pick a month so it sorts and prints consistently."
+msgstr ""
 
 #: src/features/settings/pages/profile.tsx
 msgid "We sent a confirmation link to your new email address. Open it to confirm the change."
@@ -7257,16 +7255,7 @@ msgstr "Vi har sendt en ny bekreftelseslenke til e-postadressen din. Åpne den f
 msgid "Web search"
 msgstr "Nettsøk"
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Website"
 msgstr "Nettsted"
 
@@ -7282,9 +7271,13 @@ msgstr "Hva en person ser"
 msgid "What do you want to do?"
 msgstr "Hva vil du gjøre?"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "What do you want to rename this section to?"
 msgstr "Hva vil du endre navnet på denne seksjonen til?"
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "What goes in it?"
+msgstr ""
 
 #: src/routes/_home/ats-checker.tsx
 msgid "What this checks"
@@ -7524,6 +7517,7 @@ msgid "Your margins are very narrow."
 msgstr "Margene dine er svært smale."
 
 #: src/features/homepage/resume-sculpture.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"
 msgstr "Navnet ditt"
 
@@ -7624,7 +7618,7 @@ msgstr "Verktøyene dine, tilkoblet"
 msgid "Your words as a plain-text document, with headings, lists, and links."
 msgstr "Ordene dine som et rent tekstdokument, med overskrifter, lister og lenker."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Zoom"
 msgstr "Zoom"
 

@@ -41,15 +41,10 @@ msgstr "(కొత్త ట్యాబ్‌లో తెరవబడుతు
 msgid "{0, plural, one {# application to export} other {# applications to export}}"
 msgstr "{0, plural, one {ఎగుమతి చేయడానికి # అప్లికేషన్} other {ఎగుమతి చేయడానికి # అప్లికేషన్‌లు}}"
 
-#. placeholder {0}: section.items.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-msgid "{0, plural, one {# item} other {# items}}"
-msgstr "{0, plural, one {# అంశం} other {# అంశాలు}}"
-
-#. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "{0, plural, one {# role} other {# roles}}"
-msgstr "{0, plural, one {# పాత్ర} other {# పాత్రలు}}"
+#. placeholder {0}: state?.characters ?? 0
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "{0, plural, one {# character} other {# characters}}"
+msgstr ""
 
 #. placeholder {0}: insights.total
 #: src/features/applications/components/insights-view.tsx
@@ -115,10 +110,19 @@ msgstr "{0} దాటవేయబడింది (చెల్లని లే�
 msgid "{0} to fix"
 msgstr "సరిచేయడానికి {0}"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "{column, plural, one {# Column} other {# Columns}}"
-msgstr "{column, plural, one {# కళమ్} other {# కళమ్స్}}"
+#. placeholder {0}: title || t`Untitled`
+#. placeholder {1}: index + 1
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "{0}, entry {1} of {count}"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{column, plural, one {# column} other {# columns}}"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{count, plural, one {# entry} other {# entries}}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "{count, plural, one {# error} other {# errors}}"
@@ -152,6 +156,18 @@ msgstr "{passedRules} {totalRules} చెక్కులు ఆమోదిం�
 msgid "{sectionTitle} · Item {itemNumber}"
 msgstr "{sectionTitle} · అంశం {itemNumber} "
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{title} cleared"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{title} deleted"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "{toCheck, plural, one {# to check} other {# to check}}"
+msgstr ""
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "+{extra} more"
 msgstr ""
@@ -176,9 +192,9 @@ msgstr "<ul><li>చిన్న వ్యాపారాల కోసం రె�
 msgid "<ul><li>Led research and interface design for a collaborative planning tool.</li><li>Built a shared component library with engineers and documented accessibility patterns.</li><li>Tested prototypes with customers and used their feedback to simplify onboarding.</li></ul>"
 msgstr "<ul><li>సహకార ప్లానింగ్ టూల్ కోసం పరిశోధన, ఇంటర్‌ఫేస్ డిజైన్‌కు నాయకత్వం వహించాను.</li><li>ఇంజనీర్లతో కలిసి భాగస్వామ్య కాంపొనెంట్ లైబ్రరీని నిర్మించి, యాక్సెసిబిలిటీ నమూనాలను డాక్యుమెంట్ చేశాను.</li><li>కస్టమర్లతో ప్రోటోటైప్‌లను పరీక్షించి, వారి ఫీడ్‌బ్యాక్‌తో ఆన్‌బోర్డింగ్‌ను సరళం చేశాను.</li></ul>"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "1 Column / Inline"
-msgstr "1 కాలమ్ / ఇన్‌లైన్"
+#: src/features/resume/editor/write/section-row.tsx
+msgid "1 column, inline"
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "1 interview"
@@ -191,6 +207,10 @@ msgstr "1 నెల"
 #: src/dialogs/api-key/create.tsx
 msgid "1 year"
 msgstr "1 సంవత్సరం"
+
+#: src/features/resume/editor/write/summary-editor.tsx
+msgid "2–3 sentences reads best"
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "2015 to 2019"
@@ -356,12 +376,9 @@ msgstr "సెమాంటిక్ CSSని యాక్టివేట్ చ
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/table-view.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Add"
 msgstr "జోడించు"
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Add a custom field"
-msgstr "కస్టమ్ ఫీల్డ్ జోడించండి"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Add a job you're applying to and link the resume you sent. Move it across the board as you hear back."
@@ -376,62 +393,9 @@ msgstr "కీవర్డ్ జోడించండి..."
 msgid "Add a label to the URL"
 msgstr "URL కి లేబుల్ జోడించండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new award"
-msgstr "కొత్త అవార్డు జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new certification"
-msgstr "కొత్త సర్టిఫికేషన్ జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-msgid "Add a new custom section"
-msgstr "కొత్త కస్టమ్ విభాగాన్ని జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new education"
-msgstr "కొత్త విద్యను జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new experience"
-msgstr "కొత్త అనుభవాన్ని జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new interest"
-msgstr "కొత్త ఆసక్తిని జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Add a new item"
-msgstr "కొత్త అంశాన్ని జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new language"
-msgstr "కొత్త భాషను జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new profile"
-msgstr "కొత్త ప్రొఫైల్ జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new project"
-msgstr "కొత్త ప్రాజెక్ట్ జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new publication"
-msgstr "కొత్త ప్రచురణను జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new reference"
-msgstr "కొత్త రెఫరెన్స్ జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new skill"
-msgstr "కొత్త నైపుణ్యతను జోడించండి"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
-msgid "Add a new volunteer experience"
-msgstr "కొత్త వాలంటీర్ అనుభవాన్ని జోడించండి"
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Add a link"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Add a note…"
@@ -453,6 +417,10 @@ msgstr "\"Experience\" లేదా \"Work Experience\" అనే శీర్�
 msgid "Add a tag and press Enter…"
 msgstr "ట్యాగ్‌ను జోడించి Enter నొక్కండి…"
 
+#: src/features/resume/editor/write/fields.tsx
+msgid "Add an @ and the domain, like name@example.com"
+msgstr ""
+
 #: src/libs/resume/ats.ts
 msgid "Add an entry, or use projects and volunteer work to show equivalent history."
 msgstr "ఒక ఎంట్రీని జోడించండి లేదా సమానమైన చరిత్రను చూపించడానికి ప్రాజెక్ట్‌లు మరియు స్వచ్ఛంద పనిని ఉపయోగించండి."
@@ -471,26 +439,57 @@ msgstr "దరఖాస్తును జోడించు"
 msgid "Add at least a city and country so roles can be matched to your region."
 msgstr "కనీసం ఒక నగరం మరియు దేశాన్ని జోడించండి, తద్వారా పాత్రలు మీ ప్రాంతానికి సరిపోలవచ్చు."
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add award"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add certification"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Add contact"
 msgstr "పరిచయాన్ని జోడించు"
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add cover letter"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add education"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Add entry"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add experience"
+msgstr ""
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Add field"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Add figures where you have them: volumes, percentages, timeframes, team sizes."
 msgstr "మీ దగ్గర ఉన్న అంకెలను జోడించండి: పరిమాణాలు, శాతాలు, కాలవ్యవధులు, టీమ్ పరిమాణాలు."
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add interest"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Add keyword"
 msgstr "కీవర్డ్ జోడించండి"
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add language"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
 msgid "Add link"
 msgstr "లింక్‌ను జోడించండి"
-
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Add multiple roles to show career progression at the same company."
-msgstr "ఒకే కంపెనీలో కెరీర్ పురోగతిని చూపించడానికి అనేక పాత్రలను జోడించండి."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -504,16 +503,40 @@ msgstr "దాని దేశ కోడ్‌తో ఒకటి జోడి�
 msgid "Add Page"
 msgstr "పేజీ జోడించండి"
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add profile"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add project"
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Add Provider"
 msgstr "ప్రొవైడర్‌ను జోడించండి"
 
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Add Role"
-msgstr "పాత్ర జోడించు"
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add publication"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add reference"
+msgstr ""
+
+#: src/features/resume/editor/write/entries.tsx
+msgid "Add role"
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Add screening calls and technical interviews to see them here and on the calendar."
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Add section"
+msgstr ""
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add skill"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -524,6 +547,18 @@ msgstr "ఒక వ్యక్తి తేలికగా చదవగలిగ
 msgid "Add tag"
 msgstr "ట్యాగ్ జోడించు"
 
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add text"
+msgstr ""
+
+#: src/features/resume/editor/write/fields.tsx
+msgid "Add the domain after the @, like {name}@example.com"
+msgstr ""
+
+#: src/features/resume/editor/write/fields.tsx
+msgid "Add the domain ending, like {domain}.com"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Add to pipeline"
 msgstr "పైప్‌లైన్‌కు జోడించు"
@@ -531,6 +566,10 @@ msgstr "పైప్‌లైన్‌కు జోడించు"
 #: src/features/ats-checker/messages.ts
 msgid "Add two or three lines at the top describing what you do."
 msgstr "మీరు ఏమి చేస్తారో వివరిస్తూ పైభాగంలో రెండు లేదా మూడు లైన్లు జోడించండి."
+
+#: src/features/resume/editor/write/outline.tsx
+msgid "Add volunteering"
+msgstr ""
 
 #: src/libs/resume/ats.ts
 msgid "Add your full name under Basics."
@@ -713,6 +752,34 @@ msgstr "యాప్"
 msgid "App language"
 msgstr "యాప్ భాష"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a company."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a language."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a name."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a network."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a school."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has a title."
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Appears on the page once it has an organization."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Application"
@@ -807,14 +874,6 @@ msgstr "మీరు ఈ డైలాగ్‌ను మూసివేయాల
 msgid "Are you sure you want to delete this API key?"
 msgstr "మీరు ఖచ్చితంగా ఈ API కీని తొలగించాలనుకుంటున్నారా?"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-msgid "Are you sure you want to delete this custom section?"
-msgstr "మీరు ఈ కస్టమ్ విభాగాన్ని తొలగించాలనుకుంటున్నారా?"
-
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-msgid "Are you sure you want to delete this item?"
-msgstr "మీరు ఈ ఐటెమ్‌ను తొలగించాలనుకుంటున్నారా?"
-
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Are you sure you want to delete this resume?"
@@ -832,13 +891,9 @@ msgstr "మీరు నిజంగా ఈ రిజ్యూమ్‌ను �
 msgid "Are you sure you want to remove password protection?"
 msgstr "మీరు ఖచ్చితంగా పాస్‌వర్డ్ రక్షణను తొలగించాలనుకుంటున్నారా?"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Are you sure you want to reset this section?"
-msgstr "మీరు ఈ విభాగాన్ని రీసెట్ చేయాలనుకుంటున్నారా?"
-
-#: src/dialogs/resume/sections/education.tsx
-msgid "Area of Study"
-msgstr "అధ్యయన విభాగం"
+#: src/features/resume/editor/write/entries.tsx
+msgid "Area of study"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Artificial Intelligence"
@@ -852,7 +907,7 @@ msgstr "<0>{formattedDate}</0> నాటికి."
 msgid "Ask anything about this resume"
 msgstr "ఈ రెజ్యూమె గురించి ఏమైనా అడగండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Aspect Ratio"
 msgstr "కారక నిష్పత్తి"
 
@@ -909,12 +964,10 @@ msgstr "ఆటో-ఫిల్ విఫలమైంది."
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "భారీ లెటర్-స్పేసింగ్ ఎఫెక్ట్‌లను నివారించి, తిరిగి ఎగుమతి చేయండి."
 
-#: src/dialogs/resume/sections/award.tsx
-msgctxt "(noun) person, organization, or entity that gives an award"
+#: src/features/resume/editor/write/entries.tsx
 msgid "Awarder"
-msgstr "పురస్కార దాత"
+msgstr ""
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Awards"
@@ -960,6 +1013,7 @@ msgstr "బ్యాకప్ కోడ్లు క్లిప్‌బోర�
 msgid "Base URL"
 msgstr "బేస్ URL"
 
+#: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
 msgid "Basics"
 msgstr "ప్రాథమికాలు"
@@ -990,14 +1044,15 @@ msgid "Body"
 msgstr "బాడీ"
 
 #: src/components/input/rich-input.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Bold"
 msgstr "బోల్డ్"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border Radius"
 msgstr "సరిహద్దు వ్యాసార్థం"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border Width"
 msgstr "సరిహద్దు వెడల్పు"
 
@@ -1034,7 +1089,8 @@ msgstr "బల్క్ నవీకరణ విఫలమైంది. దయ�
 msgid "Bullet List"
 msgstr "బుల్లెట్ జాబితా"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/skill-keyword-layout-menu.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "బుల్లెట్ జాబితా"
 
@@ -1050,14 +1106,9 @@ msgstr ""
 
 #. API key deletion confirmation dialog cancel action in settings
 #. Account deletion confirmation dialog cancel action in account settings
-#. Confirmation dialog button label to abort deleting a custom section in resume builder
-#. Confirmation dialog button label to abort deleting a section item in resume builder
-#. Confirmation dialog button label to abort resetting a resume section
 #. Profile settings form action to discard unsaved edits
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/section-item-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/export-applications-sheet.tsx
@@ -1065,15 +1116,12 @@ msgstr ""
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/homepage/ats-playground.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 #: src/features/settings/pages/account.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-prompt.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Cancel"
 msgstr "రద్దు చేయండి"
@@ -1090,7 +1138,6 @@ msgstr "కాటలాన్"
 msgid "Center Align"
 msgstr "మద్యAlign"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Certifications"
@@ -1212,10 +1259,6 @@ msgstr "రెజ్యూమెను ఎంచుకోండి"
 msgid "Choose a resume template"
 msgstr "రెజ్యూమ్ టెంప్లేట్‌ను ఎంచుకోండి"
 
-#: src/dialogs/resume/sections/cover-letter.tsx
-msgid "Choose a saved cover letter"
-msgstr "సేవ్ చేసిన కవర్ లెటర్‌ని ఎంచుకోండి"
-
 #: src/features/homepage/template-shelf.tsx
 msgid "Choose a template"
 msgstr "టెంప్లేట్‌ను ఎంచుకోండి"
@@ -1260,6 +1303,14 @@ msgstr "తొలగించు"
 msgid "Clear filters"
 msgstr "ఫిల్టర్లను క్లియర్ చేయండి"
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Clear formatting"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Clear section"
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 msgid "Clear selection"
 msgstr "స్పష్టమైన ఎంపిక"
@@ -1277,6 +1328,10 @@ msgstr "క్లయింట్ ID"
 msgid "Close"
 msgstr "మూసివేయి"
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Close {title}"
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Close AI assistant"
 msgstr "AI సహాయకుడిని మూసివేయండి"
@@ -1285,8 +1340,7 @@ msgstr "AI సహాయకుడిని మూసివేయండి"
 msgid "Color"
 msgstr "రంగు"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Columns"
 msgstr "నిలువు వరుసలు"
 
@@ -1314,8 +1368,8 @@ msgstr "కమ్యూనిటీ"
 msgid "Compact"
 msgstr "సంక్షిప్త"
 
-#: src/dialogs/resume/sections/experience.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Company"
 msgstr "కంపెనీ"
 
@@ -1389,12 +1443,10 @@ msgstr "సంప్రదింపు వివరాలు"
 msgid "Contacts"
 msgstr "పరిచయాలు"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Contain"
 msgstr "కలిగి ఉంటాయి"
 
-#: src/dialogs/resume/sections/cover-letter.tsx
-#: src/dialogs/resume/sections/summary-item.tsx
 #: src/features/cover-letters/editor.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
@@ -1564,8 +1616,8 @@ msgstr "కవర్ లెటర్‌ని సేవ్ చేయడం స�
 msgid "Could not set up two-factor authentication."
 msgstr "రెండు దశల ధృవీకరణను సెటప్ చేయలేకపోయాం."
 
-#. placeholder {0}: unresolvedLabels.join(", ")
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#. placeholder {0}: unresolved.join(", ")
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Could not sort these items; they stayed at the end: {0}."
 msgstr "ఈ అంశాలను క్రమబద్ధీకరించడం సాధ్యం కాలేదు; వారు చివరిలో ఉన్నారు: {0}."
 
@@ -1630,7 +1682,7 @@ msgstr "మూలం ప్రకారం సంఖ్య"
 msgid "Counted separately from the parse score. Coverage does not predict anything."
 msgstr "పార్స్ స్కోర్ నుంచి విడిగా లెక్కిస్తారు. కవరేజ్ దేన్నీ ముందుగా చెప్పదు."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Cover"
 msgstr "కవర్"
 
@@ -1641,12 +1693,8 @@ msgstr "కవర్"
 msgid "Cover letter"
 msgstr "కవర్ లెటర్"
 
-#. Fallback title for a custom cover letter item in resume builder when recipient is empty
-#. Fallback title for a custom cover letter item in resume builder when recipient is unavailable
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 msgid "Cover Letter"
 msgstr "కవర్ లెటర్"
 
@@ -1662,21 +1710,6 @@ msgstr "కవర్ లెటర్స్"
 #. Create API key dialog submit action
 #: src/dialogs/api-key/create.tsx
 #: src/dialogs/resume/index.tsx
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/cover-letter.tsx
-#: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/skill.tsx
-#: src/dialogs/resume/sections/summary-item.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
 #: src/features/cover-letters/library.tsx
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Create"
@@ -1695,72 +1728,12 @@ msgstr "క్రొత్త ఖాతాను సృష్టించండ�
 msgid "Create a new API key"
 msgstr "క్రొత్త API కీని సృష్టించండి"
 
-#: src/dialogs/resume/sections/award.tsx
-msgid "Create a new award"
-msgstr "క్రొత్త బహుమతిని సృష్టించండి"
-
-#: src/dialogs/resume/sections/certification.tsx
-msgid "Create a new certification"
-msgstr "క్రొత్త సర్టిఫికేషన్‌ను సృష్టించండి"
-
-#: src/dialogs/resume/sections/cover-letter.tsx
-msgid "Create a new cover letter"
-msgstr "కొత్త కవర్ లెటర్ సృష్టించు"
-
-#: src/dialogs/resume/sections/custom.tsx
-msgid "Create a new custom section"
-msgstr "క్రొత్త కస్టమ్ విభాగాన్ని సృష్టించండి"
-
-#: src/dialogs/resume/sections/education.tsx
-msgid "Create a new education"
-msgstr "క్రొత్త ఎడ్యుకేషన్‌ను సృష్టించండి"
-
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Create a new experience"
-msgstr "క్రొత్త అనుభవాన్ని సృష్టించండి"
-
-#: src/dialogs/resume/sections/interest.tsx
-msgid "Create a new interest"
-msgstr "క్రొత్త ఆసక్తిని సృష్టించండి"
-
-#: src/dialogs/resume/sections/language.tsx
-msgid "Create a new language"
-msgstr "క్రొత్త భాషను సృష్టించండి"
-
-#: src/dialogs/resume/sections/profile.tsx
-msgid "Create a new profile"
-msgstr "క్రొత్త ప్రొఫైల్‌ను సృష్టించండి"
-
-#: src/dialogs/resume/sections/project.tsx
-msgid "Create a new project"
-msgstr "క్రొత్త ప్రాజెక్ట్‌ను సృష్టించండి"
-
-#: src/dialogs/resume/sections/publication.tsx
-msgid "Create a new publication"
-msgstr "క్రొత్త ప్రచురణను సృష్టించండి"
-
-#: src/dialogs/resume/sections/reference.tsx
-msgid "Create a new reference"
-msgstr "క్రొత్త సూచనను సృష్టించండి"
-
 #: src/dialogs/resume/index.tsx
 #: src/features/command-palette/pages/resumes.tsx
 #: src/routes/dashboard/resumes/-components/cards/create-card.tsx
 #: src/routes/dashboard/resumes/-components/list-view.tsx
 msgid "Create a new resume"
 msgstr "కొత్త రిజ్యూమ్ సృష్టించండి"
-
-#: src/dialogs/resume/sections/skill.tsx
-msgid "Create a new skill"
-msgstr "క్రొత్త నైపుణ్యాన్ని సృష్టించండి"
-
-#: src/dialogs/resume/sections/summary-item.tsx
-msgid "Create a new summary item"
-msgstr "కొత్త సారాంశ అంశం సృష్టించు"
-
-#: src/dialogs/resume/sections/volunteer.tsx
-msgid "Create a new volunteer experience"
-msgstr "క్రొత్త వాలంటీర్ అనుభవాన్ని సృష్టించండి"
 
 #: src/features/homepage/page.tsx
 msgid "Create a resume"
@@ -1805,11 +1778,11 @@ msgstr "మీ API కీ సృష్టించబడుతోంది..."
 msgid "Creating your resume..."
 msgstr "మీ రిజ్యూమ్ సృష్టించబడుతోంది..."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and Upload"
 msgstr "చిత్రాన్ని కత్తిరించి అప్‌లోడ్ చేయండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop picture"
 msgstr "చిత్రాన్ని కత్తిరించండి"
 
@@ -1842,6 +1815,10 @@ msgstr "స్వంతం"
 msgid "Custom OAuth"
 msgstr "కస్టమ్ OAuth"
 
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Custom section"
+msgstr ""
+
 #: src/libs/resume/section.tsx
 msgid "Custom Sections"
 msgstr "కస్టమ్ విభాగాలు"
@@ -1872,9 +1849,7 @@ msgstr "చీకటి థీమ్"
 msgid "Dashboard"
 msgstr "డాష్‌బోర్డ్"
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/publication.tsx
+#: src/features/resume/editor/write/dates-field.tsx
 msgid "Date"
 msgstr "తేదీ"
 
@@ -1888,6 +1863,7 @@ msgstr "దరఖాస్తు చేసిన తేదీ"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
+#: src/features/resume/editor/write/dates-field.tsx
 msgid "Dates"
 msgstr "తేదీలు"
 
@@ -1907,13 +1883,11 @@ msgstr "డీప్ చెక్"
 msgid "Default template"
 msgstr "డిఫాల్ట్ టెంప్లేట్"
 
-#: src/dialogs/resume/sections/education.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Degree"
 msgstr "డిగ్రీ"
 
 #. API key deletion confirmation dialog confirm action in settings
-#. Destructive confirmation button label when deleting a custom section in resume builder
-#. Destructive confirmation button label when deleting a section item in resume builder
 #. Passkey row action to remove the selected passkey
 #. Resume card context menu destructive action to remove a resume
 #. Resume card dropdown destructive action to remove a resume
@@ -1922,12 +1896,11 @@ msgstr "డిగ్రీ"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/table-view.tsx
 #: src/features/cover-letters/editor-dialog.tsx
+#: src/features/resume/editor/write/entry-card.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Delete"
@@ -1938,6 +1911,10 @@ msgstr "తొలగించు"
 msgid "Delete Account"
 msgstr "ఖాతాను తొలగించండి"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Delete entry"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game the search."
 msgstr "దాన్ని తొలగించండి. దాచిన కీవర్డ్‌లు శోధనను మోసగించే ఉద్దేశపూర్వక ప్రయత్నంగా పరిగణించబడతాయి."
@@ -1946,13 +1923,17 @@ msgstr "దాన్ని తొలగించండి. దాచిన క�
 msgid "Delete Page"
 msgstr "పేజీ తొలగించండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Delete picture"
 msgstr "చిత్రాన్ని తొలగించండి"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Delete provider"
 msgstr "ప్రొవైడర్‌ను తొలగించండి"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Delete section"
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
@@ -2019,16 +2000,14 @@ msgstr "ప్రతి పాత్రను చిన్న బుల్లె
 msgid "Describe what you did so the entry contributes keywords for matching."
 msgstr "మీరు ఏమి చేశారో వివరించండి, తద్వారా నమోదు సరిపోలిక కోసం కీలకపదాలను అందిస్తుంది."
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Description"
 msgstr "వివరణ"
+
+#. placeholder {0}: index + 1
+#: src/features/resume/editor/write/entries.tsx
+msgid "Description of role {0}"
+msgstr ""
 
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
@@ -2174,6 +2153,10 @@ msgstr "నమూనా PDF డౌన్‌లోడ్ చేయండి"
 msgid "Downloads"
 msgstr "డౌన్‌లోడ్‌లు"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Draft · not printed"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Draft a cover letter"
 msgstr "కవర్ లెటర్ ముసాయిదా తయారు చేయండి"
@@ -2186,11 +2169,15 @@ msgstr "ఫాలో-అప్ ముసాయిదా తయారు చే�
 msgid "Drafting failed."
 msgstr "ముసాయిదా తయారీ విఫలమైంది."
 
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "drag · ⌥↑↓"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "విభాగాలను ఇక్కడకి డ్రాగ్ చేసి వదలండి, వీటిని కాలమ్స్ మధ్యలో తరలించేందుకు"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "స్థానాన్ని మార్చడానికి లాగండి మరియు అప్‌లోడ్ చేసే ముందు జూమ్ చేయడానికి స్లైడర్‌ను ఉపయోగించండి."
 
@@ -2206,9 +2193,8 @@ msgstr "సర్వనామాలను తొలగించి క్రి�
 #. Resume card dropdown action to create a copy
 #: src/dialogs/resume/index.tsx
 #: src/features/cover-letters/editor-dialog.tsx
+#: src/features/resume/editor/write/entry-card.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Duplicate"
@@ -2245,6 +2231,7 @@ msgstr "మునుపటి వెర్షన్‌లు ఉంచబడత�
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Edit"
 msgstr "సవరించు"
 
@@ -2303,6 +2290,10 @@ msgstr ""
 msgid "Edit keyword"
 msgstr "కీవర్డ్‌ను సవరించండి"
 
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Edit link"
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Edit model"
 msgstr "మోడల్‌ను సవరించండి"
@@ -2319,10 +2310,6 @@ msgstr "Word, Google Docs మరియు Pages లో సవరించవచ�
 msgid "Editing"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
-msgid "Editing is disabled until you unlock it."
-msgstr "మీరు అన్‌లాక్ చేసే వరకు ఎడిటింగ్ నిలిపివేయబడింది."
-
 #: src/components/input/chip-input.tsx
 msgid "Editing keyword..."
 msgstr "కీవర్డ్‌ను సవరిస్తోంది..."
@@ -2335,7 +2322,6 @@ msgstr ""
 msgid "Editor views"
 msgstr ""
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/languages-showcase.tsx
 #: src/features/homepage/resume-sculpture.tsx
@@ -2344,7 +2330,7 @@ msgstr ""
 msgid "Education"
 msgstr "విద్య"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Email"
 msgstr "ఇమెయిల్"
 
@@ -2374,10 +2360,6 @@ msgstr "అక్షరాలు మీరు అనుకున్న విధ
 msgid "Enable 2FA"
 msgstr "2FAని ప్రారంభించండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
-msgid "Enable editing"
-msgstr "సవరణను ప్రారంభించండి"
-
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enable Two-Factor Authentication"
 msgstr "టూ-ఫాక్టర్ ఆథెంటికేషన్‌ని ప్రారంభించండి"
@@ -2389,6 +2371,10 @@ msgstr "ప్రారంభించబడింది"
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enabling two-factor authentication…"
 msgstr "రెండు-కారకాల ప్రమాణీకరణను ప్రారంభించడం…"
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "End"
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 #: src/libs/locale.ts
@@ -2415,6 +2401,10 @@ msgstr "మీ ఖాతాకు కొత్త పాస్‌వర్డ్
 msgid "Enter a valid email address."
 msgstr "చెల్లుబాటు అయ్యే ఇమెయిల్ చిరునామాను నమోదు చేయండి."
 
+#: src/features/resume/editor/write/fields.tsx
+msgid "Enter a web address, like example.com"
+msgstr ""
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account"
 msgstr "మీరు సేవ్ చేసిన బ్యాకప్ కోడ్స్‌లో ఒకదాన్ని నమోదు చేసి మీ ఖాతాలోకి ప్రవేశించండి"
@@ -2422,10 +2412,6 @@ msgstr "మీరు సేవ్ చేసిన బ్యాకప్ కో�
 #: src/features/auth/pages/resume-password.tsx
 msgid "Enter the password the resume owner shared with you."
 msgstr "రెజ్యూమ్ యజమాని మీతో పంచుకున్న పాస్‌వర్డ్‌ను నమోదు చేయండి."
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Enter the URL to link to"
-msgstr "లింక్ చేయడానికి URL నమోదు చేయండి"
 
 #: src/components/input/rich-input.tsx
 msgid "Enter the URL you want to link to:"
@@ -2446,6 +2432,14 @@ msgstr "రెండు దశల ధృవీకరణ సెటప్‌ను
 #: src/dialogs/auth/disable-two-factor.tsx
 msgid "Enter your password to disable two-factor authentication. Your account will be less secure without 2FA enabled."
 msgstr "రెండు దశల ధృవీకరణను నిలిపివేయడానికి మీ పాస్‌వర్డ్‌ని నమోదు చేయండి. 2FA ప్రారంభించబడకుండా ఉంటే మీ ఖాతా తక్కువ భద్రతగా ఉంటుంది."
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Entry deleted"
+msgstr ""
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Entry options"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Error"
@@ -2471,7 +2465,6 @@ msgstr "ఫోకస్ మోడ్ నుండి నిష్క్రమి
 msgid "Exit Fullscreen"
 msgstr "పూర్తి స్క్రీన్ నుండి నిష్క్రమించు"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/feature-explorer.tsx
 #: src/features/homepage/languages-showcase.tsx
@@ -2691,7 +2684,7 @@ msgid "Failed to upload attachment."
 msgstr "అటాచ్‌మెంట్‌ను అప్‌లోడ్ చేయడంలో విఫలమయ్యాము."
 
 #. Fallback toast when uploading profile picture for resume fails
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Failed to upload picture. Please try again."
 msgstr "చిత్రాన్ని అప్‌లోడ్ చేయడంలో విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి."
 
@@ -2719,6 +2712,11 @@ msgstr "తీవ్రమైన లోపం"
 #: src/features/homepage/site-footer.tsx
 msgid "Features"
 msgstr "ఫీచర్లు"
+
+#. placeholder {0}: index + 1
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Field {0}"
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Fifteen templates, all free. Pick one you like. You can change the type, color, and layout in the editor."
@@ -2756,8 +2754,8 @@ msgstr "GitHub లో మమ్మల్ని చూడండి"
 msgid "Finnish"
 msgstr "ఫిన్నిష్"
 
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Fit"
 msgstr "ఫిట్"
 
@@ -2773,7 +2771,7 @@ msgstr "మీ వర్క్‌ఫ్లోలో ఇమిడిపోతు�
 msgid "Flatten the form so the text is part of the page."
 msgstr "టెక్స్ట్ పేజీలో భాగంగా ఉండేలా ఫారమ్‌ను ఫ్లాటన్ చేయండి."
 
-#: src/dialogs/resume/sections/language.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Fluency"
 msgstr "పరిజ్ఞానం"
 
@@ -2847,6 +2845,10 @@ msgstr "ఫార్మాట్"
 msgid "Format stylesheet"
 msgstr "ఫార్మాట్ స్టైల్‌షీట్"
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Formatting"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Free-form"
@@ -2860,6 +2862,10 @@ msgstr "ఫ్రెంచ్"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "From your resume and the posting"
 msgstr "మీ రెజ్యూమ్ మరియు పోస్టింగ్ నుండి"
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Full name"
+msgstr ""
 
 #: src/features/resume/export/download-dialog.tsx
 msgid "Full resume data for backup or import."
@@ -2948,7 +2954,7 @@ msgstr "…కు వెళ్ళండి"
 msgid "Google"
 msgstr "గూగుల్"
 
-#: src/dialogs/resume/sections/education.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Grade"
 msgstr "గ్రేడ్"
 
@@ -2964,6 +2970,10 @@ msgstr "గ్రీకు"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Grid"
 msgstr "గ్రిడ్"
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Have a resume already? <0>Import it</0>"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgctxt "Headings or Titles (H1, H2, H3, H4, H5, H6)"
@@ -2995,7 +3005,7 @@ msgid "Heading 6"
 msgstr "శీర్షిక 6"
 
 #: src/features/ats-checker/parse-preview.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Headline"
 msgstr "హెడ్లైన్"
 
@@ -3016,25 +3026,22 @@ msgid "Here's your new API key"
 msgstr "ఇక్కడ మీ కొత్త API కీ ఉంది"
 
 #: src/components/level/combobox.tsx
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/skill.tsx
+#: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/editor/write/entry-card.tsx
 msgid "Hidden"
 msgstr "హిడెన్"
 
-#: src/features/resume/builder/section-recovery.tsx
-msgid "Hidden sections"
-msgstr "దాచిన విభాగాలు"
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "Hidden sections keep their content but aren't printed or shared. Fields save as you type."
+msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Hide"
-msgstr "హైడ్"
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Hide {title} from the page"
+msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Hide heading"
-msgstr "శీర్షికను దాచు"
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Hide from page"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Hide Icons"
@@ -3066,7 +3073,7 @@ msgstr ""
 msgid "Hide password"
 msgstr "పాస్‌వర్డ్ దాచు"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Hide picture"
 msgstr "చిత్రాన్ని దాచండి"
 
@@ -3119,6 +3126,14 @@ msgstr "తొలి పరిశోధన నుండి ప్రజలు �
 msgid "Icon"
 msgstr "ఐకాన్"
 
+#: src/features/resume/editor/write/entries.tsx
+msgid "Icon colour"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Icon…"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "అది స్కాన్ నుండి వచ్చినట్లయితే, అది ఊహించదగినదే. లేకపోతే దాన్ని తొలగించండి; రిక్రూటర్లు దీన్ని కీవర్డ్ స్టఫింగ్‌గా చదువుతారు."
@@ -3159,10 +3174,6 @@ msgstr "దిగుమతి విఫలమైంది. CSVని తని�
 #: src/routes/dashboard/applications/index.tsx
 msgid "Import from CSV"
 msgstr "CSV నుండి దిగుమతి చేయండి"
-
-#: src/dialogs/resume/sections/cover-letter.tsx
-msgid "Import from library"
-msgstr "లైబ్రరీ నుండి దిగుమతి"
 
 #: src/features/cover-letters/library.tsx
 msgid "Import JSON"
@@ -3219,7 +3230,7 @@ msgstr "ఇండోనేషియన్"
 msgid "Information"
 msgstr "ఇన్ఫర్మేషన్"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/skill-keyword-layout-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "ఇన్లైన్"
 
@@ -3248,7 +3259,6 @@ msgstr "సంయోజనాలు"
 msgid "Interaction design"
 msgstr "ఇంటరాక్షన్ డిజైన్"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Interests"
@@ -3278,7 +3288,7 @@ msgstr ""
 msgid "Invalid AI provider configuration."
 msgstr "చెల్లని AI ప్రొవైడర్ కాన్ఫిగరేషన్."
 
-#: src/dialogs/resume/sections/certification.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Issuer"
 msgstr "ఇష్యూర్"
 
@@ -3295,6 +3305,7 @@ msgid "Italian"
 msgstr "ఇటాలియన్"
 
 #: src/components/input/rich-input.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Italic"
 msgstr "ఇటాలిక్"
 
@@ -3382,6 +3393,10 @@ msgstr "Word, Google Docs, లేదా Pages లో సవరణ కొనస�
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "సాధారణంగా చిత్రాలను తొలగించడం లేదా చిన్నవిగా చేయడం ద్వారా దీన్ని 2.5 MB కంటే తక్కువగా ఉంచండి."
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Keep on one page"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "ఈ రెజ్యూమ్ గురించి మీ వ్యక్తిగత నోట్స్‌ను ఇక్కడ ఉంచుకోండి. వాటిని మరెవరూ చూడలేరు."
@@ -3423,12 +3438,11 @@ msgstr "మీ లేఅవుట్ చెక్కుచెదరదు. ప�
 msgid "Key"
 msgstr "కీ"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/skill-keyword-layout-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
 msgstr "కీవర్డ్ లేఅవుట్"
 
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/skill.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Keywords"
 msgstr "కీవర్డ్స్"
 
@@ -3452,20 +3466,19 @@ msgid "Label"
 msgstr "లేబుల్"
 
 #. Preset button for setting picture aspect ratio to landscape orientation
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Landscape"
 msgstr "ల్యాండ్‌స్కేప్"
 
 #. Menu item that opens language selection submenu
-#: src/dialogs/resume/sections/language.tsx
 #: src/features/command-palette/pages/preferences/language.tsx
+#: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/pages/preferences.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Language"
 msgstr "భాష"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/resume-sculpture.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
@@ -3521,9 +3534,13 @@ msgstr "వదలు"
 msgid "Leave at least half an inch around the page."
 msgstr "పేజీ చుట్టూ కనీసం అర అంగుళం వదిలివేయండి."
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Leave empty to reset the title to the original."
 msgstr "ప్రధాన శీర్షికను పునఃస్థాపించడానికి ఖాళీగా వదిలేయండి."
+
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Leave it empty to remove the link."
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "Leave to set up an AI provider?"
@@ -3541,13 +3558,13 @@ msgstr "చట్టపరమైనవి"
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "పొడవు లోపం కాదు, మరియు సార్వత్రిక ఒక-పేజీ నియమం లేదు. తమ స్థానాన్ని సంపాదించే పేజీలను ఉంచండి."
 
+#: src/features/resume/editor/write/entries.tsx
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Letter"
 msgstr "లేఖ"
 
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/skill.tsx
+#: src/features/resume/editor/write/entries.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Level"
 msgstr "స్థాయి"
@@ -3585,6 +3602,11 @@ msgstr "లైన్ {0}, కాలమ్ {1}"
 msgid "Line Height"
 msgstr "లైన్ హైట్"
 
+#: src/features/resume/editor/write/fields.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Link"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
 msgstr "Reactive Resumeను లింక్ చేయండి (సిఫార్సు చేయబడింది)"
@@ -3596,6 +3618,11 @@ msgstr "AI మ్యాచ్ స్కోరింగ్, టైలరింగ
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
 msgstr "మీ సరిపోలికను స్కోర్ చేయడానికి మరియు అనుకూలీకరించిన కాపీని రూపొందించడానికి ఒక రెజ్యూమెను లింక్ చేసి ఉద్యోగ వివరణను అతికించండి (సవరించు)."
+
+#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Link address"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Linked Reactive Resume"
@@ -3674,13 +3701,11 @@ msgstr "మొత్తం లోడ్ అవుతోంది"
 msgid "Loading…"
 msgstr "లోడ్ అవుతోంది…"
 
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/table-view.tsx
 #: src/features/ats-checker/parse-preview.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Location"
 msgstr "స్థలం"
 
@@ -3693,6 +3718,10 @@ msgstr "తాళం"
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Lock editing"
+msgstr ""
+
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "Locked. Unlock to edit."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -3754,6 +3783,10 @@ msgstr "మలయాళం"
 msgid "Many bullets start with the same phrase."
 msgstr "చాలా బుల్లెట్లు ఒకే పదబంధంతో మొదలవుతాయి."
 
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Mar 2022"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Marathi"
 msgstr "మరాఠీ"
@@ -3769,6 +3802,10 @@ msgstr "మార్జిన్ (ఉర్ధ్వాదహం)"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Mark rejected"
 msgstr "తిరస్కరించబడిందిగా గుర్తించు"
+
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Markdown shortcuts on"
+msgstr ""
 
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Match scoring failed."
@@ -3808,6 +3845,10 @@ msgstr ""
 msgid "More download formats…"
 msgstr ""
 
+#: src/features/resume/editor/write/fields.tsx
+msgid "More options"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "More than one email address appears."
 msgstr "ఒకటి కంటే ఎక్కువ ఇమెయిల్ చిరునామాలు కనిపిస్తున్నాయి."
@@ -3832,6 +3873,14 @@ msgstr "చాలా సిస్టమ్‌లు అభ్యర్థుల�
 msgid "Move all content inside the page boundaries and re-export."
 msgstr "మొత్తం కంటెంట్‌ను పేజీ హద్దుల లోపలికి తరలించి, తిరిగి ఎగుమతి చేయండి."
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Move down"
+msgstr ""
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Move field up"
+msgstr ""
+
 #: src/libs/resume/ats.ts
 msgid "Move it into the main column and keep the sidebar for short lists."
 msgstr "దీన్ని ప్రధాన నిలువు వరుసలోకి తరలించి, చిన్న జాబితాల కోసం సైడ్‌బార్‌ను ఉంచండి."
@@ -3839,6 +3888,14 @@ msgstr "దీన్ని ప్రధాన నిలువు వరుసల
 #: src/features/ats-checker/messages.ts
 msgid "Move real content into the body of the page; some software discards the margins."
 msgstr "నిజమైన కంటెంట్‌ను పేజీ బాడీలోకి తరలించండి; కొన్ని సాఫ్ట్‌వేర్‌లు మార్జిన్‌లను విస్మరిస్తాయి."
+
+#: src/features/resume/editor/write/entries.tsx
+msgid "Move role down"
+msgstr ""
+
+#: src/features/resume/editor/write/entries.tsx
+msgid "Move role up"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Move section to another column or page"
@@ -3850,7 +3907,6 @@ msgstr "దశను మార్చు"
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Move to"
 msgstr "కి తరలించండి"
@@ -3863,6 +3919,14 @@ msgstr "ఇంటర్వ్యూకు తరలించండి"
 msgid "Move to offer"
 msgstr "ఆఫర్‌కు తరలించండి"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Move to…"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Move up"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Move your email and phone number to the top of page one."
 msgstr "మీ ఇమెయిల్ మరియు ఫోన్ నంబర్‌ను మొదటి పేజీ పైభాగానికి తరలించండి."
@@ -3871,25 +3935,16 @@ msgstr "మీ ఇమెయిల్ మరియు ఫోన్ నంబర�
 msgid "Moved to"
 msgstr "దీనికి తరలించబడింది"
 
-#. Placeholder text for custom link URL field in resume builder
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Must start with https://"
-msgstr "తప్పనిసరిగా https:// తో ప్రారంభించాలి"
-
 #. Label for full name input on registration form
 #: src/dialogs/api-key/create.tsx
 #: src/dialogs/resume/index.tsx
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/skill.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/ats-checker/parse-preview.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/cover-letters/editor.tsx
 #: src/features/cover-letters/library.tsx
+#: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/pages/profile.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "పేరు"
@@ -3910,7 +3965,7 @@ msgstr "ఒకటి కంటే ఎక్కువ పాస్‌కీలు
 msgid "Nepali"
 msgstr "నేపాళీ"
 
-#: src/dialogs/resume/sections/profile.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Network"
 msgstr "నెట్‌వర్క్"
 
@@ -3931,7 +3986,10 @@ msgstr "కొత్త దరఖాస్తు"
 msgid "New Line"
 msgstr "కొత్త లైన్"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "New page"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New Page"
 msgstr "కొత్త పేజీ"
@@ -3942,9 +4000,9 @@ msgstr "కొత్త పేజీ"
 msgid "New Password"
 msgstr "న్యూ పాస్‌వర్డ్"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-msgid "New Section"
-msgstr "కొత్త విభాగం"
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "New section"
+msgstr ""
 
 #: src/features/applications/components/table-view.tsx
 msgid "New tag…"
@@ -4053,6 +4111,10 @@ msgstr "ఇంకా పాస్‌కీలు నమోదు కాలేద
 #: src/features/ats-checker/messages.ts
 msgid "No phone number was found."
 msgstr "ఫోన్ నంబర్ కనుగొనబడలేదు."
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "No photo. Most ATS ignore photos; some regions expect one."
+msgstr ""
 
 #: src/routes/_home/ats-checker.tsx
 msgid "No prediction of whether you will be rejected. No tool can do that."
@@ -4183,6 +4245,10 @@ msgstr "సరిచేయాల్సింది ఏమీ లేదు. మ�
 msgid "Nothing to suggest."
 msgstr "సూచించాల్సింది ఏమీ లేదు."
 
+#: src/features/resume/editor/write/rich-text-editor.tsx
+msgid "Numbered list"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "ఒడియా"
@@ -4231,6 +4297,10 @@ msgstr "మొదటి పేజీలు మాత్రమే చెక్ �
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Open"
 msgstr "తెరవండి"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Open {title}"
+msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Open design library"
@@ -4295,7 +4365,7 @@ msgstr "ఏజెంట్ కోసం ఐచ్ఛిక గమనిక…"
 msgid "Optionally, which terms from a job posting already appear."
 msgstr "ఐచ్ఛికంగా, ఉద్యోగ పోస్టింగ్ నుండి ఏ పదాలు ఇప్పటికే కనిపిస్తున్నాయో."
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Options for {title}"
 msgstr "{title} కోసం ఎంపికలు"
 
@@ -4312,11 +4382,12 @@ msgstr "లేదా రెజ్యూమే PDFను అప్లోడ్ �
 msgid "Ordered List"
 msgstr "ఆర్డర్డ్ లిస్ట్"
 
-#: src/dialogs/resume/sections/volunteer.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
 msgstr "ఆర్గనైజేషన్"
 
 #: src/components/input/rich-input.tsx
+#: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "అసలు టేబుల్ ఫార్మాటింగ్ భద్రపరచబడింది. ఈ కంటెంట్ సురక్షితంగా సవరించబడనందున చదవడానికి మాత్రమే."
 
@@ -4332,9 +4403,10 @@ msgstr "పేజ్"
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: Math.floor(offset / 20) + 1
 #. placeholder {0}: pageIndex + 1
-#. placeholder {0}: targetPageIndex + 1
+#. placeholder {0}: row.page + 1
 #: src/features/cover-letters/library.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "పేజ్ {0}"
@@ -4470,26 +4542,27 @@ msgstr "PDF టెక్స్ట్ లేయర్"
 msgid "PDFs already attached to applications will remain available."
 msgstr "అప్లికేషన్‌లకు ఇప్పటికే జోడించిన PDFలు అందుబాటులో ఉంటాయి."
 
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
-msgid "Period"
-msgstr "కాలము"
-
 #: src/libs/locale.ts
 msgid "Persian"
 msgstr "పర్షియన్"
 
-#: src/dialogs/resume/sections/reference.tsx
 #: src/features/ats-checker/parse-preview.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Phone"
 msgstr "ఫోన్"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Phone (optional)"
 msgstr "ఫోన్ (ఐచ్ఛికం)"
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Photo hidden from the page."
+msgstr ""
+
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Photo on the page."
+msgstr ""
 
 #: src/routes/agent/index.tsx
 msgid "Pick a conversation from the sidebar, or start a new thread to work on a draft."
@@ -4552,7 +4625,7 @@ msgid "Polish"
 msgstr "పోలిష్"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Portrait"
 msgstr "పోర్ట్రెయిట్"
 
@@ -4564,8 +4637,7 @@ msgstr "పోర్చుగీస్ (బ్రెజిల్)"
 msgid "Portuguese (Portugal)"
 msgstr "పోర్చుగీస్ (పోర్చుగల్)"
 
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/reference.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "పాజిషన్"
 
@@ -4598,6 +4670,10 @@ msgstr "మీ రెజ్యూమెను ముద్రణకు సిద
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Preparing…"
+msgstr ""
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Present"
 msgstr ""
 
 #: src/components/input/color-picker.tsx
@@ -4671,7 +4747,7 @@ msgstr "ప్రొడక్ట్ డిజైనర్"
 msgid "Product strategy"
 msgstr "ప్రొడక్ట్ స్ట్రాటజీ"
 
-#: src/dialogs/resume/sections/skill.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "నైపుణ్యం స్థాయి"
 
@@ -4681,7 +4757,6 @@ msgstr "నైపుణ్యం స్థాయి"
 msgid "Profile"
 msgstr "ప్రొఫైల్"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Profiles"
@@ -4691,7 +4766,6 @@ msgstr "ప్రొఫైల్స్"
 msgid "Progress Bar"
 msgstr "ప్రోగ్రెస్ బార్"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/resume-sculpture.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
@@ -4723,13 +4797,12 @@ msgstr "ప్రొవైడర్ మోడల్"
 msgid "Public"
 msgstr "పబ్లిక్"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "పబ్లికేషన్స్"
 
-#: src/dialogs/resume/sections/publication.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
 msgstr "పబ్లిషర్"
 
@@ -4870,8 +4943,8 @@ msgstr "హెచ్చరికలతో యాక్టివేట్ చే�
 msgid "Ready to put your name on it?"
 msgstr "దీనిపై మీ పేరు పెట్టడానికి సిద్ధమా?"
 
-#: src/dialogs/resume/sections/cover-letter.tsx
 #: src/features/cover-letters/editor.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Recipient"
 msgstr "గ్రహీత"
 
@@ -4887,7 +4960,6 @@ msgstr "ఆయతం (పూర్తి వెడల్పు)"
 msgid "Redo stylesheet edit"
 msgstr "స్టైల్‌షీట్ సవరణను మళ్లీ చేయండి"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "References"
@@ -4917,10 +4989,6 @@ msgstr "మీ పాస్‌వర్డ్ గుర్తుందా? <0/>"
 msgid "Remote, Hybrid, a city…"
 msgstr "రిమోట్, హైబ్రిడ్, ఒక నగరం…"
 
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Remove"
-msgstr "తొలగించు"
-
 #. Screen reader label for button that removes a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
 msgid "Remove {chip}"
@@ -4930,9 +4998,9 @@ msgstr "తొలగించు {chip}"
 msgid "Remove contact"
 msgstr "పరిచయాన్ని తీసివేయండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Remove custom field"
-msgstr "కస్టమ్ ఫీల్డ్‌ను తొలగించండి"
+#: src/features/resume/editor/write/basics-card.tsx
+msgid "Remove field"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Remove file"
@@ -4946,6 +5014,10 @@ msgstr "లింక్‌ను తొలగించండి"
 msgid "Remove Password"
 msgstr "పాస్‌వర్డ్‌ను తీసివేయండి"
 
+#: src/features/resume/editor/write/entries.tsx
+msgid "Remove role"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Remove tag"
 msgstr "ట్యాగ్‌ను తీసివేయండి"
@@ -4954,10 +5026,7 @@ msgstr "ట్యాగ్‌ను తీసివేయండి"
 msgid "Removing password protection..."
 msgstr "పాస్‌వర్డ్ రక్షణను తీసివేస్తున్నాము..."
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Rename"
-msgstr "రీనేమ్"
-
+#: src/features/resume/editor/write/section-row.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Rename…"
 msgstr ""
@@ -4966,13 +5035,14 @@ msgstr ""
 msgid "Renders your current resume to PDF and runs the full file check in your browser. Nothing is uploaded."
 msgstr "మీ ప్రస్తుత రెజ్యూమ్‌ను PDF గా మార్చి, మీ బ్రౌజర్‌లోనే పూర్తి ఫైల్ తనిఖీని నడుపుతుంది. ఏదీ అప్‌లోడ్ కాదు."
 
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Reorder"
-msgstr "మళ్ళీ అమర్చు"
+#. placeholder {0}: title || t`Untitled`
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Reorder {0}"
+msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
-msgid "Reorder custom field"
-msgstr "కస్టమ్ ఫీల్డ్‌ను తిరిగి ఆర్డర్ చేయండి"
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Reorder {title}"
+msgstr ""
 
 #. placeholder {0}: jd.stuffedTerms.join(", ")
 #: src/features/ats-checker/report/jd-coverage.tsx
@@ -5020,10 +5090,8 @@ msgstr "ధ్రువీకరణ ఇమెయిల్‌ను మళ్ల�
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "పెద్ద అక్షరాలను చిన్న శీర్షికలకే రిజర్వ్ చేయండి. అవి చదవడాన్ని నెమ్మది చేస్తాయి మరియు కేస్-సెన్సిటివ్ శోధనను దెబ్బతీయగలవు."
 
-#. Destructive confirmation button label when resetting a resume section
 #: src/features/homepage/ats-playground.tsx
 #: src/features/homepage/feature-explorer.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Reset"
 msgstr "రీసెట్ చేయండి"
 
@@ -5172,6 +5240,11 @@ msgstr "కుడి align చేయండి"
 msgid "Role (optional)"
 msgstr "పాత్ర (ఐచ్చికం)"
 
+#. placeholder {0}: index + 1
+#: src/features/resume/editor/write/entries.tsx
+msgid "Role {0}"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Role / title"
 msgstr "పాత్ర / హోదా"
@@ -5180,15 +5253,11 @@ msgstr "పాత్ర / హోదా"
 msgid "Role A–Z"
 msgstr "పాత్ర A–Z"
 
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Role Progression"
-msgstr "పాత్ర పురోగతి"
-
 #: src/libs/locale.ts
 msgid "Romanian"
 msgstr "రోమేనియన్"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Rotation"
 msgstr "రోటేషన్"
 
@@ -5261,21 +5330,6 @@ msgid "Save changes"
 msgstr "మార్పులను సేవ్ చేయండి"
 
 #: src/dialogs/resume/index.tsx
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/cover-letter.tsx
-#: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/skill.tsx
-#: src/dialogs/resume/sections/summary-item.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
 #: src/features/cover-letters/editor.tsx
 #: src/features/settings/pages/profile.tsx
 msgid "Save Changes"
@@ -5339,7 +5393,7 @@ msgstr ""
 msgid "Schedule interview"
 msgstr ""
 
-#: src/dialogs/resume/sections/education.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "School"
 msgstr "పాఠశాల"
 
@@ -5399,19 +5453,14 @@ msgstr "శోధన…"
 msgid "Secret copied to clipboard."
 msgstr "రహస్యాన్ని క్లిప్‌బోర్డ్‌కు కాపీ చేశాం."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Section options"
-msgstr "విభాగ ఎంపికలు"
-
-#: src/dialogs/resume/sections/custom.tsx
-msgid "Section Type"
-msgstr "విభాగపు రకం"
-
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
 msgid "Sections"
 msgstr "విభాగాలు"
+
+#: src/features/resume/editor/write/write-panel.tsx
+msgid "Sections · print order"
+msgstr ""
 
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "See how this resume matches the posting"
@@ -5560,7 +5609,7 @@ msgstr "సెట్టింగులు"
 msgid "Setup Authenticator App"
 msgstr "ఆథెంటికేటర్ యాప్ సెట్‌అప్ చేయండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Shadow Width"
 msgstr "నెరడు వెడల్పు"
 
@@ -5580,21 +5629,14 @@ msgstr "షేరింగ్"
 msgid "Sharing preview"
 msgstr "షేరింగ్ ప్రివ్యూ"
 
-#: src/features/resume/builder/section-recovery.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "Show"
-msgstr "చూపించండి"
-
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #: src/features/applications/components/board.tsx
 msgid "Show {0} more"
 msgstr "ఇంకా {0} చూపించు"
 
-#: src/features/resume/builder/section-recovery.tsx
-msgid "Show {title} section"
-msgstr "{title} విభాగాన్ని చూపు"
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Show {title} on the page"
+msgstr ""
 
 #: src/features/homepage/languages-showcase.test.tsx
 #: src/features/homepage/languages-showcase.tsx
@@ -5605,22 +5647,17 @@ msgstr "అన్ని భాషలను చూపించు"
 msgid "Show Download Buttons"
 msgstr "డౌన్‌లోడ్ బటన్‌లను చూపించు"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "శీర్షికను చూపు"
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
+#: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
 msgstr "శీర్షికలో లింక్ చూపించు"
+
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Show on page"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Show panel"
@@ -5644,7 +5681,7 @@ msgstr ""
 msgid "Show password"
 msgstr "పాస్‌వర్డ్ చూపించు"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Show picture"
 msgstr "చిత్రాన్ని చూపించు"
 
@@ -5659,6 +5696,7 @@ msgid "Showing {0} of {1}"
 msgstr "{0}లో {1} చూపిస్తున్నాం"
 
 #. Layout editor column label for the secondary sidebar area
+#: src/features/resume/editor/write/outline.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "సైడ్‌బార్"
@@ -5745,11 +5783,10 @@ msgstr "ప్రతి పేజీలో పెద్ద అక్షరాల
 msgid "Single-column; polished and serious for senior or enterprise-level positions."
 msgstr "ఒకే-కాలమ్; శుభ్రమైన మరియు ప్రాధాన్యత ఉన్న సీనియర్ లేదా ఎంటర్‌ప్రైజ్-లెవల్ స్థానాలకు సరిపోయే విధంగా."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Size"
 msgstr "సైజు"
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/languages-showcase.tsx
 #: src/features/homepage/resume-sculpture.tsx
@@ -5758,7 +5795,7 @@ msgstr "సైజు"
 msgid "Skills"
 msgstr "స్కిల్స్"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Skip and Upload"
 msgstr "తెరవండి మరియు అప్‌లోడ్ చేయండి"
 
@@ -5860,7 +5897,7 @@ msgstr "ఏదో తప్పు జరిగింది. దయచేసి �
 msgid "Sort by"
 msgstr "సორტ్ చేయండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "Sort by date"
 msgstr "తేదీ ప్రకారం అమర్చండి"
 
@@ -5920,7 +5957,7 @@ msgstr "పేజీలను విడదీయండి"
 
 #. Preset button for setting picture aspect ratio to square
 #: src/components/level/combobox.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Square"
 msgstr "స్క్వేర్"
 
@@ -5945,6 +5982,10 @@ msgstr "GitHub లో మాకు స్టార్ ఇవ్వండి (క
 #: src/components/input/github-stars-button.tsx
 msgid "Star us on GitHub, currently {0} stars (opens in new tab)"
 msgstr "GitHub లో మాకు స్టార్ ఇవ్వండి, ప్రస్తుతం {0} స్టార్ లు ఉన్నాయి (కొత్త ట్యాబ్‌లో తెరవబడుతుంది)"
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Start"
+msgstr ""
 
 #: src/routes/agent/$threadId.tsx
 msgid "Start a new thread"
@@ -5979,6 +6020,10 @@ msgstr "ప్రతిదాన్ని నిర్దిష్ట క్ర�
 msgid "Start new thread"
 msgstr "కొత్త థ్రెడ్‌ను ప్రారంభించండి"
 
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Start on a new page"
+msgstr ""
+
 #. Layout editor toggle that forces a section to begin on a new page
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Start on new page"
@@ -5991,6 +6036,10 @@ msgstr "రెజ్యూమ్‌ను మీ పేరుతో, దాన�
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Start thread"
 msgstr "థ్రెడ్ ప్రారంభించండి"
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Start with the sections most resumes have."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Statistics"
@@ -6050,13 +6099,10 @@ msgstr "సబ్రెడిట్"
 msgid "Suggestions"
 msgstr "సూచనలు"
 
-#. Fallback title for a custom summary item in resume builder when content is empty
-#. Fallback title for a custom summary item in resume builder when content is unavailable
-#: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
+#: src/features/resume/editor/write/summary-editor.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 msgid "Summary"
 msgstr "సమ్మరీ"
 
@@ -6168,6 +6214,10 @@ msgstr "…ని పరీక్షిస్తోంది"
 msgid "Testing… {elapsedSeconds}s"
 msgstr "… {elapsedSeconds}లను పరీక్షిస్తోంది"
 
+#: src/features/resume/editor/write/entries.tsx
+msgid "Text"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
 msgid "Text alignment"
 msgstr "టెక్స్ట్ అమరిక"
@@ -6245,6 +6295,10 @@ msgstr "పైన ఉన్న చెక్‌లు యాంత్రికమ
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "The deep check could not finish. Please try again."
 msgstr "డీప్ చెక్ పూర్తి కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి."
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "The end is before the start."
+msgstr ""
 
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
@@ -6550,10 +6604,6 @@ msgstr "ఈ కాలం భవిష్యత్తులో ప్రారం
 msgid "This resume has no embedded cover letters."
 msgstr "ఈ రెజ్యూమెలో పొందుపరిచిన కవర్ లెటర్లు లేవు."
 
-#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
-msgid "This resume is locked"
-msgstr "ఈ రెజ్యూమే లాక్ చేయబడింది"
-
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked and cannot be updated."
 msgstr "ఈ రెజ్యూమ్ లాక్ చేయబడింది మరియు నవీకరించలేరు."
@@ -6614,10 +6664,6 @@ msgstr "ఈ థ్రెడ్ కేవలం చదవడానికి మ�
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "వర్కింగ్ రెస్యూమ్ లేదా AI ప్రొవైడర్ అందుబాటులో లేనందున ఈ థ్రెడ్ కేవలం చదవడానికి మాత్రమే అందుబాటులో ఉంది."
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
-msgid "This will remove all items from this section."
-msgstr "ఇది ఈ విభాగంలోని అన్ని అంశాలను తొలగిస్తుంది."
-
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "This will roll back this patch and any patches applied after it."
 msgstr "ఇది ఈ ప్యాచ్‌ను, దాని తర్వాత వర్తింపజేసిన అన్ని ప్యాచ్‌లను వెనక్కి తీసుకుంటుంది."
@@ -6654,10 +6700,7 @@ msgstr "టైమ్‌లైన్"
 msgid "Tip"
 msgstr "చిట్కా"
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/publication.tsx
+#: src/features/resume/editor/write/entries.tsx
 msgid "Title"
 msgstr "టైటిల్"
 
@@ -6669,7 +6712,6 @@ msgstr "మీ ఖాతాను తొలగించడానికి, క�
 msgid "Today"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-base.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/shared/section-base.tsx
 msgid "Toggle {sectionTitle} section"
 msgstr "{sectionTitle} విభాగాన్ని టోగుల్ చేయండి"
@@ -6849,6 +6891,8 @@ msgstr "అండర్‌లైన్"
 
 #: src/dialogs/resume/template/gallery.tsx
 #: src/features/homepage/feature-explorer.tsx
+#: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/section-row.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Undo"
 msgstr "రద్దు చేయి"
@@ -6865,11 +6909,13 @@ msgstr "మీ {providerName} ఖాతా అన్లింక్ చేస్
 #. Resume card context menu action to remove edit lock
 #. Resume card dropdown action to remove edit lock
 #: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Unlock"
 msgstr "అన్‌లాక్"
 
+#: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Unlock editing"
 msgstr ""
@@ -6878,6 +6924,10 @@ msgstr ""
 msgid "Unnamed passkey"
 msgstr "పేరులేని పాస్‌కీ"
 
+#: src/features/resume/editor/write/entry-card.tsx
+msgid "Untitled"
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "అన్‌వెరిఫైడ్"
@@ -6885,71 +6935,6 @@ msgstr "అన్‌వెరిఫైడ్"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr ""
-
-#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-msgid "Update"
-msgstr "అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/award.tsx
-msgid "Update an existing award"
-msgstr "ఉన్న అవార్డును అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/certification.tsx
-msgid "Update an existing certification"
-msgstr "ఉన్న సర్టిఫికేషన్‌ను అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/cover-letter.tsx
-msgid "Update an existing cover letter"
-msgstr "ఇప్పటికే ఉన్న కవర్ లెటర్‌ను అప్‌డేట్ చేయి"
-
-#: src/dialogs/resume/sections/custom.tsx
-msgid "Update an existing custom section"
-msgstr "ఉన్న కస్టమ్ సెక్షన్‌ను అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/education.tsx
-msgid "Update an existing education"
-msgstr "ఉన్న ఎడ్యుకేషన్‌ను అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/experience.tsx
-msgid "Update an existing experience"
-msgstr "ఉన్న అనుభవాన్ని అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/interest.tsx
-msgid "Update an existing interest"
-msgstr "ఉన్న ఆసక్తిని అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/language.tsx
-msgid "Update an existing language"
-msgstr "ఉన్న భాషను అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/profile.tsx
-msgid "Update an existing profile"
-msgstr "ఉన్న ప్రొఫైల్‌ను అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/project.tsx
-msgid "Update an existing project"
-msgstr "ఉన్న ప్రాజెక్ట్‌ను అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/publication.tsx
-msgid "Update an existing publication"
-msgstr "ఉన్న ప్రచురణను అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/reference.tsx
-msgid "Update an existing reference"
-msgstr "ఉన్న రిఫరెన్స్‌ను అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/skill.tsx
-msgid "Update an existing skill"
-msgstr "ఉన్న నైపుణ్యాన్ని అప్‌డేట్ చేయండి"
-
-#: src/dialogs/resume/sections/summary-item.tsx
-msgid "Update an existing summary item"
-msgstr "ఇప్పటికే ఉన్న సారాంశ అంశాన్ని అప్‌డేట్ చేయి"
-
-#: src/dialogs/resume/sections/volunteer.tsx
-msgid "Update an existing volunteer experience"
-msgstr "ఉన్న వాలంటీర్ అనుభవాన్ని అప్‌డేట్ చేయండి"
 
 #. Primary action button to submit changed password
 #: src/dialogs/auth/change-password.tsx
@@ -7001,11 +6986,11 @@ msgstr "ఒక రెజ్యూమ్‌ను అప్‌లోడ్ చే
 msgid "Upload attachments"
 msgstr "జోడింపులను అప్‌లోడ్ చేయండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Upload picture"
 msgstr "చిత్రాన్ని అప్‌లోడ్ చేయండి"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Uploading picture…"
 msgstr "చిత్రం అప్‌లోడ్ అవుతోంది…"
 
@@ -7014,7 +6999,7 @@ msgid "Uploading…"
 msgstr "అప్‌లోడ్ అవుతోంది…"
 
 #. Form field label for the generated public resume link in sharing settings
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "URL"
 msgstr "URL"
@@ -7026,6 +7011,10 @@ msgstr "ఉపయోగించండి"
 #: src/libs/resume/ats.ts
 msgid "Use a line height of at least 1.15 so lines are not merged together."
 msgstr "కనీసం 1.15 లైన్ ఎత్తును ఉపయోగించండి, తద్వారా పంక్తులు ఒకదానితో ఒకటి విలీనం చేయబడవు."
+
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Use a month and year, like Mar 2022, or just a year."
+msgstr ""
 
 #: src/libs/resume/ats.ts
 msgid "Use a plain address such as name@example.com, with no surrounding text."
@@ -7098,8 +7087,8 @@ msgid "User research"
 msgstr "యూజర్ రీసెర్చ్"
 
 #. Label for username input on registration form
-#: src/dialogs/resume/sections/profile.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/pages/profile.tsx
 msgid "Username"
 msgstr "యూజర్‌నేమ్"
@@ -7202,7 +7191,6 @@ msgstr "వ్యూస్"
 msgid "Visitors need your password to open the resume."
 msgstr "రెజ్యూమ్‌ను తెరవడానికి సందర్శకులకు మీ పాస్‌వర్డ్ కావాలి."
 
-#: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
@@ -7241,9 +7229,19 @@ msgstr "ఆ ప్రొవైడర్ ఖాతాను మేము లి�
 msgid "We couldn't open this thread."
 msgstr "ఈ థ్రెడ్‌ను తెరవలేకపోయాం."
 
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "We couldn't read \"{0}\". Enter the dates so they sort and print consistently."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "We couldn't read your profile from the provider."
 msgstr "ప్రొవైడర్ నుండి మీ ప్రొఫైల్‌ను మేము చదవలేకపోయాము."
+
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "We read \"{0}\". Pick a month so it sorts and prints consistently."
+msgstr ""
 
 #: src/features/settings/pages/profile.tsx
 msgid "We sent a confirmation link to your new email address. Open it to confirm the change."
@@ -7257,16 +7255,7 @@ msgstr "మీ ఇమెయిల్ చిరునామాకు కొత్
 msgid "Web search"
 msgstr "వెబ్ శోధన"
 
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
-#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Website"
 msgstr "వెబ్‌సైట్"
 
@@ -7282,9 +7271,13 @@ msgstr "ఒక వ్యక్తి ఏమి చూస్తాడు"
 msgid "What do you want to do?"
 msgstr "మీరు ఏమి చేయాలనుకుంటున్నారు?"
 
-#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+#: src/features/resume/editor/write/section-row.tsx
 msgid "What do you want to rename this section to?"
 msgstr "ఈ విభాగాన్ని మీరు కొత్తగా ఏ పేరుతో మార్చదలుచుకున్నారు?"
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "What goes in it?"
+msgstr ""
 
 #: src/routes/_home/ats-checker.tsx
 msgid "What this checks"
@@ -7524,6 +7517,7 @@ msgid "Your margins are very narrow."
 msgstr "మీ మార్జిన్‌లు చాలా ఇరుకుగా ఉన్నాయి."
 
 #: src/features/homepage/resume-sculpture.tsx
+#: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"
 msgstr "మీ పేరు"
 
@@ -7624,7 +7618,7 @@ msgstr "మీ టూల్స్, కనెక్ట్ అయ్యాయి"
 msgid "Your words as a plain-text document, with headings, lists, and links."
 msgstr "శీర్షికలు, జాబితాలు, లింక్‌లతో మీ మాటలు ప్లెయిన్-టెక్స్ట్ డాక్యుమెంట్‌గా."
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+#: src/features/resume/editor/write/picture-settings.tsx
 msgid "Zoom"
 msgstr "జూమ్"
 
