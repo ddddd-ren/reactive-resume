@@ -12,6 +12,8 @@ test("persists public download-button visibility", async ({ browser, authPage: p
 	await page.reload();
 	await openSidebarSection(page, "Sharing");
 	await expect(downloadPreference).not.toBeChecked();
+	// The address fills in once the session has loaded after the reload.
+	await expect(page.locator("#sharing-url")).toHaveValue(/\/e2e_/);
 	const publicUrl = await page.locator("#sharing-url").inputValue();
 
 	const anonymous = await browser.newPage();

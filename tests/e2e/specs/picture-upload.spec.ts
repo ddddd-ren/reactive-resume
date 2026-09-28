@@ -25,6 +25,11 @@ test("uploads a large JPEG after cropping without exceeding the upload limit", a
 	});
 	const buffer = Buffer.from(dataUrl.slice(dataUrl.indexOf(",") + 1), "base64");
 	expect(buffer.byteLength).toBeLessThan(10 * 1024 * 1024);
+	// The photo row in the Basics card opens every photo option.
+	await page
+		.locator("#sidebar-picture")
+		.getByRole("button", { name: /Edit|Add/ })
+		.click();
 	await page.locator('input[type="file"][aria-label="Upload picture"]').setInputFiles({
 		name: "large-photo.jpg",
 		mimeType: "image/jpeg",
@@ -33,7 +38,7 @@ test("uploads a large JPEG after cropping without exceeding the upload limit", a
 	const cropDialog = page.getByRole("dialog", { name: "Crop picture" });
 	await expect(cropDialog.locator("img")).toBeVisible();
 	await cropDialog.getByRole("button", { name: "Crop and Upload" }).click();
-	await expect(page.locator("#sidebar-picture input[name=url]")).toHaveValue(/\/uploads\//);
+	await expect(page.locator("input[name=url]")).toHaveValue(/\/uploads\//);
 	await expect
 		.poll(() => page.locator("#sidebar-picture img").evaluate((image: HTMLImageElement) => image.naturalWidth))
 		.toBeGreaterThan(0);

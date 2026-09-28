@@ -34,12 +34,28 @@ export async function openSidebarSection(page: Page, title: string) {
 		return;
 	}
 
-	await page.getByRole("tab", { name: designSections.has(title) ? "Design" : "Write", exact: true }).click();
-	// The visible section heading is exactly the title. Filter to visible because the screen-reader-only
-	// resume mirror in the preview also renders <h2> section headings with the same name.
-	const heading = page.getByRole("heading", { name: title, exact: true }).filter({ visible: true }).first();
-	await heading.scrollIntoViewIfNeeded();
-	await expect(heading).toBeVisible();
+	if (designSections.has(title)) {
+		await page.getByRole("tab", { name: "Design", exact: true }).click();
+		// The visible section heading is exactly the title. Filter to visible because the screen-reader-only
+		// resume mirror in the preview also renders <h2> section headings with the same name.
+		const heading = page.getByRole("heading", { name: title, exact: true }).filter({ visible: true }).first();
+		await heading.scrollIntoViewIfNeeded();
+		await expect(heading).toBeVisible();
+		return;
+	}
+
+	// Write: the Basics card is open by default; every other section is an outline row that opens on click.
+	await page.getByRole("tab", { name: "Write", exact: true }).click();
+	if (title === "Basics") {
+		await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toBeVisible();
+		return;
+	}
+	// A custom section can share a built-in's title (the sample has two "Experience" sections); prefer the built-in.
+	const builtIn = page.locator(`#sidebar-${title.toLowerCase()}`).getByRole("button", { name: title, exact: true });
+	const row = (await builtIn.count()) > 0 ? builtIn : page.getByRole("button", { name: title, exact: true }).first();
+	await row.scrollIntoViewIfNeeded();
+	if ((await row.getAttribute("aria-expanded")) !== "true") await row.click();
+	await expect(row).toHaveAttribute("aria-expanded", "true");
 }
 
 /** Opens the Download dialog with every format from the ▾ next to Download PDF. */

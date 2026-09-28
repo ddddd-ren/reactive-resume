@@ -2,12 +2,7 @@ import type { Page, TestInfo } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { Pool } from "pg";
-import {
-	createSampleResumeFromDashboard,
-	openDownloadDialog,
-	openResumeCardMenu,
-	openSidebarSection,
-} from "../fixtures/resume";
+import { createSampleResumeFromDashboard, openDownloadDialog, openResumeCardMenu } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 const summaryMarker = "RECOVERY_SUMMARY_MARKER";
@@ -91,28 +86,16 @@ function waitForResumeSave(page: Page) {
 	});
 }
 
-async function hideStandardSection(page: Page, title: string) {
-	await openSidebarSection(page, title);
-	const heading = page.getByRole("heading", { name: title, exact: true }).filter({ visible: true }).first();
-	await heading.locator("xpath=../..").getByRole("button", { name: "Section options" }).click();
+// Hidden sections stay in the outline; the eye on the row hides and shows them.
+async function hideSection(page: Page, title: string) {
 	const saved = waitForResumeSave(page);
-	await page.getByRole("menuitem", { name: "Hide", exact: true }).click();
-	await saved;
-}
-
-async function hideCustomSection(page: Page, title: string) {
-	await openSidebarSection(page, "Custom Sections");
-	const titleElement = page.getByText(title, { exact: true }).filter({ visible: true }).first();
-	const card = titleElement.locator("xpath=../../..");
-	await card.getByRole("button", { name: "Section options" }).click();
-	const saved = waitForResumeSave(page);
-	await page.getByRole("menuitem", { name: "Hide", exact: true }).click();
+	await page.getByRole("button", { name: `Hide ${title} from the page` }).click();
 	await saved;
 }
 
 async function showSection(page: Page, title: string) {
 	const saved = waitForResumeSave(page);
-	await page.getByRole("button", { name: `Show ${title} section` }).click();
+	await page.getByRole("button", { name: `Show ${title} on the page` }).click();
 	await saved;
 }
 
@@ -150,21 +133,18 @@ test("recovers hidden printable sections without changing authored placement", a
 	const authoredLayout = await seedRecoveryResume(resumeId);
 	await page.reload();
 
-	await hideStandardSection(page, "Recovery Summary");
-	await hideStandardSection(page, "Recovery Experience");
-	await hideCustomSection(page, "Recovery Custom");
+	await hideSection(page, "Recovery Summary");
+	await hideSection(page, "Recovery Experience");
+	await hideSection(page, "Recovery Custom");
 	await page.reload();
 
 	for (const title of ["Recovery Summary", "Recovery Experience", "Recovery Custom"]) {
-		await expect(page.getByRole("button", { name: `Show ${title} section` })).toBeVisible();
+		await expect(page.getByRole("button", { name: `Show ${title} on the page` })).toHaveAttribute(
+			"aria-pressed",
+			"true",
+		);
+		await expect(page.getByRole("button", { name: title, exact: true })).toBeVisible();
 	}
-	await expect(
-		page.getByRole("heading", { name: "Recovery Summary", exact: true }).filter({ visible: true }),
-	).toHaveCount(0);
-	await expect(
-		page.getByRole("heading", { name: "Recovery Experience", exact: true }).filter({ visible: true }),
-	).toHaveCount(0);
-	await expect(page.getByText("Recovery Custom", { exact: true }).filter({ visible: true })).toHaveCount(1);
 
 	const hiddenPdf = await downloadPdfText(page, testInfo, "section-recovery-hidden");
 	expect(hiddenPdf).not.toContain(summaryMarker);
@@ -186,10 +166,10 @@ test("recovers hidden printable sections without changing authored placement", a
 	expect(shownPdf).toContain(customMarker);
 
 	await page.getByRole("button", { name: "Undo", exact: true }).click();
-	await expect(page.getByRole("button", { name: "Show Recovery Custom section" })).toBeVisible();
+	await expect(page.getByRole("button", { name: "Show Recovery Custom on the page" })).toBeVisible();
 	// Redo has no button in the editor bar; ⇧⌘Z works while focus is outside fields (here, on Undo).
 	await page.keyboard.press("ControlOrMeta+Shift+Z");
-	await expect(page.getByRole("button", { name: "Show Recovery Custom section" })).toHaveCount(0);
+	await expect(page.getByRole("button", { name: "Show Recovery Custom on the page" })).toHaveCount(0);
 
 	await page.getByRole("button", { name: "Undo", exact: true }).click();
 	await expect
@@ -206,6 +186,6 @@ test("recovers hidden printable sections without changing authored placement", a
 	await locked;
 	await page.goto(`/builder/${resumeId}`);
 
-	await expect(page.getByRole("button", { name: "Show Recovery Custom section" })).toBeDisabled();
+	await expect(page.getByRole("button", { name: "Show Recovery Custom on the page" })).toBeDisabled();
 	expect((await readRecoveryState(resumeId)).metadata.layout).toEqual(authoredLayout);
 });

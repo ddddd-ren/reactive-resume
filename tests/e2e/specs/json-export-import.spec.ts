@@ -24,5 +24,5 @@ test("exports and imports a resume JSON backup", async ({ authPage: page }, test
 
 	await page.waitForURL(/\/builder\/.+/);
 	await openSidebarSection(page, "Basics");
-	await expect(page.getByLabel("Name")).toHaveValue(exportedData.basics.name);
+	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toHaveValue(exportedData.basics.name);
 });

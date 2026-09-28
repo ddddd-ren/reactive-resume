@@ -37,7 +37,7 @@ test("retries a failed autosave before leaving the builder", async ({ authPage: 
 	await page.route(updateUrl, async (route) => {
 		await route.abort("failed");
 	});
-	await page.getByLabel("Name", { exact: true }).fill("Draft recovered before leaving");
+	await page.getByRole("textbox", { name: "Full name", exact: true }).fill("Draft recovered before leaving");
 	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
 	await page.unroute(updateUrl);
 	const arrived = barrier();
@@ -50,11 +50,15 @@ test("retries a failed autosave before leaving the builder", async ({ authPage: 
 	await clickDashboardWithoutNavigationWait(page);
 	await arrived.promise;
 	expect(page.url()).toBe(url);
-	await expect(page.getByLabel("Name", { exact: true })).toHaveValue("Draft recovered before leaving");
+	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toHaveValue(
+		"Draft recovered before leaving",
+	);
 	release.resolve();
 	await page.waitForURL(/\/dashboard/);
 	await page.goto(url);
-	await expect(page.getByLabel("Name", { exact: true })).toHaveValue("Draft recovered before leaving");
+	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toHaveValue(
+		"Draft recovered before leaving",
+	);
 });
 
 test("retains the current draft when saving during navigation fails", async ({ authPage: page }, testInfo) => {
@@ -64,16 +68,16 @@ test("retains the current draft when saving during navigation fails", async ({ a
 		attempts++;
 		await route.abort("failed");
 	});
-	await page.getByLabel("Name", { exact: true }).fill("Keep unsaved draft");
+	await page.getByRole("textbox", { name: "Full name", exact: true }).fill("Keep unsaved draft");
 	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
 	await clickDashboardWithoutNavigationWait(page);
 	await expect.poll(() => attempts).toBe(2);
 	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
 	expect(page.url()).toBe(url);
-	await expect(page.getByLabel("Name", { exact: true })).toHaveValue("Keep unsaved draft");
+	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toHaveValue("Keep unsaved draft");
 	await page.unroute(updateUrl);
 	await clickDashboardWithoutNavigationWait(page);
 	await page.waitForURL(/\/dashboard/);
 	await page.goto(url);
-	await expect(page.getByLabel("Name", { exact: true })).toHaveValue("Keep unsaved draft");
+	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toHaveValue("Keep unsaved draft");
 });

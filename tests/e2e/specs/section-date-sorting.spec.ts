@@ -86,7 +86,7 @@ test("sorts Experience once while preserving undo, persistence, later edits, and
 			.evaluateAll((nodes) => nodes.map(({ id }) => id.replace("resume-item-", "")));
 
 	await expect.poll(renderedItemIds).toEqual(["unknown-sort", "older-sort", "current-sort"]);
-	await section.getByRole("button", { name: "Section options" }).click();
+	await section.getByRole("button", { name: "Options for Experience" }).click();
 	await page.getByRole("menuitem", { name: "Sort by date" }).click();
 	await expect(page.getByText("Could not sort these items; they stayed at the end: Mystery Co.")).toBeVisible();
 	await expect
@@ -99,7 +99,7 @@ test("sorts Experience once while preserving undo, persistence, later edits, and
 		.poll(async () => itemIds(await readExperienceItems(resumeId)))
 		.toEqual(["unknown-sort", "older-sort", "current-sort"]);
 
-	await section.getByRole("button", { name: "Section options" }).click();
+	await section.getByRole("button", { name: "Options for Experience" }).click();
 	await page.getByRole("menuitem", { name: "Sort by date" }).click();
 	await expect
 		.poll(async () => itemIds(await readExperienceItems(resumeId)))
@@ -108,19 +108,23 @@ test("sorts Experience once while preserving undo, persistence, later edits, and
 	await openSidebarSection(page, "Experience");
 	await expect.poll(renderedItemIds).toEqual(["current-sort", "older-sort", "unknown-sort"]);
 
-	await section.getByText("Current Co", { exact: true }).click();
-	const updateDialog = page.getByRole("dialog", { name: "Update an existing experience" });
-	await updateDialog.getByLabel("Period").fill("2010 - 2011");
-	await updateDialog.getByRole("button", { name: "Save Changes" }).click();
+	// Entries edit in place; the dates are structured, and the text dual-written from them.
+	const current = page.locator("#resume-item-current-sort");
+	await current.locator("button[aria-expanded]").first().click();
+	await current.getByRole("switch", { name: "Present" }).click();
+	await current.getByRole("textbox", { name: "Start" }).fill("2010");
+	await current.getByRole("textbox", { name: "End" }).fill("2011");
 	await expect
 		.poll(async () => {
 			const items = await readExperienceItems(resumeId);
 			return { ids: itemIds(items), currentPeriod: items.find(({ id }) => id === "current-sort")?.period };
 		})
-		.toEqual({ ids: ["current-sort", "older-sort", "unknown-sort"], currentPeriod: "2010 - 2011" });
+		.toEqual({ ids: ["current-sort", "older-sort", "unknown-sort"], currentPeriod: "2010 – 2011" });
 
 	// The document menu locks without asking; unlocking is one click away.
 	await page.getByRole("button", { name: /^Document menu/ }).click();
 	await page.getByRole("menuitem", { name: "Lock editing" }).click();
-	await expect(section.getByRole("button", { name: "Section options" })).toBeDisabled();
+	// A locked resume is read-only: the row keeps its title but loses its menu and eye.
+	await expect(section.getByRole("button", { name: "Options for Experience" })).toHaveCount(0);
+	await expect(section.getByRole("button", { name: "Hide Experience from the page" })).toBeDisabled();
 });

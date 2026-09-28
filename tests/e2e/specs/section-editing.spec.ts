@@ -8,11 +8,12 @@ test("adds an experience item and persists it across reloads", async ({ authPage
 	const position = "Principal Tester";
 
 	await openSidebarSection(page, "Experience");
-	await page.getByRole("button", { name: "Add a new experience" }).click();
+	await page.getByRole("button", { name: "Add experience", exact: true }).click();
 
-	const dialog = page.getByRole("dialog", { name: "Create a new experience" });
-	await dialog.getByLabel("Company").fill(company);
-	await dialog.getByLabel("Position").fill(position);
+	// The new draft opens in place with its first field focused; it saves as you type.
+	const entry = page.locator("#sidebar-experience [data-entry-id]").last();
+	await expect(entry.getByText("Draft · not printed")).toBeVisible();
+	await expect(entry.getByRole("textbox", { name: "Position" })).toBeFocused();
 
 	const savePromise = page.waitForResponse((response) => {
 		if (!response.url().includes("/api/rpc")) return false;
@@ -20,10 +21,12 @@ test("adds an experience item and persists it across reloads", async ({ authPage
 		if (!response.ok()) return false;
 		return (response.request().postData() ?? "").includes(company);
 	});
-	await dialog.getByRole("button", { name: "Create" }).click();
+	await entry.getByRole("textbox", { name: "Position" }).fill(position);
+	await entry.getByRole("textbox", { name: "Company" }).fill(company);
 	await savePromise;
 
-	// The new item shows up in the section list with the company as its title
+	// With a company it's no longer a draft, and its card reads "company · …"
+	await expect(entry.getByText("Draft · not printed")).toHaveCount(0);
 	await expect(page.getByText(company).filter({ visible: true }).first()).toBeVisible();
 
 	// And it survives a full reload
