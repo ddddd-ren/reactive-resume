@@ -1,10 +1,11 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { FingerprintIcon, GithubLogoIcon, GoogleLogoIcon, LinkedinLogoIcon, VaultIcon } from "@phosphor-icons/react";
+import { GithubLogoIcon, GoogleLogoIcon, LinkedinLogoIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
@@ -91,7 +92,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				}
 				className={cn("hidden", "custom" in providers && "inline-flex")}
 			>
-				<VaultIcon />
+				<Icon name="key" size={16} />
 				{providers.custom}
 			</Button>
 
@@ -102,7 +103,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				}
 				className={cn("hidden", "passkey" in providers && "inline-flex")}
 			>
-				<FingerprintIcon />
+				<Icon name="fingerprint" size={16} />
 				<Trans comment="Label for passkey sign-in button">Passkey</Trans>
 			</Button>
 

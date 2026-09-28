@@ -2,7 +2,6 @@ import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/sch
 import type { Application } from "../types";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { TrashIcon } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useId, useState } from "react";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
@@ -15,6 +14,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
@@ -267,7 +267,7 @@ export function InterviewDialog({
 								if (confirmed) remove.mutate({ id: draft.applicationId, entryId: interview.id });
 							}}
 						>
-							<TrashIcon />
+							<Icon name="delete" size={16} />
 							<Trans>Delete</Trans>
 						</Button>
 					) : (

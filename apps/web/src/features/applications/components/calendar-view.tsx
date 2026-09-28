@@ -4,17 +4,10 @@ import type { Application } from "../types";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import {
-	CalendarBlankIcon,
-	CalendarPlusIcon,
-	CaretLeftIcon,
-	CaretRightIcon,
-	MapPinIcon,
-	PlusIcon,
-} from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { cn } from "@reactive-resume/utils/style";
 import {
@@ -101,7 +94,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 
 					<div className="ms-auto flex items-center gap-1">
 						<Button size="icon-sm" variant="ghost" title={t`Previous month`} onClick={() => shiftMonth(-1)}>
-							<CaretLeftIcon />
+							<Icon name="chevron_left" size={16} />
 						</Button>
 						<Button
 							size="sm"
@@ -112,10 +105,10 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 							<Trans>This month</Trans>
 						</Button>
 						<Button size="icon-sm" variant="ghost" title={t`Next month`} onClick={() => shiftMonth(1)}>
-							<CaretRightIcon />
+							<Icon name="chevron_right" size={16} />
 						</Button>
 						<Button size="sm" className="ms-2" onClick={() => schedule()}>
-							<CalendarPlusIcon />
+							<Icon name="calendar_add_on" size={16} />
 							<Trans>Schedule interview</Trans>
 						</Button>
 					</div>
@@ -158,7 +151,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 										className="flex size-6 items-center justify-center rounded-md text-ink-3 opacity-0 transition-opacity hover:bg-sunken hover:text-ink focus-visible:opacity-100 group-hover/day:opacity-100 max-sm:hidden"
 										onClick={() => schedule(day)}
 									>
-										<PlusIcon className="size-3.5" />
+										<Icon name="add" size={14} />
 									</button>
 									<span
 										className={cn(
@@ -226,7 +219,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 				{upcoming.length === 0 ? (
 					<div className="flex flex-col items-center gap-3 rounded-xl border border-line border-dashed px-4 py-8 text-center">
 						<div className="flex size-10 items-center justify-center rounded-full bg-sunken">
-							<CalendarBlankIcon className="size-5 text-ink-3" />
+							<Icon name="calendar_today" size={20} className="text-ink-3" />
 						</div>
 						<div className="space-y-1">
 							<p className="font-medium text-sm">
@@ -237,7 +230,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 							</p>
 						</div>
 						<Button size="sm" variant="secondary" onClick={() => schedule()}>
-							<CalendarPlusIcon />
+							<Icon name="calendar_add_on" size={16} />
 							<Trans>Schedule interview</Trans>
 						</Button>
 					</div>
@@ -303,7 +296,7 @@ function UpcomingCard({ item, timeRange, locale, onEdit, onOpenApplication }: Up
 				</span>
 				{item.interview.location && (
 					<span className="mt-1.5 flex items-center gap-1 text-ink-3 text-xs">
-						<MapPinIcon className="shrink-0" />
+						<Icon name="location_on" size={16} className="shrink-0" />
 						<span className="truncate">{item.interview.location}</span>
 					</span>
 				)}

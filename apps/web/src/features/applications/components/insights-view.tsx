@@ -2,10 +2,10 @@ import type { ApplicationTimelineEntry } from "@reactive-resume/schema/applicati
 import type { Application } from "../types";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { DownloadSimpleIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useRef } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { orpc } from "@/libs/orpc/client";
 import { computeInsights, computeOutcomes, computeTimeline } from "../insights";
@@ -305,7 +305,7 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 					<Trans>Where your applications went</Trans>
 				</h3>
 				<Button size="sm" variant="secondary" onClick={() => void exportPng()}>
-					<DownloadSimpleIcon />
+					<Icon name="download" size={16} />
 					<Trans>Export PNG</Trans>
 				</Button>
 			</div>

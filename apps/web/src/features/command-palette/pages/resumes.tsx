@@ -1,11 +1,11 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { BriefcaseIcon, ChatCircleDotsIcon, PlusIcon, ReadCvLogoIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { CommandLoading } from "cmdk";
 import { CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -108,12 +108,12 @@ export function ResumesCommandGroup() {
 		<>
 			<BaseCommandGroup heading={<Trans>Search for…</Trans>}>
 				<CommandItem keywords={[t`Resumes`]} value="search.resumes" onSelect={() => pushPage("resumes")}>
-					<ReadCvLogoIcon />
+					<Icon name="description" size={16} />
 					<Trans>Resumes</Trans>
 				</CommandItem>
 
 				<CommandItem keywords={[t`Applications`]} value="search.applications" onSelect={() => pushPage("applications")}>
-					<BriefcaseIcon />
+					<Icon name="work" size={16} />
 					<Trans>Applications</Trans>
 				</CommandItem>
 
@@ -122,7 +122,7 @@ export function ResumesCommandGroup() {
 					value="search.threads"
 					onSelect={() => pushPage("threads")}
 				>
-					<ChatCircleDotsIcon />
+					<Icon name="chat" size={16} />
 					<Trans>Assistant conversations</Trans>
 				</CommandItem>
 			</BaseCommandGroup>
@@ -130,7 +130,7 @@ export function ResumesCommandGroup() {
 			{searchPage === "resumes" ? (
 				<BaseCommandGroup page={commandSearchPage} heading={<Trans>Resumes</Trans>}>
 					<CommandItem value="resumes.create" onSelect={onCreate}>
-						<PlusIcon />
+						<Icon name="add" size={16} />
 						<Trans>Create a new resume</Trans>
 					</CommandItem>
 
@@ -146,7 +146,7 @@ export function ResumesCommandGroup() {
 								keywords={[resume.name, resume.slug]}
 								onSelect={() => onNavigate(`/builder/${resume.id}`)}
 							>
-								<ReadCvLogoIcon />
+								<Icon name="description" size={16} />
 								{resume.name}
 
 								<CommandShortcut className="opacity-0 group-data-[selected=true]/command-item:opacity-100">
@@ -163,7 +163,7 @@ export function ResumesCommandGroup() {
 			{searchPage === "applications" ? (
 				<BaseCommandGroup page={commandSearchPage} heading={<Trans>Applications</Trans>}>
 					<CommandItem value="applications.create" onSelect={onCreateApplication}>
-						<PlusIcon />
+						<Icon name="add" size={16} />
 						<Trans>New Application</Trans>
 					</CommandItem>
 
@@ -179,7 +179,7 @@ export function ResumesCommandGroup() {
 								keywords={[application.company, application.role]}
 								onSelect={() => onOpenApplication(application)}
 							>
-								<BriefcaseIcon />
+								<Icon name="work" size={16} />
 								<span className="min-w-0 truncate">{application.company}</span>
 								<span className="truncate text-ink-3 text-xs">{application.role}</span>
 							</CommandItem>
@@ -205,7 +205,7 @@ export function ResumesCommandGroup() {
 									keywords={[thread.title, documentName]}
 									onSelect={() => onOpenThread(thread)}
 								>
-									<ChatCircleDotsIcon />
+									<Icon name="chat" size={16} />
 									<span className="min-w-0 truncate">{thread.title}</span>
 									<span className="truncate text-ink-3 text-xs">{documentName}</span>
 								</CommandItem>

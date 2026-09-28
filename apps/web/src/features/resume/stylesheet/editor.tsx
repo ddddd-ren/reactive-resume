@@ -18,7 +18,6 @@ import {
 } from "@codemirror/view";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { BookOpenIcon } from "@phosphor-icons/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { convertLegacyStyleRules } from "@reactive-resume/pdf/semantic-legacy";
 import {
@@ -28,6 +27,7 @@ import {
 	shouldShowResumeHeader,
 } from "@reactive-resume/pdf/semantic-tree";
 import { isFatalStylesheetDiagnostic } from "@reactive-resume/resume/stylesheet";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { ColorPicker } from "@/components/input/color-picker";
@@ -515,7 +515,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 			/>
 
 			<p className="flex items-center gap-1.5 text-ink-3 text-xs">
-				<BookOpenIcon aria-hidden="true" className="shrink-0" />
+				<Icon name="menu_book" size={16} aria-hidden="true" className="shrink-0" />
 				<span>
 					<Trans>Not sure what to write?</Trans>{" "}
 					<a

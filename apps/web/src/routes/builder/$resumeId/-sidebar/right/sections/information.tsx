@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react/macro";
-import { HandHeartIcon } from "@phosphor-icons/react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { SectionBase } from "../shared/section-base";
 
 export function InformationSectionBuilder() {
@@ -31,7 +31,7 @@ export function InformationSectionBuilder() {
 					className="mt-2 whitespace-normal px-4! text-xs"
 					render={
 						<a href="http://opencollective.com/reactive-resume" target="_blank" rel="noopener noreferrer">
-							<HandHeartIcon />
+							<Icon name="volunteer_activism" size={16} />
 							<span className="truncate">
 								<Trans>Donate to Reactive Resume</Trans>
 							</span>

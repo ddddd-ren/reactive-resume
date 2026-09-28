@@ -12,11 +12,11 @@ import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useS
 import { CSS } from "@dnd-kit/utilities";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { PencilSimpleIcon, XIcon } from "@phosphor-icons/react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { useFormControl } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { cn } from "@reactive-resume/utils/style";
@@ -110,7 +110,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 							onEdit(index);
 						}}
 					>
-						<PencilSimpleIcon className="size-3.5" />
+						<Icon name="edit" size={14} />
 					</button>
 					<button
 						type="button"
@@ -126,7 +126,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 							onRemove(index);
 						}}
 					>
-						<XIcon className="size-3.5" />
+						<Icon name="close" size={14} />
 					</button>
 				</div>
 			</Badge>

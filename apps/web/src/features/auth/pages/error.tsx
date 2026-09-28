@@ -1,9 +1,9 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ArrowLeftIcon, WarningIcon } from "@phosphor-icons/react";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 
 function getErrorMessage(code: string | undefined): string {
 	switch (code) {
@@ -68,7 +68,7 @@ export function AuthErrorPage({ code, description }: AuthErrorPageProps) {
 			</div>
 
 			<Alert>
-				<WarningIcon />
+				<Icon name="warning" size={16} />
 				<AlertTitle>{getErrorMessage(code)}</AlertTitle>
 				{description && (
 					<AlertDescription>
@@ -84,14 +84,14 @@ export function AuthErrorPage({ code, description }: AuthErrorPageProps) {
 
 			{returnsToSettings ? (
 				<Link to="/dashboard/settings/account" className={buttonVariants({ variant: "secondary" })}>
-					<ArrowLeftIcon />
+					<Icon name="arrow_back" size={16} />
 					<Trans comment="Action returning a signed-in user to the page where they manage linked providers">
 						Back to authentication settings
 					</Trans>
 				</Link>
 			) : (
 				<Link to="/auth/login" className={buttonVariants({ variant: "secondary" })}>
-					<ArrowLeftIcon />
+					<Icon name="arrow_back" size={16} />
 					<Trans comment="Action returning the visitor to the sign-in page after a failed sign-in">
 						Back to sign in
 					</Trans>

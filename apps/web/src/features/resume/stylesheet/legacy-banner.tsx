@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/react/macro";
-import { ArrowRightIcon, InfoIcon } from "@phosphor-icons/react";
 import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 
 export type LegacyStylesheetBannerProps = {
 	disabled: boolean;
@@ -11,7 +11,7 @@ export type LegacyStylesheetBannerProps = {
 export function LegacyStylesheetBanner({ disabled, onActivate }: LegacyStylesheetBannerProps) {
 	return (
 		<Alert>
-			<InfoIcon />
+			<Icon name="info" size={16} />
 			<AlertTitle>
 				<Trans>Converted stylesheet draft</Trans>
 			</AlertTitle>
@@ -21,7 +21,7 @@ export function LegacyStylesheetBanner({ disabled, onActivate }: LegacyStyleshee
 				</p>
 				<Button type="button" size="sm" disabled={disabled} onClick={onActivate}>
 					<Trans>Activate Semantic CSS</Trans>
-					<ArrowRightIcon data-icon="inline-end" />
+					<Icon name="arrow_forward" size={16} data-icon="inline-end" />
 				</Button>
 			</AlertDescription>
 		</Alert>

@@ -1,7 +1,6 @@
 import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ArrowDownIcon, CopyIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
 import { useRouter } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
@@ -18,6 +17,7 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { OTPField } from "@reactive-resume/ui/components/otp-field";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -225,7 +225,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 															message: "Show password",
 														})}
 											</span>
-											{showPassword ? <EyeIcon /> : <EyeSlashIcon />}
+											{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
 										</Button>
 									</div>
 									<FormMessage errors={field.state.meta.errors} />
@@ -255,7 +255,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 													message: "Copy secret",
 												})}
 											</span>
-											<CopyIcon />
+											<Icon name="content_copy" size={16} />
 										</Button>
 									</div>
 
@@ -321,11 +321,11 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 
 								<div className="flex items-center gap-x-2">
 									<Button type="button" variant="secondary" onClick={handleDownloadBackupCodes} className="flex-1">
-										<ArrowDownIcon className="me-2 size-4" />
+										<Icon name="arrow_downward" size={16} className="me-2" />
 										<Trans comment="Action button to download two-factor backup codes as a text file">Download</Trans>
 									</Button>
 									<Button type="button" variant="ghost" onClick={handleCopyBackupCodes} className="flex-1">
-										<CopyIcon className="me-2 size-4" />
+										<Icon name="content_copy" size={16} className="me-2" />
 										<Trans comment="Action button to copy two-factor backup codes to clipboard">Copy</Trans>
 									</Button>
 								</div>

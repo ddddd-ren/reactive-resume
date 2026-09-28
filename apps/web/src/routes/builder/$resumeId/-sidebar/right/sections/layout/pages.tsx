@@ -14,15 +14,6 @@ import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } 
 import { CSS } from "@dnd-kit/utilities";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import {
-	ArrowBendUpRightIcon,
-	DotsSixVerticalIcon,
-	DotsThreeVerticalIcon,
-	FileIcon,
-	PlusCircleIcon,
-	PlusIcon,
-	TrashIcon,
-} from "@phosphor-icons/react";
 import { useCallback, useId, useState } from "react";
 import { match } from "ts-pattern";
 import { templateLayouts } from "@reactive-resume/schema/templates";
@@ -38,6 +29,7 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
@@ -266,7 +258,7 @@ export function LayoutPages() {
 				))}
 
 				<Button variant="secondary" className="self-end" onClick={handleAddPage}>
-					<PlusIcon />
+					<Icon name="add" size={16} />
 					<Trans>Add Page</Trans>
 				</Button>
 			</div>
@@ -326,7 +318,7 @@ function PageContainer({
 							onClick={() => onDelete(pageIndex)}
 							className="size-auto gap-x-2.5 justify-self-end p-0!"
 						>
-							<TrashIcon />
+							<Icon name="delete" size={16} />
 							<Trans>Delete Page</Trans>
 						</Button>
 					)}
@@ -475,7 +467,7 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 	return (
 		<DropdownMenuSub>
 			<DropdownMenuSubTrigger>
-				<ArrowBendUpRightIcon />
+				<Icon name="redo" size={16} />
 				<Trans>Move to</Trans>
 			</DropdownMenuSubTrigger>
 
@@ -487,7 +479,7 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 					return (
 						<DropdownMenuSub key={`page-${targetPageIndex}`}>
 							<DropdownMenuSubTrigger>
-								<FileIcon />
+								<Icon name="draft" size={16} />
 								<Trans>Page {targetPageIndex + 1}</Trans>
 							</DropdownMenuSubTrigger>
 
@@ -515,7 +507,7 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 				<DropdownMenuSeparator />
 
 				<DropdownMenuItem onClick={moveToNewPage}>
-					<PlusCircleIcon />
+					<Icon name="add_circle" size={16} />
 					<Trans>New Page</Trans>
 				</DropdownMenuItem>
 			</DropdownMenuSubContent>
@@ -628,7 +620,7 @@ function LayoutItemContent({
 			)}
 			{...rest}
 		>
-			<DotsSixVerticalIcon className="opacity-40 transition-opacity group-hover/item:opacity-100" />
+			<Icon name="drag_indicator" size={16} className="opacity-40 transition-opacity group-hover/item:opacity-100" />
 			<span className="min-w-0 flex-1 truncate">{title}</span>
 
 			{/* The drag overlay renders without a location; only real rows get the menu. */}
@@ -639,7 +631,7 @@ function LayoutItemContent({
 						onPointerDown={(event) => event.stopPropagation()}
 						className="flex cursor-context-menu items-center rounded p-0.5 opacity-40 transition-opacity hover:bg-sunken/40 focus:outline-none focus-visible:ring-1 group-hover/item:opacity-100"
 					>
-						<DotsThreeVerticalIcon />
+						<Icon name="more_vert" size={16} />
 					</DropdownMenuTrigger>
 
 					<DropdownMenuContent align="end">

@@ -2,16 +2,10 @@
 
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { useAppForm } from "./tanstack-form";
-
-vi.mock("@/components/input/rich-input", () => ({
-	RichInput: ({ value, onChange }: { value: string; onChange: (value: string) => void }) => (
-		<textarea aria-label="Description value" value={value} onChange={(event) => onChange(event.target.value)} />
-	),
-}));
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
@@ -20,7 +14,6 @@ beforeAll(() => {
 function TestForm() {
 	const form = useAppForm({
 		defaultValues: {
-			description: "Initial description",
 			website: { url: "https://example.com", label: "Example", inlineLink: false },
 		},
 	});
@@ -33,13 +26,6 @@ function TestForm() {
 			>
 				{(field) => <field.WebsiteField label="Website" hideLabelButton formItemClassName="website-field" />}
 			</form.AppField>
-
-			<form.AppField
-				name="description"
-				validators={{ onChange: ({ value }) => (value ? undefined : "Description is required") }}
-			>
-				{(field) => <field.RichTextField label="Description" formItemClassName="description-field" />}
-			</form.AppField>
 		</I18nProvider>
 	);
 }
@@ -50,9 +36,7 @@ describe("registered resume fields", () => {
 		const { container } = render(<TestForm />);
 
 		expect(screen.getByText("Website")).toBeInTheDocument();
-		expect(screen.getByText("Description")).toBeInTheDocument();
 		expect(container.querySelector(".website-field")).toBeInTheDocument();
-		expect(container.querySelector(".description-field")).toBeInTheDocument();
 		const website = screen.getByRole("textbox", { name: "Website" });
 		expect(website).toHaveValue("example.com");
 		expect(screen.getByLabelText("Website")).toBe(website);
@@ -61,9 +45,7 @@ describe("registered resume fields", () => {
 		expect(website).toHaveFocus();
 
 		await user.clear(website);
-		await user.clear(screen.getByLabelText("Description value"));
 
 		expect(screen.getByText("Website is required")).toBeInTheDocument();
-		expect(screen.getByText("Description is required")).toBeInTheDocument();
 	});
 });

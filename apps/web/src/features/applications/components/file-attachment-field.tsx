@@ -1,8 +1,8 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { FilePdfIcon, UploadSimpleIcon, XIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { useRef } from "react";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { orpc } from "@/libs/orpc/client";
 
@@ -57,7 +57,7 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 			{value ? (
 				<div className="flex items-center gap-3 rounded-lg border border-line p-2.5">
 					<span className="flex size-8 items-center justify-center rounded-md bg-accent/10 text-accent-text">
-						<FilePdfIcon />
+						<Icon name="picture_as_pdf" size={16} />
 					</span>
 					<a
 						href={value.url}
@@ -74,7 +74,7 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 						className="text-ink-3 hover:text-danger-text disabled:opacity-40"
 						onClick={clear}
 					>
-						<XIcon />
+						<Icon name="close" size={16} />
 					</button>
 				</div>
 			) : (
@@ -84,7 +84,7 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 					onClick={() => inputRef.current?.click()}
 					className="flex w-full items-center gap-2 rounded-lg border border-line border-dashed p-2.5 text-ink-3 text-sm hover:bg-sunken/50 disabled:opacity-60"
 				>
-					<UploadSimpleIcon />
+					<Icon name="upload" size={16} />
 					{upload.isPending ? <Trans>Uploading…</Trans> : attachLabel}
 				</button>
 			)}

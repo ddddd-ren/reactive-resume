@@ -2,14 +2,6 @@ import type { Area } from "react-easy-crop";
 import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import {
-	EyeIcon,
-	EyeSlashIcon,
-	MagnifyingGlassMinusIcon,
-	MagnifyingGlassPlusIcon,
-	TrashSimpleIcon,
-	UploadSimpleIcon,
-} from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import Cropper from "react-easy-crop";
@@ -26,6 +18,7 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import {
 	InputGroup,
@@ -91,7 +84,7 @@ function PicturePreviewControls({
 				)}
 
 				<div className="absolute inset-0 z-0 flex size-full items-center justify-center">
-					{picture.url ? <TrashSimpleIcon className="size-6" /> : <UploadSimpleIcon className="size-6" />}
+					{picture.url ? <Icon name="delete" size={24} /> : <Icon name="upload" size={24} />}
 				</div>
 			</button>
 
@@ -125,7 +118,7 @@ function PicturePreviewControls({
 									onAutoSave();
 								}}
 							>
-								{picture.hidden ? <EyeSlashIcon /> : <EyeIcon />}
+								{picture.hidden ? <Icon name="visibility_off" size={16} /> : <Icon name="visibility" size={16} />}
 							</Button>
 						</div>
 					</FormItem>
@@ -655,7 +648,7 @@ export function PictureSettings() {
 							<span className="text-ink-3 text-xs tabular-nums">{zoom.toFixed(1)}×</span>
 						</div>
 						<div className="flex items-center gap-x-3">
-							<MagnifyingGlassMinusIcon className="size-4 shrink-0 text-ink-3" />
+							<Icon name="zoom_out" size={16} className="shrink-0 text-ink-3" />
 							<Slider
 								min={1}
 								max={3}
@@ -667,7 +660,7 @@ export function PictureSettings() {
 									setZoom(Array.isArray(value) ? value[0] : value);
 								}}
 							/>
-							<MagnifyingGlassPlusIcon className="size-4 shrink-0 text-ink-3" />
+							<Icon name="zoom_in" size={16} className="shrink-0 text-ink-3" />
 						</div>
 					</div>
 

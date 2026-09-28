@@ -1,6 +1,5 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ArrowRightIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { Link, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { useToggle } from "usehooks-ts";
@@ -8,6 +7,7 @@ import z from "zod";
 import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
@@ -104,7 +104,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 							render={
 								<Link to="/auth/login" search={{ callbackURL, reauthenticate }}>
 									<Trans comment="Call-to-action link from registration page to login page">Sign in now</Trans>{" "}
-									<ArrowRightIcon />
+									<Icon name="arrow_forward" size={16} />
 								</Link>
 							}
 						/>
@@ -241,7 +241,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 													})
 										}
 									>
-										{showPassword ? <EyeIcon /> : <EyeSlashIcon />}
+										{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
 									</Button>
 								</div>
 								<FormMessage errors={field.state.meta.errors} />
@@ -287,7 +287,7 @@ function PostSignupScreen() {
 				render={
 					<a href={callbackURL ?? "/dashboard"}>
 						<Trans comment="Button label to continue to dashboard after successful registration">Continue</Trans>{" "}
-						<ArrowRightIcon />
+						<Icon name="arrow_forward" size={16} />
 					</a>
 				}
 			/>

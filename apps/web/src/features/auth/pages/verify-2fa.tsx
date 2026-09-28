@@ -1,10 +1,10 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ArrowLeftIcon, CheckIcon } from "@phosphor-icons/react";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { OTPField } from "@reactive-resume/ui/components/otp-field";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -133,7 +133,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 						nativeButton={false}
 						render={
 							<Link to={backupCode ? "/auth/verify-2fa" : "/auth/login"} search={{ callbackURL, reauthenticate }}>
-								<ArrowLeftIcon />
+								<Icon name="arrow_back" size={16} />
 								{backupCode ? (
 									<Trans comment="Secondary navigation button on backup-code verification screen">Go Back</Trans>
 								) : (
@@ -144,7 +144,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 					/>
 
 					<Button type="submit" className="flex-1">
-						<CheckIcon />
+						<Icon name="check" size={16} />
 						{backupCode ? (
 							<Trans comment="Primary action button to submit backup code">Verify</Trans>
 						) : (

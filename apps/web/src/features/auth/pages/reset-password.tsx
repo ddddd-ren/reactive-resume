@@ -1,11 +1,11 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
@@ -113,7 +113,7 @@ export function ResetPasswordPage({ token }: Props) {
 												})
 									}
 								>
-									{showPassword ? <EyeIcon /> : <EyeSlashIcon />}
+									{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
 								</Button>
 							</div>
 							<FormMessage errors={field.state.meta.errors} />

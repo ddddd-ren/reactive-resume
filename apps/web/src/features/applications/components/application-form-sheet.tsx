@@ -3,12 +3,12 @@ import type { Application } from "../types";
 import type { FileAttachment } from "./file-attachment-field";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { SparkleIcon, XIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { STAGES } from "@reactive-resume/schema/applications/data";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@reactive-resume/ui/components/accordion";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import {
@@ -216,7 +216,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 							<AccordionItem value="job-description">
 								<AccordionTrigger>
 									<span className="flex items-center gap-1.5">
-										<SparkleIcon className="text-accent-text" />
+										<Icon name="auto_awesome" size={16} className="text-accent-text" />
 										<Trans>Job description</Trans>
 									</span>
 								</AccordionTrigger>
@@ -253,7 +253,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 											disabled={form.jobDescription.trim().length < MIN_AUTOFILL_CHARS || autofill.isPending}
 											onClick={() => runAutofill(form.jobDescription)}
 										>
-											<SparkleIcon />
+											<Icon name="auto_awesome" size={16} />
 											<Trans>Fill fields</Trans>
 										</Button>
 									</div>
@@ -464,7 +464,7 @@ function TagsField({ value, suggestions, onChange }: TagsFieldProps) {
 								className="hover:text-danger-text"
 								onClick={() => onChange(value.filter((t) => t !== tag))}
 							>
-								<XIcon className="size-3" />
+								<Icon name="close" size={12} />
 							</button>
 						</span>
 					))}

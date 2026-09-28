@@ -1,9 +1,9 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { SparkleIcon } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
 import { CommandItem } from "@reactive-resume/ui/components/command";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { orpc } from "@/libs/orpc/client";
@@ -49,7 +49,7 @@ export function AskCommandGroup() {
 	return (
 		<BaseCommandGroup heading={<Trans>Ask</Trans>}>
 			<CommandItem value={`ask ${question}`} onSelect={() => void ask()}>
-				<SparkleIcon />
+				<Icon name="auto_awesome" size={16} />
 				<span className="min-w-0 truncate">
 					<Trans>Ask the assistant “{question}”</Trans>
 				</span>

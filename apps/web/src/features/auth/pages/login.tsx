@@ -1,6 +1,5 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ArrowRightIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
@@ -8,6 +7,7 @@ import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
@@ -136,7 +136,7 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 										<Trans comment="Call-to-action link from login page to account registration page">
 											Create one now
 										</Trans>{" "}
-										<ArrowRightIcon />
+										<Icon name="arrow_forward" size={16} />
 									</Link>
 								}
 							/>
@@ -233,7 +233,7 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 													})
 										}
 									>
-										{showPassword ? <EyeIcon /> : <EyeSlashIcon />}
+										{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
 									</Button>
 								</div>
 								<FormMessage errors={field.state.meta.errors} />

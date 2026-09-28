@@ -1,7 +1,6 @@
 import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { EyeIcon, EyeSlashIcon, LockOpenIcon } from "@phosphor-icons/react";
 import { useRouter } from "@tanstack/react-router";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
@@ -14,6 +13,7 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
@@ -74,7 +74,7 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 		<DialogContent>
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
-					<LockOpenIcon />
+					<Icon name="lock_open" size={16} />
 					<Trans>Disable Two-Factor Authentication</Trans>
 				</DialogTitle>
 				<DialogDescription>
@@ -129,7 +129,7 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 													message: "Show password",
 												})}
 									</span>
-									{showPassword ? <EyeIcon /> : <EyeSlashIcon />}
+									{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
 								</Button>
 							</div>
 							<FormMessage errors={field.state.meta.errors} />

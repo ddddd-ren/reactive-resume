@@ -1,7 +1,7 @@
 import type { PdfAtsReport } from "@reactive-resume/resume/ats-pdf";
 import type { CSSProperties } from "react";
 import { Trans } from "@lingui/react/macro";
-import { InfoIcon } from "@phosphor-icons/react";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
 import { getPdfFindingMessage } from "../messages";
@@ -52,7 +52,7 @@ export function ScoreHeader({ report }: ScoreHeaderProps) {
 							render={
 								<span className="inline-flex cursor-help items-center gap-1 underline decoration-dotted underline-offset-2">
 									<Trans>{report.skippedChecks} skipped</Trans>
-									<InfoIcon className="size-3" />
+									<Icon name="info" size={12} />
 								</span>
 							}
 						/>

@@ -1,7 +1,6 @@
 import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { EyeIcon, EyeSlashIcon, PasswordIcon } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
@@ -14,6 +13,7 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
@@ -82,7 +82,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 		<DialogContent>
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
-					<PasswordIcon />
+					<Icon name="password" size={16} />
 					<Trans>Update your password</Trans>
 				</DialogTitle>
 				<DialogDescription>
@@ -132,7 +132,11 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 													message: "Show password",
 												})}
 									</span>
-									{showCurrentPassword ? <EyeIcon /> : <EyeSlashIcon />}
+									{showCurrentPassword ? (
+										<Icon name="visibility" size={16} />
+									) : (
+										<Icon name="visibility_off" size={16} />
+									)}
 								</Button>
 							</div>
 							<FormMessage errors={field.state.meta.errors} />
@@ -174,7 +178,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 													message: "Show password",
 												})}
 									</span>
-									{showNewPassword ? <EyeIcon /> : <EyeSlashIcon />}
+									{showNewPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
 								</Button>
 							</div>
 							<FormMessage errors={field.state.meta.errors} />

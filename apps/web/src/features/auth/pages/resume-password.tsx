@@ -1,13 +1,13 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
-import { EyeIcon, EyeSlashIcon, LockOpenIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { getReadableErrorMessage } from "@/libs/error-message";
@@ -132,7 +132,7 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 												})
 									}
 								>
-									{showPassword ? <EyeIcon /> : <EyeSlashIcon />}
+									{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
 								</Button>
 							</div>
 							<FormMessage errors={field.state.meta.errors} />
@@ -141,7 +141,7 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 				</form.Field>
 
 				<Button type="submit" className="w-full">
-					<LockOpenIcon />
+					<Icon name="lock_open" size={16} />
 					<Trans comment="Primary action button label to unlock a password-protected resume">Unlock</Trans>
 				</Button>
 			</form>

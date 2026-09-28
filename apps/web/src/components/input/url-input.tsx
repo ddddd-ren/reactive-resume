@@ -1,8 +1,8 @@
 import type { Website } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { TagIcon } from "@phosphor-icons/react";
 import { useCallback } from "react";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import {
 	InputGroup,
@@ -79,7 +79,7 @@ export function URLInput<TValue extends Website>({ value, onChange, hideLabelBut
 										message: "Add a label to the URL",
 									})}
 								>
-									<TagIcon />
+									<Icon name="sell" size={16} />
 								</InputGroupButton>
 							}
 						/>

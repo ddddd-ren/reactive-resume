@@ -1,7 +1,6 @@
 import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { MagicWandIcon, PencilSimpleLineIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import z from "zod";
@@ -14,6 +13,7 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { generateRandomName } from "@reactive-resume/utils/string";
@@ -85,7 +85,7 @@ export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 		<DialogContent>
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
-					<PencilSimpleLineIcon />
+					<Icon name="edit" size={16} />
 					<Trans>Update Resume</Trans>
 				</DialogTitle>
 				<DialogDescription>
@@ -150,7 +150,7 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 		<DialogContent>
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
-					<PencilSimpleLineIcon />
+					<Icon name="edit" size={16} />
 					<Trans>Duplicate Resume</Trans>
 				</DialogTitle>
 				<DialogDescription>
@@ -208,7 +208,7 @@ const ResumeForm = withForm({
 								/>
 
 								<Button size="icon" variant="secondary" title={t`Generate a random name`} onClick={onGenerateName}>
-									<MagicWandIcon />
+									<Icon name="auto_fix_high" size={16} />
 								</Button>
 							</div>
 							<FormMessage errors={field.state.meta.errors} />

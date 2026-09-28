@@ -2,7 +2,6 @@ import type { AuthSession } from "@reactive-resume/auth/types";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { PaletteIcon, SignOutIcon, TranslateIcon } from "@phosphor-icons/react";
 import { useRouter } from "@tanstack/react-router";
 import {
 	DropdownMenu,
@@ -81,7 +80,7 @@ export function UserDropdownMenu({ children }: Props) {
 				<DropdownMenuGroup>
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>
-							<TranslateIcon />
+							<Icon name="translate" size={16} />
 							<Trans comment="Menu item that opens language selection submenu">Language</Trans>
 						</DropdownMenuSubTrigger>
 						<DropdownMenuSubContent className="max-h-[400px] overflow-y-auto">
@@ -97,7 +96,7 @@ export function UserDropdownMenu({ children }: Props) {
 
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>
-							<PaletteIcon />
+							<Icon name="palette" size={16} />
 							<Trans comment="Menu item that opens appearance theme selection submenu">Theme</Trans>
 						</DropdownMenuSubTrigger>
 						<DropdownMenuSubContent>
@@ -119,7 +118,7 @@ export function UserDropdownMenu({ children }: Props) {
 				<DropdownMenuSeparator />
 
 				<DropdownMenuItem onClick={handleLogout}>
-					<SignOutIcon />
+					<Icon name="logout" size={16} />
 					<Trans comment="User menu action to sign out of current account">Sign out</Trans>
 				</DropdownMenuItem>
 			</DropdownMenuContent>

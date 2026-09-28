@@ -1,11 +1,11 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ArrowRightIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
@@ -67,7 +67,7 @@ export function ForgotPasswordPage() {
 							render={
 								<Link to="/auth/login">
 									<Trans comment="Call-to-action link from forgot-password page to login page">Sign in now</Trans>{" "}
-									<ArrowRightIcon />
+									<Icon name="arrow_forward" size={16} />
 								</Link>
 							}
 						/>

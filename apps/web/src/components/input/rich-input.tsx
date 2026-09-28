@@ -2,35 +2,6 @@ import type { Editor, UseEditorOptions } from "@tiptap/react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import {
-	ArrowsInSimpleIcon,
-	ArrowsOutSimpleIcon,
-	CodeSimpleIcon,
-	HighlighterCircleIcon,
-	KeyReturnIcon,
-	LinkBreakIcon,
-	LinkIcon,
-	ListBulletsIcon,
-	ListNumbersIcon,
-	MinusIcon,
-	ParagraphIcon,
-	TextAlignCenterIcon,
-	TextAlignJustifyIcon,
-	TextAlignLeftIcon,
-	TextAlignRightIcon,
-	TextBolderIcon,
-	TextHFiveIcon,
-	TextHFourIcon,
-	TextHOneIcon,
-	TextHSixIcon,
-	TextHThreeIcon,
-	TextHTwoIcon,
-	TextIndentIcon,
-	TextItalicIcon,
-	TextOutdentIcon,
-	TextStrikethroughIcon,
-	TextUnderlineIcon,
-} from "@phosphor-icons/react";
 import Color from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
@@ -50,6 +21,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { PopoverHeader, PopoverTitle, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Toggle } from "@reactive-resume/ui/components/toggle";
@@ -616,7 +588,7 @@ export function RichInput({
 				title={isFullscreen ? t`Exit Fullscreen` : t`Fullscreen`}
 				onClick={() => setIsFullscreen(!isFullscreen)}
 			>
-				{isFullscreen ? <ArrowsInSimpleIcon className="size-4" /> : <ArrowsOutSimpleIcon className="size-4" />}
+				{isFullscreen ? <Icon name="close_fullscreen" size={16} /> : <Icon name="open_in_full" size={16} />}
 			</Button>
 		</div>
 	);
@@ -847,7 +819,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				disabled={!state.canBold}
 				onPressedChange={state.toggleBold}
 			>
-				<TextBolderIcon className="size-3.5" />
+				<Icon name="format_bold" size={14} />
 			</Toggle>
 
 			<Toggle
@@ -859,7 +831,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				disabled={!state.canItalic}
 				onPressedChange={state.toggleItalic}
 			>
-				<TextItalicIcon className="size-3.5" />
+				<Icon name="format_italic" size={14} />
 			</Toggle>
 
 			<Toggle
@@ -871,7 +843,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				disabled={!state.canUnderline}
 				onPressedChange={state.toggleUnderline}
 			>
-				<TextUnderlineIcon className="size-3.5" />
+				<Icon name="format_underlined" size={14} />
 			</Toggle>
 
 			<Toggle
@@ -883,7 +855,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				disabled={!state.canStrike}
 				onPressedChange={state.toggleStrike}
 			>
-				<TextStrikethroughIcon className="size-3.5" />
+				<Icon name="format_strikethrough" size={14} />
 			</Toggle>
 
 			<ColorPicker
@@ -902,7 +874,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 								disabled={!state.canHighlightColor}
 							>
 								<span className="flex flex-col items-center leading-none">
-									<HighlighterCircleIcon className="size-3.5" />
+									<Icon name="ink_highlighter" size={14} />
 									<span
 										className="mt-0.5 h-0.5 w-3 rounded-full"
 										style={{ backgroundColor: visibleHighlightColor ?? "currentColor" }}
@@ -919,7 +891,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 							className="grid size-9 place-items-center rounded-lg border border-line bg-sunken/60 text-sm shadow-xs"
 							style={{ backgroundColor: visibleHighlightColor ?? defaultHighlightColor }}
 						>
-							<HighlighterCircleIcon className="size-4" />
+							<Icon name="ink_highlighter" size={16} />
 						</span>
 
 						<div className="flex flex-col gap-0.5">
@@ -1019,15 +991,15 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 							className="rounded-none"
 						>
 							{match(state)
-								.with({ isParagraph: true }, () => <ParagraphIcon className="size-3.5" />)
-								.with({ isHeading1: true }, () => <TextHOneIcon className="size-3.5" />)
-								.with({ isHeading2: true }, () => <TextHTwoIcon className="size-3.5" />)
-								.with({ isHeading3: true }, () => <TextHThreeIcon className="size-3.5" />)
-								.with({ isHeading4: true }, () => <TextHFourIcon className="size-3.5" />)
-								.with({ isHeading5: true }, () => <TextHFiveIcon className="size-3.5" />)
-								.with({ isHeading6: true }, () => <TextHSixIcon className="size-3.5" />)
+								.with({ isParagraph: true }, () => <Icon name="format_paragraph" size={14} />)
+								.with({ isHeading1: true }, () => <Icon name="format_h1" size={14} />)
+								.with({ isHeading2: true }, () => <Icon name="format_h2" size={14} />)
+								.with({ isHeading3: true }, () => <Icon name="format_h3" size={14} />)
+								.with({ isHeading4: true }, () => <Icon name="format_h4" size={14} />)
+								.with({ isHeading5: true }, () => <Icon name="format_h5" size={14} />)
+								.with({ isHeading6: true }, () => <Icon name="format_h6" size={14} />)
 								.otherwise(() => (
-									<ParagraphIcon className="size-3.5" />
+									<Icon name="format_paragraph" size={14} />
 								))}
 						</Button>
 					}
@@ -1098,12 +1070,12 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 							className="rounded-none"
 						>
 							{match(state)
-								.with({ isLeftAlign: true }, () => <TextAlignLeftIcon className="size-3.5" />)
-								.with({ isCenterAlign: true }, () => <TextAlignCenterIcon className="size-3.5" />)
-								.with({ isRightAlign: true }, () => <TextAlignRightIcon className="size-3.5" />)
-								.with({ isJustifyAlign: true }, () => <TextAlignJustifyIcon className="size-3.5" />)
+								.with({ isLeftAlign: true }, () => <Icon name="format_align_left" size={14} />)
+								.with({ isCenterAlign: true }, () => <Icon name="format_align_center" size={14} />)
+								.with({ isRightAlign: true }, () => <Icon name="format_align_right" size={14} />)
+								.with({ isJustifyAlign: true }, () => <Icon name="format_align_justify" size={14} />)
 								.otherwise(() => (
-									<TextAlignLeftIcon className="size-3.5" />
+									<Icon name="format_align_left" size={14} />
 								))}
 						</Button>
 					}
@@ -1152,7 +1124,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				disabled={!state.canBulletList}
 				onPressedChange={state.toggleBulletList}
 			>
-				<ListBulletsIcon className="size-3.5" />
+				<Icon name="format_list_bulleted" size={14} />
 			</Toggle>
 
 			<Toggle
@@ -1164,7 +1136,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				disabled={!state.canOrderedList}
 				onPressedChange={state.toggleOrderedList}
 			>
-				<ListNumbersIcon className="size-3.5" />
+				<Icon name="format_list_numbered" size={14} />
 			</Toggle>
 
 			<Button
@@ -1176,7 +1148,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				disabled={!state.canDecreaseIndent}
 				onClick={state.decreaseIndent}
 			>
-				<TextOutdentIcon className="size-3.5" />
+				<Icon name="format_indent_decrease" size={14} />
 			</Button>
 
 			<Button
@@ -1188,7 +1160,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				disabled={!state.canIncreaseIndent}
 				onClick={state.increaseIndent}
 			>
-				<TextIndentIcon className="size-3.5" />
+				<Icon name="format_indent_increase" size={14} />
 			</Button>
 
 			<div className="mx-1 h-5 w-px bg-line" />
@@ -1202,7 +1174,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 					title={t`Remove link`}
 					onClick={state.unsetLink}
 				>
-					<LinkBreakIcon className="size-3.5" />
+					<Icon name="link_off" size={14} />
 				</Button>
 			) : (
 				<Button
@@ -1213,7 +1185,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 					title={t`Add link`}
 					onClick={state.setLink}
 				>
-					<LinkIcon className="size-3.5" />
+					<Icon name="link" size={14} />
 				</Button>
 			)}
 
@@ -1226,7 +1198,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				disabled={!state.canInlineCode}
 				onPressedChange={state.toggleInlineCode}
 			>
-				<CodeSimpleIcon className="size-3.5" />
+				<Icon name="code" size={14} />
 			</Toggle>
 
 			<Button
@@ -1237,7 +1209,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				title={t`New Line`}
 				onClick={state.setHardBreak}
 			>
-				<KeyReturnIcon className="size-3.5" />
+				<Icon name="keyboard_return" size={14} />
 			</Button>
 
 			<Button
@@ -1248,7 +1220,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				title={t`Separator`}
 				onClick={state.setHorizontalRule}
 			>
-				<MinusIcon className="size-3.5" />
+				<Icon name="horizontal_rule" size={14} />
 			</Button>
 
 			<span className="ml-auto px-2 text-ink-3 text-xs tabular-nums" aria-live="polite">

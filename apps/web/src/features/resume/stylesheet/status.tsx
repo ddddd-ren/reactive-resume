@@ -1,9 +1,9 @@
 import type { SemanticCssDiagnostic } from "@reactive-resume/resume/stylesheet";
 import { Trans } from "@lingui/react/macro";
-import { WarningCircleIcon, WarningIcon } from "@phosphor-icons/react";
 import { isFatalStylesheetDiagnostic } from "@reactive-resume/resume/stylesheet";
 import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { Badge } from "@reactive-resume/ui/components/badge";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { ScrollArea } from "@reactive-resume/ui/components/scroll-area";
 
 export type StylesheetStatusProps = {
@@ -23,19 +23,19 @@ export function StylesheetStatus({ mode, status, diagnostics }: StylesheetStatus
 		<div className="space-y-2" aria-live="polite">
 			{hasFatalErrors ? (
 				<Badge variant="danger">
-					<WarningCircleIcon data-icon="inline-start" />
+					<Icon name="error" size={16} data-icon="inline-start" />
 					<Trans>Fatal error</Trans>
 				</Badge>
 			) : isPending ? (
 				<Badge variant="outline">{mode === "legacy" ? <Trans>Checking draft</Trans> : <Trans>Checking</Trans>}</Badge>
 			) : hasRecoverableErrors ? (
 				<Badge variant="warn">
-					<WarningCircleIcon data-icon="inline-start" />
+					<Icon name="error" size={16} data-icon="inline-start" />
 					{mode === "legacy" ? <Trans>Ready to activate with errors</Trans> : <Trans>Valid with errors</Trans>}
 				</Badge>
 			) : warnings.length > 0 ? (
 				<Badge variant="warn">
-					<WarningIcon data-icon="inline-start" />
+					<Icon name="warning" size={16} data-icon="inline-start" />
 					{mode === "legacy" ? <Trans>Ready to activate with warnings</Trans> : <Trans>Valid with warnings</Trans>}
 				</Badge>
 			) : (
@@ -44,7 +44,7 @@ export function StylesheetStatus({ mode, status, diagnostics }: StylesheetStatus
 
 			{hasFatalErrors && (
 				<Alert variant="error">
-					<WarningCircleIcon />
+					<Icon name="error" size={16} />
 					<AlertTitle>
 						<Trans>Stylesheet has fatal errors</Trans>
 					</AlertTitle>
@@ -56,7 +56,7 @@ export function StylesheetStatus({ mode, status, diagnostics }: StylesheetStatus
 
 			{hasRecoverableErrors && (
 				<Alert>
-					<WarningCircleIcon />
+					<Icon name="error" size={16} />
 					<AlertTitle>
 						<Trans>Some styles were ignored</Trans>
 					</AlertTitle>
