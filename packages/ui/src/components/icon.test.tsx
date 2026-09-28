@@ -5,12 +5,18 @@ import { iconNames } from "../icons/names";
 import { Icon } from "./icon";
 
 describe("Icon", () => {
-	it("is hidden from assistive tech and translation, so ligature text never becomes a name", () => {
-		const { container } = render(<Icon name="search" />);
+	it("draws the glyph from data-icon, so its name is neither text nor an accessible name", () => {
+		const { container } = render(
+			<button type="button">
+				<Icon name="search" />
+				Search
+			</button>,
+		);
 		const icon = container.querySelector('[data-slot="icon"]');
 		expect(icon).toHaveAttribute("aria-hidden", "true");
-		expect(icon).toHaveAttribute("translate", "no");
-		expect(icon).toHaveTextContent("search");
+		expect(icon).toHaveAttribute("data-icon", "search");
+		expect(icon).toBeEmptyDOMElement();
+		expect(container.querySelector("button")).toHaveTextContent(/^Search$/);
 	});
 
 	it("uses the filled glyph only when asked", () => {

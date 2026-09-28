@@ -58,6 +58,7 @@ export const iconNames = [
 	"key",
 	"language",
 	"left_panel_close",
+	"left_panel_open",
 	"light_mode",
 	"link",
 	"link_off",

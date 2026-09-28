@@ -293,6 +293,12 @@
 	width: 1em;
 	height: 1em;
 	overflow: hidden;
+
+	/* The glyph is the ligature of the name in data-icon. Drawing it from a pseudo-element keeps the name out
+	   of the text content, so copied labels, find-in-page and text queries see only the label. */
+	&::before {
+		content: attr(data-icon);
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {

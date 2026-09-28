@@ -21,8 +21,8 @@ type IconProps = Omit<React.ComponentProps<"span">, "children"> & {
 };
 
 /**
- * A Material Symbols Rounded glyph (weight 300). Icons are decorative: the control they sit in
- * carries the accessible name, so the ligature text is hidden from assistive tech and translation.
+ * A Material Symbols Rounded glyph (weight 300), drawn from `data-icon` by CSS so the name never becomes text.
+ * Icons are decorative: the control they sit in carries the accessible name.
  */
 function Icon({ name, filled = false, size = 20, className, style, ...props }: IconProps) {
 	return (
@@ -38,9 +38,7 @@ function Icon({ name, filled = false, size = 20, className, style, ...props }: I
 				...style,
 			}}
 			{...props}
-		>
-			{name}
-		</span>
+		/>
 	);
 }
 
