@@ -103,9 +103,11 @@ export const crudRouter = {
 		.handler(async ({ context, input }) => {
 			const id = generateId();
 
+			// Named from the file's content (the person, else the headline) so nothing needs filling in first.
+			const name = input.data.basics.name.trim() || input.data.basics.headline.trim() || generateRandomName();
 			await resumeService.create({
 				id,
-				name: generateRandomName(),
+				name: name.slice(0, 100),
 				tags: [],
 				data: input.data,
 				locale: context.locale,

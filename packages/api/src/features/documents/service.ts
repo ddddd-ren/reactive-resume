@@ -73,6 +73,12 @@ async function readState(ref: DocumentRef) {
 	return row;
 }
 
+async function assertUnlocked(ref: DocumentRef) {
+	const state = await readState(ref);
+	if (state.isLocked) throw locked(ref.type);
+	return state;
+}
+
 /** Deletes for good: resumes through their own path (storage too), letters directly. */
 async function deleteForGood(ref: DocumentRef) {
 	if (ref.type === "resume") return resumeService.delete({ id: ref.id, userId: ref.userId });
@@ -189,11 +195,16 @@ export const documentsService = {
 		};
 	},
 
-	/** A name typed by hand ends a blank resume's automatic naming. */
-	rename: (input: DocumentRef & { name: string }) =>
-		update(input, { name: input.name, autoName: false }, { name: input.name }),
+	/** A name typed by hand ends a blank resume's automatic naming. Locked documents keep their details. */
+	rename: async (input: DocumentRef & { name: string }) => {
+		await assertUnlocked(input);
+		await update(input, { name: input.name, autoName: false }, { name: input.name });
+	},
 
-	setTags: (input: DocumentRef & { tags: string[] }) => update(input, { tags: [...new Set(input.tags)] }),
+	setTags: async (input: DocumentRef & { tags: string[] }) => {
+		await assertUnlocked(input);
+		await update(input, { tags: [...new Set(input.tags)] });
+	},
 
 	setLocked: (input: DocumentRef & { isLocked: boolean }) =>
 		input.type === "resume"
@@ -201,14 +212,14 @@ export const documentsService = {
 			: update(input, { isLocked: input.isLocked }),
 
 	linkApplication: async (input: DocumentRef & { applicationId: string | null }) => {
+		await assertUnlocked(input);
 		if (input.applicationId) await assertOwnedApplication(input.userId, input.applicationId);
 		await update(input, { applicationId: input.applicationId }, { sourceApplicationId: input.applicationId });
 	},
 
 	/** Undoable: Trash hides the document and stops its public link; Restore brings it back intact. */
 	trash: async (input: DocumentRef) => {
-		const state = await readState(input);
-		if (state.isLocked) throw locked(input.type);
+		await assertUnlocked(input);
 		await update(input, { trashedAt: new Date() });
 	},
 
