@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M4 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M5 are done; see §11 and §12.
 
 **PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
 
@@ -1016,3 +1016,49 @@ Verification:
 - E2E: `template-switch` now previews on hover, applies from the card, checks the choice after a reload and undoes from the toast. The section helper opens Design groups and the sections inside Advanced. `cover-letter-library` drives the inline library picker. `hyphenation` and `preview-direction` pass.
 - The full suite passes against the dev server, except the server-PDF steps of `hyphenation` and `public-resume-locale`, which fail only under the dev server (see M3). Both pass against the production build, as do `template-switch`, `preview-direction`, `cover-letter-library` and `click-to-select`.
 - Checked with headless Chromium at desktop and phone widths: hover preview, the contrast warning and darker shade, Advanced, overflow at 12.5 pt and Fit (six pages back to four: Compact, 11.5 pt).
+
+### M5 · Share & export, History (done 28 Sep 2026)
+
+What changed:
+
+- **Data (§3.4, §3.5):**
+  - `resume_version` gains `kind`, `name` and `session_id`. The migration backfills `kind` from the English labels; `label` stays for API clients.
+  - Each editor visit sends a session id with `resume.update`, and its saves share one autosave version, refreshed at most every two minutes.
+  - Creating a resume writes a `created` version and importing an `import` one.
+  - New procedures: `getVersion`, `createVersion`, `renameVersion` and `deleteVersion` (named versions only), and `checkSlug`.
+  - `resume_slug_redirect` keeps a renamed resume's old slug for 30 days. `getBySlug` and `verifyPassword` resolve it, and the public route redirects to the current address.
+  - `create` and `duplicate` generate a unique slug from the name when none is given; `duplicate` no longer falls back to the original's slug, which always collided. The resume dialogs stop asking for a slug, which also stops Rename from overwriting a custom slug.
+- **Sheet:** one 440 px sheet (a full-height bottom sheet on phones) with Link, Download and History. Share opens Link, ▾ opens Download, the clock opens History, and ⌘⇧S / ⌘⇧E open their tabs. On desktop the page moves 120 px aside.
+- **Link:**
+  - The public switch card, then the address with its live check (300 ms), the reason a slug can't be used and a suggestion.
+  - A new address is saved only once it checks out, so the old one stays live until then.
+  - Copy ("Copied" for 2 s), "Visitors can download the PDF", "Require a password" (Q3a), Open public page, a QR code and, on touch devices, Share via….
+  - Views, downloads and time since the last view over 30 days in Newsreader numerals, with the 30-bar chart, or the explanation while the link is off.
+- **Download:** format cards with the spec's copy and "Best for applying"; Resume or Cover letter (with the resume-header option) when the resume has a letter; the file name recruiters see (`First-Last-Resume`, unsafe characters stripped); the non-blocking Check note with Review; progress inside the 44 px button; and on failure an alert, Try again and "Download PDF instead".
+- **History:**
+  - "Name this version", then a timeline of Now, editing sessions, named versions (bookmark), restores and where the document came from.
+  - Picking a version shows it on the page, read-only, with a 2 px ink outline and the dark banner. Restore saves "Before restore" first; naming or restoring saves pending edits first.
+  - Named versions can be renamed or deleted.
+- **Removed:** the download dialog, the version-history menu, and the sharing, statistics and export sections.
+
+Differences from the plan, with reasons:
+
+- **Retention runs when a resume gets a new version**, not in a daily job. There is no scheduler, and the Vercel entry skips startup hooks. Resumes nobody edits keep their old autosaves, which doesn't grow storage.
+- **Restore and Back to now live in the History tab** as well as the page banner's text. The sheet is modal (focus is trapped in it), so the banner on the page can't hold working buttons; it shows the status.
+- **Editing sessions are titled "Editing session".** The prototype's summaries ("Rewrote Studio Kettle bullet") need change tracking the app doesn't have.
+- **A session's version can trail its last two minutes of edits**, because refreshes are throttled like today's autosaves. Now always shows the current state.
+- **The chart has no "Sent to …" marker yet.** It needs applications, which come in M8.
+- **Deleting a named version asks first.** It can't be undone, and §7's confirmation list didn't consider versions.
+- **File names:** every export, including the one-click PDF and public visitors' downloads, now uses `First-Last-Resume`. Public visitors used to get `resume.pdf`.
+- **Slugs given at creation aren't pattern-checked** (API and MCP callers); only changes are, so existing slugs keep working.
+- **Esc closes the sheet** (and returns the page to now) rather than first leaving a preview.
+- **Found, not changed:** "Visitors can download the PDF" hides the buttons only; the public PDF endpoint doesn't enforce it, as before.
+- **Migration:** it also applies the drop of the redundant `resume_user_id_index`, which was removed from the schema in `b953435f2` without a migration.
+
+Verification:
+
+- Typecheck is clean for web, api, mcp and db.
+- Tests pass: api 469, web 915, mcp 67, utils 215, db 5. New tests cover version writing, session refresh and retention, named-version guards, the slug pattern, checks, suggestions and redirects, the update and create paths, the Link tab's password and address flows, and the stats and time formats.
+- knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
+- E2E: updated `public-sharing`, `sharing-password`, `public-download-preference`, `json-export-import`, `hyphenation`, `section-recovery`, `offline-fonts` and `preview-export-geometry`. Added `share-history`: renaming the address with the old one redirecting, and naming, previewing and restoring versions.
+- The full suite passes against the dev server except the known dev-only server-PDF steps; `hyphenation`, `public-resume-locale`, `section-recovery`, `share-history`, `public-sharing` and `json-export-import` pass against the production build.
