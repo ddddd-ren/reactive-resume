@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M6 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M7 are done; see §11 and §12.
 
 **PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
 
@@ -1106,3 +1106,82 @@ Verification:
 - knip, `turbo boundaries` and Biome are clean (this also fixed Biome findings in `index.html` from M1), and catalogs are extracted.
 - E2E: updated `dashboard-lifecycle` (rename, duplicate, Trash, restore and delete now), `lock-resume`, `cover-letter-library`, `json-export-import`, `preview-direction`, `section-recovery` and `auth`; `resume-views` became `documents-views`. Added `documents-new`: Start blank naming the resume after its headline, and Copy for a job linking the copy to its application.
 - The full suite passes against the dev server except the known dev-only server-PDF steps (33 passed, 7 opt-in diagnostics skipped). `hyphenation`, `public-resume-locale`, `documents-new`, `dashboard-lifecycle`, `cover-letter-library`, `json-export-import` and `share-history` pass against the production build.
+
+### M7 · Check (done 28 Sep 2026)
+
+What changed:
+
+- **Live checks (`packages/resume/src/ats`):**
+  - Every rule has a category: contact details, dates, layout, section headings or writing. The report scores the applicable rules (the English heading rule applies to English resumes only) as passed ÷ applicable × 100, per category too.
+  - Findings get a key that uses entry ids instead of array indexes, so reordering keeps it.
+  - New rule `TWO_COLUMN_LAYOUT` (C4): a two-column template printing a sidebar.
+- **Check state:** `metadata.check = { ignored, hiddenTerms }` in the resume data (§3.9). It's optional, so existing resumes don't change, and public viewers don't receive it. Ignored findings don't count against the score.
+- **Panel:**
+  - The 84 px score ring (accent, or warn below 80) eases to each new score. Next to it: the verdict, "n of m checks pass · n things to review" and "Live · updates as you edit".
+  - Tabs: Issues (n) · Job match (x/y) · Writing.
+- **Issues:**
+  - Numbered cards with category, title, a plain explanation and the fix, pinned to their block on the page with a numbered warn pin and a wavy underline. Picking a card or a pin outlines both.
+  - One-step fixes apply with an undo toast, and the score and badge update at once:
+    - https:// for a link;
+    - hide the photo;
+    - one column;
+    - move to the main column;
+    - add to page 1;
+    - the standard heading;
+    - minimum type size, line height or margins;
+    - Switch to one column.
+  - The other issues open their field in Write.
+  - Show on page and Ignore (Keep for the two-column issue). "n issues are ignored · Show them again" brings them back.
+  - Category rows with "n of m" or "n to review", open when they need attention.
+  - The limit statement.
+  - "Also check the exported PDF" runs the PDF engine and reports in a toast, with its full report behind Show.
+- **Job match:**
+  - It reads the posting of the application the resume is linked to (`resume.application_id`, now returned by `resume.getById`).
+  - Without one (C2): link an application, or paste a posting for this visit. A pasted posting can be saved as an application, which links it. A linked application without a posting takes one here.
+  - "x of y posting terms appear · not scored". Missing terms ask first ("appears n× in the posting"), then offer Add to Skills or "Not true for me, hide it"; hidden terms persist with Show again. Covered terms tint their entries on the page.
+  - Terms show as the posting writes them ("C#", not "csharp").
+- **Writing:**
+  - An opt-in AI review. Before it runs it says what it sends and to which provider, with Change.
+  - `ai.atsReview` takes the resume's bullets and paragraphs as passages. Rewrites of them come back as proposals; other advice shows as notes with impact and Show on page. "What's working" and "A model's opinion, not a verdict" follow.
+  - Errors stay in the tab (C3), with Retry and Open AI settings.
+  - Without a provider, the tab explains that and links to settings.
+- **Proposal core** (shared with M10):
+  - Proposals target one passage, a whole `<p>` or `<li>` block. They're out of date once the passage has changed.
+  - While Writing is open, the page shows each pending proposal: old text struck through, new text highlighted, and a numbered accent marker in the margin.
+  - Accept, Reject, Accept all (one undo step), A/R on the focused edit, and ↑/↓ between edits. After an undo they show as pending again. Out-of-date ones offer Suggest again.
+- **Parser view:** "What a person sees / What a parser reads" floats over the canvas and switches instantly. The parser view reads the PDF on the page as a parser does: the text layer and column count, the fields it finds (name, email, phone, location, links, sections, dates), then the text in reading order under the headings it recognises. Lines and fields behind open issues are flagged.
+- **Phones and tablets:** on phones, Show on page switches to the page with an "Issue n of m" bar (‹ ›) and the fix below (B2), and card buttons are touch size. On tablets the pins stay on the page, and tapping one opens the drawer on its card.
+- **Removed:** the builder's ATS section and deep-check UI, and the old finding messages and jump targets.
+
+Differences from the plan, with reasons:
+
+- **PDF-engine findings aren't pinned to the page.** The deep check reports in a toast and shows its full report on request. Mapping its evidence boxes onto the page waits for Forme.
+- **Issue cards carry no AI rewrites.** No live check needs one: the mechanical checks either have a one-step fix or need the author's words. Rewrites come from the Writing tab.
+- **The Writing category holds one check** (roles without a description). Wording judgements live in the Writing tab, as the spec's category description says.
+- **Proposals replace a passage (a bullet or paragraph), not a whole field.** This keeps two proposals in one description independent: accepting one doesn't put the other out of date.
+- **Proposal marks and markers show while Writing is open;** issue pins show on the other tabs. Pins and markers would otherwise sit on the same margin.
+- **Hidden terms belong to the resume**, not to one posting, as §3.9 stores them.
+- **"Ask the assistant to work it into a bullet"** arrives with the assistant in M10.
+- **Resolved cards disappear at once** instead of collapsing over 200 ms. The remaining cards renumber, as the spec says.
+- **Phones scroll to the issue** rather than zooming to it.
+- **Found and fixed:**
+  - The live checks treated a full-width page's sidebar as main-column content. Templates print no sidebar on full-width pages, so sections placed only there never printed and no check said so. They are now reported as never printing.
+  - The review prompt filled its placeholders one after another, so resume text that looked like a placeholder was replaced. It now fills them in one pass.
+
+Verification:
+
+- Typecheck is clean for web, api, resume, schema, mcp and ai.
+- Tests pass: resume 1321, schema 236, api 480, web 888, mcp 67, ai 40, pdf 1056. New tests cover:
+  - categories, scoring, keys, ignores and the two-column rule;
+  - issue numbering, targets and each one-step fix;
+  - passages, proposals (apply, out of date, undone, marks) and review mapping;
+  - the proposal list (A/R and arrow keys, Accept all as one undo step, out of date);
+  - the review's passages and one-pass prompt;
+  - Check state redaction.
+- knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
+- E2E: added `check-mode`, which covers:
+  - the pin, a fix with undo, and Ignore kept across a reload, then Show them again;
+  - the parser view;
+  - a pasted posting with a hidden term;
+  - Writing without a provider.
+- The full suite passes against the dev server except the known dev-only server-PDF steps (35 passed, 7 opt-in diagnostics skipped). `check-mode`, `hyphenation`, `public-resume-locale`, `share-history`, `documents-new` and `json-export-import` pass against the production build.
