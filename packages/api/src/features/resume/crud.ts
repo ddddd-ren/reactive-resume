@@ -2,6 +2,7 @@ import { generateId, generateRandomName } from "@reactive-resume/utils/string";
 import { protectedProcedure } from "../../context";
 import { resumeDto } from "../../dto/resume";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
+import { documentsService } from "../documents/service";
 import { createResumeData } from "./initial-data";
 import { parseStoredResumeData } from "./resume-data-validation";
 import { resumeService } from "./service";
@@ -67,6 +68,7 @@ export const crudRouter = {
 			resumeService.create({
 				name: input.name,
 				...(input.slug ? { slug: input.slug } : {}),
+				...(input.autoName ? { autoName: true } : {}),
 				tags: input.tags,
 				locale: context.locale,
 				userId: context.user.id,
@@ -236,13 +238,13 @@ export const crudRouter = {
 			path: "/resumes/{id}",
 			tags: ["Resumes"],
 			operationId: "deleteResume",
-			summary: "Delete a resume",
+			summary: "Move a resume to Trash",
 			description:
-				"Permanently deletes a resume and its associated files (screenshots, PDFs) from storage. Locked resumes cannot be deleted; unlock the resume first. Requires authentication.",
-			successDescription: "The resume and its associated files were deleted successfully.",
+				"Moves a resume to Trash, which stops its public link. It stays there for 30 days, then it and its files are deleted; until then it can be restored (documents.restore) or deleted at once (documents.purge). Locked resumes can't be moved; unlock the resume first. Requires authentication.",
+			successDescription: "The resume is in Trash.",
 		})
 		.input(resumeDto.delete.input)
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.delete.output)
-		.handler(({ context, input }) => resumeService.delete({ id: input.id, userId: context.user.id })),
+		.handler(({ context, input }) => documentsService.trash({ type: "resume", id: input.id, userId: context.user.id })),
 };

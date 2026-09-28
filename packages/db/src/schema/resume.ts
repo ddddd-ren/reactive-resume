@@ -1,8 +1,10 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
+import { application } from "./applications";
 import { user } from "./auth";
 
 export const resume = pg.pgTable(
@@ -20,6 +22,13 @@ export const resume = pg.pgTable(
 		showDownloadButtons: pg.boolean("show_download_buttons").notNull().default(true),
 		isLocked: pg.boolean("is_locked").notNull().default(false),
 		password: pg.text("password"),
+		// "Made for this application": Check's job match, the assistant and Copy for a job use its posting.
+		// Separate from application.resume_id, the resume linked to (or sent with) an application.
+		applicationId: pg.text("application_id").references((): AnyPgColumn => application.id, { onDelete: "set null" }),
+		// In Trash since this moment; purged after 30 days. Trashed resumes are hidden and not shared.
+		trashedAt: pg.timestamp("trashed_at", { withTimezone: true }),
+		// A blank resume's name follows its headline until the user renames it.
+		autoName: pg.boolean("auto_name").notNull().default(false),
 		data: pg
 			.jsonb("data")
 			.notNull()

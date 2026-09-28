@@ -88,9 +88,10 @@ export const coverLettersRouter = {
 			path: "/cover-letters/{id}",
 			tags: ["Cover Letters"],
 			operationId: "deleteCoverLetter",
-			summary: "Delete a cover letter",
-			description: "Permanently deletes a saved cover letter using its expected revision.",
-			successDescription: "The cover letter was deleted successfully.",
+			summary: "Move a cover letter to Trash",
+			description:
+				"Moves a saved cover letter to Trash using its expected revision. It stays there for 30 days, then it is deleted; until then it can be restored (documents.restore) or deleted at once (documents.purge). Locked letters can't be moved.",
+			successDescription: "The cover letter is in Trash.",
 		})
 		.input(coverLetterDto.delete.input)
 		.output(coverLetterDto.delete.output)

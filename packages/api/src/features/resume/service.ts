@@ -4,7 +4,7 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import type { ResumeUpdatedEvent } from "./events";
 import { ORPCError } from "@orpc/client";
 import { compare, hash } from "bcrypt";
-import { and, arrayContains, asc, desc, eq, gte, isNotNull, sql } from "drizzle-orm";
+import { and, arrayContains, asc, desc, eq, gte, isNotNull, isNull, sql } from "drizzle-orm";
 import { get } from "es-toolkit/compat";
 import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";
@@ -415,6 +415,7 @@ export const resumeService = {
 			.where(
 				and(
 					eq(schema.resume.userId, input.userId),
+					isNull(schema.resume.trashedAt),
 					match(input.tags.length)
 						.with(0, () => undefined)
 						.otherwise(() => arrayContains(schema.resume.tags, input.tags)),
@@ -475,7 +476,7 @@ export const resumeService = {
 			})
 			.from(schema.resume)
 			.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-			.where(and(matchesSlug(input.slug), eq(schema.user.username, input.username)))
+			.where(and(matchesSlug(input.slug), eq(schema.user.username, input.username), isNull(schema.resume.trashedAt)))
 			// A resume's current slug wins over another's redirect (renames delete clashing redirects anyway).
 			.orderBy(desc(sql`${schema.resume.slug} = ${input.slug}`))
 			.limit(1);
@@ -519,6 +520,8 @@ export const resumeService = {
 		data?: ResumeData;
 		/** The first version in History: "created", or "import" for an imported document. */
 		origin?: "created" | "import";
+		/** The name follows the headline until someone renames the resume. */
+		autoName?: boolean;
 	}) => {
 		const id = input.id ?? generateId();
 		const data = parseWritableResumeData(structuredClone(input.data ?? defaultResumeData));
@@ -529,6 +532,7 @@ export const resumeService = {
 			await db.insert(schema.resume).values({
 				id,
 				name: input.name,
+				autoName: input.autoName ?? false,
 				slug,
 				tags: input.tags,
 				userId: input.userId,
@@ -581,6 +585,7 @@ export const resumeService = {
 						data: schema.resume.data,
 						slug: schema.resume.slug,
 						isLocked: schema.resume.isLocked,
+						autoName: schema.resume.autoName,
 					})
 					.from(schema.resume)
 					.where(and(eq(schema.resume.id, input.id), eq(schema.resume.userId, input.userId)))
@@ -606,8 +611,14 @@ export const resumeService = {
 				const normalizedData = input.data
 					? parseWritableResumeData(input.data, parseStoredResumeData(existing.data))
 					: undefined;
+				// A blank resume is named after its headline until someone names it by hand.
+				const followedName =
+					existing.autoName && input.name === undefined && normalizedData
+						? normalizedData.basics.headline.trim().slice(0, 100) || undefined
+						: undefined;
 				const updateData: Partial<typeof schema.resume.$inferSelect> = {
-					...(input.name !== undefined ? { name: input.name } : {}),
+					...(input.name !== undefined ? { name: input.name, autoName: false } : {}),
+					...(followedName ? { name: followedName } : {}),
 					...(input.slug !== undefined ? { slug: input.slug } : {}),
 					...(input.tags !== undefined ? { tags: input.tags } : {}),
 					...(normalizedData ? { data: normalizedData } : {}),
@@ -742,7 +753,14 @@ export const resumeService = {
 			.select({ id: schema.resume.id, password: schema.resume.password })
 			.from(schema.resume)
 			.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-			.where(and(isNotNull(schema.resume.password), matchesSlug(input.slug), eq(schema.user.username, input.username)))
+			.where(
+				and(
+					isNotNull(schema.resume.password),
+					matchesSlug(input.slug),
+					eq(schema.user.username, input.username),
+					isNull(schema.resume.trashedAt),
+				),
+			)
 			.orderBy(desc(sql`${schema.resume.slug} = ${input.slug}`))
 			.limit(1);
 

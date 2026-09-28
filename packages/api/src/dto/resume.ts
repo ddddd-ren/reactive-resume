@@ -18,7 +18,10 @@ const resumeSchema = createSelectSchema(schema.resume, {
 	userId: z.string().describe("The ID of the user who owns the resume."),
 	createdAt: z.date().describe("The date and time the resume was created."),
 	updatedAt: z.date().describe("The date and time the resume was last updated."),
-});
+})
+	// Document-library columns (Trash, the application a copy was made for, automatic naming) stay internal to
+	// the documents API.
+	.omit({ applicationId: true, trashedAt: true, autoName: true });
 
 const versionSchema = z.object({
 	id: z.string().describe("The ID of the version."),
@@ -62,6 +65,10 @@ export const resumeDto = {
 
 	create: {
 		input: resumeSchema.pick({ name: true, tags: true }).extend({
+			autoName: z
+				.boolean()
+				.optional()
+				.describe("While true, the resume's name follows its headline until someone renames it."),
 			slug: resumeSchema.shape.slug
 				.optional()
 				.describe("The slug of the resume. Generated from the name, and made unique, when omitted."),

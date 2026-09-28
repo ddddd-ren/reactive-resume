@@ -67,6 +67,7 @@ vi.mock("drizzle-orm", () => ({
 	eq: (...a: unknown[]) => a,
 	gte: (...a: unknown[]) => a,
 	isNotNull: (...a: unknown[]) => a,
+	isNull: (...a: unknown[]) => a,
 	notInArray: (...a: unknown[]) => a,
 	sql: Object.assign((strings: TemplateStringsArray, ...values: unknown[]) => ({ strings, values }), {
 		join: (values: unknown[]) => values,
@@ -513,8 +514,23 @@ describe("update", () => {
 
 		const { update } = updateHarness({ slug: "Legacy_Slug" });
 		await resumeService.update({ id: "r1", userId: "u1", name: "Renamed", slug: "Legacy_Slug" });
-		expect(update.set).toHaveBeenCalledWith({ name: "Renamed", slug: "Legacy_Slug" });
+		// A name typed by hand also ends automatic naming.
+		expect(update.set).toHaveBeenCalledWith({ name: "Renamed", autoName: false, slug: "Legacy_Slug" });
 		expect(recordSlugChangeMock).not.toHaveBeenCalled();
+	});
+
+	it("names a blank resume after its headline until someone renames it", async () => {
+		const data = structuredClone(defaultResumeData);
+		data.basics.headline = "  Product Designer ";
+		const select = createLockedSelectChain([{ data: defaultResumeData, isLocked: false, slug: "s", autoName: true }]);
+		const update = createUpdateChain([{ ...createResumeRow(data), name: "Product Designer" }]);
+		dbMock.transaction.mockImplementationOnce(async (callback: (tx: unknown) => Promise<unknown>) =>
+			callback({ select: () => select.chain, update: () => update.chain }),
+		);
+
+		await resumeService.update({ id: "r1", userId: "u1", data });
+
+		expect(update.set).toHaveBeenCalledWith(expect.objectContaining({ name: "Product Designer" }));
 	});
 
 	it("passes the editing session to the autosave version, and skips it for restores", async () => {

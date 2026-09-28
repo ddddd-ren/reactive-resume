@@ -2,7 +2,7 @@ import type { CoverLetter, CoverLetterDocument, CoverLetterStyle } from "@reacti
 import type { Template } from "@reactive-resume/schema/templates";
 import type { CoverLetterListInput, CoverLetterUpdateInput } from "../../dto/cover-letter";
 import { ORPCError } from "@orpc/client";
-import { and, count, desc, eq, ilike, sql } from "drizzle-orm";
+import { and, count, desc, eq, ilike, isNull, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
@@ -89,18 +89,29 @@ async function updateRevision(
 				eq(schema.coverLetter.id, input.id),
 				eq(schema.coverLetter.userId, input.userId),
 				eq(schema.coverLetter.revision, input.expectedRevision),
+				eq(schema.coverLetter.isLocked, false),
 			),
 		)
 		.returning();
 	if (row) return coverLetterSchema.parse(row);
-	await getById(input);
+	await assertUnlocked(input);
 	throw new ORPCError("CONFLICT", { message: "This cover letter changed elsewhere. Reload it before saving again." });
+}
+
+/** Locked letters, like locked resumes, can't be edited or moved to Trash. */
+async function assertUnlocked(input: OwnedId) {
+	const [row] = await db
+		.select({ isLocked: schema.coverLetter.isLocked })
+		.from(schema.coverLetter)
+		.where(and(eq(schema.coverLetter.id, input.id), eq(schema.coverLetter.userId, input.userId)));
+	if (!row) throw new ORPCError("NOT_FOUND");
+	if (row.isLocked) throw new ORPCError("DOCUMENT_LOCKED", { status: 400, message: "Unlock the letter first." });
 }
 
 export const coverLetterService = {
 	getById,
 	list: async (input: CoverLetterListInput & { userId: string }) => {
-		const filters = [eq(schema.coverLetter.userId, input.userId)];
+		const filters = [eq(schema.coverLetter.userId, input.userId), isNull(schema.coverLetter.trashedAt)];
 		if (input.resumeId) filters.push(eq(schema.coverLetter.sourceResumeId, input.resumeId));
 		if (input.applicationId) filters.push(eq(schema.coverLetter.sourceApplicationId, input.applicationId));
 		if (input.search?.trim())
@@ -155,19 +166,22 @@ export const coverLetterService = {
 		const letter = await getById(input);
 		return insert({ ...letter, userId: input.userId, name: input.name ?? `${letter.name} (copy)`.slice(0, 100) });
 	},
+	/** Moves the letter to Trash (30 days, then deleted); Trash offers Restore and Delete now. */
 	delete: async (input: RevisionInput): Promise<void> => {
 		const rows = await db
-			.delete(schema.coverLetter)
+			.update(schema.coverLetter)
+			.set({ trashedAt: new Date(), revision: sql`${schema.coverLetter.revision} + 1` })
 			.where(
 				and(
 					eq(schema.coverLetter.id, input.id),
 					eq(schema.coverLetter.userId, input.userId),
 					eq(schema.coverLetter.revision, input.expectedRevision),
+					eq(schema.coverLetter.isLocked, false),
 				),
 			)
 			.returning({ id: schema.coverLetter.id });
 		if (rows.length) return;
-		await getById(input);
+		await assertUnlocked(input);
 		throw new ORPCError("CONFLICT", { message: "This cover letter changed elsewhere. Reload it before deleting." });
 	},
 	copyEmbedded: async (input: {

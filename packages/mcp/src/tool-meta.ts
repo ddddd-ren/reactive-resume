@@ -329,10 +329,10 @@ export const TOOL_META = {
 	[T.deleteResume]: {
 		title: "Delete Resume",
 		description: [
-			"Permanently delete a resume and all its associated files (screenshots, PDFs), removing public access if published.",
+			"Move a resume to Trash, removing public access if published.",
 			"",
-			`This action is IRREVERSIBLE. Locked resumes cannot be deleted; use \`${T.unlockResume}\` first.`,
-			`Consider using \`${T.duplicateResume}\` to create a backup before deleting.`,
+			"It stays in Trash for 30 days, where the user can restore it from the app; then it and its files are deleted.",
+			`Locked resumes cannot be moved; use \`${T.unlockResume}\` first.`,
 		].join("\n"),
 		inputSchema: z.object({ id: resumeIdSchema }),
 		annotations: { ...WRITE_DESTRUCTIVE, openWorldHint: true },
