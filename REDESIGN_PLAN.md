@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M10 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M11 are done; see §11 and §12.
 
 **PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
 
@@ -1395,4 +1395,65 @@ Verification:
   - the `/agent` redirects.
   - It needs `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` (set in the E2E workflow) and skips without it.
 - The full suite passes against the production build, and the assistant spec passed three runs in a row.
+
+### M11 · Settings and public pages (done 29 Sep 2026)
+
+What changed:
+
+- **Settings** in three pages, Account, Preferences and AI & developer:
+  - Layout: an in-page nav (220 px, with the version, Docs, Source and Donate at the bottom) beside a 680 px column; sections divided by rules, with no cards.
+  - Tablets get the nav as tabs. On phones the Account tab opens a three-row root showing each page's current value, with Help & docs and Sign out.
+  - Old addresses redirect: profile and authentication go to Account; api-keys, integrations and job-search go to AI & developer.
+- **Account:**
+  - Profile: photo (upload or remove), then Name, Username (with the instance host) and Email, each saving when the field loses focus. Invalid or failed values stay, with the reason under them.
+  - Sign-in & security: Password (Change, or Set a password), a Two-step verification switch leading to the existing flows, Passkeys (add, name, remove) and every enabled sign-in provider (Q3o).
+  - Your data: Export everything, and Delete account. The delete dialog counts documents, applications and API keys, and asks you to type "delete"; Keep account cancels.
+  - Sign out.
+- **Preferences:** Light, Dark and System tiles; the interface language with Help translate; the motion note.
+- **AI & developer:**
+  - Provider rows show the model and the key's last four characters, with Test ("Connected · 420 ms" or the provider's exact error) and Edit. Edit holds the name, model, base URL, a new key, the "Use this provider" switch and Delete. Add provider lists all 16.
+  - API keys: a table with Created, Last used and Expires. New key offers 30 days, 90 days or Never and shows the key once with Copy. Revoke has Undo.
+  - MCP server: the address with Copy, and the setup guide.
+- **Account export:** the API now includes applications, and the browser zips everything: `account.json`, each resume and letter as its own file, and `applications.json`.
+- **Shared resume:**
+  - Desktop and tablets: a 64 px bar (name, headline and city, Copy link, Download PDF), the page on the sunken canvas, and the footer credit.
+  - Phones: the resume as text in print order, in the template's colour, with contact details as tap targets and Download and Share pinned.
+  - Off, unknown and trashed links read "This resume isn't shared right now." with nothing about the owner.
+  - With downloads off, Download is hidden and printing shows a note.
+- **ATS checker:**
+  - Idle: a drop zone with Check a sample file and an optional posting. Busy: three labelled steps.
+  - Result: the 440 px column (the ring, the categories to fix, the posting's missing terms, the CTA and Check another file) beside the Original page / As software reads it lens.
+  - Fix these in the editor signs a visitor up, imports the same file and opens Check.
+- **Removed:** the six settings pages and the API key dialog; the public checker's AI review (Q3l), its locked card, the marketing parse preview and the old uploader; the unused theme combobox and dashboard header.
+
+Differences from the plan, with reasons:
+
+- **The settings root is phones-only.** From 640 px, /dashboard/settings opens Account (redirected before render). Tablets show the three pages as tabs above the column.
+- **"Last changed" for the password is the sign-in record's last update.** Better Auth doesn't record password changes separately.
+- **Test latency is timed in the browser**, so it includes the round trip through the server, which is what the user waits for.
+- **Rows say "Model …", not "Default model …".** The app uses the most recently used tested provider rather than a chosen default.
+- **Revoke turns the key off at once and deletes it when the Undo toast closes.** If the tab closes first, the key stays off and hidden.
+- **The delete dialog counts documents in Trash too**, because they're deleted as well.
+- **The reflow reads its order from the semantic tree but its values from the resume**, so it stays in print order without a second renderer. Rich text is parsed into an allowlist of elements, because resume HTML isn't sanitized on save. The template's body font applies only where the browser has it; loading resume fonts on the page waits for Forme.
+- **Phones use the system share sheet** where there is one, and copy the link otherwise.
+- **As software reads it shows the extracted text without highlighting a span**, because the analysis doesn't locate one.
+- **The checker's copy follows Q9**: "Up to 25 MB · checked in your browser, never uploaded". The sample file is the Onyx template preview.
+- **The checker's import reads the PDF in the browser even when an AI provider is set up**, so the issues in Check line up with the file that was checked.
+- **The checker's honesty panel is gone** with the old layout. Its key line stays under the score: it reflects extraction, not your chances.
+
+Verification:
+
+- Typecheck, knip, `turbo boundaries` and Biome are clean across the workspace, and catalogs are extracted.
+- Tests pass: api 485 (plus 10 opt-in), web 885, server 126. New tests cover:
+  - the export zip's contents;
+  - revoke and undo;
+  - provider test formatting and the key ending;
+  - public page states: downloads off, phones, and the credit with and without sign-ups;
+  - reflow order against print order, with hidden sections and entries;
+  - the rich-text allowlist.
+- E2E:
+  - New: `settings`, `shared-resume` and `ats-checker` (the sign-up and import path).
+  - Updated: `public-download-preference` and `root-public-resume`.
+  - The full suite passes against the production build: 42 passed, 7 opt-in skipped.
+- Docs: the guides name the new settings pages, the key flow, the export's contents and the new checker.
 
