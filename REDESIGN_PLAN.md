@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M3 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M4 are done; see §11 and §12.
 
 Inputs:
 
@@ -968,3 +968,47 @@ Verification:
 - knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
 - E2E: updated `section-editing` (inline add), `section-date-sorting` (row menu, structured dates, locked read-only), `section-recovery` (eye on the row), `picture-upload` (photo row), `json-export-import` and `builder-save-navigation` (Full name). Added `click-to-select`. `public-download-preference` now waits for the share address, which fixes a race.
 - Every builder spec passes locally against the dev server. Checked in the browser at desktop and phone widths.
+
+### M4 · Design (done 28 Sep 2026)
+
+What changed:
+
+- **Design panel** (`B/-components/design-panel.tsx`, groups in `apps/web/src/features/resume/editor/design`): a sticky group nav (Template · Type · Color · Page · Advanced) that scrolls to each group, groups divided by rules, and the whole panel read-only while the resume is locked.
+- **Template:**
+  - Filter chips (All, One column, Two columns, ATS-safe) with "n of 15 shown".
+  - Thumbnails rendered from the user's own content, font and colour. They render one at a time when the browser is idle, are cached by template and a content hash, and show the template's sample image until ready, so the grid never jumps.
+  - Hover or keyboard focus previews the template on the page with the dark "Previewing X · click to apply" chip. On touch, holding a card previews it. Leaving the cards or Esc restores the page. A click applies the template with "Template changed to X · Undo".
+  - Two-column templates add a Sidebar sub-panel: width 26–42 %, chips that move sections between the sidebar and the main column, and the ATS column-order warning.
+- **Type:** five pairings as radio rows, text size 9–12.5 pt in 0.5 pt steps (the heading keeps its ratio to the body), and density.
+- **Color:** eight accents, a hex field with its live contrast on white, and below 4.5:1 the warning with "Use a darker shade" (same hue, darkened to at least 4.6:1).
+- **Page:** Letter/A4 (Free-form appears only while in use), language, margins, "Icons in contact line" and "Underline links".
+- **Advanced** (collapsed): Date format (Mar 2022, March 2022, 03/2022, 2022-03; Q4), then every exact-value editor: typography with any family, weights and hyphenation (Q3b), text and background colours and level display (Q3c, Q3d), page gaps, section icons and free-form (Q3e), the multi-page layout (Q3f) and custom CSS. Then "Reset to template defaults" with Undo.
+- **Overflow and Fit:**
+  - The canvas reads the page map. When the physical pages exceed the authored pages it shows "Runs onto page N by about X lines" with Fit, and a dashed warn line labelled with each spilled page.
+  - Fit tightens density, then margins, then size in 0.5 pt steps (never below 9 pt), waiting for each re-render and re-measuring. The run is one undo step (a new `sameStep` option on the draft store) and ends with the spec's success or failure toast.
+- **Phones:** Design is a half-height sheet over the live page (the handle raises it to full height) with Template · Type · Color · Page tabs, a horizontal template strip and 48 px swatches on touch. Advanced sits under Page.
+- **Template layouts:** `templateLayouts` in `packages/schema/src/templates.ts` is the single source for columns, sidebar side, header placement and ATS safety. The gallery and the layout editor read it, and a DOCX test checks the two-column configurations against it.
+- **Removed:** the template gallery dialog, the Template section, the collapsible section chrome with its persisted collapse store (only titled hosts remained), and the Language field repeated in Advanced.
+- **Also:**
+  - ATS design findings now scroll to the Design group that fixes them (Type, Page or Template).
+  - The desktop panel is now a containing block. Screen-reader text deep in a long panel had stretched the document, so `scrollIntoView` could shift the whole editor up by the bar's height.
+  - **Fixed an M3 regression:** the entry dialogs removed in M3 carried "Import from library", which copies a saved letter into a resume's cover-letter entry. A new, empty cover-letter entry now offers that picker inline.
+
+Differences from the plan, with reasons:
+
+- **Presets are calibrated so Normal equals today's defaults.** Density sets body line height and section gap: Compact 1.35 / 4, Normal 1.5 / 6, Roomy 1.65 / 8. Margins (horizontal / vertical) are Narrow 10 / 8, Normal 14 / 12 and Wide 19 / 16. The spec's 1.32/1.45/1.60 and 30/44/60 pt came from the prototype renderer and would have changed every existing resume.
+- **Sidebar Left/Right is hidden.** The templates hard-code their side, and three put the header in the sidebar. Mirroring needs per-template PDF work, and §8 allows hiding the control.
+- **"Reset to template defaults" restores the look only:** type, colours, level display, spacing, icons, link underlines and sidebar width. Paper, language, date format, section placement and custom CSS stay. The prototype also resets paper, language and sidebar sections. Templates have no defaults of their own here, so the reset uses the app defaults.
+- **The template switch reuses the page's layer cross-fade** (150 ms in, then the old layer drops) rather than a separate 0.35 → 1 fade over 200 ms.
+- **The mobile sheet toggles between half and full height** with its handle; there is no drag gesture.
+- **Thumbnails re-render at idle when the content changes** while Design is open: about 15 renders of roughly 230 ms each, one at a time. The M12 worker moves them off the main thread.
+- **Still to come:** the Check "Layout" issue for two-column templates (M7; the live lint already flags sidebar sections) and single-column DOCX layout alignment (M7).
+
+Verification:
+
+- Typecheck is clean for web, schema and docx.
+- Tests pass: web 923, schema 236, docx 77. New tests cover the presets and their calibration, contrast and darkening, the Fit step order with the 9 pt floor, the overflow measure, and the template cards (hover, Esc, apply with undo, touch hold, filters).
+- knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
+- E2E: `template-switch` now previews on hover, applies from the card, checks the choice after a reload and undoes from the toast. The section helper opens Design groups and the sections inside Advanced. `cover-letter-library` drives the inline library picker. `hyphenation` and `preview-direction` pass.
+- The full suite passes against the dev server, except the server-PDF steps of `hyphenation` and `public-resume-locale`, which fail only under the dev server (see M3). Both pass against the production build, as do `template-switch`, `preview-direction`, `cover-letter-library` and `click-to-select`.
+- Checked with headless Chromium at desktop and phone widths: hover preview, the contrast warning and darker shade, Advanced, overflow at 12.5 pt and Fit (six pages back to four: Compact, 11.5 pt).
