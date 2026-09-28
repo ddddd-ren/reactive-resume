@@ -1,18 +1,26 @@
+import type { Page } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { Pool } from "pg";
 import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
+/** New → "New cover letter instead" opens the letter editor on an untitled letter; this names it. */
+async function createLetterFromDocuments(page: Page, name: string) {
+	await page.goto("/dashboard");
+	await page.getByRole("button", { name: "New", exact: true }).click();
+	await page.getByRole("button", { name: "New cover letter instead" }).click();
+	const editor = page.getByRole("dialog", { name: "Edit cover letter", exact: true });
+	await expect(editor).toBeVisible();
+	await editor.getByLabel("Name", { exact: true }).fill(name);
+	return editor;
+}
+
 test("imports a library letter into the builder as an independent copy", async ({ authPage: page }, testInfo) => {
 	test.setTimeout(90_000);
 	await createSampleResumeFromDashboard(page, testInfo);
 	const builderUrl = page.url();
-	await page.goto("/dashboard/cover-letters");
-	await page.getByRole("button", { name: "Create", exact: true }).click();
-	await page.getByLabel("Name", { exact: true }).fill("Platform engineer letter");
-	await page.getByRole("button", { name: "Create cover letter", exact: true }).click();
-	const editor = page.getByRole("dialog", { name: "Edit cover letter", exact: true });
+	const editor = await createLetterFromDocuments(page, "Platform engineer letter");
 	await editor.getByLabel("Recipient", { exact: true }).fill("Dear hiring team,");
 	await editor.getByLabel("Content", { exact: true }).fill("I build reliable platforms for growing teams.");
 	await editor.getByRole("button", { name: "Save Changes", exact: true }).click();
@@ -59,20 +67,25 @@ test("imports a library letter into the builder as an independent copy", async (
 	await resumeSaved;
 	await expect(page.getByRole("button", { name: /^Updated independent resume copy\./ })).toBeVisible();
 
-	await page.goto("/dashboard/cover-letters");
-	await page.getByRole("button", { name: "Edit Platform engineer letter", exact: true }).click();
+	await page.goto("/dashboard?type=letter");
+	await page.getByRole("button", { name: "Platform engineer letter", exact: true }).click();
 	await expect(editor.getByLabel("Content", { exact: true })).toContainText("reliable platforms");
 	await expect(editor.getByLabel("Content", { exact: true })).not.toContainText("Updated independent resume copy");
 	await editor.getByRole("button", { name: "Close", exact: true }).click();
-	await page.getByLabel("Import cover letter JSON", { exact: true }).setInputFiles(jsonPath);
+	// New → Import reads a saved letter's JSON too, and opens the copy.
+	await page.getByRole("button", { name: "New", exact: true }).click();
+	await page
+		.getByRole("dialog", { name: "New document" })
+		.getByLabel("Choose a file to import")
+		.setInputFiles(jsonPath);
 	await expect(editor.getByLabel("Content", { exact: true })).toContainText("reliable platforms");
 	await editor.getByLabel("Name", { exact: true }).fill("Imported independent copy");
 	await editor.getByRole("button", { name: "Save Changes", exact: true }).click();
 	await expect(editor.getByRole("button", { name: "Save Changes", exact: true })).toBeDisabled();
 	await editor.getByRole("button", { name: "Close", exact: true }).click();
-	// The renamed copy shows once the list has refetched; until then both rows carry the original name.
-	await expect(page.getByRole("button", { name: "Edit Imported independent copy", exact: true })).toBeVisible();
-	await expect(page.getByRole("button", { name: "Edit Platform engineer letter", exact: true })).toBeVisible();
+	// The renamed copy shows once the list has refetched; until then both cards carry the original name.
+	await expect(page.getByRole("button", { name: "Imported independent copy", exact: true })).toBeVisible();
+	await expect(page.getByRole("button", { name: "Platform engineer letter", exact: true })).toBeVisible();
 });
 
 test("keeps the application PDF snapshot after the library letter is deleted", async ({ authPage: page, account }) => {
@@ -84,11 +97,7 @@ test("keeps the application PDF snapshot after the library letter is deleted", a
 			'insert into application (id, user_id, company, role) select $1, id, $2, $3 from "user" where email = $4',
 			[applicationId, "Snapshot Company", "Platform Engineer", account.email],
 		);
-		await page.goto("/dashboard/cover-letters");
-		await page.getByRole("button", { name: "Create", exact: true }).click();
-		await page.getByLabel("Name", { exact: true }).fill("Snapshot letter");
-		await page.getByRole("button", { name: "Create cover letter", exact: true }).click();
-		const editor = page.getByRole("dialog", { name: "Edit cover letter", exact: true });
+		const editor = await createLetterFromDocuments(page, "Snapshot letter");
 		await editor.getByLabel("Content", { exact: true }).fill("My application snapshot remains available.");
 		await editor.getByRole("button", { name: "Save Changes", exact: true }).click();
 		await expect(editor.getByRole("button", { name: "Save Changes", exact: true })).toBeDisabled();
@@ -106,10 +115,15 @@ test("keeps the application PDF snapshot after the library letter is deleted", a
 		expect(before.ok()).toBe(true);
 		const bytes = await before.body();
 		expect(bytes.subarray(0, 5).toString()).toBe("%PDF-");
-		await editor.getByRole("button", { name: "Delete", exact: true }).click();
-		await page.getByRole("alertdialog").getByRole("button", { name: "Delete", exact: true }).click();
+		await editor.getByRole("button", { name: "Move to Trash", exact: true }).click();
 		await expect(editor).not.toBeVisible();
-		await expect(page.getByRole("button", { name: "Edit Snapshot letter", exact: true })).not.toBeVisible();
+		await expect(page.getByRole("button", { name: "Snapshot letter", exact: true })).not.toBeVisible();
+		// Deleting it for good from Trash leaves the application's snapshot alone too.
+		await page.goto("/dashboard/trash");
+		await page.getByRole("button", { name: "Options for Snapshot letter" }).click();
+		await page.getByRole("menuitem", { name: "Delete now…" }).click();
+		await page.getByRole("alertdialog").getByRole("button", { name: "Delete now" }).click();
+		await expect(page.getByText("Trash is empty")).toBeVisible();
 		const after = await page.request.get(url);
 		expect(after.ok()).toBe(true);
 		expect(await after.body()).toEqual(bytes);

@@ -26,15 +26,13 @@ for (const uiLanguage of ["English", "Arabic"]) {
 		test(`centers preview with ${uiLanguage} UI and ${resumeLocale} resume`, async ({ authPage: page }, info) => {
 			test.setTimeout(60_000);
 			await page.setViewportSize({ width: 1920, height: 950 });
-			await page.goto("/dashboard/resumes");
-			await page.getByText("Create a new resume", { exact: true }).click();
-			const dialog = page.getByRole("dialog", { name: "Create a new resume" });
-			await dialog.getByLabel("Name", { exact: true }).fill("Preview direction fixture");
-			await dialog.getByRole("button", { name: "Create", exact: true }).click();
-			await page.waitForURL(/\/builder\/.+/);
-			const builderUrl = page.url();
-			const resumeId = builderUrl.split("/").at(-1);
-			await page.goto("/dashboard/resumes");
+			const created = await page.request.post("/api/openapi/resumes", {
+				data: { name: "Preview direction fixture", tags: [] },
+			});
+			expect(created.ok()).toBe(true);
+			const resumeId = (await created.json()) as string;
+			await page.goto("/dashboard");
+			const builderUrl = new URL(`/builder/${resumeId}`, page.url()).toString();
 			const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 			try {
 				await pool.query(

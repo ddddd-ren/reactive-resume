@@ -178,8 +178,7 @@ test("recovers hidden printable sections without changing authored placement", a
 		.toBe(true);
 	await openResumeCardMenu(page, resumeName);
 	const locked = page.waitForResponse((response) => (response.request().postData() ?? "").includes('"isLocked":true'));
-	await page.getByRole("menuitem", { name: "Lock" }).click();
-	await page.getByRole("alertdialog").getByRole("button", { name: "Confirm" }).click();
+	await page.getByRole("menuitem", { name: "Lock editing" }).click();
 	await locked;
 	await page.goto(`/builder/${resumeId}`);
 

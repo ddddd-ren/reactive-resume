@@ -16,12 +16,12 @@ test("exports and imports a resume JSON backup", async ({ authPage: page }, test
 	await download.saveAs(downloadPath);
 	const exportedData = JSON.parse(await readFile(downloadPath, "utf-8")) as { basics: { name: string } };
 
-	await page.goto("/dashboard/resumes");
-	await page.getByRole("button", { name: "Import", exact: true }).click();
-	const dialog = page.getByRole("dialog", { name: "Import an existing resume" });
-	// Import is now file-first: selecting the file auto-detects the Reactive Resume JSON format.
-	await dialog.locator('input[type="file"]').setInputFiles(downloadPath);
-	await dialog.getByRole("button", { name: "Import", exact: true }).click();
+	// New → Import a resume: picking the file detects the format and imports it in three steps.
+	await page.goto("/dashboard");
+	await page.getByRole("button", { name: "New", exact: true }).click();
+	const dialog = page.getByRole("dialog", { name: "New document" });
+	await dialog.getByLabel("Choose a file to import").setInputFiles(downloadPath);
+	await page.getByRole("button", { name: "Open in editor" }).click();
 
 	await page.waitForURL(/\/builder\/.+/);
 	await openSidebarSection(page, "Basics");

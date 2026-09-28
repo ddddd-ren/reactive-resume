@@ -27,7 +27,11 @@ export async function loginViaUi(page: Page, account: E2EAccount) {
 }
 
 export async function logoutViaUi(page: Page, account: E2EAccount) {
-	await page.getByText(account.email).click();
+	// The avatar row at the foot of the sidebar opens the account menu.
+	await page
+		.getByRole("complementary")
+		.getByRole("button", { name: new RegExp(account.name) })
+		.click();
 	await page.getByRole("menuitem", { name: "Sign out" }).click();
 	await page.goto("/auth/login");
 }

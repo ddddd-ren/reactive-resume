@@ -2,20 +2,20 @@ import type { Page, TestInfo } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { createResumeName } from "./data";
 
+/**
+ * Creates a sample resume named after the test and opens it in the editor. It goes through the API: the New
+ * dialog has its own spec (documents), and every other spec just needs a resume.
+ */
 export async function createSampleResumeFromDashboard(page: Page, testInfo: TestInfo) {
 	const resumeName = createResumeName(testInfo);
 
-	await page.goto("/dashboard/resumes");
-	await page.getByText("Create a new resume").click();
+	const response = await page.request.post("/api/openapi/resumes", {
+		data: { name: resumeName, tags: [], withSampleData: true },
+	});
+	expect(response.ok()).toBe(true);
+	const resumeId = (await response.json()) as string;
 
-	const dialog = page.getByRole("dialog", { name: "Create a new resume" });
-	await dialog.getByLabel("Name").fill(resumeName);
-
-	const createGroup = dialog.getByRole("group", { name: "Create resume with options" });
-	await createGroup.getByRole("button").last().click();
-	await page.getByRole("menuitem", { name: "Create a Sample Resume" }).click();
-
-	// Creating a resume now navigates straight into the builder.
+	await page.goto(`/builder/${resumeId}`);
 	await page.waitForURL(/\/builder\/.+/);
 
 	return resumeName;
@@ -87,10 +87,11 @@ export async function getPublicUrl(page: Page) {
 	return (await link.getAttribute("href")) as string;
 }
 
+/** Opens a document's card menu in Documents (right-click, the same menu as ⋯). */
 export async function openResumeCardMenu(page: Page, resumeName: string, { reload = true } = {}) {
-	if (reload) await page.goto("/dashboard/resumes");
-	const resumeLink = page.getByRole("link", { name: new RegExp(resumeName) });
-	await expect(resumeLink).toBeVisible();
-	await resumeLink.click({ button: "right" });
+	if (reload) await page.goto("/dashboard");
+	const card = page.getByRole("link", { name: resumeName, exact: true });
+	await expect(card).toBeVisible();
+	await card.click({ button: "right" });
 	await expect(page.getByRole("menuitem", { name: "Open" })).toBeVisible();
 }
