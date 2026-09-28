@@ -28,7 +28,7 @@ function Switch({ className, size = "default", ...props }: SwitchProps) {
 			data-slot="switch"
 			data-size={size}
 			className={cn(
-				"group/switch peer inline-flex shrink-0 rounded-full outline-none data-disabled:cursor-not-allowed",
+				"group/switch peer touch-target relative inline-flex shrink-0 rounded-full outline-none data-disabled:cursor-not-allowed",
 				className,
 			)}
 			{...props}
@@ -66,7 +66,11 @@ function SwitchRow({ className, label, description, size = "default", ...props }
 					{label}
 				</span>
 				{description && (
-					<span id={descriptionId} className="text-[13px] text-ink-3 leading-[18px]">
+					// A checked row may sit on the accent tint, where ink-3 falls short of 4.5:1; ink-2 keeps it readable.
+					<span
+						id={descriptionId}
+						className="text-[13px] text-ink-3 leading-[18px] group-data-checked/switch:text-ink-2"
+					>
 						{description}
 					</span>
 				)}

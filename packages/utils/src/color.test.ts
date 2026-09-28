@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isDarkColor, parseColorString, rgbaStringToHex } from "./color";
+import { contrastOnWhite, isDarkColor, parseColorString, rgbaStringToHex } from "./color";
 
 describe("rgbaStringToHex", () => {
 	it("converts opaque rgb to hex", () => {
@@ -121,5 +121,19 @@ describe("parseColorString", () => {
 		it("returns null for hsl format", () => {
 			expect(parseColorString("hsl(0, 100%, 50%)")).toBeNull();
 		});
+	});
+});
+
+describe("contrastOnWhite", () => {
+	it("measures WCAG contrast against white", () => {
+		expect(contrastOnWhite("rgba(0, 0, 0, 1)")).toBeCloseTo(21, 0);
+		expect(contrastOnWhite("#ffffff")).toBeCloseTo(1, 5);
+		// The sample template blue, just short of 4.5:1 for body text.
+		expect(contrastOnWhite("rgba(0, 132, 209, 1)")).toBeCloseTo(4.02, 1);
+	});
+
+	it("lays transparency over white, and treats unreadable colours as no contrast", () => {
+		expect(contrastOnWhite("rgba(0, 0, 0, 0)")).toBeCloseTo(1, 5);
+		expect(contrastOnWhite("hsl(0 0% 0%)")).toBe(1);
 	});
 });

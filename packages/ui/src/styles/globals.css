@@ -241,6 +241,24 @@
 	}
 }
 
+/*
+ * Touch screens: a control's hit area grows to at least 44×44, centred on it, without changing how it looks
+ * (README §4.7). The control needs `position: relative`.
+ */
+@utility touch-target {
+	@media (pointer: coarse) {
+		&::after {
+			content: "";
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: max(100%, 44px);
+			height: max(100%, 44px);
+			translate: -50% -50%;
+		}
+	}
+}
+
 @utility material-symbol {
 	font-family: "Material Symbols Rounded", sans-serif;
 	font-weight: 300;

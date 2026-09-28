@@ -70,7 +70,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
 		<TabsPrimitive.Tab
 			data-slot="tabs-trigger"
 			className={cn(
-				"relative inline-flex min-w-fit items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-colors duration-quick hover:text-ink disabled:pointer-events-none disabled:text-ink-3 aria-disabled:pointer-events-none aria-disabled:text-ink-3 data-active:text-ink group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"touch-target relative inline-flex min-w-fit items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-colors duration-quick hover:text-ink disabled:pointer-events-none disabled:text-ink-3 aria-disabled:pointer-events-none aria-disabled:text-ink-3 data-active:text-ink group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				"group-data-[variant=default]/tabs-list:h-full group-data-[variant=default]/tabs-list:flex-1 group-data-[variant=default]/tabs-list:rounded-sm group-data-[variant=default]/tabs-list:px-3 group-data-[variant=default]/tabs-list:text-[13px]",
 				"group-data-[variant=line]/tabs-list:h-full group-data-[variant=line]/tabs-list:text-sm group-data-[variant=line]/tabs-list:data-active:shadow-[inset_0_-2px_0_var(--ink)]",
 				className,
