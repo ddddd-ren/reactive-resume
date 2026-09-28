@@ -434,8 +434,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"network": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The name of the network or platform."
+										"description": "The name of the network or platform. Empty while the entry is a draft, which isn't printed."
 									},
 									"username": {
 										"type": "string",
@@ -548,8 +547,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"company": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The name of the company or organization."
+										"description": "The name of the company or organization. Empty while the entry is a draft, which isn't printed."
 									},
 									"position": {
 										"type": "string",
@@ -561,7 +559,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"period": {
 										"type": "string",
-										"description": "The overall period of time at the company. When multiple roles are used, this should reflect the total tenure."
+										"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+									},
+									"dates": {
+										"type": "object",
+										"properties": {
+											"start": {
+												"default": null,
+												"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"end": {
+												"default": null,
+												"description": "When it ended. Null while ongoing or for single dates.",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"present": {
+												"default": false,
+												"description": "Whether it's ongoing, printed as 'Present'.",
+												"type": "boolean"
+											},
+											"raw": {
+												"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+												"type": "string"
+											}
+										},
+										"required": [
+											"start",
+											"end",
+											"present"
+										],
+										"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 									},
 									"website": {
 										"default": {
@@ -613,7 +659,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 												},
 												"period": {
 													"type": "string",
-													"description": "The period of time this role was held."
+													"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+												},
+												"dates": {
+													"type": "object",
+													"properties": {
+														"start": {
+															"default": null,
+															"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+															"anyOf": [
+																{
+																	"type": "string",
+																	"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+																	"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"end": {
+															"default": null,
+															"description": "When it ended. Null while ongoing or for single dates.",
+															"anyOf": [
+																{
+																	"type": "string",
+																	"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+																	"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+																},
+																{
+																	"type": "null"
+																}
+															]
+														},
+														"present": {
+															"default": false,
+															"description": "Whether it's ongoing, printed as 'Present'.",
+															"type": "boolean"
+														},
+														"raw": {
+															"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+															"type": "string"
+														}
+													},
+													"required": [
+														"start",
+														"end",
+														"present"
+													],
+													"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 												},
 												"description": {
 													"type": "string",
@@ -708,8 +802,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"school": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The name of the school or institution."
+										"description": "The name of the school or institution. Empty while the entry is a draft, which isn't printed."
 									},
 									"degree": {
 										"type": "string",
@@ -729,7 +822,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"period": {
 										"type": "string",
-										"description": "The period of time the education was obtained over."
+										"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+									},
+									"dates": {
+										"type": "object",
+										"properties": {
+											"start": {
+												"default": null,
+												"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"end": {
+												"default": null,
+												"description": "When it ended. Null while ongoing or for single dates.",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"present": {
+												"default": false,
+												"description": "Whether it's ongoing, printed as 'Present'.",
+												"type": "boolean"
+											},
+											"raw": {
+												"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+												"type": "string"
+											}
+										},
+										"required": [
+											"start",
+											"end",
+											"present"
+										],
+										"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 									},
 									"website": {
 										"default": {
@@ -845,12 +986,59 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"name": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The name of the project."
+										"description": "The name of the project. Empty while the entry is a draft, which isn't printed."
 									},
 									"period": {
 										"type": "string",
-										"description": "The period of time the project was worked on."
+										"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+									},
+									"dates": {
+										"type": "object",
+										"properties": {
+											"start": {
+												"default": null,
+												"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"end": {
+												"default": null,
+												"description": "When it ended. Null while ongoing or for single dates.",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"present": {
+												"default": false,
+												"description": "Whether it's ongoing, printed as 'Present'.",
+												"type": "boolean"
+											},
+											"raw": {
+												"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+												"type": "string"
+											}
+										},
+										"required": [
+											"start",
+											"end",
+											"present"
+										],
+										"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 									},
 									"website": {
 										"default": {
@@ -972,8 +1160,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"name": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The name of the skill."
+										"description": "The name of the skill. Empty while the entry is a draft, which isn't printed."
 									},
 									"proficiency": {
 										"type": "string",
@@ -1090,8 +1277,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"language": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The name of the language the author knows."
+										"description": "The name of the language the author knows. Empty while the entry is a draft, which isn't printed."
 									},
 									"fluency": {
 										"type": "string",
@@ -1189,8 +1375,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"name": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The name of the interest/hobby."
+										"description": "The name of the interest/hobby. Empty while the entry is a draft, which isn't printed."
 									},
 									"keywords": {
 										"default": [],
@@ -1277,8 +1462,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"title": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The title of the award."
+										"description": "The title of the award. Empty while the entry is a draft, which isn't printed."
 									},
 									"awarder": {
 										"type": "string",
@@ -1286,7 +1470,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"date": {
 										"type": "string",
-										"description": "The date when the award was received."
+										"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+									},
+									"dates": {
+										"type": "object",
+										"properties": {
+											"start": {
+												"default": null,
+												"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"end": {
+												"default": null,
+												"description": "When it ended. Null while ongoing or for single dates.",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"present": {
+												"default": false,
+												"description": "Whether it's ongoing, printed as 'Present'.",
+												"type": "boolean"
+											},
+											"raw": {
+												"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+												"type": "string"
+											}
+										},
+										"required": [
+											"start",
+											"end",
+											"present"
+										],
+										"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 									},
 									"website": {
 										"default": {
@@ -1399,8 +1631,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"title": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The title of the certification."
+										"description": "The title of the certification. Empty while the entry is a draft, which isn't printed."
 									},
 									"issuer": {
 										"type": "string",
@@ -1408,7 +1639,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"date": {
 										"type": "string",
-										"description": "The date when the certification was received."
+										"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+									},
+									"dates": {
+										"type": "object",
+										"properties": {
+											"start": {
+												"default": null,
+												"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"end": {
+												"default": null,
+												"description": "When it ended. Null while ongoing or for single dates.",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"present": {
+												"default": false,
+												"description": "Whether it's ongoing, printed as 'Present'.",
+												"type": "boolean"
+											},
+											"raw": {
+												"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+												"type": "string"
+											}
+										},
+										"required": [
+											"start",
+											"end",
+											"present"
+										],
+										"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 									},
 									"website": {
 										"default": {
@@ -1521,8 +1800,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"title": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The title of the publication."
+										"description": "The title of the publication. Empty while the entry is a draft, which isn't printed."
 									},
 									"publisher": {
 										"type": "string",
@@ -1530,7 +1808,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"date": {
 										"type": "string",
-										"description": "The date when the publication was published."
+										"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+									},
+									"dates": {
+										"type": "object",
+										"properties": {
+											"start": {
+												"default": null,
+												"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"end": {
+												"default": null,
+												"description": "When it ended. Null while ongoing or for single dates.",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"present": {
+												"default": false,
+												"description": "Whether it's ongoing, printed as 'Present'.",
+												"type": "boolean"
+											},
+											"raw": {
+												"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+												"type": "string"
+											}
+										},
+										"required": [
+											"start",
+											"end",
+											"present"
+										],
+										"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 									},
 									"website": {
 										"default": {
@@ -1643,8 +1969,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"organization": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The name of the organization or company."
+										"description": "The name of the organization or company. Empty while the entry is a draft, which isn't printed."
 									},
 									"location": {
 										"type": "string",
@@ -1652,7 +1977,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"period": {
 										"type": "string",
-										"description": "The period of time the author was volunteered at the organization or company."
+										"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+									},
+									"dates": {
+										"type": "object",
+										"properties": {
+											"start": {
+												"default": null,
+												"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"end": {
+												"default": null,
+												"description": "When it ended. Null while ongoing or for single dates.",
+												"anyOf": [
+													{
+														"type": "string",
+														"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+														"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"present": {
+												"default": false,
+												"description": "Whether it's ongoing, printed as 'Present'.",
+												"type": "boolean"
+											},
+											"raw": {
+												"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+												"type": "string"
+											}
+										},
+										"required": [
+											"start",
+											"end",
+											"present"
+										],
+										"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 									},
 									"website": {
 										"default": {
@@ -1765,8 +2138,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 									},
 									"name": {
 										"type": "string",
-										"minLength": 1,
-										"description": "The name of the reference, or a note such as 'Available upon request'."
+										"description": "The name of the reference, or a note such as 'Available upon request'. Empty while the entry is a draft, which isn't printed."
 									},
 									"position": {
 										"type": "string",
@@ -2108,8 +2480,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"network": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The name of the network or platform."
+											"description": "The name of the network or platform. Empty while the entry is a draft, which isn't printed."
 										},
 										"username": {
 											"type": "string",
@@ -2234,8 +2605,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"company": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The name of the company or organization."
+											"description": "The name of the company or organization. Empty while the entry is a draft, which isn't printed."
 										},
 										"position": {
 											"type": "string",
@@ -2247,7 +2617,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"period": {
 											"type": "string",
-											"description": "The overall period of time at the company. When multiple roles are used, this should reflect the total tenure."
+											"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+										},
+										"dates": {
+											"type": "object",
+											"properties": {
+												"start": {
+													"default": null,
+													"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"end": {
+													"default": null,
+													"description": "When it ended. Null while ongoing or for single dates.",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"present": {
+													"default": false,
+													"description": "Whether it's ongoing, printed as 'Present'.",
+													"type": "boolean"
+												},
+												"raw": {
+													"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+													"type": "string"
+												}
+											},
+											"required": [
+												"start",
+												"end",
+												"present"
+											],
+											"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 										},
 										"website": {
 											"default": {
@@ -2299,7 +2717,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 													},
 													"period": {
 														"type": "string",
-														"description": "The period of time this role was held."
+														"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+													},
+													"dates": {
+														"type": "object",
+														"properties": {
+															"start": {
+																"default": null,
+																"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+																		"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"end": {
+																"default": null,
+																"description": "When it ended. Null while ongoing or for single dates.",
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+																		"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"present": {
+																"default": false,
+																"description": "Whether it's ongoing, printed as 'Present'.",
+																"type": "boolean"
+															},
+															"raw": {
+																"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+																"type": "string"
+															}
+														},
+														"required": [
+															"start",
+															"end",
+															"present"
+														],
+														"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 													},
 													"description": {
 														"type": "string",
@@ -2406,8 +2872,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"school": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The name of the school or institution."
+											"description": "The name of the school or institution. Empty while the entry is a draft, which isn't printed."
 										},
 										"degree": {
 											"type": "string",
@@ -2427,7 +2892,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"period": {
 											"type": "string",
-											"description": "The period of time the education was obtained over."
+											"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+										},
+										"dates": {
+											"type": "object",
+											"properties": {
+												"start": {
+													"default": null,
+													"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"end": {
+													"default": null,
+													"description": "When it ended. Null while ongoing or for single dates.",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"present": {
+													"default": false,
+													"description": "Whether it's ongoing, printed as 'Present'.",
+													"type": "boolean"
+												},
+												"raw": {
+													"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+													"type": "string"
+												}
+											},
+											"required": [
+												"start",
+												"end",
+												"present"
+											],
+											"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 										},
 										"website": {
 											"default": {
@@ -2555,12 +3068,59 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"name": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The name of the project."
+											"description": "The name of the project. Empty while the entry is a draft, which isn't printed."
 										},
 										"period": {
 											"type": "string",
-											"description": "The period of time the project was worked on."
+											"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+										},
+										"dates": {
+											"type": "object",
+											"properties": {
+												"start": {
+													"default": null,
+													"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"end": {
+													"default": null,
+													"description": "When it ended. Null while ongoing or for single dates.",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"present": {
+													"default": false,
+													"description": "Whether it's ongoing, printed as 'Present'.",
+													"type": "boolean"
+												},
+												"raw": {
+													"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+													"type": "string"
+												}
+											},
+											"required": [
+												"start",
+												"end",
+												"present"
+											],
+											"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 										},
 										"website": {
 											"default": {
@@ -2701,8 +3261,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"name": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The name of the skill."
+											"description": "The name of the skill. Empty while the entry is a draft, which isn't printed."
 										},
 										"proficiency": {
 											"type": "string",
@@ -2814,8 +3373,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"language": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The name of the language the author knows."
+											"description": "The name of the language the author knows. Empty while the entry is a draft, which isn't printed."
 										},
 										"fluency": {
 											"type": "string",
@@ -2925,8 +3483,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"name": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The name of the interest/hobby."
+											"description": "The name of the interest/hobby. Empty while the entry is a draft, which isn't printed."
 										},
 										"keywords": {
 											"default": [],
@@ -3025,8 +3582,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"title": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The title of the award."
+											"description": "The title of the award. Empty while the entry is a draft, which isn't printed."
 										},
 										"awarder": {
 											"type": "string",
@@ -3034,7 +3590,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"date": {
 											"type": "string",
-											"description": "The date when the award was received."
+											"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+										},
+										"dates": {
+											"type": "object",
+											"properties": {
+												"start": {
+													"default": null,
+													"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"end": {
+													"default": null,
+													"description": "When it ended. Null while ongoing or for single dates.",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"present": {
+													"default": false,
+													"description": "Whether it's ongoing, printed as 'Present'.",
+													"type": "boolean"
+												},
+												"raw": {
+													"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+													"type": "string"
+												}
+											},
+											"required": [
+												"start",
+												"end",
+												"present"
+											],
+											"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 										},
 										"website": {
 											"default": {
@@ -3159,8 +3763,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"title": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The title of the certification."
+											"description": "The title of the certification. Empty while the entry is a draft, which isn't printed."
 										},
 										"issuer": {
 											"type": "string",
@@ -3168,7 +3771,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"date": {
 											"type": "string",
-											"description": "The date when the certification was received."
+											"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+										},
+										"dates": {
+											"type": "object",
+											"properties": {
+												"start": {
+													"default": null,
+													"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"end": {
+													"default": null,
+													"description": "When it ended. Null while ongoing or for single dates.",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"present": {
+													"default": false,
+													"description": "Whether it's ongoing, printed as 'Present'.",
+													"type": "boolean"
+												},
+												"raw": {
+													"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+													"type": "string"
+												}
+											},
+											"required": [
+												"start",
+												"end",
+												"present"
+											],
+											"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 										},
 										"website": {
 											"default": {
@@ -3293,8 +3944,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"title": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The title of the publication."
+											"description": "The title of the publication. Empty while the entry is a draft, which isn't printed."
 										},
 										"publisher": {
 											"type": "string",
@@ -3302,7 +3952,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"date": {
 											"type": "string",
-											"description": "The date when the publication was published."
+											"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+										},
+										"dates": {
+											"type": "object",
+											"properties": {
+												"start": {
+													"default": null,
+													"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"end": {
+													"default": null,
+													"description": "When it ended. Null while ongoing or for single dates.",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"present": {
+													"default": false,
+													"description": "Whether it's ongoing, printed as 'Present'.",
+													"type": "boolean"
+												},
+												"raw": {
+													"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+													"type": "string"
+												}
+											},
+											"required": [
+												"start",
+												"end",
+												"present"
+											],
+											"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 										},
 										"website": {
 											"default": {
@@ -3427,8 +4125,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"organization": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The name of the organization or company."
+											"description": "The name of the organization or company. Empty while the entry is a draft, which isn't printed."
 										},
 										"location": {
 											"type": "string",
@@ -3436,7 +4133,55 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"period": {
 											"type": "string",
-											"description": "The period of time the author was volunteered at the organization or company."
+											"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+										},
+										"dates": {
+											"type": "object",
+											"properties": {
+												"start": {
+													"default": null,
+													"description": "When it started, or the date itself for single-date entries (awards, certifications, publications).",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"end": {
+													"default": null,
+													"description": "When it ended. Null while ongoing or for single dates.",
+													"anyOf": [
+														{
+															"type": "string",
+															"pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2]))?$",
+															"description": "A year (\"2022\") or a year and month (\"2022-03\")."
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"present": {
+													"default": false,
+													"description": "Whether it's ongoing, printed as 'Present'.",
+													"type": "boolean"
+												},
+												"raw": {
+													"description": "The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+													"type": "string"
+												}
+											},
+											"required": [
+												"start",
+												"end",
+												"present"
+											],
+											"description": "Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them."
 										},
 										"website": {
 											"default": {
@@ -3561,8 +4306,7 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 										},
 										"name": {
 											"type": "string",
-											"minLength": 1,
-											"description": "The name of the reference, or a note such as 'Available upon request'."
+											"description": "The name of the reference, or a note such as 'Available upon request'. Empty while the entry is a draft, which isn't printed."
 										},
 										"position": {
 											"type": "string",
@@ -3751,6 +4495,16 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 							"default": "en-US",
 							"type": "string",
 							"description": "The locale of the page. Used for displaying pre-translated section headings, if not overridden."
+						},
+						"dateFormat": {
+							"description": "How dates print: 'short' (Mar 2022), 'long' (March 2022), 'numeric' (03/2022) or 'iso' (2022-03). When missing, it's read from how the dates were typed.",
+							"type": "string",
+							"enum": [
+								"short",
+								"long",
+								"numeric",
+								"iso"
+							]
 						},
 						"hideLinkUnderline": {
 							"default": false,

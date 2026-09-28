@@ -61,12 +61,12 @@ describe("parseResumeText", () => {
 			company: "Analytical Engines",
 			position: "Senior Engineer",
 			location: "Berlin",
-			period: "Jan 2020 - Present",
+			period: "Jan 2020 – Present",
 		});
 		expect(data.sections.experience.items[1]).toMatchObject({
 			company: "Babbage Ltd",
 			position: "Engineer",
-			period: "Mar 2016 - Dec 2019",
+			period: "Mar 2016 – Dec 2019",
 		});
 	});
 
@@ -80,7 +80,7 @@ describe("parseResumeText", () => {
 		expect(data.sections.education.items[0]).toMatchObject({
 			school: "University of London",
 			degree: "BSc Mathematics",
-			period: "2012 - 2016",
+			period: "2012 – 2016",
 		});
 	});
 
@@ -173,7 +173,7 @@ describe("parseResumeText review findings", () => {
 		expect(data.sections.experience.items[0]).toMatchObject({
 			company: "Analytical Engines",
 			position: "Senior Engineer",
-			period: "Jan 2020 - Present",
+			period: "Jan 2020 – Present",
 		});
 	});
 
@@ -201,7 +201,7 @@ describe("parseResumeText multi-line entry preambles", () => {
 		expect(data.sections.experience.items[0]).toMatchObject({
 			company: "ACME CORPORATION",
 			position: "Senior Engineer",
-			period: "Jan 2020 - Present",
+			period: "Jan 2020 – Present",
 		});
 	});
 
@@ -213,7 +213,7 @@ describe("parseResumeText multi-line entry preambles", () => {
 		expect(data.sections.education.items[0]).toMatchObject({
 			school: "UNIVERSITY OF LONDON",
 			degree: "BSc Mathematics",
-			period: "2012 - 2016",
+			period: "2012 – 2016",
 		});
 	});
 
@@ -237,7 +237,7 @@ describe("parseResumeText four-line entry preambles", () => {
 			company: "ACME CORPORATION",
 			position: "Senior Engineer",
 			location: "Berlin, Germany",
-			period: "Jan 2020 - Present",
+			period: "Jan 2020 – Present",
 		});
 	});
 
@@ -250,7 +250,7 @@ describe("parseResumeText four-line entry preambles", () => {
 			school: "UNIVERSITY OF LONDON",
 			degree: "BSc Mathematics",
 			location: "London, UK",
-			period: "2012 - 2016",
+			period: "2012 – 2016",
 		});
 	});
 });
@@ -314,7 +314,7 @@ describe("parseResumeText keeps content the layout hides", () => {
 		);
 
 		expect(() => resumeDataSchema.parse(data)).not.toThrow();
-		expect(data.sections.experience.items[0]).toMatchObject({ company: "Acme Corp", period: "Jan 2020 - Present" });
+		expect(data.sections.experience.items[0]).toMatchObject({ company: "Acme Corp", period: "Jan 2020 – Present" });
 		expect(data.sections.education.items[0]).toMatchObject({ school: "University of London" });
 		expect(data.sections.certifications.items).toHaveLength(0);
 	});

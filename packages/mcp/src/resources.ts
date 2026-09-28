@@ -2,7 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { RouterClient } from "@orpc/server";
 import type router from "@reactive-resume/api/routers";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
-import schemaJSON from "@reactive-resume/schema/schema.json";
+import { createResumeDataJsonSchema } from "@reactive-resume/schema/resume/json-schema";
 import { MCP_TOOL_NAME as T } from "./mcp-tool-names";
 
 export function registerResources(server: McpServer, client: RouterClient<typeof router>) {
@@ -63,7 +63,8 @@ export function registerResources(server: McpServer, client: RouterClient<typeof
 				{
 					uri: uri.href,
 					mimeType: "application/json" as const,
-					text: JSON.stringify(schemaJSON, null, 2),
+					// Generated from the Zod schema, like /schema.json, so it never drifts from what writes accept.
+					text: JSON.stringify(createResumeDataJsonSchema(), null, 2),
 				},
 			],
 		}),

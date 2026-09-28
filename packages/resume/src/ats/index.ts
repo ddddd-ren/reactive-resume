@@ -47,8 +47,6 @@ export function lintResumeForAts(data: ResumeData, options: AtsLintOptions = {})
 }
 
 export type { AtsRuleCode } from "./catalog";
-export type { ParsedPeriod, PeriodEndpoint } from "./period";
 export type { AtsFinding, AtsFindingParams, AtsReport, AtsSeverity } from "./types";
 export type { SectionPlacement, WalkedItem, WalkedSection } from "./walk";
 export { ATS_RULE_CODES } from "./catalog";
-export { isFutureEndpoint, isReversedPeriod, parsePeriod, parseSingleDate } from "./period";

@@ -4,7 +4,7 @@ import { getNetworkIcon } from "@reactive-resume/resume/icons";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
-import { formatPeriod, formatSingleDate } from "./date";
+import { formatPeriod, formatSingleDate, toRangeDates, toSingleDates } from "./date";
 import { rethrowAsImportError } from "./error";
 import { arrayToHtmlList, toHtmlDescription } from "./html";
 import { parseLevel } from "./level";
@@ -221,6 +221,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					position: work.position || "",
 					location: work.location || "",
 					period: formatPeriod(work.startDate, work.endDate),
+					dates: toRangeDates(work.startDate, work.endDate),
 					website: createItemWebsite(work.url),
 					roles: [],
 					description: toHtmlDescription(work.summary, work.highlights),
@@ -243,6 +244,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					grade: edu.score || "",
 					location: "",
 					period: formatPeriod(edu.startDate, edu.endDate),
+					dates: toRangeDates(edu.startDate, edu.endDate),
 					website: createItemWebsite(edu.url),
 					description: edu.courses && edu.courses.length > 0 ? arrayToHtmlList(edu.courses) : "",
 				})),
@@ -260,6 +262,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					hidden: false,
 					name: project.name || "",
 					period: formatPeriod(project.startDate, project.endDate),
+					dates: toRangeDates(project.startDate, project.endDate),
 					website: createItemWebsite(project.url),
 					description: toHtmlDescription(project.description, project.highlights),
 				})),
@@ -330,6 +333,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					title: award.title || "",
 					awarder: award.awarder || "",
 					date: formatSingleDate(award.date),
+					dates: toSingleDates(award.date),
 					website: createItemWebsite(),
 					description: award.summary ? `<p>${award.summary}</p>` : "",
 				})),
@@ -348,6 +352,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					title: cert.name || "",
 					issuer: cert.issuer || "",
 					date: formatSingleDate(cert.date),
+					dates: toSingleDates(cert.date),
 					website: createItemWebsite(cert.url),
 					description: "",
 				})),
@@ -366,6 +371,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					title: pub.name || "",
 					publisher: pub.publisher || "",
 					date: formatSingleDate(pub.releaseDate),
+					dates: toSingleDates(pub.releaseDate),
 					website: createItemWebsite(pub.url),
 					description: pub.summary ? `<p>${pub.summary}</p>` : "",
 				})),
@@ -384,6 +390,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					organization: vol.organization || "",
 					location: "",
 					period: formatPeriod(vol.startDate, vol.endDate),
+					dates: toRangeDates(vol.startDate, vol.endDate),
 					website: createItemWebsite(vol.url),
 					description: toHtmlDescription(vol.summary, vol.highlights),
 				})),

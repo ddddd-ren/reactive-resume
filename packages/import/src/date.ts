@@ -1,3 +1,5 @@
+import type { ResumeDates, YearMonth } from "@reactive-resume/schema/resume/dates";
+
 // ponytail: Intl replaces the 12-line MONTH_NAMES array; pinned to en-US so output is stable
 const fmt = new Intl.DateTimeFormat("en-US", { month: "long" });
 
@@ -49,3 +51,20 @@ export function formatSingleDate(date?: string): string {
 	if (!date) return "";
 	return formatDate(date, true);
 }
+
+/** The year and month of an ISO 8601 date ("2024-01-15" → "2024-01"); null when it isn't one. */
+export function toYearMonth(date?: string): YearMonth | null {
+	const match = /^(\d{4})(?:-(0[1-9]|1[0-2]))?/.exec(date?.trim() ?? "");
+	if (!match?.[1]) return null;
+	return match[2] ? `${match[1]}-${match[2]}` : match[1];
+}
+
+/** Structured dates for a range of ISO dates; a start with no end is ongoing, as `formatPeriod` prints it. */
+export function toRangeDates(startDate?: string, endDate?: string): ResumeDates {
+	const start = toYearMonth(startDate);
+	const end = toYearMonth(endDate);
+	return { start, end, present: Boolean(start) && !endDate };
+}
+
+/** Structured dates for a single ISO date. The day, if any, doesn't print. */
+export const toSingleDates = (date?: string): ResumeDates => ({ start: toYearMonth(date), end: null, present: false });

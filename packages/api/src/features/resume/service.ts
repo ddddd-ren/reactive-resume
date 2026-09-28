@@ -140,9 +140,10 @@ async function applyResumePatchTx(
 	input.operations.forEach(assertValidPatchPointers);
 
 	let patchedData: ResumeData;
+	const storedData = parseStoredResumeData(existing.data);
 
 	try {
-		patchedData = applyResumePatches(parseStoredResumeData(existing.data), input.operations);
+		patchedData = applyResumePatches(storedData, input.operations);
 	} catch (error) {
 		if (error instanceof ResumePatchError) {
 			throw new ORPCError("INVALID_PATCH_OPERATIONS", {
@@ -158,7 +159,7 @@ async function applyResumePatchTx(
 		});
 	}
 
-	patchedData = parseWritableResumeData(patchedData);
+	patchedData = parseWritableResumeData(patchedData, storedData);
 	// The version guard is the ms-precision JS check above, under the SELECT ... FOR UPDATE lock.
 	// Never compare expectedUpdatedAt in SQL: rows stamped by Postgres now() (defaultNow() on
 	// insert) carry microseconds, while JS Dates are ms-truncated — SQL equality then matches
@@ -509,7 +510,8 @@ export const resumeService = {
 
 		if (!resume) throw new ORPCError("NOT_FOUND");
 
-		return resume;
+		// Clients get the current data shape (structured dates and their text in step), not the stored one.
+		return { ...resume, data: parseStoredResumeData(resume.data) };
 	},
 
 	getBySlug: async (input: {
@@ -562,7 +564,8 @@ export const resumeService = {
 			}
 		}
 
-		return toSharedResumeResponse(redactResumeForViewer(resume, isOwner(resume, viewer)), resume.hasPassword);
+		const current = { ...resume, data: parseStoredResumeData(resume.data) };
+		return toSharedResumeResponse(redactResumeForViewer(current, isOwner(current, viewer)), resume.hasPassword);
 	},
 
 	create: async (input: {
@@ -633,7 +636,9 @@ export const resumeService = {
 
 				if (!existing) throw new ORPCError("NOT_FOUND");
 				if (existing.isLocked) throw new ORPCError("RESUME_LOCKED");
-				const normalizedData = input.data ? parseWritableResumeData(input.data) : undefined;
+				const normalizedData = input.data
+					? parseWritableResumeData(input.data, parseStoredResumeData(existing.data))
+					: undefined;
 				const updateData: Partial<typeof schema.resume.$inferSelect> = {
 					...(input.name !== undefined ? { name: input.name } : {}),
 					...(input.slug !== undefined ? { slug: input.slug } : {}),

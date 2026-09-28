@@ -156,6 +156,16 @@ describe("date rules", () => {
 		expect(codesOf(data)).not.toContain("UNPARSEABLE_PERIOD");
 	});
 
+	it("reads structured dates rather than their printed text", () => {
+		const data = makeResume((resume) => {
+			resume.metadata.page.locale = "ja-JP";
+			resume.sections.experience.items = [
+				experienceItem({ period: "2022年3月 – 現在", dates: { start: "2022-03", end: null, present: true } }),
+			];
+		});
+		expect(codesOf(data)).not.toContain("UNPARSEABLE_PERIOD");
+	});
+
 	it("flags a period that runs backwards", () => {
 		const data = makeResume((resume) => {
 			resume.sections.experience.items = [experienceItem({ period: "Mar 2022 - Jan 2020" })];

@@ -357,7 +357,7 @@ describe("customFieldSchema", () => {
 });
 
 describe("experienceItemSchema", () => {
-	it("requires company name (min 1)", () => {
+	it("accepts a draft without a company (drafts aren't printed)", () => {
 		const result = experienceItemSchema.safeParse({
 			id: "abcdef0123456789",
 			hidden: false,
@@ -369,7 +369,7 @@ describe("experienceItemSchema", () => {
 			description: "",
 			roles: [],
 		});
-		expect(result.success).toBe(false);
+		expect(result.success).toBe(true);
 	});
 
 	it("validates a complete experience item", () => {
@@ -404,8 +404,8 @@ describe("experienceItemSchema", () => {
 });
 
 describe("skillItemSchema", () => {
-	it("requires name (min 1)", () => {
-		const invalid = {
+	it("accepts a draft without a name (drafts aren't printed)", () => {
+		const draft = {
 			id: "x",
 			hidden: false,
 			icon: "",
@@ -415,7 +415,7 @@ describe("skillItemSchema", () => {
 			level: 4,
 			keywords: [],
 		};
-		expect(skillItemSchema.safeParse(invalid).success).toBe(false);
+		expect(skillItemSchema.safeParse(draft).success).toBe(true);
 	});
 
 	it("clamps invalid level via .catch(0)", () => {

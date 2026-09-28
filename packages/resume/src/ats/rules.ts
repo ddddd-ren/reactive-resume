@@ -2,8 +2,14 @@ import type { CustomSectionType, ResumeData } from "@reactive-resume/schema/resu
 import type { AtsRuleCode } from "./catalog";
 import type { AtsFinding, AtsFindingParams } from "./types";
 import type { WalkedSection } from "./walk";
+import { resumeDatesSchema, resumeDatesToPeriod } from "@reactive-resume/schema/resume/dates";
+import {
+	isFutureEndpoint,
+	isReversedPeriod,
+	parsePeriod,
+	parseSingleDate,
+} from "@reactive-resume/schema/resume/period";
 import { atsRuleSeverity } from "./catalog";
-import { isFutureEndpoint, isReversedPeriod, parsePeriod, parseSingleDate } from "./period";
 import { SECTION_TITLE_ALIASES } from "./section-aliases";
 import { isRenderedSection } from "./walk";
 
@@ -99,13 +105,26 @@ const urlRules: AtsRule = (context) => {
 	return findings;
 };
 
-function periodFindings(raw: unknown, pointer: string, type: CustomSectionType, context: RuleContext): AtsFinding[] {
+// Structured dates are read already; text that never parsed keeps its original in `raw`.
+const readItemDates = (dates: unknown) => {
+	const parsed = resumeDatesSchema.safeParse(dates);
+	return parsed.success ? parsed.data : undefined;
+};
+
+function periodFindings(
+	raw: unknown,
+	dates: unknown,
+	pointer: string,
+	type: CustomSectionType,
+	context: RuleContext,
+): AtsFinding[] {
 	if (typeof raw !== "string") return [];
 
 	const value = raw.trim();
 	if (!value) return PERIOD_REQUIRED_TYPES.has(type) ? [finding("EMPTY_PERIOD", pointer)] : [];
 
-	const parsed = parsePeriod(value, context.locale);
+	const structured = readItemDates(dates);
+	const parsed = structured ? resumeDatesToPeriod(structured) : parsePeriod(value, context.locale);
 	if (!parsed) return [finding("UNPARSEABLE_PERIOD", pointer, { value })];
 
 	const findings: AtsFinding[] = [];
@@ -119,13 +138,15 @@ function periodFindings(raw: unknown, pointer: string, type: CustomSectionType, 
 	return findings;
 }
 
-function singleDateFindings(raw: unknown, pointer: string, context: RuleContext): AtsFinding[] {
+function singleDateFindings(raw: unknown, dates: unknown, pointer: string, context: RuleContext): AtsFinding[] {
 	if (typeof raw !== "string") return [];
 
 	const value = raw.trim();
 	if (!value) return [];
 
-	return parseSingleDate(value, context.locale) ? [] : [finding("UNPARSEABLE_DATE", pointer, { value })];
+	const structured = readItemDates(dates);
+	const readable = structured ? Boolean(structured.start) : Boolean(parseSingleDate(value, context.locale));
+	return readable ? [] : [finding("UNPARSEABLE_DATE", pointer, { value })];
 }
 
 const dateRules: AtsRule = (context) => {
@@ -135,15 +156,17 @@ const dateRules: AtsRule = (context) => {
 		if (isCoverLetter(section) || !isRenderedSection(section)) continue;
 
 		for (const item of section.items) {
-			findings.push(...periodFindings(item.value.period, `${item.pointer}/period`, section.type, context));
-			findings.push(...singleDateFindings(item.value.date, `${item.pointer}/date`, context));
+			findings.push(
+				...periodFindings(item.value.period, item.value.dates, `${item.pointer}/period`, section.type, context),
+			);
+			findings.push(...singleDateFindings(item.value.date, item.value.dates, `${item.pointer}/date`, context));
 
 			const roles = item.value.roles;
 			if (!Array.isArray(roles)) continue;
 
 			roles.forEach((role, index) => {
-				const value = (role as Record<string, unknown>).period;
-				findings.push(...periodFindings(value, `${item.pointer}/roles/${index}/period`, section.type, context));
+				const { period, dates } = role as Record<string, unknown>;
+				findings.push(...periodFindings(period, dates, `${item.pointer}/roles/${index}/period`, section.type, context));
 			});
 		}
 	}

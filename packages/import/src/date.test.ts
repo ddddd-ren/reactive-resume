@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDate, formatPeriod, formatSingleDate } from "./date";
+import { formatDate, formatPeriod, formatSingleDate, toRangeDates, toSingleDates, toYearMonth } from "./date";
 
 describe("formatDate", () => {
 	it("formats YYYY-MM as 'Month Year'", () => {
@@ -85,5 +85,19 @@ describe("formatSingleDate", () => {
 
 	it("returns plain year when only year present", () => {
 		expect(formatSingleDate("2024")).toBe("2024");
+	});
+});
+
+describe("structured dates", () => {
+	it("keeps the year and month of ISO dates", () => {
+		expect(toYearMonth("2024-01-15")).toBe("2024-01");
+		expect(toYearMonth("2024")).toBe("2024");
+		expect(toYearMonth("soon")).toBeNull();
+	});
+
+	it("marks a start without an end as ongoing", () => {
+		expect(toRangeDates("2020-03", undefined)).toEqual({ start: "2020-03", end: null, present: true });
+		expect(toRangeDates("2020-03", "2021")).toEqual({ start: "2020-03", end: "2021", present: false });
+		expect(toSingleDates("2019-11-02")).toEqual({ start: "2019-11", end: null, present: false });
 	});
 });
