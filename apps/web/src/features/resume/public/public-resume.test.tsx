@@ -37,6 +37,9 @@ vi.mock("@tanstack/react-router", () => ({
 	}),
 }));
 vi.mock("./pdf-viewer", () => ({ PdfViewer: publicResumeMock.PdfViewer }));
+vi.mock("./resume-reflow", () => ({ ResumeReflow: () => <div data-testid="reflow" /> }));
+const breakpoint = vi.hoisted(() => ({ value: "desktop" }));
+vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => breakpoint.value }));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: { resume: { getBySlug: { queryOptions: () => ({ query: "resume" }) } } },
 }));
@@ -49,6 +52,7 @@ const { PublicResumeRoute } = await import("./public-resume");
 beforeAll(() => i18n.loadAndActivate({ locale: "en", messages: {} }));
 
 beforeEach(() => {
+	breakpoint.value = "desktop";
 	publicResumeMock.flags.disableSignups = false;
 	publicResumeMock.resume = { data: sampleResumeData, name: "Sample Resume", slug: "sample" };
 	publicResumeMock.PdfViewer.mockClear();
@@ -71,39 +75,44 @@ const renderPublicResumeRoute = () =>
 	);
 
 describe("PublicResumeRoute", () => {
-	it("shows the create-resume link when registration is enabled", () => {
+	it("links the footer credit home when registration is enabled", () => {
 		renderPublicResumeRoute();
 
-		expect(screen.getByRole("link", { name: /Build your own resume/ })).toHaveAttribute("href", "/");
+		expect(screen.getByRole("link", { name: /Made with Reactive Resume/ })).toHaveAttribute("href", "/");
 	});
 
-	it("hides the create-resume link when registration is disabled", () => {
+	it("keeps the credit as plain text when registration is disabled", () => {
 		publicResumeMock.flags.disableSignups = true;
 		renderPublicResumeRoute();
 
-		expect(screen.queryByRole("link", { name: /Build your own resume/ })).not.toBeInTheDocument();
+		expect(screen.queryByRole("link", { name: /Made with Reactive Resume/ })).not.toBeInTheDocument();
+		expect(screen.getByText(/Made with Reactive Resume/)).toBeInTheDocument();
 		expect(screen.getByTestId("pdf-viewer")).toBeInTheDocument();
 	});
 
-	it("shows both working download controls by default", () => {
+	it("leads with the owner's name and downloads from the bar", () => {
 		renderPublicResumeRoute();
-		const buttons = screen.getAllByRole("button", { name: "Download PDF" });
-		expect(buttons).toHaveLength(2);
-		for (const button of buttons) fireEvent.click(button);
-		expect(publicResumeMock.onDownloadPDF).toHaveBeenCalledTimes(2);
+		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(sampleResumeData.basics.name);
+		expect(screen.getByRole("button", { name: /Copy link/ })).toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", { name: "Download PDF" }));
+		expect(publicResumeMock.onDownloadPDF).toHaveBeenCalledTimes(1);
 	});
 
-	it("hides both download controls while keeping the public PDF visible", () => {
+	it("hides Download when downloads are off, keeps the page, and blocks printing with a note", () => {
 		publicResumeMock.resume = { data: sampleResumeData, name: "Sample", slug: "sample", showDownloadButtons: false };
 		renderPublicResumeRoute();
 		expect(screen.queryByRole("button", { name: "Download PDF" })).not.toBeInTheDocument();
 		expect(screen.getByTestId("pdf-viewer")).toBeVisible();
+		expect(screen.getByText("Printing is turned off for this resume.")).toHaveClass("print:block");
 	});
 
-	it("shows both controls when the owner enables downloads again", () => {
-		publicResumeMock.resume = { data: sampleResumeData, name: "Sample", slug: "sample", showDownloadButtons: true };
+	it("reflows on phones, with Download and Share pinned", () => {
+		breakpoint.value = "mobile";
 		renderPublicResumeRoute();
-		expect(screen.getAllByRole("button", { name: "Download PDF" })).toHaveLength(2);
+		expect(screen.getByTestId("reflow")).toBeInTheDocument();
+		expect(screen.queryByTestId("pdf-viewer")).not.toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Download PDF" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
 	});
 
 	it("passes exposed source data directly to the browser viewer and export fallback", () => {
@@ -125,9 +134,7 @@ describe("PublicResumeRoute", () => {
 		renderPublicResumeRoute();
 
 		const viewerFrame = screen.getByTestId("pdf-viewer").parentElement;
-		const page = viewerFrame?.parentElement;
-		expect(page).not.toHaveClass("min-h-svh", "h-svh", "max-h-svh", "overflow-hidden");
-		expect(viewerFrame).not.toHaveClass("min-h-0", "flex-1", "overflow-hidden");
+		expect(viewerFrame).not.toHaveClass("min-h-0", "overflow-hidden", "h-svh", "max-h-svh");
 	});
 });
 
@@ -145,7 +152,7 @@ describe("PublicResumePage at root", () => {
 				/>
 			</I18nProvider>,
 		);
-		expect(screen.getByRole("link", { name: /Build your own resume/ })).toHaveAttribute("href", "/dashboard");
+		expect(screen.getByRole("link", { name: /Made with Reactive Resume/ })).toHaveAttribute("href", "/dashboard");
 		expect(screen.getByRole("main")).toHaveAttribute("id", "main-content");
 		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(sampleResumeData.basics.name);
 		expect(publicResumeMock.useResumeExport).toHaveBeenCalledWith(publicResumeMock.resume, {

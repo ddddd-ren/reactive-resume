@@ -11,6 +11,10 @@ type LoaderData = Omit<RouterOutput["resume"]["getBySlug"], "data"> & { data: Re
 export const Route = createFileRoute("/$username/$slug")({
 	ssr: "data-only",
 	component: lazyRouteComponent(() => import("@/features/resume/public/public-resume"), "PublicResumeRoute"),
+	notFoundComponent: lazyRouteComponent(
+		() => import("@/features/resume/public/public-resume"),
+		"SharedResumeUnavailable",
+	),
 	loader: async ({ context, params }) => {
 		const { username, slug } = params;
 		const resume = await context.queryClient.ensureQueryData(
