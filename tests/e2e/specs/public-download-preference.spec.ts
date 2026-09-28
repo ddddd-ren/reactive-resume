@@ -1,20 +1,22 @@
-import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
+import {
+	createSampleResumeFromDashboard,
+	getPublicUrl,
+	makeResumePublic,
+	openSidebarSection,
+} from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 test("persists public download-button visibility", async ({ browser, authPage: page }, testInfo) => {
 	await createSampleResumeFromDashboard(page, testInfo);
-	await openSidebarSection(page, "Sharing");
-	await page.getByRole("switch", { name: /Allow Public Access/ }).click();
-	const downloadPreference = page.getByRole("switch", { name: "Show Download Buttons" });
+	await makeResumePublic(page);
+	const downloadPreference = page.getByRole("switch", { name: "Visitors can download the PDF" });
 	await expect(downloadPreference).toBeChecked();
 	await downloadPreference.click();
 	await expect(downloadPreference).not.toBeChecked();
 	await page.reload();
 	await openSidebarSection(page, "Sharing");
 	await expect(downloadPreference).not.toBeChecked();
-	// The address fills in once the session has loaded after the reload.
-	await expect(page.locator("#sharing-url")).toHaveValue(/\/e2e_/);
-	const publicUrl = await page.locator("#sharing-url").inputValue();
+	const publicUrl = await getPublicUrl(page);
 
 	const anonymous = await browser.newPage();
 	try {

@@ -61,12 +61,9 @@ async function seedHyphenationResume(page: Page) {
 }
 
 async function downloadPdfText(page: Page, testInfo: TestInfo, name: string) {
-	await openDownloadDialog(page);
+	const sheet = await openDownloadDialog(page);
 	const pending = page.waitForEvent("download");
-	await page
-		.getByRole("dialog", { name: "Download" })
-		.getByRole("button", { name: "Download PDF", exact: true })
-		.click();
+	await sheet.getByRole("button", { name: "Download PDF", exact: true }).click();
 	const download = await pending;
 	const path = testInfo.outputPath(`${name}.pdf`);
 	await download.saveAs(path);

@@ -64,10 +64,27 @@ export async function openSidebarSection(page: Page, title: string) {
 	await expect(row).toHaveAttribute("aria-expanded", "true");
 }
 
-/** Opens the Download dialog with every format from the ▾ next to Download PDF. */
+/** Opens Share & export on its Download tab, from the ▾ next to Download PDF. */
 export async function openDownloadDialog(page: Page) {
 	await page.getByRole("button", { name: "More download formats", exact: true }).click();
-	await expect(page.getByRole("dialog", { name: "Download" })).toBeVisible();
+	const sheet = page.getByRole("dialog", { name: "Share & export" });
+	await expect(sheet.getByRole("tab", { name: "Download", exact: true })).toHaveAttribute("aria-selected", "true");
+	return sheet;
+}
+
+/** Turns the public link on in Share → Link and returns the public address. */
+export async function makeResumePublic(page: Page) {
+	await openSidebarSection(page, "Sharing");
+	const sheet = page.getByRole("dialog", { name: "Share & export" });
+	await sheet.getByRole("switch", { name: "Public link" }).click();
+	return getPublicUrl(page);
+}
+
+/** The public address, from Share → Link's "Open public page" (it fills in once the session has loaded). */
+export async function getPublicUrl(page: Page) {
+	const link = page.getByRole("dialog", { name: "Share & export" }).getByRole("link", { name: "Open public page" });
+	await expect(link).toHaveAttribute("href", /\/e2e_/);
+	return (await link.getAttribute("href")) as string;
 }
 
 export async function openResumeCardMenu(page: Page, resumeName: string, { reload = true } = {}) {

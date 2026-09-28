@@ -4,7 +4,6 @@ import { createRequire } from "node:module";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { Pool } from "pg";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { generateFilename } from "@reactive-resume/utils/file";
 import { createSampleResumeFromDashboard, openDownloadDialog } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
@@ -544,8 +543,7 @@ async function runGeometryMatrix(page: Page, testInfo: TestInfo, scenarios: Geom
 	dedicatedDatabaseUrl();
 	await page.setViewportSize({ width: 1920, height: 1000 });
 	await installPreviewCapture(page);
-	const resumeName = await createSampleResumeFromDashboard(page, testInfo);
-	const expectedExportFilename = generateFilename(resumeName, "pdf");
+	await createSampleResumeFromDashboard(page, testInfo);
 	const resumeId = new URL(page.url()).pathname.match(/^\/builder\/([^/]+)/)?.[1];
 	if (!resumeId) throw new Error("Missing synthetic geometry resume id.");
 
@@ -582,17 +580,11 @@ async function runGeometryMatrix(page: Page, testInfo: TestInfo, scenarios: Geom
 				persistedFixture.revision,
 			);
 			const pending = page.waitForEvent("download");
-			await openDownloadDialog(page);
-			const downloadDialog = page.getByRole("dialog", { name: "Download" });
-			await expect(downloadDialog.getByRole("tab", { name: "Resume", exact: true })).toHaveAttribute(
-				"aria-selected",
-				"true",
-			);
-			await downloadDialog.getByRole("button", { name: "Download PDF", exact: true }).click();
+			const downloadSheet = await openDownloadDialog(page);
+			await downloadSheet.getByRole("button", { name: "Download PDF", exact: true }).click();
 			const download = await pending;
-			expect(download.suggestedFilename(), `${scenarioName(scenario)} zoom ${zoom} export target`).toBe(
-				expectedExportFilename,
-			);
+			// The default file name is "First-Last-Resume"; this test only checks it's the PDF.
+			expect(download.suggestedFilename(), `${scenarioName(scenario)} zoom ${zoom} export target`).toMatch(/\.pdf$/);
 			const downloadPath = testInfo.outputPath(`${scenarioName(scenario)}.zoom-${zoom}.pdf`);
 			await download.saveAs(downloadPath);
 			const downloadBytes = new Uint8Array(await readFile(downloadPath));

@@ -360,12 +360,9 @@ test.describe("offline font diagnostic", () => {
 		let rasterEvidenceStatus = "not-attempted";
 		try {
 			await page.goto(fixture.builderURL);
-			await openDownloadDialog(page);
+			const sheet = await openDownloadDialog(page);
 			const downloadPromise = page.waitForEvent("download", { timeout: 20_000 });
-			await page
-				.getByRole("dialog", { name: "Download" })
-				.getByRole("button", { name: "Download PDF", exact: true })
-				.click();
+			await sheet.getByRole("button", { name: "Download PDF", exact: true }).click();
 			const download = await downloadPromise;
 			downloadStatus = "received";
 			const path = testInfo.outputPath("offline-font-browser-download.pdf");

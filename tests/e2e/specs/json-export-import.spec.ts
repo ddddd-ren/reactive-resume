@@ -5,9 +5,10 @@ import { expect, test } from "../fixtures/test";
 test("exports and imports a resume JSON backup", async ({ authPage: page }, testInfo) => {
 	await createSampleResumeFromDashboard(page, testInfo);
 
-	await openDownloadDialog(page);
+	const sheet = await openDownloadDialog(page);
+	await sheet.getByRole("radio", { name: /^JSON/ }).click();
 	const downloadPromise = page.waitForEvent("download");
-	await page.getByRole("button", { name: "Download JSON" }).click();
+	await sheet.getByRole("button", { name: "Download JSON" }).click();
 	const download = await downloadPromise;
 	expect(download.suggestedFilename()).toMatch(/\.json$/);
 

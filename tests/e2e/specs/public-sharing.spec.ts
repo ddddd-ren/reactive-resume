@@ -1,4 +1,4 @@
-import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
+import { createSampleResumeFromDashboard, makeResumePublic } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 test("counts a visitor's PDF download without counting the preview", async ({ browser, authPage: page }, testInfo) => {
@@ -11,13 +11,7 @@ test("counts a visitor's PDF download without counting the preview", async ({ br
 		expect(response.ok()).toBe(true);
 		return response.json();
 	};
-	await openSidebarSection(page, "Sharing");
-
-	await page.getByRole("switch", { name: /Allow Public Access/ }).click();
-	const sharingUrl = page.locator("#sharing-url");
-	await expect(sharingUrl).toHaveValue(/\/e2e_/);
-	const publicUrl = await sharingUrl.inputValue();
-	expect(publicUrl).toMatch(/\/e2e_/);
+	const publicUrl = await makeResumePublic(page);
 
 	const anonymous = await browser.newPage();
 	try {
