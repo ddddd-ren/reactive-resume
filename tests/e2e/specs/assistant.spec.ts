@@ -1,0 +1,116 @@
+import type { Page } from "@playwright/test";
+import { startAiStub } from "../fixtures/ai-stub";
+import { createSampleResumeFromDashboard } from "../fixtures/resume";
+import { expect, test } from "../fixtures/test";
+
+// The stub is a local provider, so the server must allow a loopback base URL.
+test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs FLAG_ALLOW_UNSAFE_AI_BASE_URL=true");
+
+let stub: Awaited<ReturnType<typeof startAiStub>>;
+test.beforeAll(async () => {
+	stub = await startAiStub();
+});
+test.afterAll(async () => {
+	await stub?.close();
+});
+
+const resumeIdOf = (page: Page) => new URL(page.url()).pathname.split("/").at(-1) ?? "";
+
+async function resumeJson(page: Page, resumeId: string) {
+	const response = await page.request.get(`/api/openapi/resumes/${resumeId}`);
+	return JSON.stringify(await response.json());
+}
+
+/** D1: connects the stub through the assistant's inline setup. */
+async function connectStub(page: Page) {
+	const assistant = page.getByRole("region", { name: "Assistant" });
+	await assistant.getByRole("button", { name: "Other · OpenAI-compatible" }).click();
+	await assistant.getByLabel("Base URL").fill(stub.baseURL);
+	await assistant.getByLabel("API key").fill("stub-key");
+	await assistant.getByLabel("Model").fill("stub");
+	await assistant.getByRole("button", { name: "Connect" }).click();
+	await expect(assistant.getByLabel("Message the assistant")).toBeVisible({ timeout: 20_000 });
+}
+
+async function send(page: Page, text: string) {
+	// Send turns into Stop while a reply streams.
+	await expect(page.getByRole("button", { name: "Send" }).last()).toBeVisible({ timeout: 20_000 });
+	const composer = page.getByLabel("Message the assistant");
+	await composer.fill(text);
+	await composer.press("Enter");
+}
+
+test("proposes edits that change nothing until accepted, asks before assuming, and stops", async ({
+	authPage: page,
+}, testInfo) => {
+	test.setTimeout(90_000);
+	await createSampleResumeFromDashboard(page, testInfo);
+	const resumeId = resumeIdOf(page);
+
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	await connectStub(page);
+
+	await send(page, "Tighten my resume");
+	const edits = page.getByRole("list", { name: "Proposed edits" });
+	await expect(edits).toBeVisible({ timeout: 20_000 });
+	await expect(page.getByText("1 proposed", { exact: true })).toBeVisible();
+	await expect(page.getByText(/proposed edit on this page/)).toBeVisible();
+	expect(await resumeJson(page, resumeId)).not.toContain("(tightened by the stub)");
+
+	await edits.getByRole("button", { name: "Accept" }).click();
+	await expect(edits.getByText("Applied")).toBeVisible();
+	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).toContain("(tightened by the stub)");
+	await expect(page.getByText("1 proposed", { exact: true })).toBeHidden();
+
+	// A clarifying question: the answer continues the reply.
+	await send(page, "Ask me a question first");
+	await page.getByRole("button", { name: "Yes, I have" }).click();
+	await expect(page.getByText("You answered: Yes, I have")).toBeVisible();
+	await expect(page.getByRole("list", { name: "Proposed edits" })).toHaveCount(2, { timeout: 20_000 });
+	await expect(page.getByText("I tightened one passage. Accept it if it reads right.")).toHaveCount(2);
+
+	// Stopping mid-reply keeps what arrived and proposes nothing.
+	await send(page, "Reply slowly please");
+	await expect(page.getByText("word3", { exact: false })).toBeVisible({ timeout: 20_000 });
+	await page.getByRole("button", { name: "Stop" }).click();
+	await expect(page.getByText("Stopped. No edits were proposed.")).toBeVisible();
+	await expect(page.getByRole("button", { name: "Continue" })).toBeVisible();
+});
+
+test("improves one line in place, and asks from ⌘K; old assistant links redirect", async ({
+	authPage: page,
+}, testInfo) => {
+	test.setTimeout(90_000);
+	await createSampleResumeFromDashboard(page, testInfo);
+	const resumeId = resumeIdOf(page);
+
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	await connectStub(page);
+	await page.getByRole("button", { name: "Close the assistant" }).click();
+
+	// Improve works on the line holding the caret, and changes it only on Replace.
+	await page.getByRole("button", { name: "Open Summary" }).click();
+	const summary = page.getByRole("textbox", { name: "Summary" });
+	await summary.click();
+	await page.getByRole("button", { name: "Improve", exact: true }).click();
+	await page.getByRole("button", { name: "Stronger verb" }).click();
+	await expect(page.getByText("Uses a verb that shows ownership.")).toBeVisible({ timeout: 20_000 });
+	await expect(summary).not.toContainText("Led ");
+	await page.getByRole("button", { name: "Replace" }).click();
+	await expect(summary).toContainText("Led ");
+
+	// ⌘K → Ask opens the document edited last, with the question sent.
+	await page.goto("/dashboard");
+	await page.getByRole("button", { name: /Search or run/ }).click();
+	await page.keyboard.type("What should I cut?");
+	await page.getByRole("option", { name: /Ask the assistant/ }).click();
+	await page.waitForURL(new RegExp(`/builder/${resumeId}`));
+	await expect(page.getByText("What should I cut?")).toBeVisible();
+	await expect(page.getByRole("list", { name: "Proposed edits" })).toBeVisible({ timeout: 20_000 });
+
+	await page.goto("/agent");
+	await page.waitForURL(/\/dashboard$/);
+	await page.goto(`/agent/new?resumeId=${resumeId}`);
+	await page.waitForURL(new RegExp(`/builder/${resumeId}`));
+	await expect(page.getByRole("region", { name: "Assistant" })).toBeVisible();
+});

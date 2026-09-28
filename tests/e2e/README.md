@@ -24,7 +24,7 @@ Build the production app:
 
 Run tests:
 
-`APP_URL=http://localhost:3000 PORT=3000 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres FLAG_DISABLE_SIGNUPS=false FLAG_DISABLE_EMAIL_AUTH=false FLAG_DISABLE_API_RATE_LIMIT=true LOCAL_STORAGE_PATH=/workspace/data/e2e pnpm test:e2e`
+`APP_URL=http://localhost:3000 PORT=3000 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres FLAG_DISABLE_SIGNUPS=false FLAG_DISABLE_EMAIL_AUTH=false FLAG_DISABLE_API_RATE_LIMIT=true FLAG_ALLOW_UNSAFE_AI_BASE_URL=true LOCAL_STORAGE_PATH=/workspace/data/e2e pnpm test:e2e`
 
 ## Coverage
 
@@ -33,6 +33,7 @@ Run tests:
 - Builder section editing, autosave/navigation, and locking.
 - JSON export/import.
 - Public sharing for anonymous visitors.
+- The assistant and inline Improve, against a scripted OpenAI-compatible provider (`fixtures/ai-stub.ts`). It needs `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` so the server may call the stub on 127.0.0.1, and skips without it.
 
 Visual regression, PDF/DOCX rasterization parity, thumbnail resolution, and import-fixture reproduction are
 intentionally outside the PR gate to keep it fast; the opt-in geometry, offline-font, and root-resume suites stay
