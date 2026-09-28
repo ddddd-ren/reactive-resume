@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { Pool } from "pg";
-import { createSampleResumeFromDashboard } from "../fixtures/resume";
+import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 test("imports a library letter into the builder as an independent copy", async ({ authPage: page }, testInfo) => {
@@ -45,21 +45,19 @@ test("imports a library letter into the builder as an independent copy", async (
 	await editor.getByRole("button", { name: "Close", exact: true }).click();
 
 	await page.goto(builderUrl);
-	await page.getByRole("button", { name: "Cover Letter", exact: true }).click();
-	await page.getByRole("button", { name: "Add a new item", exact: true }).last().click();
-	const createItem = page.getByRole("dialog", { name: "Create a new cover letter", exact: true });
-	await createItem.getByLabel("Import from library", { exact: true }).click();
+	await openSidebarSection(page, "Cover Letter");
+	await page.getByRole("button", { name: "Add cover letter", exact: true }).click();
+	await page.getByLabel("Import from library", { exact: true }).click();
 	await page.getByRole("option", { name: "Platform engineer letter", exact: true }).click();
-	const createEditors = createItem.locator('[data-editor="true"]');
-	await expect(createEditors.nth(0)).toContainText("Dear hiring team");
-	await expect(createEditors.nth(1)).toContainText("reliable platforms");
-	await createEditors.nth(1).fill("Updated independent resume copy.");
+	const letter = page.getByRole("textbox", { name: "Letter", exact: true });
+	await expect(page.getByRole("textbox", { name: "Recipient", exact: true })).toContainText("Dear hiring team");
+	await expect(letter).toContainText("reliable platforms");
 	const resumeSaved = page.waitForResponse(
 		(response) => new URL(response.url()).pathname === "/api/rpc/resume/update" && response.ok(),
 	);
-	await createItem.getByRole("button", { name: "Create", exact: true }).click();
+	await letter.fill("Updated independent resume copy.");
 	await resumeSaved;
-	await expect(page.getByRole("button", { name: /^Dear hiring team, Updated independent resume copy/ })).toBeVisible();
+	await expect(page.getByRole("button", { name: /^Updated independent resume copy\./ })).toBeVisible();
 
 	await page.goto("/dashboard/cover-letters");
 	await page.getByRole("button", { name: "Edit Platform engineer letter", exact: true }).click();
@@ -72,8 +70,9 @@ test("imports a library letter into the builder as an independent copy", async (
 	await editor.getByRole("button", { name: "Save Changes", exact: true }).click();
 	await expect(editor.getByRole("button", { name: "Save Changes", exact: true })).toBeDisabled();
 	await editor.getByRole("button", { name: "Close", exact: true }).click();
-	await expect(page.getByRole("button", { name: "Edit Platform engineer letter", exact: true })).toBeVisible();
+	// The renamed copy shows once the list has refetched; until then both rows carry the original name.
 	await expect(page.getByRole("button", { name: "Edit Imported independent copy", exact: true })).toBeVisible();
+	await expect(page.getByRole("button", { name: "Edit Platform engineer letter", exact: true })).toBeVisible();
 });
 
 test("keeps the application PDF snapshot after the library letter is deleted", async ({ authPage: page, account }) => {

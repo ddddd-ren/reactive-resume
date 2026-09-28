@@ -5,6 +5,8 @@ import type { EntryWriter } from "./fields";
 import type { Entry } from "./model";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
+import { useId } from "react";
 import { EMPTY_RESUME_DATES } from "@reactive-resume/schema/resume/dates";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormDescription, FormItem, FormLabel } from "@reactive-resume/ui/components/form";
@@ -15,6 +17,8 @@ import { generateId } from "@reactive-resume/utils/string";
 import { ChipInput } from "@/components/input/chip-input";
 import { ColorPicker } from "@/components/input/color-picker";
 import { IconPicker } from "@/components/input/icon-picker";
+import { Combobox } from "@/components/ui/combobox";
+import { orpc } from "@/libs/orpc/client";
 import { DatesField } from "./dates-field";
 import { MoreOptions, TextField, WebsiteField } from "./fields";
 import { RichTextEditor } from "./rich-text-editor";
@@ -107,6 +111,36 @@ function Description({
 						target[field] = html;
 					})
 				}
+			/>
+		</div>
+	);
+}
+
+/** A new, empty letter can start as a copy of one saved in the library; the copy doesn't follow later edits. */
+function ImportFromLibrary({ entry, write }: FieldSetProps) {
+	const id = useId();
+	const letters = useQuery(orpc.coverLetters.list.queryOptions({ input: { limit: 100 } }));
+	const values = valuesOf(entry);
+	if (str(values.recipient) || str(values.content) || !letters.data?.items.length) return null;
+
+	return (
+		<div className="col-span-full grid gap-1.5">
+			<label htmlFor={id} className="font-medium text-[13px] leading-4">
+				<Trans>Import from library</Trans>
+			</label>
+			<Combobox
+				id={id}
+				value={null}
+				placeholder={t`Choose a saved cover letter`}
+				options={letters.data.items.map((letter) => ({ value: letter.id, label: letter.name }))}
+				onValueChange={(letterId) => {
+					const letter = letters.data?.items.find((item) => item.id === letterId);
+					if (!letter) return;
+					write("import", (target) => {
+						target.recipient = letter.recipient;
+						target.content = letter.content;
+					});
+				}}
 			/>
 		</div>
 	);
@@ -444,6 +478,7 @@ export function EntryFields({
 		case "cover-letter":
 			return (
 				<>
+					<ImportFromLibrary {...props} />
 					<Description {...props} field="recipient" label={t`Recipient`} />
 					<Description {...props} field="content" label={t`Letter`} />
 				</>
