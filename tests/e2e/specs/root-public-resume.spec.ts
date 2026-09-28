@@ -124,7 +124,10 @@ test("configured root preserves access, canonical, identity, statistics and app 
 		await expect(page).toHaveURL(`${baseURL}/`);
 		await expect(page.getByRole("main")).toHaveCount(1);
 		await expect(page.getByRole("navigation", { name: "Main navigation" })).toHaveCount(0);
-		await expect(page.getByRole("link", { name: "Build your own resume" })).toHaveAttribute("href", "/dashboard");
+		await expect(page.getByRole("link", { name: "Made with Reactive Resume, free and open source" })).toHaveAttribute(
+			"href",
+			"/dashboard",
+		);
 		await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `${baseURL}/`);
 		await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
 		await expect.poll(readStatistics).toMatchObject({ views: 1, downloads: 0 });

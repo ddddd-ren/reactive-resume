@@ -26,7 +26,7 @@ test("persists public download-button visibility", async ({ browser, authPage: p
 		await downloadPreference.click();
 		await expect(downloadPreference).toBeChecked();
 		await anonymous.reload();
-		await expect(anonymous.getByRole("button", { name: "Download PDF" })).toHaveCount(2);
+		await expect(anonymous.getByRole("button", { name: "Download PDF" })).toHaveCount(1);
 	} finally {
 		await anonymous.close();
 	}
