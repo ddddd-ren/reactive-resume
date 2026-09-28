@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M7 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M8 are done; see §11 and §12.
 
 **PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
 
@@ -1187,3 +1187,73 @@ Verification:
   - a pasted posting with a hidden term;
   - Writing without a provider.
 - The full suite passes against the dev server except the known dev-only server-PDF steps (35 passed, 7 opt-in diagnostics skipped). `check-mode`, `hyphenation`, `public-resume-locale`, `share-history`, `documents-new` and `json-export-import` pass against the production build.
+
+### M8 · Applications (done 28 Sep 2026)
+
+What changed:
+
+- **Data (§3.7):**
+  - Applications end in a `closed` stage with a reason: not selected, withdrew, accepted another offer, or no response.
+  - The migration moves `rejected` to closed + not selected and archived applications to closed, and rewrites `rejected` in stage history. `rollback.sql` reverses it for older versions.
+  - `archived` stays, deprecated. The API still accepts `rejected` and reads it as closed.
+  - New columns: `closed_reason`, `cover_letter_id` (backfilled where exactly one letter was written for the application), `sent_resume_version_id`, `sent_check_score` and `requirements`.
+  - Once an application with a linked resume reaches Applied, the resume is saved as a "Sent to {company}" version, and the application keeps the version and the resume's Check score then.
+- **Posting reader:** `applications.ai.parsePosting` reads a pasted link or posting.
+  - Links are fetched on the server: https only, addresses checked at connect time, three redirects, 2 MB and 10 s at most.
+  - A page's own JobPosting data fills role, company and location without AI. With a provider, the model reads role, company, location, salary and requirements.
+- **Page:** the header has Import/Export CSV behind one icon and Add application. Below it:
+  - the follow-up nudge for the application waiting longest without a reply (10+ days), dismissible per device;
+  - List · Board · Insights · Calendar;
+  - search across role, company, location, contacts and tags;
+  - Show closed.
+- **List (the default):** grouped Interview, Offer, Screening, Applied, Saved, then Closed, with collapsible groups.
+  - Columns: Role, Next step (warn when overdue), Stage, Sent ("None" in warn once sent without documents) and Updated.
+  - Headers sort within groups. Row checkboxes select for Move to…, Add tag, Close… and Delete…
+  - Phones get two-line rows ("company · next step").
+- **Board:** a column per stage (Closed when shown). Dropping tints the column, and a drop and Move to… show the same toast.
+- **Detail sheet** (480 px; full screen on phones):
+  - The header links View posting (its text and requirements, or the link) and has ⋯ with Edit details… and Delete…
+  - The stepper is clickable, followed by the current stage, its duration and Move to {next}.
+  - NEXT STEP: the next interview or follow-up, with Edit (schedule an interview or set the follow-up) and Add to calendar (.ics). It is in warn when overdue.
+  - WHAT YOU SENT:
+    - Open goes to the version that was sent, in History, read-only, with Back to now. The builder takes `?version=` for this.
+    - Tailor a resume opens Copy for a job with the application picked. Write a letter creates a linked letter with the recipient filled in.
+    - Uploaded PDFs sit under "Attach a file instead".
+  - Salary and source edit in place. Applied, and Contact, which opens the contact list.
+  - Tags; notes that save as you type; the activity timeline, with each row's ⋯ for edit and delete.
+  - Footer: Close application… takes a reason (Reopen when closed).
+- **Add dialog:** paste a link or posting. Its role and company fill editable fields, with what was found stated. The stage is a segmented Saved · Applied · Interview. Add, or Add and tailor a resume.
+- **Insights:** how far applications get, counted from stage history (closed ones included), then heard back %, median days to first reply and tailored against base resumes. The existing pipeline chart (with PNG export), weekly chart and sources chart follow (Q3p).
+- **CSV:** import shows how each column was matched, changeable, before saving, and the skipped rows can be downloaded. Export adds the closed reason.
+- **Elsewhere:** job pickers (New → Copy for a job, Link to application, Job match) and the sidebar count leave out closed applications instead of archived ones. Sent versions are titled "Sent to {company}" in History.
+- **Removed:** the table view (replaced by the list), Mark rejected and Archive.
+
+Differences from the plan, with reasons:
+
+- **Sent letter versions come with M9.** Letters get versions there, so `sent_cover_letter_version_id` is added then; for now the linked letter opens as it is.
+- **Prepare for next step waits for the assistant (M10).** Until M10 replaces it (Q3i), the application copilot stays at the foot of the sheet, keeping the fit score and drafts.
+- **Edit details… keeps the old form** for company, role, location, link, posting and the linked resume. Salary, source, contacts, tags and notes edit in the sheet itself.
+- **Reopen moves a closed application back to Applied.** The spec doesn't say how to undo closing.
+- **Links must be https.** Job pages are, and the AI base-URL flag that allows http is for self-hosted models, not for pages.
+- **The page's own job data is read without AI**, so a pasted link fills role and company for everyone. The plan left the fields empty without AI.
+- **Heard back counts a rejection as a reply**, as the spec's copy implies; median days runs from the first stage at Applied or later to that reply.
+- **The Stage and Sent columns don't sort:** grouping already orders by stage.
+- **Empty groups are hidden** in the list.
+- **The board and calendar give way to the list on phones**, and the calendar keeps its old styling apart from the new stages.
+- **Found and fixed:** choosing an editor mode replaced the builder's whole search, which would have dropped other parameters. It now keeps them.
+
+Verification:
+
+- Typecheck is clean for web, api, schema, db and mcp.
+- Tests pass: api 489, web 899, schema 236, mcp 67. New tests cover:
+  - the closed reason and reopening;
+  - sent-version snapshots (once, and only when sent);
+  - the posting reader: link safety, public addresses, page text and JobPosting data;
+  - next-step derivation, `.ics` output, the outcome insights;
+  - CSV column matching and skipped rows;
+  - sent-version titles;
+  - the page's search and closed filtering.
+- The backfill and `rollback.sql` were checked in a transaction on sample rows.
+- knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
+- E2E: rewrote `applications-tracker` (add from a posting, move, note, close with a reason, Show closed; CSV import with the column match, then a bulk close) and updated `applications-export`.
+- The full suite passes against the dev server except the known dev-only server-PDF steps (35 passed, 7 opt-in diagnostics skipped). `applications-tracker`, `applications-export`, `check-mode`, `documents-new`, `hyphenation` and `public-resume-locale` pass against the production build.
