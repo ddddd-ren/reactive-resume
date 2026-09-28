@@ -3,6 +3,7 @@ import { ORPCError } from "@orpc/client";
 import { and, count, eq, isNotNull, isNull, lt, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { linkLetterApplication } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
 
 type DocumentType = DocumentSummary["type"];
@@ -214,7 +215,20 @@ export const documentsService = {
 	linkApplication: async (input: DocumentRef & { applicationId: string | null }) => {
 		await assertUnlocked(input);
 		if (input.applicationId) await assertOwnedApplication(input.userId, input.applicationId);
-		await update(input, { applicationId: input.applicationId }, { sourceApplicationId: input.applicationId });
+		if (input.type === "resume") return update(input, { applicationId: input.applicationId });
+
+		const [letter] = await db
+			.select({ applicationId: schema.coverLetter.sourceApplicationId })
+			.from(schema.coverLetter)
+			.where(owned(input));
+		await update(input, {}, { sourceApplicationId: input.applicationId });
+		await linkLetterApplication({
+			userId: input.userId,
+			letterId: input.id,
+			from: letter?.applicationId,
+			to: input.applicationId,
+			replace: true,
+		});
 	},
 
 	/** Undoable: Trash hides the document and stops its public link; Restore brings it back intact. */

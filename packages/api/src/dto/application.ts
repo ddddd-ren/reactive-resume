@@ -48,6 +48,10 @@ const applicationSchema = createSelectSchema(schema.application, {
 		.nullable()
 		.describe("The version of the linked resume saved when the application was sent (reached Applied)."),
 	sentCheckScore: z.number().int().nullable().describe("The resume's Check score when it was sent, out of 100."),
+	sentCoverLetterVersionId: z
+		.string()
+		.nullable()
+		.describe("The version of the linked letter saved when the application was sent."),
 	requirements: z.array(z.string()).describe("What the posting asks for, as read when the application was added."),
 	source: z.string().trim().nullable(),
 	sourceUrl: httpUrlSchema.nullable(),

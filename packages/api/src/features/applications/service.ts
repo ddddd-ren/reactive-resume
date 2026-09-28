@@ -147,25 +147,41 @@ const SENT_STAGES = new Set<ApplicationStatus>(["applied", "screening", "intervi
 type ApplicationRow = typeof schema.application.$inferSelect;
 
 /**
- * Once an application with a linked resume has been sent (Applied or later), that resume is saved as a "sent"
- * version, named after the company, with its Check score at the time. The application keeps pointing at it, so it
- * can open exactly what went out while the resume moves on.
+ * Once an application has been sent (Applied or later), its linked resume is saved as a "sent" version, named after
+ * the company, with its Check score at the time, and so is its linked letter. The application keeps pointing at
+ * them, so it can open exactly what went out while the documents move on.
  */
 async function recordSentResume(row: ApplicationRow): Promise<ApplicationRow> {
-	if (!row.resumeId || row.sentResumeVersionId || !SENT_STAGES.has(row.status)) return row;
+	if (!SENT_STAGES.has(row.status)) return row;
+	const changes: Partial<ApplicationRow> = {};
 
-	const resume = await resumeService.getById({ id: row.resumeId, userId: row.userId });
-	const version = await writeVersion(db, {
-		resumeId: row.resumeId,
-		userId: row.userId,
-		data: resume.data,
-		kind: "sent",
-		name: row.company,
-	});
+	if (row.resumeId && !row.sentResumeVersionId) {
+		const resume = await resumeService.getById({ id: row.resumeId, userId: row.userId });
+		const version = await writeVersion(db, {
+			resumeId: row.resumeId,
+			userId: row.userId,
+			data: resume.data,
+			kind: "sent",
+			name: row.company,
+		});
+		changes.sentResumeVersionId = version.id;
+		changes.sentCheckScore = lintResumeForAts(resume.data).score;
+	}
 
+	// The letter sent with it is kept the same way.
+	if (row.coverLetterId && !row.sentCoverLetterVersionId) {
+		const version = await coverLetterService.recordSent({
+			id: row.coverLetterId,
+			userId: row.userId,
+			company: row.company,
+		});
+		changes.sentCoverLetterVersionId = version.id;
+	}
+
+	if (Object.keys(changes).length === 0) return row;
 	const [updated] = await db
 		.update(schema.application)
-		.set({ sentResumeVersionId: version.id, sentCheckScore: lintResumeForAts(resume.data).score })
+		.set(changes)
 		.where(eq(schema.application.id, row.id))
 		.returning();
 	return updated ?? row;

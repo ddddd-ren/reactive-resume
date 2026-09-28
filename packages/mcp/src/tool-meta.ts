@@ -67,8 +67,28 @@ const expectedRevisionSchema = z
 	.describe("Revision returned by the latest cover-letter response.");
 const coverLetterEditableFieldsSchema = {
 	name: z.string().min(1).max(100).describe("Cover-letter name."),
-	recipient: z.string().max(20_000).optional().describe("Recipient and salutation HTML."),
-	content: z.string().max(100_000).optional().describe("Cover-letter body HTML."),
+	recipient: z
+		.string()
+		.max(20_000)
+		.optional()
+		.describe("Freeform letters only: the recipient block as HTML. Structured letters use the fields below."),
+	content: z
+		.string()
+		.max(100_000)
+		.optional()
+		.describe("Body HTML. Structured letters add the greeting and sign-off around it, so leave those out."),
+	recipientName: z
+		.string()
+		.max(200)
+		.optional()
+		.describe('Structured letters: who it\'s to, a person or a team. The greeting follows it ("Dear Dana,").'),
+	recipientCompany: z.string().max(200).optional().describe("Structured letters: the recipient's company."),
+	letterDate: z
+		.string()
+		.regex(/^\d{4}-\d{2}-\d{2}$/, "Date must use YYYY-MM-DD format.")
+		.nullable()
+		.optional()
+		.describe("Structured letters: the letter's date."),
 };
 const timelineDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must use YYYY-MM-DD format.");
 const interviewAtSchema = z.iso
@@ -410,16 +430,28 @@ export const TOOL_META = {
 			...coverLetterEditableFieldsSchema,
 			recipient: z.string().max(20_000).optional().default(""),
 			content: z.string().max(100_000).optional().default(""),
-			resumeId: z.string().min(1).optional().describe("Optional source resume ID."),
-			applicationId: z.string().min(1).optional().describe("Optional source application ID."),
-			template: templateSchema.optional().describe("Optional template for this cover letter."),
+			resumeId: z
+				.string()
+				.min(1)
+				.optional()
+				.describe("Optional resume the letter goes with; its sender details and design are linked live."),
+			applicationId: z
+				.string()
+				.min(1)
+				.optional()
+				.describe("Optional application the letter is for; it fills the recipient and becomes its letter."),
+			template: templateSchema.optional().describe("Optional template of the letter's own (unlinks the design)."),
+			layout: z
+				.enum(["structured", "freeform"])
+				.optional()
+				.describe("Defaults to structured, or freeform when a recipient block is given."),
 		}),
 		annotations: WRITE_NON_IDEMPOTENT,
 	},
 	[T.updateCoverLetter]: {
 		title: "Update Cover Letter",
 		description: [
-			"Update an independent cover letter's name, recipient, content, or template.",
+			"Update an independent cover letter's name, recipient, content, template, or its links to a resume and application.",
 			"Pass the latest `revision` as `expectedRevision`; stale writes are rejected instead of overwriting newer edits.",
 		].join("\n"),
 		inputSchema: z.object({
@@ -427,7 +459,13 @@ export const TOOL_META = {
 			expectedRevision: expectedRevisionSchema,
 			...coverLetterEditableFieldsSchema,
 			name: coverLetterEditableFieldsSchema.name.optional(),
-			template: templateSchema.optional().describe("Replacement template. Omit to keep the current template."),
+			template: templateSchema
+				.optional()
+				.describe("Replacement template, which unlinks the design. Omit to keep the current template."),
+			resumeId: z.string().min(1).nullable().optional().describe("The resume the letter goes with."),
+			applicationId: z.string().min(1).nullable().optional().describe("The application the letter is for."),
+			senderLinked: z.boolean().optional().describe("Take the sender's details live from the resume."),
+			designLinked: z.boolean().optional().describe("Take the design live from the resume."),
 		}),
 		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true },
 	},
@@ -457,7 +495,7 @@ export const TOOL_META = {
 	[T.deleteCoverLetter]: {
 		title: "Delete Cover Letter",
 		description: [
-			"Permanently delete an independent cover letter from the library.",
+			"Move an independent cover letter to Trash, where it stays for 30 days before it's deleted.",
 			"Pass the latest `revision` as `expectedRevision`; this does not delete embedded cover-letter sections.",
 		].join("\n"),
 		inputSchema: z.object({ id: coverLetterIdSchema, expectedRevision: expectedRevisionSchema }),

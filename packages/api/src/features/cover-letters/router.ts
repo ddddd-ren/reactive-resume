@@ -1,6 +1,11 @@
+import { eventIterator } from "@orpc/server";
+import z from "zod";
 import { protectedProcedure } from "../../context";
 import { coverLetterDto } from "../../dto/cover-letter";
+import { aiRequestRateLimit } from "../../middleware/rate-limit";
+import { draftLetterBody } from "./draft";
 import { coverLetterService } from "./service";
+import { deleteLetterVersion, getLetterVersion, listLetterVersions, renameLetterVersion } from "./versions";
 
 export const coverLettersRouter = {
 	list: protectedProcedure
@@ -135,4 +140,110 @@ export const coverLettersRouter = {
 		.input(coverLetterDto.import.input)
 		.output(coverLetterDto.import.output)
 		.handler(({ context, input }) => coverLetterService.import({ ...input, userId: context.user.id })),
+	listVersions: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/cover-letters/{id}/versions",
+			tags: ["Cover Letters"],
+			operationId: "listCoverLetterVersions",
+			summary: "List a cover letter's versions",
+			description:
+				"Returns the letter's History, newest first (at most 100): sessions, named, sent and restore points.",
+			successDescription: "The versions.",
+		})
+		.input(coverLetterDto.listVersions.input)
+		.output(coverLetterDto.listVersions.output)
+		.handler(({ context, input }) => listLetterVersions({ coverLetterId: input.id, userId: context.user.id })),
+	getVersion: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/cover-letters/{id}/versions/{versionId}",
+			tags: ["Cover Letters"],
+			operationId: "getCoverLetterVersion",
+			summary: "Get a cover letter version",
+			description: "Returns one version of the letter, with the letter as it read then.",
+			successDescription: "The version.",
+		})
+		.input(coverLetterDto.getVersion.input)
+		.output(coverLetterDto.getVersion.output)
+		.handler(({ context, input }) =>
+			getLetterVersion({ coverLetterId: input.id, userId: context.user.id, versionId: input.versionId }),
+		),
+	createVersion: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/cover-letters/{id}/versions",
+			tags: ["Cover Letters"],
+			operationId: "createCoverLetterVersion",
+			summary: "Name a version of a cover letter",
+			description: "Saves the letter as it is now as a named version.",
+			successDescription: "The new version.",
+		})
+		.input(coverLetterDto.createVersion.input)
+		.output(coverLetterDto.createVersion.output)
+		.handler(({ context, input }) => coverLetterService.createVersion({ ...input, userId: context.user.id })),
+	renameVersion: protectedProcedure
+		.route({
+			method: "PATCH",
+			path: "/cover-letters/{id}/versions/{versionId}",
+			tags: ["Cover Letters"],
+			operationId: "renameCoverLetterVersion",
+			summary: "Rename a named version",
+			description: "Renames one of the letter's named versions.",
+			successDescription: "The renamed version.",
+		})
+		.input(coverLetterDto.renameVersion.input)
+		.output(coverLetterDto.renameVersion.output)
+		.handler(({ context, input }) =>
+			renameLetterVersion({
+				coverLetterId: input.id,
+				userId: context.user.id,
+				versionId: input.versionId,
+				name: input.name,
+			}),
+		),
+	deleteVersion: protectedProcedure
+		.route({
+			method: "DELETE",
+			path: "/cover-letters/{id}/versions/{versionId}",
+			tags: ["Cover Letters"],
+			operationId: "deleteCoverLetterVersion",
+			summary: "Delete a named version",
+			description: "Deletes one of the letter's named versions. Other versions can't be deleted.",
+			successDescription: "The version was deleted.",
+		})
+		.input(coverLetterDto.deleteVersion.input)
+		.output(coverLetterDto.deleteVersion.output)
+		.handler(({ context, input }) =>
+			deleteLetterVersion({ coverLetterId: input.id, userId: context.user.id, versionId: input.versionId }),
+		),
+	restoreVersion: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/cover-letters/{id}/versions/{versionId}/restore",
+			tags: ["Cover Letters"],
+			operationId: "restoreCoverLetterVersion",
+			summary: "Restore a cover letter version",
+			description:
+				'Saves the current letter as "Before restore", then makes the letter read as the version did. Linked details and design keep coming from the resume.',
+			successDescription: "The restored letter.",
+		})
+		.input(coverLetterDto.restoreVersion.input)
+		.output(coverLetterDto.restoreVersion.output)
+		.handler(({ context, input }) => coverLetterService.restoreVersion({ ...input, userId: context.user.id })),
+	draft: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/cover-letters/{id}/draft",
+			tags: ["Cover Letters", "AI"],
+			operationId: "draftCoverLetter",
+			summary: "Draft a cover letter's body",
+			description:
+				"Streams a draft of the letter's body, as text, from its linked resume and its application's posting, using only facts from them. Nothing is saved. `shorter` and `personal` revise a previous draft.",
+			successDescription: "The draft, streamed as text.",
+		})
+		.input(coverLetterDto.draft.input)
+		.output(eventIterator(z.string()))
+		.use(aiRequestRateLimit)
+		.handler(({ context, input, signal }) => draftLetterBody({ ...input, userId: context.user.id, signal })),
 };

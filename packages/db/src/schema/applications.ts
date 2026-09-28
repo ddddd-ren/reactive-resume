@@ -9,7 +9,7 @@ import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import * as pg from "drizzle-orm/pg-core";
 import { generateId } from "@reactive-resume/utils/string";
 import { user } from "./auth";
-import { coverLetter } from "./cover-letter";
+import { coverLetter, coverLetterVersion } from "./cover-letter";
 import { resume, resumeVersion } from "./resume";
 
 // A tracked job application. Points at the live Reactive Resume that was sent (resumeId),
@@ -45,6 +45,10 @@ export const application = pg.pgTable(
 		// The linked resume as it was when the application reached Applied, and its Check score then.
 		sentResumeVersionId: pg.text("sent_resume_version_id").references(() => resumeVersion.id, { onDelete: "set null" }),
 		sentCheckScore: pg.smallint("sent_check_score"),
+		// The linked letter as it was when the application was sent.
+		sentCoverLetterVersionId: pg
+			.text("sent_cover_letter_version_id")
+			.references((): AnyPgColumn => coverLetterVersion.id, { onDelete: "set null" }),
 		source: pg.text("source"),
 		tags: pg.text("tags").array().notNull().default([]),
 		// --- AI reservations (no working AI this pass; see feature AI roadmap) ---

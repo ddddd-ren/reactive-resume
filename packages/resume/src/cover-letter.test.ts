@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { copyCoverLetterStyle, coverLetterTextToHtml, createCoverLetterResumeData } from "./cover-letter";
+import {
+	composeCoverLetter,
+	copyCoverLetterStyle,
+	coverLetterTextToHtml,
+	createCoverLetterResumeData,
+	greetingName,
+} from "./cover-letter";
 
 describe("independent cover letters", () => {
 	it("copies sender and style without linking source mutations or retaining private notes", () => {
@@ -45,5 +51,48 @@ describe("independent cover letters", () => {
 			"<p>Hello &lt;script&gt;alert(&#39;x&#39;)&lt;/script&gt; &amp; team<br />next</p><p>Thanks&quot;</p>",
 		);
 		expect(coverLetterTextToHtml("  ")).toBe("");
+	});
+
+	it("greets a first name, a title with the surname, a team as written, or the hiring team", () => {
+		expect(greetingName("Dana Reyes")).toBe("Dana");
+		expect(greetingName("  Dana  ")).toBe("Dana");
+		expect(greetingName("Dr. Dana Reyes")).toBe("Dr. Reyes");
+		expect(greetingName("ms Reyes")).toBe("ms Reyes");
+		expect(greetingName("Design team")).toBe("Design team");
+		expect(greetingName("Hiring Team")).toBeNull();
+		expect(greetingName(" ")).toBeNull();
+	});
+
+	const words = {
+		greeting: (name: string) => `Dear ${name},`,
+		teamGreeting: "Dear hiring team,",
+		hiringTeam: "Hiring team",
+		signOff: "Kind regards,",
+		formatDate: (date: string) => `on ${date}`,
+	};
+
+	it("composes structured letters around the body and leaves freeform letters as written", () => {
+		const style = copyCoverLetterStyle(defaultResumeData);
+		style.basics.name = "Jordan <Reyes>";
+		const letter = {
+			layout: "structured" as const,
+			recipient: "<p>Unused</p>",
+			content: "<p>Body</p>",
+			recipientName: "Dana Reyes",
+			recipientCompany: "Lumen & Co",
+			letterDate: "2026-09-28",
+			style,
+		};
+		expect(composeCoverLetter(letter, words)).toEqual({
+			recipient: "<p>Dana Reyes<br />Lumen &amp; Co</p><p>on 2026-09-28</p>",
+			content: "<p>Dear Dana,</p><p>Body</p><p>Kind regards,<br />Jordan &lt;Reyes&gt;</p>",
+		});
+		expect(
+			composeCoverLetter({ ...letter, recipientName: "", recipientCompany: "", letterDate: null }, words),
+		).toMatchObject({ recipient: "<p>Hiring team</p>", content: expect.stringMatching(/^<p>Dear hiring team,<\/p>/) });
+		expect(composeCoverLetter({ ...letter, layout: "freeform" }, words)).toEqual({
+			recipient: "<p>Unused</p>",
+			content: "<p>Body</p>",
+		});
 	});
 });

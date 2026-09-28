@@ -50,13 +50,20 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		});
 		fixture.db = drizzle({ client: fixture.pool });
 		await fixture.pool.query(
-			'CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text, data jsonb); CREATE TABLE application (id text PRIMARY KEY, user_id text);',
+			`CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text, data jsonb); CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz);`,
 		);
-		const migration = await readFile(
-			new URL("../../../../../migrations/20260905121445_cover_letter_library/migration.sql", import.meta.url),
-			"utf8",
-		);
-		await fixture.pool.query(migration.replaceAll('"public".', ""));
+		// The migrations that shape the letter tables, in order.
+		for (const name of [
+			"20260905121445_cover_letter_library",
+			"20260928175116_documents_trash_and_links",
+			"20260928201742_letters_structured_and_versions",
+		]) {
+			const migration = await readFile(
+				new URL(`../../../../../migrations/${name}/migration.sql`, import.meta.url),
+				"utf8",
+			);
+			await fixture.pool.query(migration.replaceAll('"public".', ""));
+		}
 		service = (await import("./service")).coverLetterService;
 	});
 	afterAll(async () => {
@@ -163,12 +170,119 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		});
 	});
 
-	it("refreshes copied style without changing content and survives source deletion", async () => {
+	it("starts structured from the application, linked to the resume's details and design", async () => {
+		await getPool().query(
+			`UPDATE application SET company='Lumen Health', contacts='[{"name":"Dana Reyes"}]' WHERE id='alice-app'`,
+		);
+		const created = await service.create({
+			userId: "alice",
+			name: "For Lumen",
+			resumeId: "alice-resume",
+			applicationId: "alice-app",
+		});
+		// It becomes the application's letter.
+		const linked = await getPool().query("SELECT cover_letter_id FROM application WHERE id='alice-app'");
+		expect(linked.rows[0].cover_letter_id).toBe(created.id);
+		expect(created).toMatchObject({
+			layout: "structured",
+			recipientName: "Dana Reyes",
+			recipientCompany: "Lumen Health",
+			letterDate: new Date().toISOString().slice(0, 10),
+			senderLinked: true,
+			designLinked: true,
+		});
+		// A recipient block keeps a letter freeform, and a template of its own leaves the design unlinked.
+		const freeform = await service.create({
+			userId: "alice",
+			name: "Freeform",
+			recipient: "<p>Hiring team</p>",
+			resumeId: "alice-resume",
+			template: "pikachu",
+		});
+		expect(freeform).toMatchObject({ layout: "freeform", senderLinked: true, designLinked: false });
+		expect(freeform.style.metadata.template).toBe("pikachu");
+		// Without a resume there's nothing to link to.
+		expect(await service.create({ userId: "alice", name: "Plain" })).toMatchObject({
+			senderLinked: false,
+			designLinked: false,
+		});
+
+		// Moving the letter to another application takes it along.
+		await getPool().query("INSERT INTO application (id, user_id) VALUES ('alice-app-2','alice')");
+		await service.update({ userId: "alice", id: created.id, expectedRevision: 1, applicationId: "alice-app-2" });
+		const moved = await getPool().query(
+			"SELECT id, cover_letter_id FROM application WHERE user_id='alice' ORDER BY id",
+		);
+		expect(moved.rows).toEqual([
+			{ id: "alice-app", cover_letter_id: null },
+			{ id: "alice-app-2", cover_letter_id: created.id },
+		]);
+	});
+
+	it("reads linked details and design live, keeps them as they read when unlinked, and outlives the resume", async () => {
 		const created = await service.create({
 			userId: "alice",
 			name: "Keep",
 			content: "<p>Keep body</p>",
 			resumeId: "alice-resume",
+		});
+		const changed = structuredClone(defaultResumeData);
+		changed.basics.name = "New sender";
+		changed.metadata.template = "gengar";
+		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [changed]);
+		expect((await service.getById({ userId: "alice", id: created.id })).style).toMatchObject({
+			basics: { name: "New sender" },
+			metadata: { template: "gengar" },
+		});
+
+		const unlinked = await service.update({
+			userId: "alice",
+			id: created.id,
+			expectedRevision: 1,
+			senderLinked: false,
+		});
+		expect(unlinked).toMatchObject({
+			senderLinked: false,
+			designLinked: true,
+			style: { basics: { name: "New sender" } },
+		});
+		changed.basics.name = "Later sender";
+		changed.metadata.template = "azurill";
+		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [changed]);
+		expect((await service.getById({ userId: "alice", id: created.id })).style).toMatchObject({
+			basics: { name: "New sender" },
+			metadata: { template: "azurill" },
+		});
+
+		// Choosing a template of the letter's own ends the design link, keeping the rest of the design as it read.
+		const own = await service.update({ userId: "alice", id: created.id, expectedRevision: 2, template: "ditto" });
+		expect(own).toMatchObject({ designLinked: false, style: { metadata: { template: "ditto" } } });
+
+		await expect(
+			service.update({ userId: "alice", id: created.id, expectedRevision: 3, resumeId: null, senderLinked: true }),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+
+		// Once the resume is gone, the letter reads from its copies and is no longer linked.
+		const relinked = await service.update({
+			userId: "alice",
+			id: created.id,
+			expectedRevision: 3,
+			senderLinked: true,
+		});
+		expect(relinked.style.basics.name).toBe("Later sender");
+		await getPool().query("DELETE FROM resume WHERE id='alice-resume'");
+		const orphaned = await service.getById({ userId: "alice", id: created.id });
+		expect(orphaned).toMatchObject({ sourceResumeId: null, senderLinked: false, content: "<p>Keep body</p>" });
+		expect(
+			(await service.update({ userId: "alice", id: created.id, expectedRevision: 4, name: "Still editable" })).name,
+		).toBe("Still editable");
+	});
+
+	it("refreshes copied style without changing content and survives source deletion", async () => {
+		const created = await service.create({
+			userId: "alice",
+			name: "Keep",
+			content: "<p>Keep body</p>",
 			applicationId: "alice-app",
 		});
 		const changed = structuredClone(defaultResumeData);
@@ -196,6 +310,56 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			sourceApplicationId: null,
 			style: { basics: { name: "New sender" } },
 		});
+	});
+
+	it("keeps History: one version per session, named and sent versions, and restores with a way back", async () => {
+		const created = await service.create({ userId: "alice", name: "History", content: "<p>One</p>" });
+		const kinds = async () =>
+			(await getPool().query("SELECT kind, name FROM cover_letter_version ORDER BY created_at, id")).rows;
+		expect(await kinds()).toEqual([{ kind: "created", name: null }]);
+
+		// Saves in one session share a version.
+		const edit = { userId: "alice", id: created.id, sessionId: "session-a" };
+		await service.update({ ...edit, expectedRevision: 1, content: "<p>Two</p>" });
+		await service.update({ ...edit, expectedRevision: 2, content: "<p>Three</p>" });
+		expect(await kinds()).toEqual([
+			{ kind: "created", name: null },
+			{ kind: "auto", name: null },
+		]);
+
+		const named = await service.createVersion({ userId: "alice", id: created.id, name: "Before the rewrite" });
+		await service.update({ ...edit, expectedRevision: 3, content: "<p>Rewritten</p>", recipientName: "Dana" });
+		await service.recordSent({ userId: "alice", id: created.id, company: "Lumen Health" });
+
+		const restored = await service.restoreVersion({ userId: "alice", id: created.id, versionId: named.id });
+		expect(restored).toMatchObject({ content: "<p>Three</p>", recipientName: "", revision: 5 });
+		expect((await kinds()).map((row) => row.kind)).toEqual([
+			"created",
+			"auto",
+			"named",
+			"sent",
+			"before-restore",
+			"restored",
+		]);
+		const [beforeRestore] = (await getPool().query("SELECT data FROM cover_letter_version WHERE kind='before-restore'"))
+			.rows;
+		expect(beforeRestore.data).toMatchObject({ content: "<p>Rewritten</p>", recipientName: "Dana" });
+		const [sent] = (await getPool().query("SELECT name, data FROM cover_letter_version WHERE kind='sent'")).rows;
+		expect(sent).toMatchObject({ name: "Lumen Health", data: { content: "<p>Rewritten</p>" } });
+
+		// Only named versions can be renamed or deleted, and only by their owner.
+		const { deleteLetterVersion, renameLetterVersion } = await import("./versions");
+		await expect(
+			renameLetterVersion({ coverLetterId: created.id, userId: "bob", versionId: named.id, name: "Mine" }),
+		).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(service.restoreVersion({ userId: "bob", id: created.id, versionId: named.id })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await deleteLetterVersion({ coverLetterId: created.id, userId: "alice", versionId: named.id });
+		const [created0] = (await getPool().query("SELECT id FROM cover_letter_version WHERE kind='created'")).rows;
+		await expect(
+			deleteLetterVersion({ coverLetterId: created.id, userId: "alice", versionId: created0.id }),
+		).rejects.toMatchObject({ code: "NOT_FOUND" });
 	});
 
 	it("searches literal names and paginates stable results within owner context", async () => {

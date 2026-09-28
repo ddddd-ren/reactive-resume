@@ -9,6 +9,7 @@ const resumeServiceMock = vi.hoisted(() => ({
 }));
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
 vi.mock("../resume/service", () => ({ resumeService: resumeServiceMock }));
+vi.mock("../cover-letters/service", () => ({ linkLetterApplication: vi.fn() }));
 
 const { documentsService, suggestCopyName } = await import("./service");
 

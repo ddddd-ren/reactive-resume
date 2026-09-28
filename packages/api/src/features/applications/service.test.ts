@@ -41,7 +41,7 @@ vi.mock("../resume/service", () => ({
 	resumeService: { getById: resumeGetByIdMock },
 }));
 vi.mock("../resume/version-history", () => ({ writeVersion: writeVersionMock }));
-vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: vi.fn() } }));
+vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: vi.fn(), recordSent: vi.fn() } }));
 vi.mock("../storage/service", () => ({
 	getStorageService: () => ({ delete: storageDeleteMock }),
 	uploadFile: uploadFileMock,
