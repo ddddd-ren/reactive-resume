@@ -62,11 +62,13 @@ export const authService = {
 			.where(eq(schema.resume.userId, input.userId));
 
 		const coverLetters = await db.select().from(schema.coverLetter).where(eq(schema.coverLetter.userId, input.userId));
+		const applications = await db.select().from(schema.application).where(eq(schema.application.userId, input.userId));
 		return {
 			exportedAt: new Date().toISOString(),
 			user: userRecord,
 			resumes,
 			coverLetters: coverLetters.map((letter) => coverLetterSchema.parse(letter)),
+			applications: applications.map(({ userId: _userId, ...application }) => application),
 		};
 	},
 

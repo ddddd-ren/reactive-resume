@@ -8,6 +8,7 @@ vi.mock("@reactive-resume/db/schema", () => ({
 	user: { id: "user.id" },
 	resume: { userId: "resume.userId" },
 	coverLetter: { userId: "coverLetter.userId" },
+	application: { userId: "application.userId" },
 }));
 vi.mock("drizzle-orm", () => ({ eq: (column: unknown, value: unknown) => ({ column, value }) }));
 vi.mock("@reactive-resume/env/server", () => ({ env: {} }));
@@ -15,7 +16,7 @@ vi.mock("../storage/service", () => ({ getStorageService: vi.fn() }));
 const { authService } = await import("./service");
 
 describe("account backup", () => {
-	it("includes owned independent cover letters alongside embedded resume letters", async () => {
+	it("includes owned cover letters and applications alongside resumes", async () => {
 		const letter = {
 			id: "letter",
 			name: "Saved",
@@ -35,7 +36,13 @@ describe("account backup", () => {
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};
-		for (const rows of [[{ id: "owner", name: "Owner" }], [{ id: "resume", data: defaultResumeData }], [letter]]) {
+		const application = { id: "application", userId: "owner", company: "Lumen", role: "Designer" };
+		for (const rows of [
+			[{ id: "owner", name: "Owner" }],
+			[{ id: "resume", data: defaultResumeData }],
+			[letter],
+			[application],
+		]) {
 			mocks.select.mockReturnValueOnce({
 				from: () => ({
 					where: (predicate: unknown) => {
@@ -47,6 +54,8 @@ describe("account backup", () => {
 		}
 		const exported = await authService.exportData({ userId: "owner" });
 		expect(exported).toMatchObject({ coverLetters: [letter], resumes: [{ id: "resume" }] });
+		// Applications come along, without the owner's id.
+		expect(exported.applications).toEqual([{ id: "application", company: "Lumen", role: "Designer" }]);
 		expect(mocks.predicates).toContainEqual({ column: "coverLetter.userId", value: "owner" });
 	});
 });
