@@ -27,6 +27,10 @@ msgstr ""
 msgid "\"{0} · {1}\" and its full timeline will be permanently deleted. This can't be undone."
 msgstr "\"{0} · {1}\" a celá časová os budú natrvalo odstránené. Túto akciu nie je možné vrátiť späť."
 
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "(link is live)"
+msgstr ""
+
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
 msgid "(opens in new tab)"
@@ -134,6 +138,10 @@ msgstr "{label} za posledných 30 dní"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "{monthCount} interviews"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
@@ -338,10 +346,6 @@ msgstr "Prístupnosť"
 msgid "Account"
 msgstr "Účet"
 
-#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
-msgid "Account menu"
-msgstr "Ponuka účtu"
-
 #: src/features/applications/components/table-view.tsx
 msgid "Actions"
 msgstr "Akcie"
@@ -349,10 +353,6 @@ msgstr "Akcie"
 #: src/features/resume/stylesheet/legacy-banner.tsx
 msgid "Activate Semantic CSS"
 msgstr "Aktivovať sémantický CSS"
-
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Actual size (100%)"
-msgstr "Skutočná veľkosť (100 %)"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/table-view.tsx
@@ -815,7 +815,7 @@ msgstr "Ste si istí, že chcete odstrániť túto vlastnú sekciu?"
 msgid "Are you sure you want to delete this item?"
 msgstr "Ste si istí, že chcete túto položku odstrániť?"
 
-#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Are you sure you want to delete this resume?"
 msgstr "Naozaj chceš tento životopis vymazať?"
@@ -824,7 +824,6 @@ msgstr "Naozaj chceš tento životopis vymazať?"
 msgid "Are you sure you want to delete your account?"
 msgstr "Naozaj chceš svoj účet vymazať?"
 
-#: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Are you sure you want to lock this resume?"
 msgstr "Naozaj chceš tento životopis uzamknúť?"
@@ -856,6 +855,10 @@ msgstr "Opýtajte sa na čokoľvek ohľadom tohto životopisu"
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Aspect Ratio"
 msgstr "Pomer strán"
+
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "Assistant"
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "ATS Check"
@@ -929,6 +932,10 @@ msgstr "BA"
 #: src/features/auth/pages/error.tsx
 msgid "Back to authentication settings"
 msgstr "Späť na nastavenia overovania"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Back to documents"
+msgstr ""
 
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "Back to resumes"
@@ -1118,6 +1125,11 @@ msgstr "Zmeny sa zdieľajú medzi vašou knižnicou a tvorcom životopisov."
 #: src/routes/agent/$threadId.tsx
 msgid "Chat"
 msgstr "Čet"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
+msgid "Check"
+msgstr ""
 
 #: src/features/ats-checker/tool.tsx
 msgid "Check again"
@@ -1384,6 +1396,7 @@ msgstr "Obsahovať"
 #: src/dialogs/resume/sections/cover-letter.tsx
 #: src/dialogs/resume/sections/summary-item.tsx
 #: src/features/cover-letters/editor.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Obsah"
 
@@ -1480,7 +1493,6 @@ msgstr "Skopírujte text z exportovaného súboru a prečítajte si ho celý; op
 msgid "Copy this secret key and use it in your applications to access your data."
 msgstr "Skopíruj tento tajný kľúč a použi ho vo svojich aplikáciách na prístup k svojim dátam."
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Copy URL"
 msgstr "Kopírovať URL"
@@ -1585,10 +1597,6 @@ msgstr "Nepodarilo sa odstrániť záznam časovej osi."
 #: src/features/applications/components/board.tsx
 msgid "Couldn't move the application. Please try again."
 msgstr "Žiadosť sa nepodarilo presunúť. Skúste to znova."
-
-#: src/routes/builder/$resumeId/-components/header.tsx
-msgid "Couldn't save"
-msgstr "Nepodarilo sa uložiť"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't save the note."
@@ -1918,7 +1926,6 @@ msgstr "Titul"
 #: src/features/settings/pages/api-keys.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
@@ -1973,6 +1980,10 @@ msgstr "Odstrániť tento záznam časovej osi?"
 msgid "Delete timeline entry"
 msgstr "Odstrániť záznam časovej osi"
 
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Delete…"
+msgstr ""
+
 #. placeholder {0}: result.deleted
 #: src/features/applications/components/table-view.tsx
 msgid "Deleted {0} application(s)."
@@ -1986,7 +1997,7 @@ msgstr "Vymazávam tvoj účet..."
 msgid "Deleting your API key..."
 msgstr "Vymazávam tvoj API kľúč..."
 
-#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Deleting your resume..."
 msgstr "Vymazávam tvoj životopis..."
@@ -2022,7 +2033,8 @@ msgstr "Popis"
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
 #: src/libs/resume/section.tsx
-#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Design"
 msgstr "Dizajn"
 
@@ -2084,6 +2096,10 @@ msgstr "Zavrieť"
 msgid "Docs"
 msgstr "Dokumentácia"
 
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Document menu: {name}"
+msgstr ""
+
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
@@ -2111,11 +2127,10 @@ msgid "Done"
 msgstr "Hotovo"
 
 #. Action button to download two-factor backup codes as a text file
-#. Primary action in the builder header to open resume download options
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/homepage/languages-showcase.tsx
 #: src/features/resume/export/download-dialog.tsx
-#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
 msgid "Download"
 msgstr "Stiahnuť"
@@ -2132,14 +2147,10 @@ msgstr "Stiahnite si podrobnosti aplikácie, kontakty, poznámky a históriu ča
 msgid "Download CSV"
 msgstr "Stiahnite si CSV"
 
-#. Primary action in the builder header to open resume download options
-#: src/routes/builder/$resumeId/-components/header.tsx
-msgid "Download options"
-msgstr "Možnosti sťahovania"
-
 #: src/features/cover-letters/editor-dialog.tsx
 #: src/features/resume/public/public-resume.tsx
 #: src/routes/agent/-components/resume-pane.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Download PDF"
 msgstr "Stiahnuť PDF"
 
@@ -2195,7 +2206,7 @@ msgstr "Vynechajte zámená a začnite slovesom. Je to zvyklosť na väčšine t
 #. Resume card dropdown action to create a copy
 #: src/dialogs/resume/index.tsx
 #: src/features/cover-letters/editor-dialog.tsx
-#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
@@ -2234,7 +2245,6 @@ msgstr "Staršie verzie sa zachovajú; história vrátenia zmien v nástroji na 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
-#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
 msgid "Edit"
 msgstr "Upraviť"
 
@@ -2276,11 +2286,14 @@ msgstr "Úprava zamietnutá"
 
 #. Resume card context menu action to edit resume metadata
 #. Resume card dropdown action to edit resume metadata
-#: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Edit details"
 msgstr "Upraviť podrobnosti"
+
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
+msgid "Edit entry"
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Edit interview"
@@ -2302,6 +2315,10 @@ msgstr "Upraviť poznámku"
 msgid "Editable in Word, Google Docs, and Pages."
 msgstr "Upraviteľné vo Worde, Dokumentoch Google a Pages."
 
+#: src/features/resume/editor/page-overlay.tsx
+msgid "Editing"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/left/index.tsx
 msgid "Editing is disabled until you unlock it."
 msgstr "Úpravy sú zakázané, kým ich neodomknete."
@@ -2309,6 +2326,14 @@ msgstr "Úpravy sú zakázané, kým ich neodomknete."
 #: src/components/input/chip-input.tsx
 msgid "Editing keyword..."
 msgstr "Úprava kľúčového slova..."
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Editor mode"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
+msgid "Editor views"
+msgstr ""
 
 #: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
@@ -2731,13 +2756,14 @@ msgstr "Nájdi nás na GitHub"
 msgid "Finnish"
 msgstr "Fínčina"
 
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Fit"
 msgstr "Vhodné"
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Fit to view"
-msgstr "Prispôsobiť zobrazeniu"
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Fit page to width"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Fits into your workflow"
@@ -2821,6 +2847,7 @@ msgstr "Formát"
 msgid "Format stylesheet"
 msgstr "Formátovať štýlový hárok"
 
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Free-form"
 msgstr "Voľný tvar"
@@ -2909,11 +2936,6 @@ msgstr "Choď domov"
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Prejsť na nástenku"
-
-#. Accessible label for button navigating from builder to resumes dashboard
-#: src/routes/builder/$resumeId/-components/header.tsx
-msgid "Go to resumes dashboard"
-msgstr "Prejsť na ovládací panel životopisov"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
@@ -3021,6 +3043,10 @@ msgstr "Skryť ikony"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Hide Link Underline"
 msgstr "Skryť podčiarknutie odkazu"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Hide panel"
+msgstr ""
 
 #. Accessible label for button that hides password in registration form
 #. Accessible label for button that hides password in reset-password form
@@ -3189,6 +3215,7 @@ msgid "Indonesian"
 msgstr "Indonézština"
 
 #: src/libs/resume/section.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Information"
 msgstr "Informácie"
 
@@ -3371,6 +3398,10 @@ msgstr "Udržujte záhlavia krátke, alebo ich vynechajte. Opakujú sa aj v extr
 msgid "Keep the company, role, resume, and follow-up date together. Switch between a board, table, and insights in the app."
 msgstr "Maj spoločnosť, pozíciu, životopis a dátum ďalšieho kroku pohromade. V aplikácii prepínaj medzi nástenkou, tabuľkou a prehľadmi."
 
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Keep the panel beside the page"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Keep them to roughly two lines, so a skim-reader finishes them."
 msgstr "Udržte ich na približne dvoch riadkoch, aby ich rýchločitateľ stihol dočítať."
@@ -3510,6 +3541,7 @@ msgstr "Právne informácie"
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Dĺžka nie je nedostatok a univerzálne pravidlo jednej strany neexistuje. Ponechajte strany, ktoré si svoje miesto zaslúžia."
 
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Letter"
 msgstr "Letter"
@@ -3654,11 +3686,14 @@ msgstr "Lokalita"
 
 #. Resume card context menu action to prevent edits
 #. Resume card dropdown action to prevent edits
-#: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Lock"
 msgstr "Zamknúť"
+
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Lock editing"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -3764,6 +3799,14 @@ msgstr "Licencia MIT"
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Model"
 msgstr "Model"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "More download formats"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
+msgid "More download formats…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "More than one email address appears."
@@ -3999,6 +4042,10 @@ msgstr "Žiadny riadok nevyzerá ako pracovná pozícia spárovaná so zamestná
 msgid "No one-page rule, and no treating a font or a career gap as a fault."
 msgstr "Žiadne pravidlo jednej strany a žiadne považovanie písma či kariérnej pauzy za chybu."
 
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "No open issues"
+msgstr ""
+
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "No passkeys registered yet."
 msgstr "Zatiaľ neboli zaregistrované žiadne prístupové kľúče."
@@ -4092,6 +4139,10 @@ msgstr "Vo vašom životopise nedoložené"
 msgid "Not in your resume"
 msgstr "Nie je vo vašom životopise"
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Not saved"
+msgstr ""
+
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Not scored"
 msgstr "Bez skóre"
@@ -4108,6 +4159,7 @@ msgstr "Poznámka"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/libs/resume/section.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Notes"
 msgstr "Poznámky"
 
@@ -4138,6 +4190,10 @@ msgstr "Urijčina"
 #: src/features/homepage/feature-explorer.tsx
 msgid "Offer"
 msgstr "Ponuka"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Offline · saved on this device"
+msgstr ""
 
 #: src/features/settings/pages/api-keys.tsx
 msgid "Once deleted, the key can no longer access your data. This cannot be undone."
@@ -4176,14 +4232,6 @@ msgstr "Skontrolované boli iba prvé strany."
 msgid "Open"
 msgstr "Otvoriť"
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Open AI agent"
-msgstr "Otvoriť agenta AI"
-
-#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
-msgid "Open AI assistant"
-msgstr "Otvoriť asistenta s umelou inteligenciou"
-
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Open design library"
 msgstr "Otvoriť dizajnovú knižnicu"
@@ -4204,6 +4252,10 @@ msgstr "Otvoriť v editore"
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Open Integrations Settings"
 msgstr "Otvoriť Nastavenia integrácií"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "open issues"
+msgstr ""
 
 #: src/features/homepage/template-shelf.tsx
 msgid "Open template PDF"
@@ -4273,6 +4325,7 @@ msgid "out of 100"
 msgstr "zo 100"
 
 #: src/libs/resume/section.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Page"
 msgstr "Strana"
 
@@ -4285,6 +4338,14 @@ msgstr "Strana"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "Strana {0}"
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Page {pageNumber}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Page 1 · {formatLabel} · click any line to edit it"
+msgstr ""
 
 #: src/components/input/rich-input.tsx
 msgid "Paragraph"
@@ -4535,6 +4596,10 @@ msgstr "Pripravuje sa vzor…"
 msgid "Preparing your resume for printing..."
 msgstr "Príprava životopisu na tlač..."
 
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Preparing…"
+msgstr ""
+
 #: src/components/input/color-picker.tsx
 msgid "Presets"
 msgstr "Prednastavenia"
@@ -4547,10 +4612,6 @@ msgstr "Stlačte <0>{RETURN_KEY}</0> alebo <1>{COMMA_KEY}</1> pre pridanie alebo
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Press <0>Enter</0> to open"
 msgstr "Stlačením tlačidla <0>Enter</0> otvoríte"
-
-#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
-msgid "Preview"
-msgstr "Náhľad"
 
 #: src/features/resume/stylesheet/status.tsx
 msgid "Preview and export fall back to base styles."
@@ -4579,6 +4640,10 @@ msgstr "Predchádzajúca šablóna"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Primary Color"
 msgstr "Hlavná farba"
+
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Print"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Print or export the form to a flat PDF before sending it."
@@ -4818,10 +4883,6 @@ msgstr "Obdĺžnik"
 msgid "Rectangle (Full Width)"
 msgstr "Obdĺžnik (plná šírka)"
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Redo"
-msgstr "Znovu"
-
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Redo stylesheet edit"
 msgstr "Znovu upraviť štýlový hárok"
@@ -4896,6 +4957,10 @@ msgstr "Odstraňujem ochranu heslom..."
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Rename"
 msgstr "Premenovať"
+
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Rename…"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Renders your current resume to PDF and runs the full file check in your browser. Nothing is uploaded."
@@ -4996,6 +5061,10 @@ msgstr "Obnoviť životopis do stavu pred touto záplatou?"
 msgid "Restore this version?"
 msgstr "Obnoviť túto verziu?"
 
+#: src/features/resume/builder/draft.ts
+msgid "Restored changes that hadn't been saved yet."
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/resume/export/download-dialog.tsx
 #: src/routes/agent/-components/resume-pane.tsx
@@ -5019,7 +5088,6 @@ msgstr "Úprava životopisu"
 msgid "Resume file"
 msgstr "Súbor životopisu"
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Resume link copied to clipboard."
 msgstr "Odkaz na životopis skopírovaný do schránky."
@@ -5031,10 +5099,6 @@ msgstr "Pokračovať prepojené"
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume not found"
 msgstr "Životopis sa nenašiel"
-
-#: src/routes/builder/$resumeId/-components/header.tsx
-msgid "Resume options"
-msgstr "Možnosti životopisu"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Resume patch"
@@ -5059,9 +5123,14 @@ msgstr "Životopisy"
 
 #: src/features/cover-letters/editor-dialog.tsx
 #: src/features/cover-letters/library.tsx
+#: src/features/resume/editor/save-status.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Retry"
 msgstr "Skúsiť znova"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Retry saving"
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Review edits"
@@ -5233,7 +5302,7 @@ msgstr "Pred skopírovaním obsahu alebo štýlu uložte zmeny životopisu."
 msgid "Save the file with every page upright."
 msgstr "Uložte súbor tak, aby boli všetky strany vzpriamené."
 
-#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/features/resume/editor/save-status.tsx
 msgid "Saved"
 msgstr "Uložené"
 
@@ -5241,7 +5310,7 @@ msgstr "Uložené"
 msgid "Saving is taking longer than expected. Your changes are still open."
 msgstr "Ukladanie trvá dlhšie, ako sa očakávalo. Vaše zmeny sú stále otvorené."
 
-#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/features/resume/editor/save-status.tsx
 msgid "Saving…"
 msgstr "Ukladá sa…"
 
@@ -5495,6 +5564,14 @@ msgstr "Nastaviť autentifikačnú aplikáciu"
 msgid "Shadow Width"
 msgstr "Šírka tieňa"
 
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Share"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/share-sheet.tsx
+msgid "Share & export"
+msgstr ""
+
 #: src/libs/resume/section.tsx
 msgid "Sharing"
 msgstr "Zdieľanie"
@@ -5544,6 +5621,10 @@ msgstr "Zobraziť nadpis"
 #: src/dialogs/resume/sections/volunteer.tsx
 msgid "Show link in title"
 msgstr "Zobraziť odkaz v nadpise"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Show panel"
+msgstr ""
 
 #. Accessible label for button that reveals password in registration form
 #. Accessible label for button that reveals password in reset-password form
@@ -5683,11 +5764,13 @@ msgstr "Preskočiť a nahrať"
 
 #: src/features/homepage/page.tsx
 #: src/routes/_home/route.tsx
-#: src/routes/builder/$resumeId/-components/desktop-builder-shell.tsx
-#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
 #: src/routes/dashboard/route.tsx
 msgid "Skip to main content"
 msgstr "Preskočiť na hlavný obsah"
+
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
+msgid "Skip to the page"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Slovak"
@@ -6280,7 +6363,7 @@ msgstr "Tieto dátumy sa neprečítajú správne."
 msgid "Thinking"
 msgstr "Myslenie"
 
-#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "This action cannot be undone."
 msgstr "Túto akciu nemožno vrátiť späť."
@@ -6591,23 +6674,9 @@ msgstr ""
 msgid "Toggle {sectionTitle} section"
 msgstr "Prepnúť sekciu {sectionTitle}"
 
-#. Screen-reader label for opening or closing the left sidebar in resume builder
-#: src/routes/builder/$resumeId/-components/header.tsx
-msgid "Toggle left sidebar"
-msgstr "Prepnutie ľavého bočného panela"
-
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Toggle page stacking"
-msgstr "Prepnúť stohovanie stránok"
-
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle resume preview"
 msgstr "Prepnúť ukážku životopisu"
-
-#. Screen-reader label for opening or closing the right sidebar in resume builder
-#: src/routes/builder/$resumeId/-components/header.tsx
-msgid "Toggle right sidebar"
-msgstr "Prepnutie pravého bočného panela"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle threads"
@@ -6780,7 +6849,7 @@ msgstr "Podčiarknuté"
 
 #: src/dialogs/resume/template/gallery.tsx
 #: src/features/homepage/feature-explorer.tsx
-#: src/routes/builder/$resumeId/-components/dock.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Undo"
 msgstr "Späť"
 
@@ -6796,11 +6865,14 @@ msgstr "Odpájam tvoj účet {providerName}..."
 #. Resume card context menu action to remove edit lock
 #. Resume card dropdown action to remove edit lock
 #: src/features/auth/pages/resume-password.tsx
-#: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Unlock"
 msgstr "Odomknúť"
+
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Unlock editing"
+msgstr ""
 
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Unnamed passkey"
@@ -7222,7 +7294,6 @@ msgstr "Čo sa tu kontroluje"
 msgid "What this does not do"
 msgstr "Čo to nerobí"
 
-#: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "When locked, the resume cannot be updated or deleted."
 msgstr "Keď je životopis uzamknutý, nemožno ho aktualizovať ani vymazať."
@@ -7303,6 +7374,11 @@ msgstr "Funguje…"
 msgid "Worth a shot"
 msgstr "Stojí za to"
 
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
+msgid "Write"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write \"Present\" as the end date of your current role."
 msgstr "Ako dátum ukončenia vašej aktuálnej pozície napíšte „Present“."
@@ -7339,6 +7415,10 @@ msgstr "Prihlásiť sa môžete aj používateľským menom."
 #: src/features/homepage/feature-explorer.tsx
 msgid "You can always go back to the original."
 msgstr "K originálu sa môžeš kedykoľvek vrátiť."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "You can keep editing. Changes sync when you're back online. Download and Share need a connection."
+msgstr ""
 
 #: src/features/auth/pages/error.tsx
 msgid "You cancelled the sign-in before it finished."
@@ -7390,7 +7470,7 @@ msgstr "Text vášho tela je veľmi malý."
 msgid "Your bullets are drawn with unusual characters."
 msgstr "Vaše odrážky sú vykreslené neobvyklými znakmi."
 
-#: src/routes/builder/$resumeId/-components/preview-page.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Your changes are saved automatically."
 msgstr "Tvoje zmeny sa ukladajú automaticky."
 
@@ -7429,10 +7509,6 @@ msgstr "Váš súbor zostáva tu"
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Vaše nadpisy vyzerajú rovnako ako váš hlavný text."
-
-#: src/features/resume/builder/draft.ts
-msgid "Your latest changes could not be saved."
-msgstr "Vaše posledné zmeny sa nepodarilo uložiť."
 
 #: src/features/resume/stylesheet/legacy-banner.tsx
 msgid "Your legacy styles stay active until you activate this Semantic CSS draft."
@@ -7475,7 +7551,7 @@ msgstr "Váš profil bol aktualizovaný."
 msgid "Your resume has been created."
 msgstr "Váš životopis bol vytvorený."
 
-#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Your resume has been deleted."
 msgstr "Váš životopis bol vymazaný."
@@ -7552,16 +7628,15 @@ msgstr "Tvoje slová ako dokument v čistom texte spolu s nadpismi, zoznamami a 
 msgid "Zoom"
 msgstr "Priblíženie"
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Zoom in"
 msgstr "Priblížiť"
 
 #: src/routes/agent/-components/resume-pane.tsx
-#: src/routes/builder/$resumeId/-components/dock.tsx
 msgid "Zoom level"
 msgstr "Úroveň priblíženia"
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Zoom out"
 msgstr "Oddialiť"
 
