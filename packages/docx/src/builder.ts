@@ -68,7 +68,7 @@ interface TemplateConfig {
 	headerPosition: "full-width" | "main-only" | "sidebar-only";
 }
 
-const TEMPLATE_CONFIGS: Record<Template, TemplateConfig> = {
+export const TEMPLATE_CONFIGS: Record<Template, TemplateConfig> = {
 	azurill: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
 	bronzor: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
 	chikorita: { sidebarSide: "right", sidebarBackground: "solid", headerPosition: "main-only" },

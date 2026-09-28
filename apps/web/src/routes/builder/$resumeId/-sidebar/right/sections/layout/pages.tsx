@@ -25,6 +25,7 @@ import {
 } from "@phosphor-icons/react";
 import { useCallback, useId, useState } from "react";
 import { match } from "ts-pattern";
+import { templateLayouts } from "@reactive-resume/schema/templates";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -39,7 +40,6 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
-import { templates } from "@/dialogs/resume/template/data";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { EASE_OUT_STRONG } from "@/libs/motion";
 import { resolveLayoutSectionTitle } from "./title";
@@ -97,7 +97,7 @@ export function LayoutPages() {
 
 	const resume = useCurrentResume();
 	const template = resume.data.metadata.template;
-	const templateSidebarPosition = templates[template].sidebarPosition;
+	const templateSidebarPosition = templateLayouts[template].sidebarSide ?? "none";
 
 	const layout = resume.data.metadata.layout;
 	const updateResumeData = useUpdateResumeData();
@@ -450,7 +450,7 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 
 	const pages = resume.data.metadata.layout.pages;
 	// When the template collapses the sidebar, no page has a usable sidebar column.
-	const sidebarCollapsed = templates[resume.data.metadata.template].sidebarPosition === "none";
+	const sidebarCollapsed = templateLayouts[resume.data.metadata.template].columns === 1;
 
 	const moveTo = (targetPageIndex: number, targetColumnId: ColumnId) => {
 		updateResumeData((draft) => {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { templateLayouts } from "@reactive-resume/schema/templates";
 import { templates } from "./data";
 
 describe("templates metadata", () => {
@@ -37,10 +38,11 @@ describe("templates metadata", () => {
 		}
 	});
 
-	it("uses a recognized sidebar position for every template", () => {
-		const validPositions = new Set(["left", "right", "none"]);
-		for (const [id, meta] of entries) {
-			expect(validPositions.has(meta.sidebarPosition), `${id}: ${meta.sidebarPosition}`).toBe(true);
+	it("takes each template's layout from the shared metadata", () => {
+		for (const [id] of entries) {
+			const layout = templateLayouts[id as keyof typeof templateLayouts];
+			expect(layout, id).toBeDefined();
+			expect(layout.columns === 2, id).toBe(layout.sidebarSide !== null);
 		}
 	});
 
