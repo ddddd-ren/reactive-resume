@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M5 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M6 are done; see §11 and §12.
 
 **PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
 
@@ -1062,3 +1062,47 @@ Verification:
 - knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
 - E2E: updated `public-sharing`, `sharing-password`, `public-download-preference`, `json-export-import`, `hyphenation`, `section-recovery`, `offline-fonts` and `preview-export-geometry`. Added `share-history`: renaming the address with the old one redirecting, and naming, previewing and restoring versions.
 - The full suite passes against the dev server except the known dev-only server-PDF steps; `hyphenation`, `public-resume-locale`, `section-recovery`, `share-history`, `public-sharing` and `json-export-import` pass against the production build.
+
+### M6 · Documents & New (done 28 Sep 2026)
+
+What changed:
+
+- **Data (§3.3):**
+  - `resume` gains `application_id` (the job a copy was made for; set null when the application goes), `trashed_at` and `auto_name`. `cover_letter` gains `tags`, `is_locked` and `trashed_at`. The migration only adds columns and the foreign key.
+  - A new `documents` feature lists resumes and letters together with their linked application, counts them, and renames, tags, locks, links, trashes, restores, deletes for good (`purge`) and copies for a job. `copyForJob` links the copy to the application and, when the application has no resume yet, the application to the copy.
+  - Moving to Trash replaces deleting: `resume.delete`, `coverLetters.delete` and the MCP `deleteResume` tool now move to Trash. Trashed documents drop out of lists, their public page stops, and their slug stays reserved until they are deleted for good.
+  - Locked documents can't be renamed, tagged, linked or trashed. A locked letter can't be edited either, which matches resumes.
+  - Blank resumes from New set `auto_name`, so their name follows the headline until renamed by hand. Imports are named after the person in the file (or the headline) instead of a random name.
+  - Letter saves now bump `revision`.
+- **App shell:** a 240 px sidebar (Rr mark, ⌘K button, Documents and Applications with counts, Trash with its count only when it holds something, New with N, and the avatar row), an icon rail with tooltips at 640–1023 px, and bottom tabs Documents · Applications · New · Account on phones. N opens New outside fields and dialogs. Settings pages keep today's layout under a tab strip until M11.
+- **Documents:** a Newsreader title, All · Resumes · Letters tabs with counts, search (/ focuses it) over names, tags and linked applications, sort by edited, name or created, grid or list, and tag chips.
+  - Cards show the real thumbnail (letters show a text sketch), "Resume · Edited 2h ago", the application line, a lock badge, a "New" badge until first opened (remembered per device), and a 2 px hover lift. The list shows Name, Type, Application, Edited and ⋯.
+  - The same menu opens from ⋯, right-click and long-press: Open, Rename (inline), Duplicate, Copy for a job… (Link to application… for letters), Tags…, Lock or Unlock, and Move to Trash with an Undo toast. Locked documents disable the items that would change them.
+  - Dropping a file anywhere on the page imports it. Loading, empty-filter and first-run states ("Let's start with what you have", with Choose a file first) are covered.
+- **Trash:** back link, the 30-day note, "n days left", Restore, and "Delete now…" behind an alert dialog.
+- **New dialog:**
+  - Choose: Import a resume, Copy a resume for a job, Start blank, and the links "New cover letter instead" and "Try with a sample resume".
+  - Importing: the file row with Cancel, three labelled steps with notes, the progress bar, then the result with the count of dates flagged for a look and Open in editor or Stay here. Failures offer Choose another file and Start blank.
+  - Copy for a job: source resumes as radio rows, application chips or "No job yet", the suggested name ("{name} — {company}"), Create and open.
+  - Start blank opens Write on the name field.
+- **Letters** live in the Letters tab and still open in today's letter dialog (M9 moves them to the editor shell). Letter JSON imports through New → Import; a letter embedded in a resume can be copied into Documents from its entry menu (Q3k).
+- **Routes:** `/dashboard` is Documents and `/dashboard/trash` is new. `/dashboard/resumes` redirects to Documents with its filters, and `/dashboard/cover-letters` to the Letters tab. The command bar gains Documents, New document, Trash and ATS Checker, and the user menu gains Settings.
+- **Removed:** the old sidebar, the resumes page and its grid and list views, the create-resume and import dialogs, and the letter library page.
+
+Differences from the plan, with reasons:
+
+- **Trash is purged when documents are listed**, not by a daily job, for the same reason as M5's version retention: there is no scheduler and the Vercel entry skips startup hooks. Anything trashed over 30 days ago goes the next time its owner opens Documents or Trash.
+- **Filtering, search and sort run in the browser** over one `documents.list` call, instead of API filters. A library is small, and filtering locally keeps the tabs, counts and tag chips instant.
+- **New stays a centred dialog on phones**, not a bottom sheet. It holds a multi-step flow with a file picker, and the dialog already fits a phone screen.
+- **There is no "Read as…" choice.** Every supported format is told apart by its extension, type or content, so detection is never ambiguous.
+- **Grid or list is remembered per device** rather than in the URL. The URL still accepts `view=list`, so old links work.
+- **Copying an embedded letter (Q3k) keeps the resume's copy.** "Copy to Documents" makes a library letter without removing the one inside the resume, so nothing on the page changes.
+- **The Agents page is reachable from ⌘K only** until the assistant replaces it in M10.
+
+Verification:
+
+- Typecheck is clean for web, api, mcp and db.
+- Tests pass: api 477, web 906, mcp 67, db 5. New tests cover the documents service (copy names, Trash and its lock rule, deleting for good only from Trash, the purge before listing, and Copy for a job's links), the name following the headline, document filters, sort, search and the Trash countdown, and import detection, parsing and summaries. Tests for the removed dialogs and pages went with them.
+- knip, `turbo boundaries` and Biome are clean (this also fixed Biome findings in `index.html` from M1), and catalogs are extracted.
+- E2E: updated `dashboard-lifecycle` (rename, duplicate, Trash, restore and delete now), `lock-resume`, `cover-letter-library`, `json-export-import`, `preview-direction`, `section-recovery` and `auth`; `resume-views` became `documents-views`. Added `documents-new`: Start blank naming the resume after its headline, and Copy for a job linking the copy to its application.
+- The full suite passes against the dev server except the known dev-only server-PDF steps (33 passed, 7 opt-in diagnostics skipped). `hyphenation`, `public-resume-locale`, `documents-new`, `dashboard-lifecycle`, `cover-letter-library`, `json-export-import` and `share-history` pass against the production build.
