@@ -37,7 +37,11 @@ async function send(page: Page, text: string) {
 	await expect(page.getByRole("button", { name: "Send" }).last()).toBeVisible({ timeout: 20_000 });
 	const composer = page.getByLabel("Message the assistant");
 	await composer.fill(text);
-	await composer.press("Enter");
+	// Enter is ignored until the previous reply has fully settled; the text stays, so press again.
+	await expect(async () => {
+		if ((await composer.inputValue()) !== "") await composer.press("Enter");
+		await expect(composer).toHaveValue("", { timeout: 1_000 });
+	}).toPass({ timeout: 20_000 });
 }
 
 test("proposes edits that change nothing until accepted, asks before assuming, and stops", async ({

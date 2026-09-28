@@ -45,5 +45,5 @@ test("sheets, panels and dialogs return focus to what opened them", async ({ aut
 	await page.keyboard.press("Enter");
 	await expect(page.getByRole("dialog")).toBeVisible();
 	await page.keyboard.press("Escape");
-	expect(await focusedName(page)).toMatch(/Search or run/);
+	await expect.poll(() => focusedName(page)).toMatch(/Search or run/);
 });
