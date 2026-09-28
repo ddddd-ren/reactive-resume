@@ -321,7 +321,7 @@ describe("builder resume autosave", () => {
 
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(1);
 		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
-			{ id: initial.id, data: updated.data },
+			{ id: initial.id, data: updated.data, sessionId: expect.any(String) },
 			expect.objectContaining({ signal: expect.any(AbortSignal) }),
 		);
 		expect(orpcMocks.patchResume).not.toHaveBeenCalled();
@@ -342,7 +342,7 @@ describe("builder resume autosave", () => {
 		await flushMicrotasks();
 
 		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
-			{ id: initial.id, data: updated.data },
+			{ id: initial.id, data: updated.data, sessionId: expect.any(String) },
 			expect.objectContaining({ signal: expect.any(AbortSignal) }),
 		);
 	});
@@ -381,8 +381,16 @@ describe("builder resume autosave", () => {
 		await flushMicrotasks();
 
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(2);
-		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).toEqual({ id: initial.id, data: first.data });
-		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({ id: initial.id, data: latest.data });
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).toEqual({
+			id: initial.id,
+			data: first.data,
+			sessionId: expect.any(String),
+		});
+		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({
+			id: initial.id,
+			data: latest.data,
+			sessionId: expect.any(String),
+		});
 		expect(orpcMocks.patchResume).not.toHaveBeenCalled();
 	});
 
@@ -419,7 +427,11 @@ describe("builder resume autosave", () => {
 		await flushMicrotasks();
 
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(2);
-		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({ id: initial.id, data: latest.data });
+		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({
+			id: initial.id,
+			data: latest.data,
+			sessionId: expect.any(String),
+		});
 	});
 
 	it("keeps the latest draft on this device and reports Not saved when saving fails", async () => {

@@ -8,7 +8,7 @@ import { getResumeSectionTitle } from "@reactive-resume/pdf/section-title";
 import { getResumeExportData, resumeHasCoverLetter } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/file";
+import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { resolvePublicResumePdfBlob } from "@/features/resume/public/public-pdf";
 import { client } from "@/libs/orpc/client";
 import { createSectionTitleResolverForLocale } from "@/libs/resume/section-title-locale";
@@ -37,36 +37,71 @@ type UseResumeExportOptions = {
 	publicResumePdf?: PublicResumePdfOptions;
 };
 
-const getExportName = (resume: ExportableResume) => resume.name || resume.data.basics.name || resume.slug;
-const getTargetExportName = (resume: ExportableResume, target: ResumeExportTarget) =>
-	target === "cover-letter" ? `${getExportName(resume)} Cover Letter` : getExportName(resume);
-
 type DownloadPdfOptions = {
 	includeCoverLetterHeader?: boolean;
 };
 
+export type ExportFormat = "pdf" | "docx" | "md" | "json";
+
+// Characters Windows and macOS won't take in a file name.
+const UNSAFE_FILE_NAME_CHARACTERS = /[\\/:*?"<>|]/g;
+
+/** A file name as the user typed it, minus the characters file systems reject. */
+export const sanitizeFileName = (value: string) => value.replace(UNSAFE_FILE_NAME_CHARACTERS, "").trim();
+
 /**
- * Single source of truth for resume export (PDF / DOCX / JSON / Print). Previously duplicated verbatim
- * between the builder dock and the right-panel Export section (#17).
+ * "First-Last-Resume" (or "First-Last-Cover-Letter"): recruiters see this name. Without a name on the
+ * resume it falls back to the document's name.
  */
+export function getDefaultFileName(resume: ExportableResume, target: ResumeExportTarget = "resume") {
+	const words = (text: string) => sanitizeFileName(text).split(/\s+/).filter(Boolean);
+	const person = words(resume.data.basics.name);
+	const suffix = target === "cover-letter" ? ["Cover", "Letter"] : ["Resume"];
+	if (person.length > 0) return [...person, ...suffix].join("-");
+	return [...words(resume.name || resume.slug), ...(target === "cover-letter" ? suffix : [])].join("-") || "Resume";
+}
+
+/** Builds one export file. It throws when the file can't be made, so each caller decides how to say so. */
+export async function createExportFile(
+	resume: ExportableResume,
+	format: ExportFormat,
+	target: ResumeExportTarget = "resume",
+	options?: DownloadPdfOptions,
+): Promise<Blob> {
+	if (format === "json") {
+		return new Blob([JSON.stringify(resume.data, null, 2)], { type: "application/json" });
+	}
+
+	const data = getResumeExportData(resume.data, target);
+	if (format === "pdf") {
+		return createResumePdfBlob(
+			data,
+			undefined,
+			target === "cover-letter" ? { includeCoverLetterHeader: options?.includeCoverLetterHeader } : undefined,
+		);
+	}
+
+	const resolveTitle = await createSectionTitleResolver(data);
+	if (format === "md") return new Blob([buildMarkdown(data, resolveTitle)], { type: "text/markdown" });
+	return buildDocx(data, resolveTitle);
+}
+
+/** One-click exports that report their own progress and failures in toasts (the bar, ⌘P, public pages). */
 export function useResumeExport(resume: ExportableResume | undefined, exportOptions: UseResumeExportOptions = {}) {
 	const [isExporting, setIsExporting] = useState(false);
 	const hasCoverLetter = resume ? resumeHasCoverLetter(resume.data) : false;
 
-	const onDownloadJSON = useCallback(() => {
+	const onDownloadJSON = useCallback(async () => {
 		if (!resume) return;
-		const blob = new Blob([JSON.stringify(resume.data, null, 2)], { type: "application/json" });
-		downloadWithAnchor(blob, generateFilename(getExportName(resume), "json"));
+		downloadWithAnchor(await createExportFile(resume, "json"), `${getDefaultFileName(resume)}.json`);
 	}, [resume]);
 
 	const onDownloadMarkdown = useCallback(
 		async (target: ResumeExportTarget = "resume") => {
 			if (!resume) return;
 			if (target === "cover-letter" && !resumeHasCoverLetter(resume.data)) return;
-			const data = getResumeExportData(resume.data, target);
-			const resolveTitle = await createSectionTitleResolver(data);
-			const blob = new Blob([buildMarkdown(data, resolveTitle)], { type: "text/markdown" });
-			downloadWithAnchor(blob, generateFilename(getTargetExportName(resume, target), "md"));
+			const blob = await createExportFile(resume, "md", target);
+			downloadWithAnchor(blob, `${getDefaultFileName(resume, target)}.md`);
 		},
 		[resume],
 	);
@@ -76,10 +111,8 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 			if (!resume) return;
 			if (target === "cover-letter" && !resumeHasCoverLetter(resume.data)) return;
 			try {
-				const data = getResumeExportData(resume.data, target);
-				const resolveTitle = await createSectionTitleResolver(data);
-				const blob = await buildDocx(data, resolveTitle);
-				downloadWithAnchor(blob, generateFilename(getTargetExportName(resume, target), "docx"));
+				const blob = await createExportFile(resume, "docx", target);
+				downloadWithAnchor(blob, `${getDefaultFileName(resume, target)}.docx`);
 			} catch {
 				toast.add({ type: "error", description: t`Could not generate the DOCX. Please try again.` });
 			}
@@ -97,17 +130,10 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 			});
 			setIsExporting(true);
 			try {
-				const data = exportOptions.publicResumePdf ? resume.data : getResumeExportData(resume.data, target);
 				const blob = exportOptions.publicResumePdf
-					? await resolvePublicResumePdfBlob({ data, ...exportOptions.publicResumePdf })
-					: await createResumePdfBlob(
-							data,
-							undefined,
-							target === "cover-letter"
-								? { includeCoverLetterHeader: downloadOptions?.includeCoverLetterHeader }
-								: undefined,
-						);
-				downloadWithAnchor(blob, generateFilename(getTargetExportName(resume, target), "pdf"));
+					? await resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
+					: await createExportFile(resume, "pdf", target, downloadOptions);
+				downloadWithAnchor(blob, `${getDefaultFileName(resume, target)}.pdf`);
 				if (exportOptions.publicResumePdf) {
 					// Statistics are best effort and must not delay or fail a completed browser download.
 					void client.resume.statistics

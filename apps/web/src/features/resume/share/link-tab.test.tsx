@@ -7,17 +7,18 @@ import { I18nProvider } from "@lingui/react";
 import { ORPCError } from "@orpc/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PromptDialogProvider } from "@/hooks/use-prompt";
-import { SharingSectionBuilder } from "@/routes/builder/$resumeId/-sidebar/right/sections/sharing";
-
-type SectionBaseProps = { children: React.ReactNode };
+import { LinkTab } from "./link-tab";
 
 const mocks = vi.hoisted(() => ({
 	setPassword: vi.fn(),
+	update: vi.fn(),
+	checkSlug: vi.fn(),
 	patchResume: vi.fn(),
+	resume: { id: "resume-id", name: "Resume", slug: "resume", isPublic: true, hasPassword: false, isLocked: false },
 }));
 
 vi.mock("@/features/resume/builder/draft", () => ({
-	useCurrentResume: () => ({ id: "resume-id", slug: "resume", isPublic: true, hasPassword: false }),
+	useCurrentResume: () => mocks.resume,
 	usePatchResume: () => mocks.patchResume,
 }));
 vi.mock("@/libs/auth/client", () => ({
@@ -27,16 +28,28 @@ vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		resume: {
 			setPassword: { mutationOptions: () => ({ mutationFn: mocks.setPassword }) },
-			update: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			update: { mutationOptions: () => ({ mutationFn: mocks.update }) },
 			removePassword: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			checkSlug: {
+				queryOptions: ({ input }: { input: { slug: string } }) => ({
+					queryKey: ["checkSlug", input.slug],
+					queryFn: () => mocks.checkSlug(input),
+				}),
+			},
+			statistics: {
+				getById: { queryOptions: () => ({ queryKey: ["stats"], queryFn: async () => ({ lastViewedAt: null }) }) },
+				getDailyById: { queryOptions: () => ({ queryKey: ["daily"], queryFn: async () => [] }) },
+			},
 		},
 	},
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
-vi.mock("@/routes/builder/$resumeId/-sidebar/right/shared/section-base", () => ({
-	SectionBase: ({ children }: SectionBaseProps) => <div>{children}</div>,
-}));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn(), close: vi.fn() } }));
+vi.mock("usehooks-ts", async (importOriginal) => ({
+	...(await importOriginal<typeof import("usehooks-ts")>()),
+	// The address check waits 300 ms after typing; tests skip the wait.
+	useDebounceValue: <T,>(value: T) => [value, vi.fn()],
+}));
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
@@ -44,21 +57,26 @@ beforeAll(() => {
 beforeEach(() => {
 	vi.clearAllMocks();
 	mocks.setPassword.mockResolvedValue(undefined);
+	mocks.update.mockImplementation(async (input: { slug?: string }) => ({ ...mocks.resume, ...input }));
 });
 afterEach(cleanup);
 
-async function openDialog() {
+function renderTab() {
 	render(
 		<I18nProvider i18n={i18n}>
-			<QueryClientProvider client={new QueryClient()}>
+			<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
 				<PromptDialogProvider>
-					<SharingSectionBuilder />
+					<LinkTab />
 				</PromptDialogProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
+}
+
+async function openDialog() {
+	renderTab();
 	await act(() => {
-		fireEvent.click(screen.getByRole("button", { name: "Set Password" }));
+		fireEvent.click(screen.getByRole("switch", { name: "Require a password" }));
 	});
 	return within(screen.queryByRole("dialog") ?? screen.getByRole("alertdialog"));
 }
@@ -156,10 +174,53 @@ describe("resume password sharing", () => {
 		await act(() => {
 			fireEvent.click(dialog.getByRole("button", { name: "Cancel" }));
 		});
+		// Cancelling leaves the switch off; turning it on again starts over.
+		expect(screen.getByRole("switch", { name: "Require a password" })).not.toBeChecked();
 		await act(() => {
-			fireEvent.click(screen.getByRole("button", { name: "Set Password" }));
+			fireEvent.click(screen.getByRole("switch", { name: "Require a password" }));
 		});
 		expect((screen.getByLabelText("Password", { exact: true }) as HTMLInputElement).value).toBe("");
 		expect(mocks.setPassword).not.toHaveBeenCalled();
+	});
+});
+
+describe("the address", () => {
+	const address = () => screen.getByRole("textbox", { name: "Address" });
+	const type = (value: string) =>
+		act(() => {
+			fireEvent.change(address(), { target: { value } });
+		});
+
+	it("explains the pattern without asking the server", async () => {
+		renderTab();
+		await type("My Resume!");
+
+		expect(address()).toHaveValue("my-resume!");
+		expect(screen.getByText("Use lowercase letters, numbers and single dashes.")).toBeInTheDocument();
+		expect(mocks.checkSlug).not.toHaveBeenCalled();
+	});
+
+	it("names the resume using a taken address and applies the suggestion", async () => {
+		mocks.checkSlug.mockResolvedValueOnce({ status: "taken", takenBy: "Resume 2024", suggestion: "resume-lumen" });
+		renderTab();
+		await type("taken");
+
+		expect(await screen.findByText("You already use this for “Resume 2024”.")).toBeInTheDocument();
+		mocks.checkSlug.mockResolvedValueOnce({ status: "available" });
+		await act(() => {
+			fireEvent.click(screen.getByRole("button", { name: "Try resume-lumen" }));
+		});
+		expect(address()).toHaveValue("resume-lumen");
+	});
+
+	it("saves a new address once it checks out, keeping the old one until then", async () => {
+		mocks.checkSlug.mockResolvedValueOnce({ status: "available" });
+		renderTab();
+		await type("product-designer");
+
+		await vi.waitFor(() =>
+			expect(mocks.update).toHaveBeenCalledWith({ id: "resume-id", slug: "product-designer" }, expect.anything()),
+		);
+		expect(mocks.patchResume).toHaveBeenCalled();
 	});
 });

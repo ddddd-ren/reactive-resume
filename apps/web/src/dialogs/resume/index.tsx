@@ -3,10 +3,9 @@ import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { CaretDownIcon, MagicWandIcon, PencilSimpleLineIcon, PlusIcon, TestTubeIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
@@ -25,18 +24,11 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-} from "@reactive-resume/ui/components/input-group";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { generateId, generateRandomName, slugify } from "@reactive-resume/utils/string";
+import { generateId, generateRandomName } from "@reactive-resume/utils/string";
 import { ChipInput } from "@/components/input/chip-input";
 import { usePatchResume } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
-import { authClient } from "@/libs/auth/client";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
@@ -45,7 +37,6 @@ import { useDialogStore } from "../store";
 const formSchema = z.object({
 	id: z.string(),
 	name: z.string().min(1).max(64),
-	slug: z.string().min(1).max(64).transform(slugify),
 	tags: z.array(z.string()),
 });
 
@@ -54,7 +45,6 @@ type FormValues = z.infer<typeof formSchema>;
 const defaultValues: FormValues = {
 	id: "",
 	name: "",
-	slug: "",
 	tags: [],
 };
 
@@ -70,7 +60,6 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 		defaultValues: {
 			id: generateId(),
 			name: "",
-			slug: "",
 			tags: [] as string[],
 		},
 		validators: { onSubmit: formSchema },
@@ -91,12 +80,6 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 		},
 	});
 
-	const name = useStore(form.store, (s) => s.values.name);
-
-	useEffect(() => {
-		form.setFieldValue("slug", slugify(name));
-	}, [form, name]);
-
 	useFormBlocker(form, {
 		shouldBlock: () => !didCreateRef.current && form.state.isDirty && !form.state.isSubmitting,
 	});
@@ -107,7 +90,6 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 
 		const data = {
 			name: values.name || randomName,
-			slug: values.slug || slugify(randomName),
 			tags: values.tags,
 			withSampleData: true,
 		} satisfies RouterInput["resume"]["create"];
@@ -195,7 +177,6 @@ export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 		defaultValues: {
 			id: data.id,
 			name: data.name,
-			slug: data.slug,
 			tags: data.tags,
 		},
 		validators: { onSubmit: formSchema },
@@ -224,13 +205,6 @@ export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 			});
 		},
 	});
-
-	const name = useStore(form.store, (s) => s.values.name);
-
-	useEffect(() => {
-		if (!name) return;
-		form.setFieldValue("slug", slugify(name));
-	}, [form, name]);
 
 	useFormBlocker(form);
 
@@ -276,7 +250,6 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 		defaultValues: {
 			id: data.id,
 			name: `${data.name} (Copy)`,
-			slug: `${data.slug}-copy`,
 			tags: data.tags,
 		},
 		validators: { onSubmit: formSchema },
@@ -297,13 +270,6 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 			});
 		},
 	});
-
-	const name = useStore(form.store, (s) => s.values.name);
-
-	useEffect(() => {
-		if (!name) return;
-		form.setFieldValue("slug", slugify(name));
-	}, [form, name]);
 
 	useFormBlocker(form);
 
@@ -342,10 +308,6 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 const ResumeForm = withForm({
 	defaultValues,
 	render: function ResumeFormRenderer({ form }) {
-		const { data: session } = authClient.useSession();
-
-		const slugPrefix = `${window.location.origin}/${session?.user.username ?? ""}/`;
-
 		const onGenerateName = () => {
 			form.setFieldValue("name", generateRandomName());
 		};
@@ -379,38 +341,6 @@ const ResumeForm = withForm({
 							<FormMessage errors={field.state.meta.errors} />
 							<FormDescription>
 								<Trans>Name the resume after the position you are applying for.</Trans>
-							</FormDescription>
-						</FormItem>
-					)}
-				</form.Field>
-
-				<form.Field name="slug">
-					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-							<FormLabel>
-								<Trans>Slug</Trans>
-							</FormLabel>
-							<FormControl
-								render={
-									<InputGroup>
-										<InputGroupAddon align="inline-start" className="hidden sm:flex">
-											<InputGroupText>{slugPrefix}</InputGroupText>
-										</InputGroupAddon>
-										<InputGroupInput
-											min={1}
-											max={64}
-											className="ps-0!"
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
-										/>
-									</InputGroup>
-								}
-							/>
-							<FormMessage errors={field.state.meta.errors} />
-							<FormDescription>
-								<Trans>This is a URL-friendly name for your resume.</Trans>
 							</FormDescription>
 						</FormItem>
 					)}

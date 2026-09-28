@@ -11,12 +11,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentBuilderResumeSelector, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "@/features/resume/editor/store";
-import { ResumeDownloadDialog } from "@/features/resume/export/download-dialog";
+import { useOpenIssueCount } from "@/features/resume/editor/use-open-issue-count";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { BuilderAiAssistant } from "./ai-assistant";
 import { DocumentMenu } from "./document-menu";
-import { useOpenIssueCount } from "./use-open-issue-count";
-import { BuilderVersionHistory } from "./version-history";
 
 type EditorBarProps = {
 	layout: "desktop" | "tablet" | "mobile";
@@ -49,7 +47,7 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 				{layout === "desktop" && (
 					<>
 						<UndoButton />
-						<BuilderVersionHistory resumeId={resumeId} />
+						<HistoryButton />
 						<span className="me-1.5">
 							<BuilderAiAssistant resumeId={resumeId} />
 						</span>
@@ -170,6 +168,13 @@ function DrawerControls({ pinnable }: { pinnable: boolean }) {
 	);
 }
 
+/** History lives in the Share & export sheet; the clock opens it there. */
+function HistoryButton() {
+	const setShareTab = useEditorStore((state) => state.setShareTab);
+
+	return <IconButton icon="history" label={t`History`} className="text-ink-2" onClick={() => setShareTab("history")} />;
+}
+
 type ToolbarActionProps = {
 	compact: boolean;
 	disabled: boolean;
@@ -177,7 +182,7 @@ type ToolbarActionProps = {
 
 function ShareButton({ compact, disabled }: ToolbarActionProps) {
 	const isPublic = useCurrentBuilderResumeSelector((resume) => resume.isPublic ?? false);
-	const setShareOpen = useEditorStore((state) => state.setShareOpen);
+	const setShareTab = useEditorStore((state) => state.setShareTab);
 	const liveDot = isPublic ? (
 		<span aria-hidden="true" className="absolute end-1.5 top-1.5 size-[7px] rounded-full bg-accent" />
 	) : null;
@@ -190,7 +195,7 @@ function ShareButton({ compact, disabled }: ToolbarActionProps) {
 					label={t`Share`}
 					shortcut="⌘⇧S"
 					disabled={disabled}
-					onClick={() => setShareOpen(true)}
+					onClick={() => setShareTab("link")}
 				/>
 				{liveDot}
 			</span>
@@ -198,7 +203,7 @@ function ShareButton({ compact, disabled }: ToolbarActionProps) {
 	}
 
 	return (
-		<Button variant="secondary" className="relative gap-1.5" disabled={disabled} onClick={() => setShareOpen(true)}>
+		<Button variant="secondary" className="relative gap-1.5" disabled={disabled} onClick={() => setShareTab("link")}>
 			<Icon name="ios_share" />
 			<Trans>Share</Trans>
 			{isPublic && (
@@ -211,26 +216,21 @@ function ShareButton({ compact, disabled }: ToolbarActionProps) {
 	);
 }
 
-/** Download PDF is the only filled button; the ▾ segment opens every format. */
+/** Download PDF is the only filled button; the ▾ segment opens the Download tab with every format. */
 function DownloadButtons({ compact, disabled }: ToolbarActionProps) {
 	const resume = useCurrentResume();
 	const { onDownloadPDF, isExporting } = useResumeExport(resume);
-	const downloadOpen = useEditorStore((state) => state.downloadOpen);
-	const setDownloadOpen = useEditorStore((state) => state.setDownloadOpen);
+	const setShareTab = useEditorStore((state) => state.setShareTab);
 
 	if (compact) {
 		return (
-			<>
-				<IconButton
-					icon="download"
-					label={t`Download PDF`}
-					shortcut="⌘P"
-					disabled={disabled || isExporting}
-					onClick={() => void onDownloadPDF()}
-				/>
-				{/* Opened from the Share sheet. */}
-				<ResumeDownloadDialog resume={resume} open={downloadOpen} onOpenChange={setDownloadOpen} />
-			</>
+			<IconButton
+				icon="download"
+				label={t`Download PDF`}
+				shortcut="⌘P"
+				disabled={disabled || isExporting}
+				onClick={() => void onDownloadPDF()}
+			/>
 		);
 	}
 
@@ -240,21 +240,15 @@ function DownloadButtons({ compact, disabled }: ToolbarActionProps) {
 				{!isExporting && <Icon name="download" />}
 				{isExporting ? <Trans>Preparing…</Trans> : <Trans>Download PDF</Trans>}
 			</Button>
-			<ResumeDownloadDialog
-				resume={resume}
-				open={downloadOpen}
-				onOpenChange={setDownloadOpen}
-				trigger={(exporting) => (
-					<Button
-						size="icon"
-						disabled={disabled || exporting}
-						aria-label={t`More download formats`}
-						className="w-8 border-s border-s-[oklch(1_0_0/0.25)]"
-					>
-						<Icon name="expand_more" />
-					</Button>
-				)}
-			/>
+			<Button
+				size="icon"
+				disabled={disabled || isExporting}
+				aria-label={t`More download formats`}
+				className="w-8 border-s border-s-[oklch(1_0_0/0.25)]"
+				onClick={() => setShareTab("download")}
+			>
+				<Icon name="expand_more" />
+			</Button>
 		</ButtonGroup>
 	);
 }

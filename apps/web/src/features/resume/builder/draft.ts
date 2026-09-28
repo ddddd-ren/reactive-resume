@@ -96,6 +96,8 @@ type Runtime = {
 	onlineHandler?: () => void;
 	deferredRemoteResume?: Resume;
 	deferredFocusHandler?: () => void;
+	/** This visit's saves share one autosave version in History. */
+	sessionId: string;
 };
 
 type ResumeUpdateSubscriptionOptions = {
@@ -263,7 +265,7 @@ async function flushResumeSave(id: string) {
 
 	try {
 		const updated = (await orpc.resume.update.call(
-			{ id: submitted.id, data: submittedData },
+			{ id: submitted.id, data: submittedData, sessionId: runtime.sessionId },
 			{ signal: runtime.abortController.signal },
 		)) as Resume;
 
@@ -338,6 +340,7 @@ function createRuntime(): Runtime {
 		isSaving: false,
 		saveFailed: false,
 		syncResume,
+		sessionId: crypto.randomUUID(),
 	};
 
 	if (typeof window !== "undefined") {
@@ -788,8 +791,12 @@ export function useBuilderResumeUpdateSubscription() {
 	useResumeUpdateSubscription({ resumeId, onUpdate, onError });
 }
 
-// Route transitions can await a save; unmount cleanup and browser unload cannot.
-function saveResumeBeforeLeaving(id: string): boolean | Promise<boolean> {
+/**
+ * Saves pending edits now and resolves once they're on the server (false if saving fails). Route transitions
+ * await it before leaving, and History before naming or restoring a version, so the server has what's on
+ * screen. Unmount cleanup and browser unload can't await it.
+ */
+export function savePendingChanges(id: string): boolean | Promise<boolean> {
 	const runtime = runtimes.get(id);
 	const current = useResumeStore.getState().resume;
 	if (!runtime?.hasPendingLocalChanges || current?.id !== id) return true;
@@ -833,7 +840,7 @@ export function useResumeCleanup() {
 	useBlocker({
 		shouldBlockFn: async ({ next }) => {
 			if (!resumeId || ("resumeId" in next.params && next.params.resumeId === resumeId)) return false;
-			return !(await saveResumeBeforeLeaving(resumeId));
+			return !(await savePendingChanges(resumeId));
 		},
 		enableBeforeUnload: () => !!resumeId && (runtimes.get(resumeId)?.hasPendingLocalChanges ?? false),
 	});

@@ -1,7 +1,9 @@
 import type { EditorSelection } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
@@ -13,6 +15,8 @@ import { PageOverlay } from "@/features/resume/editor/page-overlay";
 import { useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "@/features/resume/editor/store";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
 import { ResumePreview } from "@/features/resume/preview/preview";
+import { formatVersionTime, getVersionTitle } from "@/features/resume/share/format";
+import { orpc } from "@/libs/orpc/client";
 import { useEditorMode } from "./use-editor-mode";
 
 // Page widths in PDF points; 1pt renders as 1 CSS px at 100%.
@@ -46,6 +50,10 @@ export function PageCanvas() {
 	const select = useEditorStore((state) => state.select);
 	const setDrawerOpen = useEditorStore((state) => state.setDrawerOpen);
 	const previewTemplate = useEditorStore((state) => state.previewTemplate);
+	const historyVersionId = useEditorStore((state) => state.historyVersionId);
+	const sheetOpen = useEditorStore((state) => state.shareTab !== null);
+	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
+	const { i18n } = useLingui();
 	const rendered = useEditorStore((state) => state.rendered);
 	const setRendered = useEditorStore((state) => state.setRendered);
 	const breakpoint = useBreakpoint();
@@ -58,13 +66,26 @@ export function PageCanvas() {
 	const pageScale = zoom === "fit" ? Math.max(0.25, fitScale) : zoom;
 	const formatLabel = { a4: "A4", letter: t`Letter`, "free-form": t`Free-form` }[format];
 
+	// History: the picked version is drawn on the page, read-only, until the user restores it or goes back to now.
+	const { data: version } = useQuery({
+		...orpc.resume.getVersion.queryOptions({ input: { resumeId, versionId: historyVersionId ?? "" } }),
+		enabled: historyVersionId !== null,
+	});
+	const viewing = historyVersionId !== null && version?.id === historyVersionId ? version : null;
+
 	// Design: a hovered or focused template is drawn on the page until it's applied or the pointer leaves.
 	const previewData = useMemo(
 		() =>
-			data && previewTemplate ? { ...data, metadata: { ...data.metadata, template: previewTemplate } } : undefined,
-		[data, previewTemplate],
+			viewing
+				? viewing.data
+				: data && previewTemplate
+					? { ...data, metadata: { ...data.metadata, template: previewTemplate } }
+					: undefined,
+		[data, previewTemplate, viewing],
 	);
-	const overflow = data && !previewTemplate ? measureOverflow(data, rendered) : null;
+	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, rendered) : null;
+	// Desktop: the page moves 120px aside so it stays visible beside the Share & export sheet.
+	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
 
 	const onSelect = (selection: EditorSelection) => {
 		select(selection);
@@ -92,13 +113,27 @@ export function PageCanvas() {
 					pageLayout="vertical"
 					pageGap={24}
 					pageScale={pageScale}
-					className="mx-auto w-fit"
-					pageClassName="rounded-none shadow-page"
+					className={cn(
+						"mx-auto w-fit transition-transform duration-emphasized ease-enter",
+						shifted && "-translate-x-[120px] rtl:translate-x-[120px]",
+					)}
+					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-ink outline-offset-4")}
 					onRender={setRendered}
 					renderPageCaption={({ pageNumber }) =>
 						pageNumber === 1 ? (
 							<figcaption className="mb-2.5 flex min-h-8 flex-wrap items-center justify-center gap-2.5 text-center font-medium text-ink-3 text-xs">
-								{previewTemplate ? (
+								{viewing ? (
+									<span
+										role="status"
+										className="flex h-8 items-center gap-2 rounded-lg bg-ink px-3 text-[13px] text-bg"
+									>
+										<Icon name="history" size={18} />
+										<Trans>
+											Viewing {formatVersionTime(viewing.createdAt, i18n.locale)} · {getVersionTitle(viewing)} ·
+											read-only
+										</Trans>
+									</span>
+								) : previewTemplate ? (
 									<span
 										role="status"
 										className="flex h-8 items-center gap-2 rounded-lg bg-ink px-3 text-[13px] text-bg"
@@ -126,9 +161,10 @@ export function PageCanvas() {
 							</figcaption>
 						)
 					}
-					renderPageOverlay={({ pageIndex, pageMap }) => (
-						<PageOverlay pageIndex={pageIndex} pageMap={pageMap} onSelect={onSelect} />
-					)}
+					renderPageOverlay={({ pageIndex, pageMap }) =>
+						// A version from History is read-only: its lines don't open entries.
+						viewing ? null : <PageOverlay pageIndex={pageIndex} pageMap={pageMap} onSelect={onSelect} />
+					}
 				/>
 			</div>
 

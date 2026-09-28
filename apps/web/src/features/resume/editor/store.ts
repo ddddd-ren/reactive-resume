@@ -5,6 +5,9 @@ import { create } from "zustand/react";
 export const EDITOR_MODES = ["write", "design", "check"] as const;
 export type EditorMode = (typeof EDITOR_MODES)[number];
 
+/** The Share & export sheet's tabs; each entry point opens its own. */
+export type ShareTab = "link" | "download" | "history";
+
 /** What's selected in the editor: shared by the panel and the page, so each can outline the other. */
 export type EditorSelection = PageMapTarget;
 
@@ -22,8 +25,10 @@ type EditorStore = {
 	drawerOpen: boolean;
 	/** Tablet in landscape: the panel sits beside the page instead of over it. */
 	drawerPinned: boolean;
-	shareOpen: boolean;
-	downloadOpen: boolean;
+	/** The open tab of the Share & export sheet, or null while it's closed. */
+	shareTab: ShareTab | null;
+	/** History: the version shown on the page, read-only, instead of the current resume. */
+	historyVersionId: string | null;
 	assistantOpen: boolean;
 	/** Write: sections open in the outline. */
 	openSections: readonly string[];
@@ -41,8 +46,9 @@ type EditorStore = {
 	setZoom: (zoom: number | "fit") => void;
 	setDrawerOpen: (open: boolean) => void;
 	setDrawerPinned: (pinned: boolean) => void;
-	setShareOpen: (open: boolean) => void;
-	setDownloadOpen: (open: boolean) => void;
+	/** Opens the sheet on a tab, or closes it (which also returns the page to now). */
+	setShareTab: (tab: ShareTab | null) => void;
+	setHistoryVersion: (versionId: string | null) => void;
 	setAssistantOpen: (open: boolean) => void;
 	setSectionOpen: (sectionId: string, open: boolean) => void;
 	markSectionAdded: (sectionId: string) => void;
@@ -70,8 +76,8 @@ const initialState = {
 	zoom: "fit",
 	drawerOpen: false,
 	drawerPinned: false,
-	shareOpen: false,
-	downloadOpen: false,
+	shareTab: null,
+	historyVersionId: null,
 	assistantOpen: false,
 	openSections: [],
 	addedSections: [],
@@ -87,8 +93,8 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 	setZoom: (zoom) => set({ zoom: zoom === "fit" ? "fit" : clampZoom(zoom) }),
 	setDrawerOpen: (drawerOpen) => set({ drawerOpen }),
 	setDrawerPinned: (drawerPinned) => set({ drawerPinned }),
-	setShareOpen: (shareOpen) => set({ shareOpen }),
-	setDownloadOpen: (downloadOpen) => set({ downloadOpen }),
+	setShareTab: (shareTab) => set(shareTab ? { shareTab } : { shareTab, historyVersionId: null }),
+	setHistoryVersion: (historyVersionId) => set({ historyVersionId }),
 	setAssistantOpen: (assistantOpen) => set({ assistantOpen }),
 	setSectionOpen: (sectionId, open) =>
 		set((state) => {

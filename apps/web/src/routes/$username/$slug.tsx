@@ -17,6 +17,11 @@ export const Route = createFileRoute("/$username/$slug")({
 			orpc.resume.getBySlug.queryOptions({ input: { username, slug } }),
 		);
 
+		// A renamed resume's old address still finds it for 30 days; send visitors to the current one.
+		if (resume.slug !== slug) {
+			throw redirect({ to: "/$username/$slug", params: { username, slug: resume.slug }, replace: true });
+		}
+
 		return { resume: resume as LoaderData };
 	},
 	head: ({ loaderData, params }) => {
