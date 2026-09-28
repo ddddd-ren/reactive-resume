@@ -23,7 +23,7 @@ The [Model Context Protocol (MCP)](https://modelcontextprotocol.io) is a standar
   </Step>
 
   <Step title="If using API key, create one">
-    Head over to [https://rxresu.me](https://rxresu.me) (or your self-hosted instance), sign in, and navigate to **Settings → API Keys**. Click **Create a new API key**, give it a name, and copy the secret. It is shown only once.
+    Head over to [https://rxresu.me](https://rxresu.me) (or your self-hosted instance), sign in, and navigate to **Settings → AI & developer**. Under **API keys**, click **New key**, give it a name, and copy the secret. It is shown only once.
 
     For the full walkthrough, see [Using the API](/guides/using-the-api).
 
@@ -372,7 +372,7 @@ For a complete workflow and prompt library, see [Managing applications with MCP]
 | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | "Unauthorized" with no login prompt                           | Your client may not support MCP OAuth discovery. Use API key mode (`x-api-key`)                                                |
 | OAuth login opens but fails redirect/callback                 | Confirm your client's MCP OAuth callback settings and retry the connection                                                     |
-| "API error (401)"                                             | Your API key is invalid or expired. Create a new one in **Settings → API Keys**                                                |
+| "API error (401)"                                             | Your API key is invalid or expired. Create a new one in **Settings → AI & developer**                                                |
 | "API error (404)"                                             | The resume ID doesn't exist. Use `list_resumes` to find valid IDs                                                             |
 | "API error (403)"                                             | The resume is locked. Unlock it in the Reactive Resume dashboard                                                               |
 | Connection refused                                            | Check that the URL is correct and the instance is running                                                                      |
