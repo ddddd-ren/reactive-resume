@@ -113,7 +113,8 @@ describe("createApp", () => {
 		await expect(response.text()).resolves.toBe("oauth");
 		expect(mocks.handleOAuth).toHaveBeenCalledWith(request);
 		expect(mocks.handleAuth).not.toHaveBeenCalled();
-	});
+		// The first test pays for the cold import of the whole app, which takes seconds under a parallel run.
+	}, 15_000);
 
 	it("routes signed resume PDF downloads before the web fallback", async () => {
 		const { createApp } = await import("./app");
