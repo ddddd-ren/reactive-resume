@@ -1,6 +1,7 @@
 import type { AtsFinding, AtsSeverity } from "@reactive-resume/resume/ats";
 import type { CSSProperties } from "react";
 import type { AtsCheckResult } from "@/features/ats-checker/run-ats-check";
+import type { SidebarSection } from "@/libs/resume/section";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, CheckCircleIcon, MagnifyingGlassIcon, WarningCircleIcon } from "@phosphor-icons/react";
@@ -23,12 +24,14 @@ import { getScrollBehavior, revealSelectionInPanel } from "@/features/resume/edi
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { getAtsFindingLocation, getAtsFindingMessage, getAtsFindingTarget } from "@/libs/resume/ats";
 import { useEditorMode } from "../../../-components/use-editor-mode";
-import { useSectionStore } from "../../../-store/section";
 import { SectionBase } from "../shared/section-base";
 
 const MAX_JOB_DESCRIPTION_CHARS = 20_000;
 
 const SEVERITIES = ["error", "warning", "info"] as const;
+
+// Design findings scroll to the Design group that fixes them.
+const DESIGN_GROUPS: Partial<Record<SidebarSection, string>> = { typography: "type", page: "page", layout: "template" };
 
 function severityDotClass(severity: AtsSeverity) {
 	return match(severity)
@@ -101,7 +104,6 @@ function AtsFindingRow({ finding, onJump }: AtsFindingRowProps) {
 function LiveLintTier() {
 	const data = useResumeData();
 	const [, setMode] = useEditorMode();
-	const setCollapsed = useSectionStore((state) => state.setCollapsed);
 
 	const report = useMemo(() => (data ? lintResumeForAts(data) : null), [data]);
 
@@ -127,14 +129,13 @@ function LiveLintTier() {
 			}
 
 			setMode("design");
-			setCollapsed(target.section, false);
 			requestAnimationFrame(() => {
 				document
-					.getElementById(`sidebar-${target.section}`)
+					.getElementById(`design-${DESIGN_GROUPS[target.section] ?? "template"}`)
 					?.scrollIntoView({ block: "start", inline: "nearest", behavior: getScrollBehavior() });
 			});
 		},
-		[data, setCollapsed, setMode],
+		[data, setMode],
 	);
 
 	if (!report) return null;

@@ -45,6 +45,11 @@ type UpdateResumeDataOptions = {
 	coalesceKey?: string;
 	/** Always a step of its own (structural actions such as adding, moving or deleting). */
 	newStep?: boolean;
+	/**
+	 * Merges into the current step whenever the previous edit had the same key, however long ago: one action
+	 * made of several edits, such as Fit to one page, undoes as a whole.
+	 */
+	sameStep?: boolean;
 };
 
 type ResumeStoreState = {
@@ -532,10 +537,13 @@ export const useResumeStore = create<ResumeStore>()(
 			// state. Later edits to the same field fold into it (see shouldCoalesceEdit).
 			const now = Date.now();
 			const newStep = options.newStep ?? false;
-			const coalesce = shouldCoalesceEdit(
-				{ at: historyLastEditAt, key: historyLastKey, canCoalesce: historyCanCoalesce },
-				{ at: now, key: options.coalesceKey, newStep },
-			);
+			const coalesce =
+				options.sameStep && options.coalesceKey !== undefined && historyLastKey === options.coalesceKey
+					? true
+					: shouldCoalesceEdit(
+							{ at: historyLastEditAt, key: historyLastKey, canCoalesce: historyCanCoalesce },
+							{ at: now, key: options.coalesceKey, newStep },
+						);
 			const snapshotBefore = coalesce ? undefined : currentResume.data;
 			historyLastEditAt = now;
 			historyLastKey = options.coalesceKey;

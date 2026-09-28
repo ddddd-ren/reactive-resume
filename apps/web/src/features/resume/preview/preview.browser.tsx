@@ -116,7 +116,7 @@ export function ResumePreviewClient({
 	showPageNumbers,
 	renderPageCaption,
 	renderPageOverlay,
-	onPageCount,
+	onRender,
 }: ResolvedResumePreviewProps) {
 	const builderResumeData = useResumeData();
 	const resumeData = data ?? builderResumeData;
@@ -179,10 +179,12 @@ export function ResumePreviewClient({
 		};
 	}, [paused, resumeData]);
 
-	const activePageCount = getActivePreviewLayer(previewLayers)?.numPages ?? 0;
+	const activeLayer = getActivePreviewLayer(previewLayers);
+	const activePageCount = activeLayer?.numPages ?? 0;
+	const activePageMap = activeLayer?.pageMap;
 	useEffect(() => {
-		if (activePageCount > 0) onPageCount?.(activePageCount);
-	}, [activePageCount, onPageCount]);
+		if (activePageCount > 0) onRender?.({ pageCount: activePageCount, pageMap: activePageMap });
+	}, [activePageCount, activePageMap, onRender]);
 
 	if (!resumeData) return null;
 

@@ -15,7 +15,10 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("motion/react", () => ({ useInView: () => mocks.inView }));
 vi.mock("@/features/resume/export/pdf-document", () => ({ createResumePdfBlob: mocks.toPdf }));
-vi.mock("@/features/resume/preview/pdf-thumbnail", () => ({ createPdfFirstPageImageUrl: mocks.toImage }));
+vi.mock("@/features/resume/preview/pdf-thumbnail", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@/features/resume/preview/pdf-thumbnail")>()),
+	createPdfFirstPageImageUrl: mocks.toImage,
+}));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		resume: {

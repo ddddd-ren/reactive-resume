@@ -17,8 +17,8 @@ export type ResumePreviewProps = {
 	renderPageCaption?: (page: { pageNumber: number; totalPages: number }) => ReactNode;
 	/** Drawn over each page, in page-relative coordinates; receives the page map of the render on screen. */
 	renderPageOverlay?: (page: { pageIndex: number; pageMap: PageMap | undefined }) => ReactNode;
-	/** Called with the number of physical pages whenever the render on screen changes. */
-	onPageCount?: (pageCount: number) => void;
+	/** Called whenever the render on screen changes, with its physical page count and page map. */
+	onRender?: (render: { pageCount: number; pageMap: PageMap | undefined }) => void;
 };
 
 export type ResolvedResumePreviewProps = ResumePreviewProps & {

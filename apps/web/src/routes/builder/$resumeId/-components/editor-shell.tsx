@@ -11,6 +11,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
+import { DesignSheet } from "./design-panel";
 import { EditorBar } from "./editor-bar";
 import { ModePanel } from "./mode-panels";
 import { ShareSheet } from "./share-sheet";
@@ -86,7 +87,9 @@ function DesktopBody({ mode }: { mode: EditorMode }) {
 			<TabsContent
 				value={mode}
 				aria-label={panelLabels()[mode]}
-				className="min-h-0 overflow-y-auto border-line border-e bg-surface"
+				// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
+				// stretching the document, which would let scrollIntoView shift the whole editor.
+				className="relative min-h-0 overflow-y-auto border-line border-e bg-surface"
 			>
 				<ModePanel mode={mode} />
 			</TabsContent>
@@ -139,16 +142,18 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 	const setPreviewPaused = usePreviewPausedStore((state) => state.setPaused);
 	const labels: Record<MobileView, string> = { write: t`Write`, page: t`Page`, design: t`Design`, check: t`Check` };
 
-	// The page stays mounted so zoom survives switching views; it doesn't re-render while hidden.
+	// The page stays mounted so zoom survives switching views; it doesn't re-render while hidden. Design keeps
+	// it in view above its sheet.
+	const pageVisible = view === "page" || view === "design";
 	useEffect(() => {
-		setPreviewPaused(view !== "page");
+		setPreviewPaused(!pageVisible);
 		return () => setPreviewPaused(false);
-	}, [view, setPreviewPaused]);
+	}, [pageVisible, setPreviewPaused]);
 
 	return (
 		<div className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto]">
 			<div className="relative min-h-0">
-				<main id="main-content" className={cn("h-full", view !== "page" && "invisible")}>
+				<main id="main-content" className={cn("h-full", !pageVisible && "invisible")}>
 					<Outlet />
 				</main>
 				{view === "page" && (
@@ -159,7 +164,8 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 						}}
 					/>
 				)}
-				{view !== "page" && (
+				{view === "design" && <DesignSheet />}
+				{view !== "page" && view !== "design" && (
 					<TabsContent value={mode} className="absolute inset-0 overflow-y-auto bg-surface">
 						<ModePanel mode={mode} />
 					</TabsContent>

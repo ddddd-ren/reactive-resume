@@ -10,7 +10,6 @@ export type DialogSchema =
 			| "api-key.create"
 			| "resume.create"
 			| "resume.import"
-			| "resume.template.gallery"
 	  >
 	| {
 			type: "resume.update";

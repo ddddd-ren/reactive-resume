@@ -9,7 +9,6 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const resumeState = vi.hoisted(() => ({ data: undefined as ResumeData | undefined }));
 const editorModeState = vi.hoisted(() => ({ setMode: vi.fn() }));
-const sectionState = vi.hoisted(() => ({ setCollapsed: vi.fn() }));
 
 const deepCheckMocks = vi.hoisted(() => ({
 	createResumePdfBlob: vi.fn(async () => new Blob(["%PDF"], { type: "application/pdf" })),
@@ -35,7 +34,6 @@ const deepCheckMocks = vi.hoisted(() => ({
 }));
 
 type SectionBaseProps = { children: React.ReactNode };
-type SectionStoreSelector = (state: { setCollapsed: typeof sectionState.setCollapsed }) => unknown;
 
 // The renderer and the engine are exercised by their own tests; here they only have to be callable.
 vi.mock("@/features/resume/export/pdf-document", () => ({
@@ -57,9 +55,6 @@ vi.mock("@/features/resume/builder/draft", () => ({
 }));
 vi.mock("../../../-components/use-editor-mode", () => ({
 	useEditorMode: () => ["check", editorModeState.setMode],
-}));
-vi.mock("../../../-store/section", () => ({
-	useSectionStore: (selector: SectionStoreSelector) => selector(sectionState),
 }));
 vi.mock("../shared/section-base", () => ({
 	SectionBase: ({ children }: SectionBaseProps) => <div>{children}</div>,
@@ -163,7 +158,15 @@ describe("AtsCheckSectionBuilder", () => {
 		expect(useEditorStore.getState()).toMatchObject({ selection: { kind: "header" }, basicsOpen: true });
 	});
 
-	it("points typography findings at the right sidebar", () => {
+	it("points typography findings at the Type group in Design", () => {
+		vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+			callback(0);
+			return 0;
+		});
+		const group = document.createElement("section");
+		group.id = "design-type";
+		group.scrollIntoView = vi.fn();
+		document.body.append(group);
 		resumeState.data = makeResume((data) => {
 			data.metadata.typography.body.fontSize = 8;
 		});
@@ -172,7 +175,9 @@ describe("AtsCheckSectionBuilder", () => {
 		fireEvent.click(screen.getByRole("button", { name: /Typography/ }));
 
 		expect(editorModeState.setMode).toHaveBeenCalledWith("design");
-		expect(sectionState.setCollapsed).toHaveBeenCalledWith("typography", false);
+		expect(group.scrollIntoView).toHaveBeenCalled();
+		group.remove();
+		vi.unstubAllGlobals();
 	});
 });
 

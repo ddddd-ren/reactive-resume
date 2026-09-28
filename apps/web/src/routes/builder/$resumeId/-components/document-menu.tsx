@@ -22,7 +22,6 @@ import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { InformationSectionBuilder } from "../-sidebar/right/sections/information";
 import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
-import { BareSectionChrome } from "../-sidebar/right/shared/section-base";
 
 type DocumentDialog = "notes" | "information" | null;
 
@@ -64,9 +63,7 @@ export function DocumentMenu() {
 							<Trans>Notes</Trans>
 						</DialogTitle>
 					</DialogHeader>
-					<BareSectionChrome>
-						<NotesSectionBuilder />
-					</BareSectionChrome>
+					<NotesSectionBuilder />
 				</DialogContent>
 			</Dialog>
 
@@ -77,9 +74,7 @@ export function DocumentMenu() {
 							<Trans>Information</Trans>
 						</DialogTitle>
 					</DialogHeader>
-					<BareSectionChrome>
-						<InformationSectionBuilder />
-					</BareSectionChrome>
+					<InformationSectionBuilder />
 				</DialogContent>
 			</Dialog>
 		</>

@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
-import { createPdfFirstPageImageUrl } from "@/features/resume/preview/pdf-thumbnail";
+import { createPdfFirstPageImageUrl, releaseThumbnailUrls } from "@/features/resume/preview/pdf-thumbnail";
 import { getResumeThumbnailCacheKey, getResumeThumbnailSize } from "@/features/resume/preview/resume-thumbnail.shared";
 import { orpc } from "@/libs/orpc/client";
 
@@ -27,28 +27,6 @@ const throwIfAborted = (signal: AbortSignal) => {
 };
 
 const THUMBNAIL_CACHE_TIME = 5 * 60 * 1000;
-const thumbnailQueryCaches = new WeakSet<object>();
-
-function ensureThumbnailCacheLifecycle(queryClient: ReturnType<typeof useQueryClient>) {
-	const queryCache = queryClient.getQueryCache();
-	if (thumbnailQueryCaches.has(queryCache)) return;
-
-	thumbnailQueryCaches.add(queryCache);
-	// Cache updates have already replaced state.data, so retain each query's previous URL.
-	const urls = new WeakMap<object, unknown>(
-		queryCache.findAll({ queryKey: ["resume-thumbnail"] }).map((query) => [query, query.state.data]),
-	);
-	queryCache.subscribe((event) => {
-		if (event.query.queryKey[0] !== "resume-thumbnail") return;
-		if (event.type !== "updated" && event.type !== "removed") return;
-		const previousUrl = urls.get(event.query);
-		const url = event.type === "removed" ? undefined : event.query.state.data;
-		if (typeof previousUrl === "string" && previousUrl !== url) URL.revokeObjectURL(previousUrl);
-		if (typeof url === "string") urls.set(event.query, url);
-		else urls.delete(event.query);
-	});
-}
-
 const createResumeThumbnailUrl = async (data: ResumeData, size: ResumeThumbnailSize, signal: AbortSignal) => {
 	const pdf = await createResumePdfBlob(data);
 	throwIfAborted(signal);
@@ -116,7 +94,7 @@ function useResumeThumbnail(
 	const queryClient = useQueryClient();
 
 	useEffect(() => {
-		ensureThumbnailCacheLifecycle(queryClient);
+		releaseThumbnailUrls(queryClient, "resume-thumbnail");
 	}, [queryClient]);
 
 	useEffect(() => {

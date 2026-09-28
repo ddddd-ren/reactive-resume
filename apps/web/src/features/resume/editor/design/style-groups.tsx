@@ -1,0 +1,344 @@
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { WritableDraft } from "immer";
+import type { CSSProperties } from "react";
+import type { DensityId, FontPairingId, MarginId } from "./presets";
+import { Radio } from "@base-ui/react/radio";
+import { RadioGroup } from "@base-ui/react/radio-group";
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
+import { useId, useState } from "react";
+import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
+import { Input } from "@reactive-resume/ui/components/input";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
+import { Slider } from "@reactive-resume/ui/components/slider";
+import { SwitchRow } from "@reactive-resume/ui/components/switch";
+import { cn } from "@reactive-resume/utils/style";
+import { Combobox } from "@/components/ui/combobox";
+import { getLocaleOptions } from "@/features/locale/locale-options";
+import { useResumeData, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	ACCENTS,
+	applyDensity,
+	applyFontPairing,
+	applyMargins,
+	applyTextSize,
+	contrastOnWhite,
+	darkenForWhite,
+	FONT_PAIRINGS,
+	hexToRgba,
+	isValidHex,
+	matchDensity,
+	matchFontPairing,
+	matchMargins,
+	rgbaToHex,
+	TEXT_SIZE,
+} from "./presets";
+
+type Metadata = ResumeData["metadata"];
+
+/** Edits the design; `key` names the control, so dragging a slider is one undo step. */
+function useDesignWriter() {
+	const updateResumeData = useUpdateResumeData();
+	return (key: string, mutate: (metadata: WritableDraft<Metadata>) => void, discrete = false) =>
+		updateResumeData(
+			(draft) => mutate(draft.metadata),
+			discrete ? { newStep: true } : { coalesceKey: `design.${key}` },
+		);
+}
+
+/** Type: five font pairings, the text size (9–12.5 pt) and density. */
+export function TypeGroup() {
+	const data = useResumeData();
+	const write = useDesignWriter();
+	const sizeLabelId = useId();
+	if (!data) return null;
+
+	const { metadata } = data;
+	const pairing = matchFontPairing(metadata);
+	const density = matchDensity(metadata);
+	const size = metadata.typography.body.fontSize;
+
+	return (
+		<div className="grid gap-4">
+			<RadioGroup
+				aria-label={t`Font pairing`}
+				value={pairing ?? null}
+				onValueChange={(value) => write("pairing", (draft) => applyFontPairing(draft, value as FontPairingId), true)}
+				className="grid gap-1"
+			>
+				{FONT_PAIRINGS.map((option) => (
+					<Radio.Root
+						key={option.id}
+						value={option.id}
+						className="flex h-12 cursor-pointer items-center gap-3 rounded-lg border border-line px-3 text-start transition-colors duration-quick hover:bg-hover data-checked:border-accent data-checked:bg-accent-soft data-checked:hover:bg-accent-soft"
+					>
+						<span className="font-medium text-sm">{option.label}</span>
+						<span className="truncate text-ink-3 text-xs">
+							{option.heading === option.body ? option.heading : `${option.heading} + ${option.body}`}
+						</span>
+						{pairing === option.id && <Icon name="check" size={18} className="ms-auto text-accent-text" />}
+					</Radio.Root>
+				))}
+			</RadioGroup>
+
+			<div className="grid gap-2">
+				<div className="flex items-center justify-between text-[13px]">
+					<span id={sizeLabelId} className="font-medium">
+						<Trans>Text size</Trans>
+					</span>
+					<span className="font-mono text-ink-2 text-xs">{size} pt</span>
+				</div>
+				<Slider
+					aria-labelledby={sizeLabelId}
+					min={TEXT_SIZE.min}
+					max={TEXT_SIZE.max}
+					step={TEXT_SIZE.step}
+					value={[Math.min(TEXT_SIZE.max, Math.max(TEXT_SIZE.min, size))]}
+					onValueChange={(value) =>
+						write("size", (draft) => applyTextSize(draft, Array.isArray(value) ? (value[0] ?? size) : value))
+					}
+				/>
+				<span className="text-ink-3 text-xs">
+					<Trans>10–11 recommended</Trans>
+				</span>
+			</div>
+
+			<div className="grid gap-2">
+				<span className="font-medium text-[13px]">
+					<Trans>Density</Trans>
+				</span>
+				<SegmentedControl
+					aria-label={t`Density`}
+					value={density ?? ""}
+					onValueChange={(value) => write("density", (draft) => applyDensity(draft, value as DensityId), true)}
+					className="w-full"
+				>
+					<SegmentedControlItem value="compact">
+						<Trans>Compact</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="normal">
+						<Trans>Normal</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="roomy">
+						<Trans>Roomy</Trans>
+					</SegmentedControlItem>
+				</SegmentedControl>
+			</div>
+		</div>
+	);
+}
+
+/** Color: eight accents or a custom hex, with its contrast on white and a darker shade when it's too light. */
+export function ColorGroup() {
+	const data = useResumeData();
+	const write = useDesignWriter();
+	const current = data ? (rgbaToHex(data.metadata.design.colors.primary) ?? "#000000") : "#000000";
+	const [typed, setTyped] = useState<string | null>(null);
+	if (!data) return null;
+
+	const hex = typed ?? current;
+	const valid = isValidHex(hex);
+	const normalized = valid ? `#${hex.replace("#", "").toUpperCase()}` : current;
+	const ratio = contrastOnWhite(normalized);
+	const tooLight = valid && ratio < 4.5;
+
+	const setAccent = (next: string, discrete = true) =>
+		write(
+			"accent",
+			(draft) => {
+				draft.design.colors.primary = hexToRgba(next);
+			},
+			discrete,
+		);
+
+	return (
+		<div className="grid gap-3">
+			<RadioGroup
+				aria-label={t`Accent colour`}
+				value={ACCENTS.some((accent) => accent.hex === current) ? current : null}
+				onValueChange={(value) => {
+					setTyped(null);
+					setAccent(value as string);
+				}}
+				// Touch: 48px swatches, four to a row.
+				className="grid grid-cols-8 pointer-coarse:grid-cols-[repeat(4,3rem)] pointer-coarse:justify-between gap-1.5 pointer-coarse:gap-y-3"
+			>
+				{ACCENTS.map((accent) => (
+					<Radio.Root
+						key={accent.hex}
+						value={accent.hex}
+						aria-label={accent.label}
+						title={accent.label}
+						className="aspect-square cursor-pointer rounded-full transition-shadow duration-quick data-checked:shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--swatch)]"
+						style={{ backgroundColor: accent.hex, "--swatch": accent.hex } as CSSProperties}
+					/>
+				))}
+			</RadioGroup>
+
+			<div className="flex items-center gap-2">
+				<span className="size-9 shrink-0 rounded-lg border border-line-2" style={{ backgroundColor: normalized }} />
+				<Input
+					aria-label={t`Custom colour (hex)`}
+					value={hex}
+					spellCheck={false}
+					className="font-mono uppercase"
+					onChange={(event) => {
+						setTyped(event.target.value);
+						if (isValidHex(event.target.value)) setAccent(`#${event.target.value.replace("#", "")}`, false);
+					}}
+					onBlur={() => setTyped(null)}
+				/>
+				<span className={cn("shrink-0 font-mono text-xs", tooLight ? "text-warn-text" : "text-ink-3")}>
+					{ratio.toFixed(1)}:1
+				</span>
+			</div>
+
+			{tooLight && (
+				<div className="grid gap-2 rounded-lg bg-warn-soft p-3 text-[13px] text-warn-text leading-[19px]" role="status">
+					<span className="flex gap-2">
+						<Icon name="contrast" size={20} />
+						<Trans>Too light for headings on white. It may be hard to read and print faintly.</Trans>
+					</span>
+					<Button
+						size="sm"
+						variant="secondary"
+						className="w-fit"
+						onClick={() => {
+							setTyped(null);
+							setAccent(darkenForWhite(normalized));
+						}}
+					>
+						<Trans>Use a darker shade</Trans>
+					</Button>
+				</div>
+			)}
+
+			<p className="text-ink-3 text-xs leading-4">
+				<Trans>
+					Accent is used for headings, icons and the header band. Body text stays near-black for print and ATS.
+				</Trans>
+			</p>
+		</div>
+	);
+}
+
+/** Page: paper, language (section titles and date words), margins, icons and link underlines. */
+export function PageGroup() {
+	const data = useResumeData();
+	const write = useDesignWriter();
+	const languageId = useId();
+	if (!data) return null;
+
+	const { page } = data.metadata;
+	const margins = matchMargins(data.metadata);
+
+	return (
+		<div className="grid gap-4">
+			<div className="grid gap-2">
+				<span className="font-medium text-[13px]">
+					<Trans>Paper</Trans>
+				</span>
+				<SegmentedControl
+					aria-label={t`Paper`}
+					value={page.format}
+					onValueChange={(value) =>
+						write(
+							"format",
+							(draft) => {
+								draft.page.format = value as typeof page.format;
+							},
+							true,
+						)
+					}
+					className="w-full"
+				>
+					<SegmentedControlItem value="letter">
+						<Trans>Letter</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="a4">A4</SegmentedControlItem>
+					{page.format === "free-form" && (
+						<SegmentedControlItem value="free-form">
+							<Trans>Free-form</Trans>
+						</SegmentedControlItem>
+					)}
+				</SegmentedControl>
+			</div>
+
+			<div className="grid gap-2">
+				<label htmlFor={languageId} className="font-medium text-[13px]">
+					<Trans>Language</Trans>
+				</label>
+				<Combobox
+					id={languageId}
+					options={getLocaleOptions()}
+					value={page.locale}
+					onValueChange={(locale) =>
+						write(
+							"locale",
+							(draft) => {
+								draft.page.locale = (locale ?? "en-US") as string;
+							},
+							true,
+						)
+					}
+				/>
+				<span className="text-ink-3 text-xs">
+					<Trans>Changes section titles and date words only, not your content.</Trans>
+				</span>
+			</div>
+
+			<div className="grid gap-2">
+				<span className="font-medium text-[13px]">
+					<Trans>Margins</Trans>
+				</span>
+				<SegmentedControl
+					aria-label={t`Margins`}
+					value={margins ?? ""}
+					onValueChange={(value) => write("margins", (draft) => applyMargins(draft, value as MarginId), true)}
+					className="w-full"
+				>
+					<SegmentedControlItem value="narrow">
+						<Trans>Narrow</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="normal">
+						<Trans>Normal</Trans>
+					</SegmentedControlItem>
+					<SegmentedControlItem value="wide">
+						<Trans>Wide</Trans>
+					</SegmentedControlItem>
+				</SegmentedControl>
+			</div>
+
+			<div className="grid">
+				<SwitchRow
+					label={t`Icons in contact line`}
+					description={t`Also shows the icons on skills, profiles and interests.`}
+					checked={!page.hideIcons}
+					onCheckedChange={(checked) =>
+						write(
+							"icons",
+							(draft) => {
+								draft.page.hideIcons = !checked;
+							},
+							true,
+						)
+					}
+				/>
+				<SwitchRow
+					label={t`Underline links`}
+					checked={!page.hideLinkUnderline}
+					onCheckedChange={(checked) =>
+						write(
+							"underline",
+							(draft) => {
+								draft.page.hideLinkUnderline = !checked;
+							},
+							true,
+						)
+					}
+				/>
+			</div>
+		</div>
+	);
+}

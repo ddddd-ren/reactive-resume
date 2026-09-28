@@ -1,4 +1,5 @@
-import type { PageMapTarget } from "@reactive-resume/pdf/page-map";
+import type { PageMap, PageMapTarget } from "@reactive-resume/pdf/page-map";
+import type { Template } from "@reactive-resume/schema/templates";
 import { create } from "zustand/react";
 
 export const EDITOR_MODES = ["write", "design", "check"] as const;
@@ -32,6 +33,10 @@ type EditorStore = {
 	focusEntryId: string | null;
 	/** Write: the Basics card. It collapses when an entry is picked on the page. */
 	basicsOpen: boolean;
+	/** Design: a template shown on the page while its thumbnail is hovered or focused, not yet applied. */
+	previewTemplate: Template | null;
+	/** The render on screen: physical pages and the page map. `version` counts renders, so Fit can wait for one. */
+	rendered: { pageCount: number; pageMap: PageMap | undefined; version: number };
 	select: (selection: EditorSelection | null) => void;
 	setZoom: (zoom: number | "fit") => void;
 	setDrawerOpen: (open: boolean) => void;
@@ -43,6 +48,8 @@ type EditorStore = {
 	markSectionAdded: (sectionId: string) => void;
 	setFocusEntry: (entryId: string | null) => void;
 	setBasicsOpen: (open: boolean) => void;
+	setPreviewTemplate: (template: Template | null) => void;
+	setRendered: (render: { pageCount: number; pageMap: PageMap | undefined }) => void;
 	reset: () => void;
 };
 
@@ -70,6 +77,8 @@ const initialState = {
 	addedSections: [],
 	focusEntryId: null,
 	basicsOpen: true,
+	previewTemplate: null,
+	rendered: { pageCount: 0, pageMap: undefined, version: 0 },
 } as const;
 
 export const useEditorStore = create<EditorStore>()((set) => ({
@@ -95,5 +104,7 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 		),
 	setFocusEntry: (focusEntryId) => set({ focusEntryId }),
 	setBasicsOpen: (basicsOpen) => set({ basicsOpen }),
+	setPreviewTemplate: (previewTemplate) => set({ previewTemplate }),
+	setRendered: (render) => set((state) => ({ rendered: { ...render, version: state.rendered.version + 1 } })),
 	reset: () => set(initialState),
 }));

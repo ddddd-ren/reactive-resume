@@ -5,7 +5,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@reactive-resume/u
 import { useEditorStore } from "@/features/resume/editor/store";
 import { SharingSectionBuilder } from "../-sidebar/right/sections/sharing";
 import { StatisticsSectionBuilder } from "../-sidebar/right/sections/statistics";
-import { BareSectionChrome } from "../-sidebar/right/shared/section-base";
 
 /** The public link, its statistics and every download format. History joins this sheet in M5. */
 export function ShareSheet() {
@@ -22,10 +21,8 @@ export function ShareSheet() {
 					</SheetTitle>
 				</SheetHeader>
 				<div className="space-y-8 px-6 pb-8">
-					<BareSectionChrome>
-						<SharingSectionBuilder />
-						<StatisticsSectionBuilder />
-					</BareSectionChrome>
+					<SharingSectionBuilder />
+					<StatisticsSectionBuilder />
 
 					<Button
 						variant="secondary"

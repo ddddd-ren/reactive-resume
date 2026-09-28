@@ -645,6 +645,32 @@ describe("builder resume undo/redo", () => {
 		expect(store().undoStack.length).toBe(3);
 	});
 
+	it("merges a multi-edit action with the same key into one step, however long it takes", () => {
+		const store = useResumeStore.getState;
+		store().initialize(makeResume("undo-same-step"));
+		const now = vi.spyOn(Date, "now");
+
+		now.mockReturnValue(1_000);
+		store().updateResumeData(
+			(draft) => {
+				draft.metadata.page.gapY = 4;
+			},
+			{ coalesceKey: "fit:1", sameStep: true },
+		);
+		now.mockReturnValue(9_000);
+		store().updateResumeData(
+			(draft) => {
+				draft.metadata.page.marginX = 10;
+			},
+			{ coalesceKey: "fit:1", sameStep: true },
+		);
+		now.mockRestore();
+
+		expect(store().undoStack).toHaveLength(1);
+		store().undo();
+		expect(store().resume?.data.metadata.page).toMatchObject({ gapY: 6, marginX: 14 });
+	});
+
 	it("keeps 200 steps and drops the oldest beyond that", () => {
 		const store = useResumeStore.getState;
 		store().initialize(makeResume("undo-depth"));

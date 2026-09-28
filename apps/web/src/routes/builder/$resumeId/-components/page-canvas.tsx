@@ -2,11 +2,13 @@ import type { EditorSelection } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { useCurrentBuilderResumeSelector } from "@/features/resume/builder/draft";
+import { templates } from "@/dialogs/resume/template/data";
+import { useCurrentBuilderResumeSelector, useResumeData } from "@/features/resume/builder/draft";
+import { measureOverflow, runFit } from "@/features/resume/editor/design/fit";
 import { PageOverlay } from "@/features/resume/editor/page-overlay";
 import { useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "@/features/resume/editor/store";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
@@ -38,20 +40,31 @@ function useCanvasWidth() {
  * that links lines to entries, and the zoom bar.
  */
 export function PageCanvas() {
+	const data = useResumeData();
 	const format = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.format);
 	const zoom = useEditorStore((state) => state.zoom);
 	const select = useEditorStore((state) => state.select);
 	const setDrawerOpen = useEditorStore((state) => state.setDrawerOpen);
+	const previewTemplate = useEditorStore((state) => state.previewTemplate);
+	const rendered = useEditorStore((state) => state.rendered);
+	const setRendered = useEditorStore((state) => state.setRendered);
 	const breakpoint = useBreakpoint();
 	const [mode] = useEditorMode();
 	const [canvasRef, canvasWidth] = useCanvasWidth();
-	const [pageCount, setPageCount] = useState(1);
 	const isPhone = breakpoint === "mobile";
 	const gutter = isPhone ? CANVAS_GUTTER.narrow : CANVAS_GUTTER.wide;
 
 	const fitScale = canvasWidth > 0 ? Math.min(ZOOM_MAX, (canvasWidth - gutter) / PAGE_WIDTH[format]) : 1;
 	const pageScale = zoom === "fit" ? Math.max(0.25, fitScale) : zoom;
 	const formatLabel = { a4: "A4", letter: t`Letter`, "free-form": t`Free-form` }[format];
+
+	// Design: a hovered or focused template is drawn on the page until it's applied or the pointer leaves.
+	const previewData = useMemo(
+		() =>
+			data && previewTemplate ? { ...data, metadata: { ...data.metadata, template: previewTemplate } } : undefined,
+		[data, previewTemplate],
+	);
+	const overflow = data && !previewTemplate ? measureOverflow(data, rendered) : null;
 
 	const onSelect = (selection: EditorSelection) => {
 		select(selection);
@@ -75,29 +88,86 @@ export function PageCanvas() {
 				className={cn("absolute inset-0 overflow-auto pt-7 pb-24", isPhone ? "px-4" : "px-10")}
 			>
 				<ResumePreview
+					data={previewData}
 					pageLayout="vertical"
 					pageGap={24}
 					pageScale={pageScale}
 					className="mx-auto w-fit"
 					pageClassName="rounded-none shadow-page"
-					onPageCount={setPageCount}
-					renderPageCaption={({ pageNumber }) => (
-						<figcaption className="mb-2.5 text-center font-medium text-ink-3 text-xs">
-							{pageNumber === 1 ? (
-								<Trans>Page 1 · {formatLabel} · click any line to edit it</Trans>
-							) : (
+					onRender={setRendered}
+					renderPageCaption={({ pageNumber }) =>
+						pageNumber === 1 ? (
+							<figcaption className="mb-2.5 flex min-h-8 flex-wrap items-center justify-center gap-2.5 text-center font-medium text-ink-3 text-xs">
+								{previewTemplate ? (
+									<span
+										role="status"
+										className="flex h-8 items-center gap-2 rounded-lg bg-ink px-3 text-[13px] text-bg"
+									>
+										<Icon name="visibility" size={18} />
+										<Trans>Previewing {templates[previewTemplate].name} · click to apply</Trans>
+									</span>
+								) : (
+									<>
+										<Trans>Page 1 · {formatLabel} · click any line to edit it</Trans>
+										{overflow && <OverflowChip {...overflow} />}
+									</>
+								)}
+							</figcaption>
+						) : overflow && pageNumber > overflow.authored ? (
+							// Content past the authored pages: a dashed warn line at the page boundary.
+							<figcaption className="relative mb-2.5 border-warn border-t-[1.5px] border-dashed">
+								<span className="absolute end-0 -top-2.5 rounded bg-sunken px-1.5 font-semibold text-[11px] text-warn-text">
+									<Trans>Page {pageNumber}</Trans>
+								</span>
+							</figcaption>
+						) : (
+							<figcaption className="mb-2.5 text-center font-medium text-ink-3 text-xs">
 								<Trans>Page {pageNumber}</Trans>
-							)}
-						</figcaption>
-					)}
+							</figcaption>
+						)
+					}
 					renderPageOverlay={({ pageIndex, pageMap }) => (
 						<PageOverlay pageIndex={pageIndex} pageMap={pageMap} onSelect={onSelect} />
 					)}
 				/>
 			</div>
 
-			<ZoomBar fitScale={fitScale} pageCount={pageCount} />
+			<ZoomBar fitScale={fitScale} pageCount={Math.max(1, rendered.pageCount)} />
 		</div>
+	);
+}
+
+type OverflowChipProps = { authored: number; lines: number | null };
+
+/** "Runs onto page 2 by about 6 lines" with Fit, which tightens the design until it fits (one undo step). */
+function OverflowChip({ authored, lines }: OverflowChipProps) {
+	const [fitting, setFitting] = useState(false);
+	const next = authored + 1;
+
+	return (
+		<span className="flex min-h-8 items-center gap-2 rounded-lg bg-warn-soft py-1 ps-3 pe-1.5 text-[13px] text-warn-text">
+			<Icon name="vertical_split" size={18} />
+			{lines ? (
+				<Plural
+					value={lines}
+					one={`Runs onto page ${next} by about # line`}
+					other={`Runs onto page ${next} by about # lines`}
+				/>
+			) : (
+				<Trans>Runs onto page {next}</Trans>
+			)}
+			<button
+				type="button"
+				disabled={fitting}
+				onClick={() => {
+					setFitting(true);
+					void runFit().finally(() => setFitting(false));
+				}}
+				className="h-6 whitespace-nowrap rounded-md bg-surface px-2.5 font-semibold text-ink text-xs shadow-e1 disabled:opacity-60"
+			>
+				{authored === 1 ? <Trans>Fit to one page</Trans> : <Trans>Fit to {authored} pages</Trans>}
+			</button>
+		</span>
 	);
 }
 
