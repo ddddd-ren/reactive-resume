@@ -19,13 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 545\n"
 
 #. placeholder {0}: application.role
-#. placeholder {0}: current.role
 #. placeholder {1}: application.company
-#. placeholder {1}: current.company
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "\"{0} · {1}\" and its full timeline will be permanently deleted. This can't be undone."
-msgstr "\"{0} · {1}\" et tout son historique seront supprimés définitivement. Cette action est irréversible."
+msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
+msgstr ""
 
 #. placeholder {0}: term.label
 #: src/features/resume/editor/check/job-match.tsx
@@ -75,6 +73,10 @@ msgstr ""
 msgid "(link is live)"
 msgstr ""
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "(no header)"
+msgstr ""
+
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
 msgid "(opens in new tab)"
@@ -87,6 +89,11 @@ msgstr "(s'ouvre dans un nouvel onglet)"
 msgid "{0, plural, one {“{1}” appears once in the posting.} other {“{2}” appears #× in the posting.}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr ""
+
 #. placeholder {0}: selected.length
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "{0, plural, one {# application to export} other {# applications to export}}"
@@ -97,6 +104,16 @@ msgstr "{0, plural, one {# application à exporter} other {# applications à exp
 msgid "{0, plural, one {# character} other {# characters}}"
 msgstr ""
 
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr ""
+
+#. placeholder {0}: outcomes.medianDaysToReply
+#: src/features/applications/components/insights-view.tsx
+msgid "{0, plural, one {# day} other {# days}}"
+msgstr ""
+
 #. placeholder {0}: report.ignored.length
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
@@ -105,6 +122,41 @@ msgstr ""
 #. placeholder {0}: proposals.length
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
+msgstr ""
+
+#. placeholder {0}: result.skipped
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# selected} other {# selected}}"
+msgstr ""
+
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
+msgstr ""
+
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {For # day} other {For # days}}"
+msgstr ""
+
+#. placeholder {0}: parsed.requirements.length
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "{0, plural, one {Found role, company, location and # requirement. Saved with the application.} other {Found role, company, location and # requirements. Saved with the application.}}"
+msgstr ""
+
+#. placeholder {0}: importable.length
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr ""
+
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr ""
 
 #. placeholder {0}: passages.length
@@ -128,10 +180,10 @@ msgstr "{0} candidatures suivies"
 msgid "{0} characters"
 msgstr "{0} caractères"
 
-#. placeholder {0}: parsed.contactsSkipped
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "{0} contact(s) skipped (invalid email or missing Contact Name). Those applications still import."
-msgstr "{0} contact(s) ignoré(s) (email invalide ou nom du contact manquant). Ces candidatures sont tout de même importées."
+#. placeholder {0}: insights.closed
+#: src/features/applications/components/insights-view.tsx
+msgid "{0} closed"
+msgstr ""
 
 #. placeholder {0}: daysLeftInTrash(document.trashedAt)
 #: src/features/documents/document-card.tsx
@@ -163,6 +215,11 @@ msgstr ""
 msgid "{0} found, {unreadable} unreadable"
 msgstr ""
 
+#. placeholder {0}: kind?.label ?? entry.kind
+#: src/features/applications/components/detail/activity.tsx
+msgid "{0} interview"
+msgstr ""
+
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/score-header.tsx
@@ -187,21 +244,19 @@ msgstr ""
 msgid "{0} of {1} shown"
 msgstr ""
 
+#. placeholder {0}: outcomes.tailored.replied
+#. placeholder {1}: outcomes.tailored.sent
+#. placeholder {2}: outcomes.base.replied
+#. placeholder {3}: outcomes.base.sent
+#: src/features/applications/components/insights-view.tsx
+msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
+msgstr ""
+
 #. placeholder {0}: jd.matchedCount
 #. placeholder {1}: jd.totalTerms
 #: src/features/ats-checker/report/jd-coverage.tsx
 msgid "{0} of {1} terms found"
 msgstr "{0} termes trouvés sur {1}"
-
-#. placeholder {0}: importable.length
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "{0} ready to import"
-msgstr "{0} prêt à importer"
-
-#. placeholder {0}: insights.rejected
-#: src/features/applications/components/insights-view.tsx
-msgid "{0} rejected"
-msgstr "{0} refusées"
 
 #. placeholder {0}: data.basics.name
 #: src/features/homepage/export-playground.tsx
@@ -224,11 +279,6 @@ msgstr ""
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
 msgstr "{0} ignorée(s)"
-
-#. placeholder {0}: parsed.skipped
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "{0} skipped (invalid or missing data)"
-msgstr "{0} ignoré(s) (données invalides ou manquantes)"
 
 #. placeholder {0}: findings.length
 #: src/features/ats-checker/report/report-view.tsx
@@ -254,6 +304,10 @@ msgstr ""
 msgid "{column, plural, one {# column} other {# columns}}"
 msgstr ""
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: no reply for {days} days. A short follow-up is usually fine now."
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr ""
@@ -272,6 +326,10 @@ msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "{kind} interview"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
@@ -324,6 +382,10 @@ msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{passedRules} of {totalRules} checks pass."
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "{since, plural, =0 {since today} one {for # day} other {for # days}}"
 msgstr ""
 
 #: src/features/resume/editor/design/fit.ts
@@ -544,6 +606,10 @@ msgstr "Un projet auquel vous pouvez<0/>participer."
 msgid "A real sample PDF"
 msgstr "Un véritable exemple de PDF"
 
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "A reminder to check in, shown as the next step until you do."
+msgstr ""
+
 #: src/features/ats-checker/parse-preview.tsx
 msgid "A resume laid out for a human reader, with a photo, headings and columns"
 msgstr "Un CV mis en page pour un lecteur humain, avec photo, titres et colonnes"
@@ -554,6 +620,10 @@ msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "A second opinion on your wording"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "A short follow-up is usually fine now"
 msgstr ""
 
 #: src/features/ats-checker/parse-preview.tsx
@@ -592,6 +662,10 @@ msgstr ""
 msgid "Accept all"
 msgstr ""
 
+#: src/features/applications/stages.ts
+msgid "Accepted another offer"
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading and changing your resumes and job applications."
 msgstr "Accéder à votre compte via l'API, y compris lire et modifier vos CV et vos candidatures."
@@ -607,16 +681,18 @@ msgstr "Accessibilité"
 msgid "Account"
 msgstr "Compte"
 
-#: src/features/applications/components/table-view.tsx
-msgid "Actions"
-msgstr "Actes"
-
 #: src/features/resume/stylesheet/legacy-banner.tsx
 msgid "Activate Semantic CSS"
 msgstr "Activer le CSS sémantique"
 
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/detail/activity.tsx
+msgid "Activity"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/detail/contacts.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Add"
 msgstr "Ajouter"
@@ -625,10 +701,6 @@ msgstr "Ajouter"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Add “{0}”"
 msgstr ""
-
-#: src/routes/dashboard/applications/index.tsx
-msgid "Add a job you're applying to and link the resume you sent. Move it across the board as you hear back."
-msgstr "Ajoutez un poste auquel vous postulez et associez le CV que vous avez envoyé. Déplacez-le sur le tableau au fil des réponses."
 
 #: src/components/input/chip-input.tsx
 msgid "Add a keyword..."
@@ -647,7 +719,11 @@ msgstr ""
 msgid "Add a location"
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/activity.tsx
+msgid "Add a note"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
 msgid "Add a note…"
 msgstr "Ajouter une note…"
 
@@ -667,6 +743,10 @@ msgstr "Ajoutez une section intitulée « Expérience » ou « Expérience profe
 msgid "Add a summary or describe a role first; there's nothing to review yet."
 msgstr ""
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Add a tag"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Add a tag and press Enter…"
 msgstr "Ajoutez une étiquette et appuyez sur Entrée…"
@@ -679,8 +759,16 @@ msgstr ""
 msgid "Add an address."
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Add an application"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Add an email"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Add and tailor a resume"
 msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
@@ -701,7 +789,7 @@ msgstr ""
 msgid "Add certification"
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/contacts.tsx
 msgid "Add contact"
 msgstr "Ajouter un contact"
 
@@ -806,7 +894,7 @@ msgstr ""
 msgid "Add some whitespace between sections so a person can skim it."
 msgstr "Ajoutez de l'espace entre les sections pour qu'une personne puisse le parcourir rapidement."
 
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Add tag"
 msgstr "Ajouter une étiquette"
 
@@ -820,6 +908,10 @@ msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain ending, like {domain}.com"
+msgstr ""
+
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Add to calendar"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -845,6 +937,12 @@ msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Add your name"
+msgstr ""
+
+#. placeholder {0}: role.trim()
+#. placeholder {1}: company.trim()
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Added {0} at {1}"
 msgstr ""
 
 #: src/features/resume/share/link-tab.tsx
@@ -941,8 +1039,8 @@ msgid "All app languages"
 msgstr "Toutes les langues de l'application"
 
 #: src/features/applications/components/export-applications-sheet.tsx
-msgid "All applications (including archived)"
-msgstr "Toutes les candidatures (y compris celles qui ont été archivées)"
+msgid "All applications (including closed)"
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
@@ -988,6 +1086,11 @@ msgstr ""
 msgid "An unexpected error stopped this page from loading. You can try again or head back."
 msgstr "Une erreur inattendue a empêché le chargement de cette page. Vous pouvez réessayer ou revenir en arrière."
 
+#. placeholder {0}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "and {0} more"
+msgstr ""
+
 #: src/features/resume/share/link-tab.tsx
 msgid "Another of your resumes uses this address."
 msgstr ""
@@ -996,16 +1099,16 @@ msgstr ""
 msgid "Answer in your own words"
 msgstr "Répondez avec vos propres mots"
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "Any tag"
-msgstr "Toute étiquette"
-
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Anyone who opens the public URL will need this password."
 msgstr "Toute personne qui ouvre l'URL publique aura besoin de ce mot de passe."
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Anyone with the link will be able to view your resume."
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Anything to remember about this job"
 msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
@@ -1073,13 +1176,13 @@ msgstr ""
 msgid "Application"
 msgstr "Candidature"
 
-#: src/features/applications/components/application-actions-menu.tsx
-msgid "Application actions"
-msgstr "Actions de candidature"
-
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Application added to your pipeline."
 msgstr "Candidature ajoutée à votre pipeline."
+
+#: src/features/applications/use-application-actions.ts
+msgid "Application closed"
+msgstr ""
 
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Application Copilot"
@@ -1093,10 +1196,13 @@ msgstr "Date de dépôt des candidatures à partir du"
 msgid "Application date to"
 msgstr "Date limite de dépôt des candidatures :"
 
-#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/use-application-actions.ts
+msgid "Application deleted"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "Application deleted."
-msgstr "Candidature supprimée."
+msgid "Application options"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Application updated."
@@ -1121,15 +1227,16 @@ msgstr "Candidatures envoyées par semaine (8 dernières semaines)"
 msgid "Applications to export"
 msgstr "Candidatures à exporter"
 
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/stages.ts
 #: src/features/homepage/feature-explorer.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Applied"
 msgstr "Candidature envoyée"
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Applied on"
-msgstr "Postulé le"
+#: src/features/applications/next-step.ts
+msgid "Applied today"
+msgstr ""
 
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Approve"
@@ -1143,17 +1250,14 @@ msgstr "Approuvé, en attente de l'agent…"
 msgid "Arabic"
 msgstr "Arabe"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/table-view.tsx
 #: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "Archive"
 msgstr "Archiver"
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "Archived"
-msgstr "Archivée"
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Archived (closes it)"
+msgstr ""
 
 #: src/hooks/use-form-blocker.tsx
 msgid "Are you sure you want to close this dialog?"
@@ -1201,12 +1305,19 @@ msgstr "Vérificateur ATS"
 msgid "ATS-safe"
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Attach a cover letter (PDF)"
 msgstr "Joindre une lettre de motivation (PDF)"
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Attach a cover letter file (PDF)"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Attach a file instead"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
 msgid "Attach a resume file (PDF)"
 msgstr "Joindre un fichier de CV (PDF)"
 
@@ -1387,14 +1498,6 @@ msgstr "Création d'un système de design utilisé par six équipes produit."
 msgid "Bulgarian"
 msgstr "Bulgare"
 
-#: src/features/applications/components/table-view.tsx
-msgid "Bulk delete failed. Please try again."
-msgstr "La suppression groupée a échoué. Veuillez réessayer."
-
-#: src/features/applications/components/table-view.tsx
-msgid "Bulk update failed. Please try again."
-msgstr "La mise à jour groupée a échoué. Veuillez réessayer."
-
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "bullet {n}"
 msgstr ""
@@ -1423,8 +1526,10 @@ msgstr ""
 #. Profile settings form action to discard unsaved edits
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/detail/close-dialog.tsx
+#: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/export-applications-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
@@ -1471,9 +1576,17 @@ msgstr "Changer la langue"
 msgid "Change language to…"
 msgstr "Changer la langue en…"
 
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Change the follow-up…"
+msgstr ""
+
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change theme to…"
 msgstr "Changer le thème en…"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Change this timeline entry."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Changed your mind? Rename your resume to something more descriptive."
@@ -1642,17 +1755,18 @@ msgstr "Argile"
 #. Clear the highlight color
 #. Clear the text color
 #: src/components/input/rich-input.tsx
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "Effacer"
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "Clear filters"
-msgstr "Effacer les filtres"
-
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Clear formatting"
+msgstr ""
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Clear search"
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
@@ -1671,6 +1785,7 @@ msgstr "Sélection claire"
 msgid "Client ID"
 msgstr "ID client"
 
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/cover-letters/editor-dialog.tsx
 #: src/features/cover-letters/editor.tsx
 #: src/features/resume/editor/check/page-layer.tsx
@@ -1686,11 +1801,38 @@ msgstr ""
 msgid "Close AI assistant"
 msgstr "Fermer l'assistant IA"
 
+#: src/features/applications/components/detail/close-dialog.tsx
+msgid "Close application"
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Close application…"
+msgstr ""
+
+#: src/features/applications/components/detail/close-dialog.tsx
+msgid "Close this application"
+msgstr ""
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/list-view.tsx
+msgid "Close…"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+#: src/features/applications/stages.ts
+msgid "Closed"
+msgstr ""
+
 #: src/features/homepage/resume-sculpture.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Color"
 msgstr "Couleur"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Column {header} goes to"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Columns"
 msgstr "Colonnes"
@@ -1720,19 +1862,13 @@ msgstr "Communauté"
 msgid "Compact"
 msgstr "Compact"
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/write/entries.tsx
 msgid "Company"
 msgstr "Entreprise"
-
-#: src/features/applications/components/table-view.tsx
-msgid "Company / Role"
-msgstr "Entreprise / poste"
-
-#: src/routes/dashboard/applications/index.tsx
-msgid "Company A–Z"
-msgstr "Entreprise A–Z"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Compare this resume against this job posting URL and update the keywords without overselling anything."
@@ -1795,12 +1931,37 @@ msgstr "Échec de la connexion."
 msgid "Connection verified. The provider is ready to use."
 msgstr "Connexion vérifiée. Le fournisseur est prêt à l'emploi."
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Contact"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
 msgid "Contact details"
 msgstr "Coordonnées"
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Contact email"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Contact label"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Contact name"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Contact phone"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Contact role"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
 msgstr "Personnes à contacter"
 
@@ -1976,6 +2137,10 @@ msgstr "Impossible de vérifier la connexion au fournisseur."
 msgid "Could not verify the connection. Check the API key, model, and base URL."
 msgstr "Impossible de vérifier la connexion. Veuillez vérifier la clé API, le modèle et l'URL de base."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't add the application."
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't add the application. Please try again."
 msgstr "Impossible d'ajouter la candidature. Veuillez réessayer."
@@ -1992,18 +2157,17 @@ msgstr ""
 msgid "Couldn't create the document."
 msgstr ""
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Couldn't delete the application."
-msgstr "Impossible de supprimer la candidature."
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Couldn't create the letter."
+msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "Couldn't delete the applications. Try again."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Couldn't delete the interview."
 msgstr ""
-
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Couldn't delete the timeline entry."
-msgstr "Impossible de supprimer l’entrée de la chronologie."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't import"
@@ -2012,10 +2176,6 @@ msgstr ""
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't link the application."
 msgstr ""
-
-#: src/features/applications/components/board.tsx
-msgid "Couldn't move the application. Please try again."
-msgstr "Impossible de déplacer la candidature. Veuillez réessayer."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't reach the AI provider. Try again in a moment."
@@ -2029,29 +2189,46 @@ msgstr ""
 msgid "Couldn't save the application."
 msgstr ""
 
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Couldn't save the follow-up."
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "Couldn't save the note."
-msgstr "Impossible d'enregistrer la note."
+msgid "Couldn't save the notes."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't save the posting."
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't save the tags."
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't save your changes. Please try again."
 msgstr "Impossible d'enregistrer vos modifications. Veuillez réessayer."
 
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Couldn't save."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Couldn't schedule the interview."
+msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "Couldn't update the applications. Try again."
 msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Couldn't update the interview."
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Couldn't update the timeline entry."
-msgstr "Impossible de mettre à jour l’entrée de la chronologie."
+#: src/features/applications/components/detail/activity.tsx
+msgid "Couldn't update the timeline. Try again."
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Couldn't upload the file. Please try again."
@@ -2065,12 +2242,17 @@ msgstr "Nombre par source"
 msgid "Counted separately from the parse score. Coverage does not predict anything."
 msgstr "Comptée séparément du score de lecture. La couverture ne prédit rien."
 
+#: src/features/applications/components/insights-view.tsx
+msgid "Counts every application that reached each stage, including ones now closed."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Cover"
 msgstr "Remplir"
 
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/resume/share/download-tab.tsx
 msgid "Cover letter"
 msgstr "lettre de motivation"
@@ -2080,9 +2262,18 @@ msgstr "lettre de motivation"
 msgid "Cover Letter"
 msgstr "Lettre de motivation"
 
+#. placeholder {0}: application.company
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Cover letter — {0}"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Cover letter draft"
 msgstr "Brouillon de lettre de motivation"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Cover letter file"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Cover letter imported"
@@ -2175,10 +2366,6 @@ msgstr "Filtres actuels"
 msgid "Current Password"
 msgstr "Mot de passe actuel"
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Current stage"
-msgstr "Étape actuelle"
-
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Currently available for German resumes. Uses the language set in Page."
 msgstr "Actuellement disponible pour les CV en allemand. Utilise la langue définie dans la page."
@@ -2231,6 +2418,8 @@ msgstr "Sombre"
 msgid "Dark theme"
 msgstr "Thème sombre"
 
+#: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Date"
 msgstr "Date"
@@ -2238,10 +2427,6 @@ msgstr "Date"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Date & time"
 msgstr ""
-
-#: src/routes/dashboard/applications/index.tsx
-msgid "Date applied"
-msgstr "Date de candidature"
 
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
@@ -2283,8 +2468,9 @@ msgstr "Diplôme"
 #. Passkey row action to remove the selected passkey
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/interview-dialog.tsx
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
@@ -2301,6 +2487,11 @@ msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete “{title}”?"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "Delete {0} applications?"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -2350,17 +2541,20 @@ msgstr "Supprimer ce fil de discussion de l'agent ?"
 msgid "Delete this application?"
 msgstr "Supprimer cette candidature ?"
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Delete this entry?"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Delete this interview?"
 msgstr ""
 
+#: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "Delete this timeline entry?"
-msgstr "Supprimer cette entrée de la chronologie ?"
-
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Delete timeline entry"
-msgstr "Supprimer l’entrée de la chronologie"
+#: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/list-view.tsx
+msgid "Delete…"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Deleted"
@@ -2376,9 +2570,9 @@ msgid "Deleted “{title}”"
 msgstr ""
 
 #. placeholder {0}: result.deleted
-#: src/features/applications/components/table-view.tsx
-msgid "Deleted {0} application(s)."
-msgstr "{0} candidature(s) supprimée(s)."
+#: src/features/applications/components/list-view.tsx
+msgid "Deleted {0}"
+msgstr ""
 
 #: src/features/documents/trash-page.tsx
 msgid "Deleted in"
@@ -2490,6 +2684,7 @@ msgid "Discord"
 msgstr "Discord"
 
 #: src/features/applications/components/application-ai-copilot.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Dismiss"
 msgstr "Rejeter"
 
@@ -2516,10 +2711,6 @@ msgstr "Documentation"
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
 msgstr ""
-
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Documents sent"
-msgstr "Documents envoyés"
 
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
@@ -2588,6 +2779,10 @@ msgstr "Télécharger l'exemple Markdown"
 #: src/features/homepage/export-playground.tsx
 msgid "Download sample PDF"
 msgstr "Télécharger l'exemple PDF"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Download them"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Downloaded {file}"
@@ -2682,8 +2877,7 @@ msgid "Dutch"
 msgstr "Néerlandais"
 
 #: src/components/input/chip-input.tsx
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Edit"
 msgstr "Modifier"
@@ -2719,7 +2913,7 @@ msgstr "Modifier le contenu en mode plein écran"
 msgid "Edit cover letter"
 msgstr "Modifier la lettre de motivation"
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
 msgstr "Modifier la date"
 
@@ -2727,12 +2921,20 @@ msgstr "Modifier la date"
 msgid "Edit declined"
 msgstr "Modification refusée"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Edit details…"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Edit entry"
 msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Edit interview"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Edit interview…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
@@ -2747,7 +2949,7 @@ msgstr ""
 msgid "Edit model"
 msgstr "Modifier le modèle"
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/activity.tsx
 msgid "Edit note"
 msgstr "Modifier la note"
 
@@ -2757,6 +2959,14 @@ msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Edit the link"
+msgstr ""
+
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Edit this interview…"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Edit…"
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
@@ -2796,7 +3006,7 @@ msgstr "Formation"
 msgid "Email"
 msgstr "Email"
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/contacts.tsx
 msgid "Email (optional)"
 msgstr "Email (facultatif)"
 
@@ -2817,6 +3027,10 @@ msgstr ""
 #: src/features/settings/pages/profile.tsx
 msgid "Email delivery isn't configured on this instance, so verification is disabled."
 msgstr "La distribution des e-mails n'est pas configurée sur cette instance, la vérification est donc désactivée."
+
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Email the recruiter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
@@ -2863,7 +3077,7 @@ msgstr "Entrez un nom pour votre clé d'accès."
 msgid "Enter a new password for your account"
 msgstr "Saisissez un nouveau mot de passe pour votre compte"
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/contacts.tsx
 msgid "Enter a valid email address."
 msgstr "Saisissez une adresse email valide."
 
@@ -2965,10 +3179,6 @@ msgstr "Exporter"
 msgid "Export applications"
 msgstr "Exporter les candidatures"
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "Export CSV"
-msgstr "Exporter en CSV"
-
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Export Data"
 msgstr "Exporter les données"
@@ -2996,6 +3206,10 @@ msgstr "Exporter en PNG"
 #: src/features/ats-checker/messages.ts
 msgid "Export the resume as a text PDF rather than as an image or a scan."
 msgstr "Exportez le CV en PDF texte plutôt qu'en image ou en scan."
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Export to CSV…"
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Exported PDF checked: {problems} more to look at."
@@ -3217,6 +3431,14 @@ msgstr ""
 msgid "Fill fields"
 msgstr "Remplir les champs"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Fill in the role and company. Connect an AI provider in settings to read them from the posting."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Fill in the role and company. The posting is saved with the application."
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Filled in what we could from the posting."
 msgstr "Nous avons rempli ce que nous pouvions à partir de l'offre."
@@ -3228,10 +3450,6 @@ msgstr ""
 #: src/features/documents/documents-page.tsx
 msgid "Filter by tag"
 msgstr ""
-
-#: src/routes/dashboard/applications/index.tsx
-msgid "Filter by tags"
-msgstr "Filtrer par étiquettes"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Find the weak bullet points and rewrite them with stronger outcomes, numbers, scope, and sharper verbs."
@@ -3294,7 +3512,11 @@ msgstr "Aplatissez le formulaire pour que le texte fasse partie de la page."
 msgid "Fluency"
 msgstr "Niveau"
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/next-step.ts
+msgid "Follow up"
+msgstr ""
+
+#: src/features/applications/components/detail/next-step-card.tsx
 msgid "Follow-up"
 msgstr "Relance"
 
@@ -3386,6 +3608,10 @@ msgstr "Feuille de style de format"
 
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Formatting"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Found the role and company on the page. The posting is saved with the application."
 msgstr ""
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -3557,6 +3783,10 @@ msgstr ""
 msgid "Headline"
 msgstr "Titre professionnel"
 
+#: src/features/applications/components/insights-view.tsx
+msgid "heard back"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Hebrew"
 msgstr "Hébreu"
@@ -3666,6 +3896,15 @@ msgstr "Couleur de surbrillance"
 msgid "Hindi"
 msgstr "Hindi"
 
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Hiring manager"
+msgstr ""
+
+#. placeholder {0}: application.company
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Hiring team, {0}"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "History"
@@ -3679,6 +3918,10 @@ msgstr "Accueil"
 msgid "How do I use the API?"
 msgstr "Comment utiliser l'API ?"
 
+#: src/features/applications/components/insights-view.tsx
+msgid "How far applications get"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Hungarian"
 msgstr "Hongrois"
@@ -3690,6 +3933,10 @@ msgstr "Césure"
 #: src/features/homepage/resume-sculpture.tsx
 msgid "I design software for teams, from early research to the details people use every day."
 msgstr "Je conçois des logiciels pour les équipes, depuis les premières recherches jusqu'aux détails que les gens utilisent chaque jour."
+
+#: src/features/applications/stages.ts
+msgid "I withdrew"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
@@ -3732,11 +3979,6 @@ msgstr "Les images couvrent la majeure partie de la page."
 msgid "Import"
 msgstr "Importer"
 
-#. placeholder {0}: importable.length
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "Import {0}"
-msgstr "Importer {0}"
-
 #: src/features/documents/new-document-dialog.tsx
 msgid "Import a resume"
 msgstr ""
@@ -3744,10 +3986,6 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "Import a resume, copy one for a job, or start blank."
 msgstr ""
-
-#: src/routes/dashboard/applications/index.tsx
-msgid "Import CSV"
-msgstr "Importer un CSV"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Import failed. Check the CSV and try again."
@@ -3758,8 +3996,16 @@ msgstr "L'importation a échoué. Vérifiez le CSV et réessayez."
 msgid "Import from CSV"
 msgstr "Importer depuis un CSV"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Import from CSV…"
+msgstr ""
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Import from library"
+msgstr ""
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Import or export CSV"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -3778,10 +4024,15 @@ msgstr ""
 msgid "Imported"
 msgstr ""
 
-#. placeholder {0}: result.imported
+#. placeholder {0}: response.imported
 #: src/features/applications/components/import-applications-sheet.tsx
-msgid "Imported {0} application(s)."
-msgstr "{0} candidature(s) importée(s)."
+msgid "Imported {0} applications."
+msgstr ""
+
+#. placeholder {0}: response.imported
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Imported {0} applications. {skipped} rows had no company or role and were skipped."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Importing"
@@ -3855,10 +4106,7 @@ msgstr "Design d'interaction"
 msgid "Interests"
 msgstr "Centres d'intérêt"
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "interview"
-msgstr ""
-
+#: src/features/applications/stages.ts
 #: src/features/homepage/feature-explorer.tsx
 msgid "Interview"
 msgstr "Entretien"
@@ -3871,8 +4119,8 @@ msgstr ""
 msgid "Interview type"
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Interviews"
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Interviewer"
 msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
@@ -3938,6 +4186,10 @@ msgstr ""
 msgid "It will show on the application's timeline and on the calendar."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "It's removed from the timeline for good."
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Italian"
 msgstr "Italien"
@@ -3971,11 +4223,14 @@ msgstr "Description du poste"
 msgid "Job description (optional)"
 msgstr "Description du poste (facultatif)"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Job link or posting text"
+msgstr ""
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Job posting"
 msgstr "Offre d'emploi"
@@ -4121,10 +4376,14 @@ msgstr "Coréen"
 
 #. Short field label for custom display text associated with a URL
 #: src/components/input/url-input.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/contacts.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Label"
 msgstr "Libellé"
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Label, e.g. Recruiter"
+msgstr ""
 
 #. Preset button for setting picture aspect ratio to landscape orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -4149,10 +4408,6 @@ msgstr "Langues"
 #: src/features/documents/documents-page.tsx
 msgid "Last edited"
 msgstr ""
-
-#: src/routes/dashboard/applications/index.tsx
-msgid "Last updated"
-msgstr "Dernière mise à jour"
 
 #: src/libs/locale.ts
 msgid "Latvian"
@@ -4188,6 +4443,10 @@ msgstr "Laissez le champ vide pour rétablir le titre d'origine."
 msgid "Leave it empty to remove the link."
 msgstr ""
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Leave out"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
 msgid "Left Align"
 msgstr "Aligné à gauche"
@@ -4211,6 +4470,10 @@ msgstr ""
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Letter"
 msgstr "Lettre"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Letter created with the recipient filled in"
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
@@ -4266,6 +4529,7 @@ msgstr ""
 msgid "Lines this close can run together when read. Use at least {minimum}."
 msgstr ""
 
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
@@ -4321,9 +4585,13 @@ msgstr ""
 msgid "Link updated"
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Linked Reactive Resume"
-msgstr "Reactive Resume lié"
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Linked · not sent yet"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Linked resume"
+msgstr ""
 
 #. Authentication provider display name in account settings
 #. Brand name label for LinkedIn social sign-in button
@@ -4351,6 +4619,7 @@ msgid "Links"
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "List"
 msgstr "Liste"
 
@@ -4403,7 +4672,7 @@ msgid "Loading total"
 msgstr "Chargement du total"
 
 #: src/features/applications/components/application-form-sheet.tsx
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/ats-checker/parse-preview.tsx
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
@@ -4523,10 +4792,6 @@ msgstr ""
 msgid "Margins set to {minimum} pt"
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Mark rejected"
-msgstr "Marquer comme rejetée"
-
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Markdown shortcuts on"
 msgstr ""
@@ -4545,6 +4810,10 @@ msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Match this posting"
+msgstr ""
+
+#: src/features/applications/components/insights-view.tsx
+msgid "median to first reply"
 msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -4631,15 +4900,14 @@ msgstr ""
 msgid "Move section to another column or page"
 msgstr "Déplacer la section vers une autre colonne ou page"
 
-#: src/features/applications/components/table-view.tsx
-msgid "Move stage"
-msgstr "Changer d'étape"
-
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Move to"
 msgstr "Déplacer vers"
+
+#. placeholder {0}: getStageLabel(next)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Move to {0}"
+msgstr ""
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Move to interview"
@@ -4655,6 +4923,8 @@ msgstr "Déplacer en offre"
 msgid "Move to Trash"
 msgstr ""
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Move to…"
 msgstr ""
@@ -4667,14 +4937,17 @@ msgstr ""
 msgid "Move your email and phone number to the top of page one."
 msgstr "Déplacez votre email et votre numéro de téléphone en haut de la première page."
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Moved to"
-msgstr "Déplacé vers"
+#. placeholder {0}: getStageLabel(entry.stage)
+#. placeholder {0}: getStageLabel(status)
+#: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/use-application-actions.ts
+msgid "Moved to {0}"
+msgstr ""
 
 #. Label for full name input on registration form
 #: src/dialogs/api-key/create.tsx
 #: src/dialogs/resume/index.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/contacts.tsx
 #: src/features/ats-checker/parse-preview.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/cover-letters/editor.tsx
@@ -4789,10 +5062,6 @@ msgstr "Nouveau mot de passe"
 msgid "New section"
 msgstr ""
 
-#: src/features/applications/components/table-view.tsx
-msgid "New tag…"
-msgstr "Nouvelle étiquette…"
-
 #: src/features/command-palette/pages/resumes.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "New thread"
@@ -4811,6 +5080,11 @@ msgstr ""
 msgid "Next month"
 msgstr ""
 
+#: src/features/applications/components/detail/next-step-card.tsx
+#: src/features/applications/components/list-view.tsx
+msgid "Next step"
+msgstr ""
+
 #: src/features/homepage/template-shelf.tsx
 msgid "Next template"
 msgstr "Modèle suivant"
@@ -4823,17 +5097,14 @@ msgstr ""
 msgid "No AI provider connected"
 msgstr "Aucun fournisseur d'IA connecté"
 
+#. placeholder {0}: query.trim()
 #: src/routes/dashboard/applications/index.tsx
-msgid "No applications match your filters."
-msgstr "Aucune candidature ne correspond à vos filtres."
+msgid "No applications match “{0}”."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "No applications yet"
 msgstr ""
-
-#: src/features/applications/components/insights-view.tsx
-msgid "No applications yet. Add a few to see your funnel and reply rates."
-msgstr "Aucune candidature pour l'instant. Ajoutez-en quelques-unes pour voir votre entonnoir et vos taux de réponse."
 
 #: src/features/documents/document-actions.tsx
 msgid "No applications yet. Add one in Applications first."
@@ -4847,6 +5118,10 @@ msgstr "Aucune liste à puces n'a été trouvée."
 #: src/features/command-palette/index.tsx
 msgid "No commands match that search."
 msgstr "Aucune commande ne correspond à cette recherche."
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "No contacts yet."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No conventional section headings were found."
@@ -4870,10 +5145,6 @@ msgstr "Aucune adresse email n'a été trouvée."
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "No interviews"
-msgstr ""
-
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "No interviews scheduled."
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -4924,13 +5195,13 @@ msgstr "Aucun texte lisible trouvé. Ce PDF peut contenir des images scannées. 
 msgid "No repeating the claim that most resumes are thrown out automatically."
 msgstr "Aucune reprise de l'affirmation selon laquelle la plupart des CV sont rejetés automatiquement."
 
+#: src/features/applications/stages.ts
+msgid "No response"
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 msgid "No results found."
 msgstr "Aucun résultat trouvé."
-
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "No resume linked."
-msgstr "Aucun CV lié."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
@@ -4976,6 +5247,10 @@ msgstr ""
 msgid "No work-experience section was found."
 msgstr "Aucune section expérience professionnelle n'a été trouvée."
 
+#: src/features/applications/components/list-view.tsx
+msgid "None"
+msgstr ""
+
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Normal"
@@ -4988,6 +5263,10 @@ msgstr ""
 #: src/libs/locale.ts
 msgid "Norwegian"
 msgstr "Norvégien"
+
+#: src/features/applications/next-step.ts
+msgid "Not applied yet"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Not connected"
@@ -5021,6 +5300,10 @@ msgstr ""
 msgid "Not scored"
 msgstr "Non noté"
 
+#: src/features/applications/stages.ts
+msgid "Not selected"
+msgstr ""
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Not sure what to write?"
 msgstr "Vous ne savez pas quoi écrire ?"
@@ -5029,8 +5312,13 @@ msgstr "Vous ne savez pas quoi écrire ?"
 msgid "Not true for me, hide it"
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Note"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -5086,6 +5374,7 @@ msgstr "Odia"
 msgid "Off. Only you can see this resume."
 msgstr ""
 
+#: src/features/applications/stages.ts
 #: src/features/homepage/feature-explorer.tsx
 msgid "Offer"
 msgstr "Offre"
@@ -5101,6 +5390,10 @@ msgstr ""
 #: src/features/settings/pages/api-keys.tsx
 msgid "Once deleted, the key can no longer access your data. This cannot be undone."
 msgstr "Une fois supprimée, la clé ne peut plus accéder à vos données. Cette action est irréversible."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Once you've sent a few applications, this shows how far they get and how quickly people reply."
+msgstr ""
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "One column"
@@ -5140,7 +5433,9 @@ msgstr "Seules les premières pages ont été vérifiées."
 msgid "Only you see these"
 msgstr ""
 
+#: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/documents/document-actions.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Open"
 msgstr "Ouvrir"
 
@@ -5237,10 +5532,20 @@ msgstr ""
 msgid "Options for {0}"
 msgstr ""
 
+#. placeholder {0}: application.role
+#. placeholder {1}: application.company
+#: src/features/applications/components/application-actions-menu.tsx
+msgid "Options for {0} at {1}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 #: src/features/resume/share/history-tab.tsx
 msgid "Options for {title}"
 msgstr "Options pour {title}"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Options for this entry"
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "or"
@@ -5379,13 +5684,21 @@ msgstr ""
 msgid "Passwords do not match."
 msgstr "Les mots de passe ne correspondent pas."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Paste a job link or posting, then check the role and company."
+msgstr ""
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
 msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
-msgid "Paste rows or upload a .csv. We map columns like Company, Role, Stage, Stage Date, Salary, Source, Tags, Contact Name, Contact Email and Contact Phone."
-msgstr "Collez des lignes ou importez un fichier .csv. Nous associons les colonnes telles que Entreprise, Poste, Étape, Date d'étape, Salaire, Origine, Mots-clés, Nom du contact, Email du contact et Téléphone du contact."
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
@@ -5454,7 +5767,7 @@ msgstr "Persan"
 msgid "Phone"
 msgstr "Téléphone"
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/contacts.tsx
 msgid "Phone (optional)"
 msgstr "Téléphone (facultatif)"
 
@@ -5493,10 +5806,6 @@ msgstr "Photo"
 #: src/features/applications/components/insights-view.tsx
 msgid "Pipeline flow"
 msgstr "Flux du pipeline"
-
-#: src/features/applications/components/insights-view.tsx
-msgid "Pipeline health across all applications"
-msgstr "Santé du pipeline sur toutes les candidatures"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Plain text with headings. Paste into application forms and notes."
@@ -5849,10 +6158,15 @@ msgstr "Lecture du PDF"
 msgid "Reading the file"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading the link…"
+msgstr ""
+
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "Reading the PDF…"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Reading the posting…"
@@ -5886,10 +6200,18 @@ msgstr "Prêt à être activé avec avertissements"
 msgid "Ready to put your name on it?"
 msgstr "Prêt à y apposer votre nom ?"
 
+#: src/features/applications/components/detail/close-dialog.tsx
+msgid "Reason"
+msgstr ""
+
 #: src/features/cover-letters/editor.tsx
 #: src/features/resume/editor/write/entries.tsx
 msgid "Recipient"
 msgstr "Destinataire"
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Recruiter"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Recruiters see this name. Your name plus “Resume” works well."
@@ -5911,6 +6233,10 @@ msgstr "Rétablir la modification de la feuille de style"
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "Références"
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Referral"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Referred by…, things to emphasize, etc."
@@ -5948,14 +6274,19 @@ msgstr "À distance, hybride, une ville…"
 msgid "Remove"
 msgstr ""
 
+#. placeholder {0}: contact.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Remove {0}"
+msgstr ""
+
 #. Screen reader label for button that removes a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
 msgid "Remove {chip}"
 msgstr "Supprimer {chip}"
 
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "Remove contact"
-msgstr "Supprimer le contact"
+msgid "Remove {value}"
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
@@ -5993,6 +6324,10 @@ msgstr ""
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Rename…"
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Reopen"
 msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
@@ -6117,6 +6452,7 @@ msgid "Restored the version from {0}. Your previous state is saved as “Before 
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/agent/-components/resume-pane.tsx
@@ -6136,13 +6472,9 @@ msgstr "Contenu du CV"
 msgid "Resume edit"
 msgstr "Modification du CV"
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
 msgid "Resume file"
 msgstr "Fichier de CV"
-
-#: src/features/applications/components/application-card.tsx
-msgid "Resume linked"
-msgstr "CV lié"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume not found"
@@ -6219,11 +6551,14 @@ msgstr "CV d'exemple Rhyhorn"
 msgid "Right Align"
 msgstr "Alignement à droite"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Role"
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/contacts.tsx
 msgid "Role (optional)"
 msgstr "Poste (facultatif)"
 
@@ -6235,10 +6570,6 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Role / title"
 msgstr "Poste / titre"
-
-#: src/routes/dashboard/applications/index.tsx
-msgid "Role A–Z"
-msgstr "Poste A–Z"
 
 #: src/libs/locale.ts
 msgid "Romanian"
@@ -6274,7 +6605,7 @@ msgid "Russian"
 msgstr "Russe"
 
 #: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 msgid "Salary"
 msgstr "Salaire"
 
@@ -6307,7 +6638,8 @@ msgid "Sans"
 msgstr "Sans"
 
 #. Passkey rename prompt confirm action in authentication settings
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
@@ -6365,6 +6697,7 @@ msgstr ""
 msgid "saved"
 msgstr ""
 
+#: src/features/applications/stages.ts
 #: src/features/resume/editor/save-status.tsx
 msgid "Saved"
 msgstr "Enregistré"
@@ -6405,7 +6738,10 @@ msgstr ""
 msgid "Schedule an interview on {date}"
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Schedule an interview…"
+msgstr ""
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr ""
@@ -6422,14 +6758,18 @@ msgstr "Évaluer mon adéquation"
 msgid "Scoring your fit…"
 msgstr "Évaluation de votre adéquation…"
 
+#: src/features/applications/stages.ts
+msgid "Screening"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Search"
 msgstr "Recherche"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Search applications…"
-msgstr "Rechercher des candidatures…"
+msgid "Search applications"
+msgstr ""
 
 #. Accessible label for command palette search input
 #: src/features/command-palette/index.tsx
@@ -6456,6 +6796,10 @@ msgstr "Rechercher…"
 
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Search or run…"
+msgstr ""
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Search role, company or contact"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
@@ -6505,10 +6849,15 @@ msgstr "Voyez ce que le<0/>logiciel lit."
 msgid "See whether your PDF has readable text. Read a sample or try your own PDF. Everything runs in your browser, so your file stays with you."
 msgstr "Vérifiez si votre PDF contient du texte lisible. Lisez un exemple ou essayez votre propre PDF. Tout s'exécute dans votre navigateur, votre fichier reste donc avec vous."
 
-#. placeholder {0}: app.company
-#: src/features/applications/components/table-view.tsx
-msgid "Select {0}"
-msgstr "Sélectionner {0}"
+#: src/features/applications/components/list-view.tsx
+msgid "Select"
+msgstr ""
+
+#. placeholder {0}: application.role
+#. placeholder {1}: application.company
+#: src/features/applications/components/list-view.tsx
+msgid "Select {0} at {1}"
+msgstr ""
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Select a resume"
@@ -6517,10 +6866,6 @@ msgstr "Sélectionnez un CV"
 #: src/routes/agent/index.tsx
 msgid "Select a thread"
 msgstr "Sélectionnez une discussion"
-
-#: src/features/applications/components/table-view.tsx
-msgid "Select all"
-msgstr "Tout sélectionner"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Select an agent model"
@@ -6533,10 +6878,6 @@ msgstr "Sélectionnez un fournisseur d'IA"
 #: src/components/ui/combobox.tsx
 msgid "Select..."
 msgstr "Sélectionner..."
-
-#: src/features/applications/components/table-view.tsx
-msgid "selected"
-msgstr "sélectionné"
 
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Semantic CSS stylesheet"
@@ -6586,8 +6927,14 @@ msgstr ""
 msgid "Senior product designer"
 msgstr "Concepteur produit senior"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/resume/share/format.ts
 msgid "Sent"
+msgstr ""
+
+#. placeholder {0}: version.name
+#: src/features/resume/share/format.ts
+msgid "Sent to {0}"
 msgstr ""
 
 #: src/components/input/rich-input.tsx
@@ -6601,6 +6948,10 @@ msgstr "Serbe"
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Serif"
 msgstr "Serif"
+
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Set a follow-up…"
+msgstr ""
 
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/settings/authentication/components/password.tsx
@@ -6689,6 +7040,10 @@ msgstr ""
 msgid "Show all languages"
 msgstr "Afficher toutes les langues"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Afficher le titre"
@@ -6736,12 +7091,6 @@ msgstr ""
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show them again"
 msgstr ""
-
-#. placeholder {0}: rows.length
-#. placeholder {1}: applications.length
-#: src/features/applications/components/table-view.tsx
-msgid "Showing {0} of {1}"
-msgstr "Affichage de {0} sur {1}"
 
 #. Layout editor column label for the secondary sidebar area
 #: src/features/resume/editor/design/template-group.tsx
@@ -6878,6 +7227,10 @@ msgstr "Slovaque"
 msgid "Slovenian"
 msgstr "Slovène"
 
+#: src/features/applications/components/insights-view.tsx
+msgid "Small numbers, but worth noticing."
+msgstr ""
+
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Some applicant tracking systems read columns out of order. Check mode shows the order they'll see."
 msgstr ""
@@ -6954,13 +7307,12 @@ msgstr "Une erreur s'est produite lors de la lecture de ce fichier. Veuillez ré
 msgid "Something went wrong while signing you in. Please try again."
 msgstr "Une erreur s'est produite lors de votre connexion. Veuillez réessayer."
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/share/link-tab.tsx
 msgid "Something went wrong. Please try again."
 msgstr "Une erreur s'est produite. Veuillez réessayer."
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/documents/document-actions.tsx
 msgid "Something went wrong. Try again."
 msgstr ""
@@ -6969,21 +7321,13 @@ msgstr ""
 msgid "Sort"
 msgstr ""
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "Sort by"
-msgstr "Trier par"
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Sort by date"
 msgstr "Trier par date"
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "Sort by…"
-msgstr "Trier par…"
-
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 msgid "Source"
 msgstr "Origine"
 
@@ -7041,14 +7385,21 @@ msgstr "Carré"
 msgid "Stack pages"
 msgstr "Empiler les pages"
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Stage"
 msgstr "Étape"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 msgid "Stage date"
 msgstr "Date de l’étape"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Stages"
+msgstr ""
 
 #: src/components/input/github-stars-button.tsx
 msgid "Star us on GitHub (opens in new tab)"
@@ -7251,13 +7602,14 @@ msgstr ""
 msgid "Systems look for an experience section. Projects or volunteering can show the same history."
 msgstr ""
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "Table"
-msgstr "Tableau"
+#: src/features/applications/components/list-view.tsx
+msgid "Tag"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
-#: src/features/applications/components/table-view.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/documents/document-actions.tsx
 msgid "Tags"
 msgstr "Mots-clés"
@@ -7278,6 +7630,10 @@ msgstr ""
 msgid "Tags…"
 msgstr ""
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Tailor a resume"
+msgstr ""
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Tailor my resume"
 msgstr "Adapter mon CV"
@@ -7285,6 +7641,10 @@ msgstr "Adapter mon CV"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Tailor this resume to a product manager job description, and emphasize roadmap ownership, stakeholder communication, and measurable launch outcomes."
 msgstr "Adaptez ce CV à une offre de chef de produit et mettez en avant la responsabilité de la feuille de route, la communication avec les parties prenantes et des résultats de lancement mesurables."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Tailored vs. base resume"
+msgstr ""
 
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Tailoring failed."
@@ -7403,6 +7763,10 @@ msgstr "Ce fichier n'est pas un PDF. Exportez votre CV en PDF et réessayez."
 msgid "That file is too large to check in the browser."
 msgstr "Ce fichier est trop volumineux pour être vérifié dans le navigateur."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "That link couldn't be read. Paste the posting text instead."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to a different user."
 msgstr "Ce compte du fournisseur est déjà lié à un autre utilisateur."
@@ -7472,6 +7836,10 @@ msgstr ""
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "L'ordre dans lequel le texte est stocké diffère nettement de l'ordre dans lequel il se lit."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "The page had no job details to read. Fill in the role and company."
+msgstr ""
+
 #: src/components/layout/not-found-screen.tsx
 msgid "The page you're looking for may have been moved or no longer exists."
 msgstr "La page que vous recherchez a peut-être été déplacée ou n'existe plus."
@@ -7492,6 +7860,14 @@ msgstr "Le mot de passe saisi est incorrect"
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "Le PDF est lu par du code exécuté dans cet onglet. Rien n'est envoyé, rien n'est stocké, et aucun compte n'est nécessaire. Ouvrez l'onglet réseau de votre navigateur pour observer, si vous le souhaitez."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "The posting couldn't be read. Fill in the role and company."
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "The posting saved with this application."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "The provider didn't share an email address, which is required to sign in."
 msgstr "Le fournisseur n'a pas communiqué d'adresse e-mail, pourtant nécessaire à la connexion."
@@ -7511,6 +7887,10 @@ msgstr ""
 #: src/features/auth/pages/error.tsx
 msgid "The provider's response could not be verified. Please start again."
 msgstr "La réponse du fournisseur n'a pas pu être vérifiée. Veuillez recommencer."
+
+#: src/features/applications/components/detail/close-dialog.tsx
+msgid "The reason is kept for Insights. Linked documents aren't touched."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
@@ -7584,6 +7964,10 @@ msgstr "Il n'y a aucun lien vers un profil, un portfolio ou un dépôt."
 msgid "There is no summary paragraph."
 msgstr "Il n'y a pas de paragraphe de résumé."
 
+#: src/features/applications/components/list-view.tsx
+msgid "They and their timelines are deleted permanently. This can't be undone."
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr ""
@@ -7631,10 +8015,6 @@ msgstr "Il n'est plus possible de répondre à cette demande de modification."
 #: src/features/resume/editor/check/issues.ts
 msgid "This entry"
 msgstr ""
-
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "This entry will be permanently deleted. This can't be undone."
-msgstr "Cette entrée sera supprimée définitivement. Cette action est irréversible."
 
 #: src/features/ats-checker/messages.ts
 msgid "This file contains form fields."
@@ -7817,10 +8197,6 @@ msgstr "Fils de discussion"
 msgid "Tighten the skills section so it supports the target role instead of reading like a keyword dump."
 msgstr "Réduisez la section « compétences » pour qu'elle corresponde au rôle visé au lieu de ressembler à un simple assemblage de mots-clés."
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Timeline"
-msgstr "Chronologie"
-
 #: src/features/ats-checker/messages.ts
 msgid "Tip"
 msgstr "Astuce"
@@ -7887,8 +8263,8 @@ msgid "Track a job you're applying to and link the resume you sent."
 msgstr "Suivez une offre à laquelle vous postulez et liez le CV envoyé."
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Track your first application"
-msgstr "Suivre votre première candidature"
+msgid "Track your first job"
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Translate the app"
@@ -8040,11 +8416,6 @@ msgstr "Typographie"
 msgid "Ukrainian"
 msgstr "Ukrainien"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Unarchive"
-msgstr "Désarchiver"
-
 #: src/components/input/rich-input.tsx
 msgid "Underline"
 msgstr "Souligner"
@@ -8133,10 +8504,6 @@ msgstr "Modifier le mot de passe"
 msgid "Update Resume"
 msgstr "Modifier le CV"
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Update the calendar date for this timeline entry."
-msgstr "Mettez à jour la date du calendrier pour cette entrée de la chronologie."
-
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Update the project bullets to show leadership, constraints, tradeoffs, and measurable outcomes."
 msgstr "Mettez à jour les puces des projets pour montrer le leadership, les contraintes, les arbitrages et des résultats mesurables."
@@ -8145,13 +8512,18 @@ msgstr "Mettez à jour les puces des projets pour montrer le leadership, les con
 msgid "Update this application's details."
 msgstr "Mettez à jour les détails de cette candidature."
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Update this timeline note."
-msgstr "Mettez à jour cette note de chronologie."
-
 #: src/dialogs/auth/change-password.tsx
 msgid "Update your password"
 msgstr "Modifier votre mot de passe"
+
+#: src/features/applications/components/list-view.tsx
+msgid "Updated"
+msgstr ""
+
+#. placeholder {0}: result.updated
+#: src/features/applications/components/list-view.tsx
+msgid "Updated {0}"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Updating your password..."
@@ -8356,6 +8728,15 @@ msgstr "Vérification du mot de passe..."
 msgid "Verifying your email is required when resetting your password."
 msgstr "La vérification de votre adresse e-mail est requise lors de la réinitialisation de votre mot de passe."
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Version sent {date}"
+msgstr ""
+
+#. placeholder {0}: application.sentCheckScore
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Version sent {date} · Check {0}"
+msgstr ""
+
 #: src/features/resume/share/history-tab.tsx
 msgid "Versions"
 msgstr ""
@@ -8377,11 +8758,16 @@ msgid "Vietnamese"
 msgstr "Vietnamien"
 
 #: src/features/documents/documents-page.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "View"
 msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "View application"
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "View posting"
 msgstr ""
 
 #. placeholder {0}: formatVersionTime(viewing.createdAt, i18n.locale)
@@ -8422,6 +8808,10 @@ msgstr "Bénévolat"
 msgid "Waiting for the agent…"
 msgstr "En attente de l'agent…"
 
+#: src/features/applications/next-step.ts
+msgid "Waiting to hear back"
+msgstr ""
+
 #: src/features/ats-checker/ai-review/locked-card.tsx
 msgid "Want a second opinion on the writing?"
 msgstr "Vous voulez un second avis sur la rédaction ?"
@@ -8454,6 +8844,10 @@ msgstr "Nous n'avons pas pu lire votre profil chez le fournisseur."
 #. placeholder {0}: dates.raw
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "We read \"{0}\". Pick a month so it sorts and prints consistently."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "We read the page and save the posting for Check, the assistant and your letter."
 msgstr ""
 
 #: src/features/settings/pages/profile.tsx
@@ -8494,6 +8888,10 @@ msgstr "Comment voulez-vous renommer cette section ?"
 msgid "What goes in it?"
 msgstr ""
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "What it asks for"
+msgstr ""
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "What the file-level check found in the PDF you'd send. It ran in this tab; nothing was uploaded."
 msgstr ""
@@ -8506,8 +8904,16 @@ msgstr "Ce que cela vérifie"
 msgid "What this does not do"
 msgstr "Ce que cela ne fait pas"
 
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "What to do"
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 msgid "What to download"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "What you sent"
 msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -8614,6 +9020,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Write \"Present\" as the end date of your current role."
 msgstr "Écrivez « Présent » comme date de fin de votre poste actuel."
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Write a letter"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write each role as a clear title and company line, with the dates alongside."
