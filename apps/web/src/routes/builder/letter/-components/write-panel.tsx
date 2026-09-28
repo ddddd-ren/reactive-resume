@@ -450,7 +450,7 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 			{canDraft && !hasUsableProvider && (
 				<p className="text-ink-3 text-xs">
 					<Trans>Drafting needs an AI provider.</Trans>{" "}
-					<Link to="/dashboard/settings/integrations" className={buttonVariants({ variant: "link", size: "sm" })}>
+					<Link to="/dashboard/settings/ai" className={buttonVariants({ variant: "link", size: "sm" })}>
 						<Trans>Open AI settings</Trans>
 					</Link>
 				</p>

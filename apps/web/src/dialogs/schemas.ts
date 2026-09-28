@@ -4,7 +4,7 @@ import type { NewDocumentDialogData } from "@/features/documents/new-document-di
 type EmptyDialog<T extends string> = { [K in T]: { type: K; data?: undefined } }[T];
 
 export type DialogSchema =
-	| EmptyDialog<"auth.change-password" | "auth.two-factor.enable" | "auth.two-factor.disable" | "api-key.create">
+	| EmptyDialog<"auth.change-password" | "auth.two-factor.enable" | "auth.two-factor.disable">
 	| {
 			type: "document.new";
 			data?: NewDocumentDialogData | undefined;

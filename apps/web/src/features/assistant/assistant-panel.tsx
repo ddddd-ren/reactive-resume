@@ -148,7 +148,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 								</DropdownMenuItem>
 							))}
 							<DropdownMenuSeparator />
-							<DropdownMenuItem onClick={() => void navigate({ to: "/dashboard/settings/integrations" })}>
+							<DropdownMenuItem onClick={() => void navigate({ to: "/dashboard/settings/ai" })}>
 								<Trans>Connect another…</Trans>
 							</DropdownMenuItem>
 						</DropdownMenuContent>

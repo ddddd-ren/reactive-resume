@@ -1,14 +1,5 @@
 import type { AuthProvider } from "@reactive-resume/auth/types";
-import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
-import {
-	FingerprintIcon,
-	GithubLogoIcon,
-	GoogleLogoIcon,
-	LinkedinLogoIcon,
-	PasswordIcon,
-	VaultIcon,
-} from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { match } from "ts-pattern";
@@ -62,20 +53,6 @@ export function getProviderName(providerId: AuthProvider): string {
 }
 
 /**
- * Get the icon component for a social provider
- */
-export function getProviderIcon(providerId: AuthProvider): ReactNode {
-	return match(providerId)
-		.with("credential", () => <PasswordIcon />)
-		.with("passkey", () => <FingerprintIcon />)
-		.with("google", () => <GoogleLogoIcon />)
-		.with("github", () => <GithubLogoIcon />)
-		.with("linkedin", () => <LinkedinLogoIcon />)
-		.with("custom", () => <VaultIcon />)
-		.exhaustive();
-}
-
-/**
  * Hook to fetch and manage authentication accounts
  */
 export function useAuthAccounts() {
@@ -110,7 +87,7 @@ export function useAuthProviderActions() {
 		const providerName = getProviderName(provider);
 		const toastId = toast.add({ type: "loading", description: t`Linking your ${providerName} account...` });
 
-		const { error } = await authClient.linkSocial({ provider, callbackURL: "/dashboard/settings/authentication" });
+		const { error } = await authClient.linkSocial({ provider, callbackURL: "/dashboard/settings/account" });
 
 		if (error) {
 			toast.add({
@@ -165,7 +142,7 @@ export function useAuthProviderActions() {
  * Possible values: "credential", "google", "github", "linkedin", "custom"
  */
 export function useEnabledProviders() {
-	const { data: enabledProviders = [] } = useQuery(orpc.auth.providers.list.queryOptions());
+	const { data: enabledProviders = {} } = useQuery(orpc.auth.providers.list.queryOptions());
 
 	return { enabledProviders };
 }

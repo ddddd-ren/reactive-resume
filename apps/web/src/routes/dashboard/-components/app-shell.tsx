@@ -55,7 +55,7 @@ function useNavItems() {
 /** Whether the item is the current page: Documents is exact, the others match their section. */
 function useIsCurrent() {
 	const matchRoute = useMatchRoute();
-	return (to: NavItem["to"]) => Boolean(matchRoute({ to, fuzzy: to !== "/dashboard" }));
+	return (to: NavItem["to"] | "/dashboard/settings") => Boolean(matchRoute({ to, fuzzy: to !== "/dashboard" }));
 }
 
 /**
@@ -325,13 +325,14 @@ function MobileTabs() {
 					<Trans>New</Trans>
 				</span>
 			</button>
-			<UserDropdownMenu>
-				{() => (
-					<button type="button" className="flex min-h-[52px] flex-col items-center justify-center gap-0.5">
-						{tab("account_circle", t`Account`, false)}
-					</button>
-				)}
-			</UserDropdownMenu>
+			{/* The Account tab is the settings root (README §6.9, B). */}
+			<Link
+				to="/dashboard/settings"
+				aria-current={isCurrent("/dashboard/settings") ? "page" : undefined}
+				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5"
+			>
+				{tab("account_circle", t`Account`, isCurrent("/dashboard/settings"))}
+			</Link>
 		</nav>
 	);
 }

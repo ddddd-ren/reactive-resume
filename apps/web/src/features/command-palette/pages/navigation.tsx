@@ -5,14 +5,11 @@ import {
 	GearIcon,
 	HouseSimpleIcon,
 	KeyIcon,
-	OpenAiLogoIcon,
 	PlusIcon,
 	ReadCvLogoIcon,
 	SealCheckIcon,
-	ShieldCheckIcon,
 	TrashIcon,
 	UserCircleIcon,
-	UserGearIcon,
 } from "@phosphor-icons/react";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { CommandItem } from "@reactive-resume/ui/components/command";
@@ -117,16 +114,24 @@ export function NavigationCommandGroup() {
 
 			<BaseCommandGroup page="settings" heading={<Trans>Settings</Trans>}>
 				<CommandItem
-					keywords={[t`Profile`]}
-					value="navigation.settings.profile"
-					onSelect={() => onNavigate("/dashboard/settings/profile")}
+					keywords={[
+						t`Account`,
+						t`Profile`,
+						t`Password`,
+						t`Two-step verification`,
+						t`Passkeys`,
+						t`Export Data`,
+						t`Delete Account`,
+					]}
+					value="navigation.settings.account"
+					onSelect={() => onNavigate("/dashboard/settings/account")}
 				>
 					<UserCircleIcon />
-					<Trans>Profile</Trans>
+					<Trans>Account</Trans>
 				</CommandItem>
 
 				<CommandItem
-					keywords={[t`Preferences`]}
+					keywords={[t`Preferences`, t`Theme`, t`Language`]}
 					value="navigation.settings.preferences"
 					onSelect={() => onNavigate("/dashboard/settings/preferences")}
 				>
@@ -135,39 +140,12 @@ export function NavigationCommandGroup() {
 				</CommandItem>
 
 				<CommandItem
-					keywords={[t`Authentication`]}
-					value="navigation.settings.authentication"
-					onSelect={() => onNavigate("/dashboard/settings/authentication")}
-				>
-					<ShieldCheckIcon />
-					<Trans>Authentication</Trans>
-				</CommandItem>
-
-				<CommandItem
-					keywords={[t`API Keys`]}
-					value="navigation.settings.api-keys"
-					onSelect={() => onNavigate("/dashboard/settings/api-keys")}
+					keywords={[t`AI & developer`, t`AI providers`, t`API Keys`, t`MCP`, t`Integrations`]}
+					value="navigation.settings.ai"
+					onSelect={() => onNavigate("/dashboard/settings/ai")}
 				>
 					<KeyIcon />
-					<Trans>API Keys</Trans>
-				</CommandItem>
-
-				<CommandItem
-					keywords={[t`Integrations`, t`Artificial Intelligence`]}
-					value="navigation.settings.integrations"
-					onSelect={() => onNavigate("/dashboard/settings/integrations")}
-				>
-					<OpenAiLogoIcon />
-					<Trans>Integrations</Trans>
-				</CommandItem>
-
-				<CommandItem
-					keywords={[t`Account`, t`Export Data`, t`Delete Account`]}
-					value="navigation.settings.account"
-					onSelect={() => onNavigate("/dashboard/settings/account")}
-				>
-					<UserGearIcon />
-					<Trans>Account</Trans>
+					<Trans>AI & developer</Trans>
 				</CommandItem>
 			</BaseCommandGroup>
 		</>

@@ -70,6 +70,6 @@ describe("AuthErrorPage", () => {
 		renderPage("access_denied");
 
 		const link = screen.getByRole("link", { name: /back to authentication settings/i });
-		expect(link.getAttribute("href")).toBe("/dashboard/settings/authentication");
+		expect(link.getAttribute("href")).toBe("/dashboard/settings/account");
 	});
 });

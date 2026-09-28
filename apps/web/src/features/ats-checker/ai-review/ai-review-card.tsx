@@ -149,7 +149,7 @@ function NoProviderState() {
 					variant="secondary"
 					nativeButton={false}
 					render={
-						<Link to="/dashboard/settings/integrations">
+						<Link to="/dashboard/settings/ai">
 							<Trans>Open Integrations Settings</Trans>
 							<ArrowRightIcon />
 						</Link>

@@ -66,7 +66,7 @@ export function ProviderSetup() {
 			<p className="text-ink-3 text-xs">
 				<Trans>
 					More providers and options are in{" "}
-					<Link to="/dashboard/settings/integrations" className={buttonVariants({ variant: "link", size: "sm" })}>
+					<Link to="/dashboard/settings/ai" className={buttonVariants({ variant: "link", size: "sm" })}>
 						Settings
 					</Link>
 					. The rest of the app works fully without AI.

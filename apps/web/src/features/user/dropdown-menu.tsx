@@ -73,7 +73,7 @@ export function UserDropdownMenu({ children }: Props) {
 			<DropdownMenuTrigger render={children({ session: session as AuthSession })} />
 
 			<DropdownMenuContent align="start" side="top">
-				<DropdownMenuItem onClick={() => void router.navigate({ to: "/dashboard/settings/profile" })}>
+				<DropdownMenuItem onClick={() => void router.navigate({ to: "/dashboard/settings" })}>
 					<Icon name="settings" />
 					<Trans>Settings</Trans>
 				</DropdownMenuItem>
