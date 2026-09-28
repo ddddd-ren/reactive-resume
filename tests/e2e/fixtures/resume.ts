@@ -21,8 +21,9 @@ export async function createSampleResumeFromDashboard(page: Page, testInfo: Test
 	return resumeName;
 }
 
-// Sections the Design mode hosts; every other section title lives in Write.
-const designSections = new Set(["Template", "Layout", "Typography", "Design", "Page"]);
+// Design groups, each under its own heading, and the exact-value sections inside Design → Advanced.
+const designGroups = new Set(["Template", "Type", "Color", "Page"]);
+const advancedSections = new Set(["Layout", "Typography", "Design", "Custom CSS"]);
 // Sections the Share & export sheet hosts, without headings of their own.
 const shareSections = new Set(["Sharing", "Statistics"]);
 
@@ -34,11 +35,16 @@ export async function openSidebarSection(page: Page, title: string) {
 		return;
 	}
 
-	if (designSections.has(title)) {
+	if (designGroups.has(title) || advancedSections.has(title)) {
 		await page.getByRole("tab", { name: "Design", exact: true }).click();
-		// The visible section heading is exactly the title. Filter to visible because the screen-reader-only
-		// resume mirror in the preview also renders <h2> section headings with the same name.
-		const heading = page.getByRole("heading", { name: title, exact: true }).filter({ visible: true }).first();
+		const panel = page.getByRole("tabpanel", { name: "Design" });
+		if (advancedSections.has(title)) {
+			const advanced = panel.locator("#design-advanced");
+			if ((await advanced.getAttribute("open")) === null) await advanced.locator("summary").click();
+		}
+		// Groups are level 2; the exact-value sections inside Advanced are level 3 (both have a "Page").
+		const level = advancedSections.has(title) ? 3 : 2;
+		const heading = panel.getByRole("heading", { name: title, exact: true, level });
 		await heading.scrollIntoViewIfNeeded();
 		await expect(heading).toBeVisible();
 		return;
