@@ -27,12 +27,12 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { orpc } from "@/libs/orpc/client";
-import { atsFindingItemElementId } from "@/libs/resume/ats";
 import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "@/libs/resume/move-item";
 import { useEditorStore } from "../store";
 import { EntryFields } from "./entries";
 import { useEntry, useEntryWriter } from "./fields";
 import { createEntry, describeEntry, getEntries, getPrimaryField, isDraftEntry } from "./model";
+import { entryElementId } from "./reveal";
 import { useSectionTitle } from "./section-row";
 
 const DRAFT_HINTS: Record<string, MessageDescriptor> = {
@@ -99,7 +99,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 	return (
 		<div
 			ref={sortable.setNodeRef}
-			id={atsFindingItemElementId(entryId)}
+			id={entryElementId(entryId)}
 			data-entry-id={entryId}
 			style={{ transform: CSS.Translate.toString(sortable.transform), transition: sortable.transition }}
 			className={cn(

@@ -16,7 +16,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume } from "@/features/resume/builder/draft";
-import { useOpenIssueCount } from "@/features/resume/editor/use-open-issue-count";
+import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
 import { createExportFile, getDefaultFileName, sanitizeFileName } from "@/features/resume/export/use-resume-export";
 
 type Format = { id: ExportFormat; label: string; extension: string; icon: IconName; description: string };

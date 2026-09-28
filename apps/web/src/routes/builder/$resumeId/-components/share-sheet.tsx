@@ -6,10 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@reactive-resume/ui/co
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "@/features/resume/editor/store";
+import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { DownloadTab } from "@/features/resume/share/download-tab";
 import { HistoryTab } from "@/features/resume/share/history-tab";
 import { LinkTab } from "@/features/resume/share/link-tab";
-import { useEditorMode } from "./use-editor-mode";
 
 /**
  * Share & export: one sheet with Link, Download and History. Share opens Link, the ▾ beside Download PDF

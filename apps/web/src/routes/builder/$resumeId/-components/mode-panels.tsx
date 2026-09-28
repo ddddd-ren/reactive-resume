@@ -1,19 +1,10 @@
 import type { EditorMode } from "@/features/resume/editor/store";
+import { CheckPanel } from "@/features/resume/editor/check/check-panel";
 import { OfflineBanner } from "@/features/resume/editor/save-status";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { selectionFromPanelElement } from "@/features/resume/editor/write/reveal";
 import { WritePanel } from "@/features/resume/editor/write/write-panel";
-import { AtsCheckSectionBuilder } from "../-sidebar/right/sections/ats-check";
 import { DesignPanel } from "./design-panel";
-
-// Until Check mode is rebuilt (M7), it hosts the existing ATS check.
-function CheckPanel() {
-	return (
-		<div className="@container p-4">
-			<AtsCheckSectionBuilder />
-		</div>
-	);
-}
 
 function WriteMode() {
 	const select = useEditorStore((state) => state.select);

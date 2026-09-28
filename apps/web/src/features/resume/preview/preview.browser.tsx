@@ -182,9 +182,11 @@ export function ResumePreviewClient({
 	const activeLayer = getActivePreviewLayer(previewLayers);
 	const activePageCount = activeLayer?.numPages ?? 0;
 	const activePageMap = activeLayer?.pageMap;
+	const activeFile = activeLayer?.file;
 	useEffect(() => {
-		if (activePageCount > 0) onRender?.({ pageCount: activePageCount, pageMap: activePageMap });
-	}, [activePageCount, activePageMap, onRender]);
+		if (activePageCount > 0 && activeFile)
+			onRender?.({ pageCount: activePageCount, pageMap: activePageMap, file: activeFile });
+	}, [activePageCount, activePageMap, activeFile, onRender]);
 
 	if (!resumeData) return null;
 

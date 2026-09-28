@@ -24,6 +24,8 @@ export type Resume = {
 	hasPassword?: boolean;
 	isPublic?: boolean;
 	showDownloadButtons?: boolean;
+	/** The job application this resume was made for; Check's Job match reads its posting. */
+	applicationId?: string | null;
 };
 
 // Mirrors the server-side ResumeUpdatedEvent discriminator (packages/api resume/events.ts).

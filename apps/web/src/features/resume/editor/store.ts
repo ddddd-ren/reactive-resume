@@ -1,5 +1,6 @@
 import type { PageMap, PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { Template } from "@reactive-resume/schema/templates";
+import type { Proposal } from "./proposals/proposals";
 import { create } from "zustand/react";
 
 export const EDITOR_MODES = ["write", "design", "check"] as const;
@@ -7,6 +8,23 @@ export type EditorMode = (typeof EDITOR_MODES)[number];
 
 /** The Share & export sheet's tabs; each entry point opens its own. */
 export type ShareTab = "link" | "download" | "history";
+
+export type CheckTab = "issues" | "match" | "writing";
+
+/** Phones show one view at a time: the page, or one mode's panel. */
+export type MobileView = "page" | EditorMode;
+
+/** A writing note that isn't a rewrite: where it is, how much it matters, the words and what to consider. */
+export type WritingNote = {
+	location: string;
+	impact: "high" | "medium" | "low";
+	quote: string;
+	note: string;
+	target: PageMapTarget | null;
+};
+
+/** Check → Writing: the model's review. Its rewrites are the proposals. */
+type WritingReview = { summary: string; strengths: readonly string[]; notes: readonly WritingNote[] };
 
 /** What's selected in the editor: shared by the panel and the page, so each can outline the other. */
 export type EditorSelection = PageMapTarget;
@@ -40,8 +58,25 @@ type EditorStore = {
 	basicsOpen: boolean;
 	/** Design: a template shown on the page while its thumbnail is hovered or focused, not yet applied. */
 	previewTemplate: Template | null;
-	/** The render on screen: physical pages and the page map. `version` counts renders, so Fit can wait for one. */
-	rendered: { pageCount: number; pageMap: PageMap | undefined; version: number };
+	/**
+	 * The render on screen: physical pages, the page map and the PDF (which Check's parser view reads). `version`
+	 * counts renders, so Fit can wait for one.
+	 */
+	rendered: { pageCount: number; pageMap: PageMap | undefined; file: Blob | undefined; version: number };
+	/** Phones: the view on screen; null until one is picked, which shows the current mode. */
+	mobileView: MobileView | null;
+	checkTab: CheckTab;
+	/** Check: the issue picked on its card or pin (its key). Both are outlined. */
+	checkIssue: string | null;
+	/** Check: the page as a person sees it, or the text a parser reads from it. */
+	pageView: "page" | "parser";
+	/** Check → Job match: a term whose entries are tinted on the page. */
+	highlightTerm: string | null;
+	/** Check → Job match: a posting pasted for this visit, for a resume with no application linked. */
+	pastedPosting: string;
+	/** Edits suggested for the page (Check → Writing), shown on it until accepted or rejected. */
+	proposals: readonly Proposal[];
+	writingReview: WritingReview | null;
 	select: (selection: EditorSelection | null) => void;
 	setZoom: (zoom: number | "fit") => void;
 	setDrawerOpen: (open: boolean) => void;
@@ -55,7 +90,16 @@ type EditorStore = {
 	setFocusEntry: (entryId: string | null) => void;
 	setBasicsOpen: (open: boolean) => void;
 	setPreviewTemplate: (template: Template | null) => void;
-	setRendered: (render: { pageCount: number; pageMap: PageMap | undefined }) => void;
+	setRendered: (render: { pageCount: number; pageMap: PageMap | undefined; file: Blob }) => void;
+	setMobileView: (view: MobileView) => void;
+	setCheckTab: (tab: CheckTab) => void;
+	setCheckIssue: (key: string | null) => void;
+	setPageView: (view: "page" | "parser") => void;
+	setHighlightTerm: (term: string | null) => void;
+	setPastedPosting: (posting: string) => void;
+	setProposals: (proposals: readonly Proposal[]) => void;
+	setProposalStatus: (ids: readonly string[], status: Proposal["status"]) => void;
+	setWritingReview: (review: WritingReview | null) => void;
 	reset: () => void;
 };
 
@@ -84,7 +128,15 @@ const initialState = {
 	focusEntryId: null,
 	basicsOpen: true,
 	previewTemplate: null,
-	rendered: { pageCount: 0, pageMap: undefined, version: 0 },
+	rendered: { pageCount: 0, pageMap: undefined, file: undefined, version: 0 },
+	mobileView: null,
+	checkTab: "issues",
+	checkIssue: null,
+	pageView: "page",
+	highlightTerm: null,
+	pastedPosting: "",
+	proposals: [],
+	writingReview: null,
 } as const;
 
 export const useEditorStore = create<EditorStore>()((set) => ({
@@ -112,5 +164,17 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 	setBasicsOpen: (basicsOpen) => set({ basicsOpen }),
 	setPreviewTemplate: (previewTemplate) => set({ previewTemplate }),
 	setRendered: (render) => set((state) => ({ rendered: { ...render, version: state.rendered.version + 1 } })),
+	setMobileView: (mobileView) => set({ mobileView }),
+	setCheckTab: (checkTab) => set({ checkTab }),
+	setCheckIssue: (checkIssue) => set({ checkIssue }),
+	setPageView: (pageView) => set({ pageView }),
+	setHighlightTerm: (highlightTerm) => set({ highlightTerm }),
+	setPastedPosting: (pastedPosting) => set({ pastedPosting }),
+	setProposals: (proposals) => set({ proposals }),
+	setProposalStatus: (ids, status) =>
+		set((state) => ({
+			proposals: state.proposals.map((proposal) => (ids.includes(proposal.id) ? { ...proposal, status } : proposal)),
+		})),
+	setWritingReview: (writingReview) => set({ writingReview }),
 	reset: () => set(initialState),
 }));

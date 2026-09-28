@@ -1,13 +1,15 @@
 import type { EditorSelection } from "../store";
-import { atsFindingItemElementId } from "@/libs/resume/ats";
 import { useEditorStore } from "../store";
+
+/** The id of an entry's card in the Write panel, which the page and Check scroll to. */
+export const entryElementId = (entryId: string) => `resume-item-${entryId}`;
 
 /** Smooth scrolling unless the user asked for reduced motion. */
 export const getScrollBehavior = (): ScrollBehavior =>
 	window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
 
 const SECTION_ANCHOR = "sidebar-";
-const ITEM_ANCHOR = atsFindingItemElementId("");
+const ITEM_ANCHOR = entryElementId("");
 
 /**
  * The block an element in the Write panel edits, read from the section and entry anchors around it, so focusing
@@ -39,7 +41,7 @@ export function revealSelectionInPanel(selection: EditorSelection) {
 		const section = document.getElementById(
 			selection.kind === "header" ? "sidebar-basics" : `sidebar-${selection.sectionId}`,
 		);
-		const entry = selection.kind === "item" ? document.getElementById(atsFindingItemElementId(selection.itemId)) : null;
+		const entry = selection.kind === "item" ? document.getElementById(entryElementId(selection.itemId)) : null;
 		(entry ?? section)?.scrollIntoView({ block: "start", behavior: getScrollBehavior() });
 	});
 }

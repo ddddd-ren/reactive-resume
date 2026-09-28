@@ -18,7 +18,8 @@ export type ResumePreviewProps = {
 	/** Drawn over each page, in page-relative coordinates; receives the page map of the render on screen. */
 	renderPageOverlay?: (page: { pageIndex: number; pageMap: PageMap | undefined }) => ReactNode;
 	/** Called whenever the render on screen changes, with its physical page count and page map. */
-	onRender?: (render: { pageCount: number; pageMap: PageMap | undefined }) => void;
+	/** Each render on screen: its page count, page map and the PDF itself. */
+	onRender?: (render: { pageCount: number; pageMap: PageMap | undefined; file: Blob }) => void;
 };
 
 export type ResolvedResumePreviewProps = ResumePreviewProps & {

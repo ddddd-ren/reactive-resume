@@ -1,22 +1,23 @@
 import type { IconName } from "@reactive-resume/ui/components/icon";
-import type { EditorMode } from "@/features/resume/editor/store";
+import type { EditorMode, MobileView } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Outlet } from "@tanstack/react-router";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
+import { IssueStepper } from "@/features/resume/editor/check/page-layer";
 import { useEditorStore } from "@/features/resume/editor/store";
+import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
 import { DesignSheet } from "./design-panel";
 import { EditorBar } from "./editor-bar";
 import { ModePanel } from "./mode-panels";
 import { ShareSheet } from "./share-sheet";
 import { useEditorHotkeys } from "./use-editor-hotkeys";
-import { useEditorMode } from "./use-editor-mode";
 
 const LANDSCAPE_QUERY = "(orientation: landscape)";
 
@@ -123,8 +124,6 @@ function TabletBody({ mode }: { mode: EditorMode }) {
 	);
 }
 
-type MobileView = "page" | EditorMode;
-
 type MobileBodyProps = {
 	mode: EditorMode;
 	onModeChange: (mode: EditorMode) => void;
@@ -138,7 +137,8 @@ const MOBILE_TABS: { view: MobileView; icon: IconName }[] = [
 ];
 
 function MobileBody({ mode, onModeChange }: MobileBodyProps) {
-	const [view, setView] = useState<MobileView>(mode);
+	const view = useEditorStore((state) => state.mobileView) ?? mode;
+	const setView = useEditorStore((state) => state.setMobileView);
 	const setPreviewPaused = usePreviewPausedStore((state) => state.setPaused);
 	const labels: Record<MobileView, string> = { write: t`Write`, page: t`Page`, design: t`Design`, check: t`Check` };
 
@@ -156,7 +156,8 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 				<main id="main-content" className={cn("h-full", !pageVisible && "invisible")}>
 					<Outlet />
 				</main>
-				{view === "page" && (
+				{view === "page" && mode === "check" && <IssueStepper />}
+				{view === "page" && mode !== "check" && (
 					<SelectionBar
 						onEdit={() => {
 							setView("write");

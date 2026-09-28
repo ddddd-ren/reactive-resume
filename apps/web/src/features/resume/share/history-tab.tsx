@@ -66,7 +66,10 @@ export function HistoryTab() {
 			await savePendingChanges(resume.id);
 			const restored = await restoreVersion.mutateAsync({ resumeId: resume.id, versionId: version.id });
 			useResumeStore.getState().replaceResumeFromServer(restored as Resume);
-			queryClient.setQueryData(orpc.resume.getById.queryKey({ input: { id: resume.id } }), restored);
+			queryClient.setQueryData(orpc.resume.getById.queryKey({ input: { id: resume.id } }), {
+				...restored,
+				applicationId: resume.applicationId ?? null,
+			});
 			setVersion(null);
 			void queryClient.invalidateQueries({ queryKey: listKey });
 			toast.add({

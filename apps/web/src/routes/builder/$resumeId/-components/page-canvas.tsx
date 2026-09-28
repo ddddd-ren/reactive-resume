@@ -10,14 +10,17 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
 import { useCurrentBuilderResumeSelector, useResumeData } from "@/features/resume/builder/draft";
+import { CheckPageLayer, PageViewToggle } from "@/features/resume/editor/check/page-layer";
+import { ParserView } from "@/features/resume/editor/check/parser-view";
 import { measureOverflow, runFit } from "@/features/resume/editor/design/fit";
 import { PageOverlay } from "@/features/resume/editor/page-overlay";
+import { markProposals } from "@/features/resume/editor/proposals/proposals";
 import { useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "@/features/resume/editor/store";
+import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
 import { ResumePreview } from "@/features/resume/preview/preview";
 import { formatVersionTime, getVersionTitle } from "@/features/resume/share/format";
 import { orpc } from "@/libs/orpc/client";
-import { useEditorMode } from "./use-editor-mode";
 
 // Page widths in PDF points; 1pt renders as 1 CSS px at 100%.
 const PAGE_WIDTH = { a4: 595.28, letter: 612, "free-form": 595.28 } as const;
@@ -51,6 +54,9 @@ export function PageCanvas() {
 	const setDrawerOpen = useEditorStore((state) => state.setDrawerOpen);
 	const previewTemplate = useEditorStore((state) => state.previewTemplate);
 	const historyVersionId = useEditorStore((state) => state.historyVersionId);
+	const pageView = useEditorStore((state) => state.pageView);
+	const checkTab = useEditorStore((state) => state.checkTab);
+	const proposals = useEditorStore((state) => state.proposals);
 	const sheetOpen = useEditorStore((state) => state.shareTab !== null);
 	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const { i18n } = useLingui();
@@ -73,6 +79,10 @@ export function PageCanvas() {
 	});
 	const viewing = historyVersionId !== null && version?.id === historyVersionId ? version : null;
 
+	// Check → Writing: proposed edits show on the page, the old text struck through and the new highlighted.
+	const markEdits = mode === "check" && checkTab === "writing" && pageView === "page" && proposals.length > 0;
+	const parser = mode === "check" && pageView === "parser" && !viewing;
+
 	// Design: a hovered or focused template is drawn on the page until it's applied or the pointer leaves.
 	const previewData = useMemo(
 		() =>
@@ -80,8 +90,10 @@ export function PageCanvas() {
 				? viewing.data
 				: data && previewTemplate
 					? { ...data, metadata: { ...data.metadata, template: previewTemplate } }
-					: undefined,
-		[data, previewTemplate, viewing],
+					: data && markEdits
+						? markProposals(data, proposals)
+						: undefined,
+		[data, previewTemplate, viewing, markEdits, proposals],
 	);
 	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, rendered) : null;
 	// Desktop: the page moves 120px aside so it stays visible beside the Share & export sheet.
@@ -106,7 +118,12 @@ export function PageCanvas() {
 					if (breakpoint === "tablet") setDrawerOpen(false);
 					if (isPhone) select(null);
 				}}
-				className={cn("absolute inset-0 overflow-auto pt-7 pb-24", isPhone ? "px-4" : "px-10")}
+				className={cn(
+					"absolute inset-0 overflow-auto pb-24",
+					// Check keeps room above the page for the page-view toggle.
+					mode === "check" && !viewing ? "pt-[68px]" : "pt-7",
+					isPhone ? "px-4" : "px-10",
+				)}
 			>
 				<ResumePreview
 					data={previewData}
@@ -116,6 +133,7 @@ export function PageCanvas() {
 					className={cn(
 						"mx-auto w-fit transition-transform duration-emphasized ease-enter",
 						shifted && "-translate-x-[120px] rtl:translate-x-[120px]",
+						parser && "hidden",
 					)}
 					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-ink outline-offset-4")}
 					onRender={setRendered}
@@ -143,7 +161,11 @@ export function PageCanvas() {
 									</span>
 								) : (
 									<>
-										<Trans>Page 1 · {formatLabel} · click any line to edit it</Trans>
+										{mode === "check" ? (
+											<Trans>Page 1 · {formatLabel}</Trans>
+										) : (
+											<Trans>Page 1 · {formatLabel} · click any line to edit it</Trans>
+										)}
 										{overflow && <OverflowChip {...overflow} />}
 									</>
 								)}
@@ -163,12 +185,18 @@ export function PageCanvas() {
 					}
 					renderPageOverlay={({ pageIndex, pageMap }) =>
 						// A version from History is read-only: its lines don't open entries.
-						viewing ? null : <PageOverlay pageIndex={pageIndex} pageMap={pageMap} onSelect={onSelect} />
+						viewing ? null : mode === "check" ? (
+							<CheckPageLayer pageIndex={pageIndex} pageMap={pageMap} />
+						) : (
+							<PageOverlay pageIndex={pageIndex} pageMap={pageMap} onSelect={onSelect} />
+						)
 					}
 				/>
+				{parser && <ParserView />}
 			</div>
 
-			<ZoomBar fitScale={fitScale} pageCount={Math.max(1, rendered.pageCount)} />
+			{mode === "check" && !viewing && <PageViewToggle />}
+			{!parser && <ZoomBar fitScale={fitScale} pageCount={Math.max(1, rendered.pageCount)} />}
 		</div>
 	);
 }
