@@ -3,12 +3,14 @@ import type { Template } from "@reactive-resume/schema/templates";
 import type { Locale } from "@reactive-resume/utils/locale";
 import type { ComponentType } from "react";
 import type { ResumeRenderOptions } from "./context";
+import type { PageMap } from "./page-map";
 import type { SectionTitleResolver } from "./section-title";
 import type { ResolvedResumeRuntime } from "./semantic";
 import { useMemo } from "react";
 import { Document } from "#react-pdf-renderer";
 import { RenderProvider } from "./context";
 import { registerFonts, resumeContentContainsCJK, resumeContentScripts } from "./hooks/use-register-fonts";
+import { extractPageMap } from "./page-map";
 import { SemanticRenderProvider } from "./semantic/context";
 import { resolveResumeRuntime, resolveStylesheetMode } from "./semantic/resolve";
 import { getTemplatePage } from "./templates";
@@ -31,6 +33,8 @@ type ResumeDocumentProps = {
 	renderOptions?: ResumeRenderOptions | undefined;
 	resolveSectionTitle?: SectionTitleResolver | undefined;
 	semanticRuntime?: ResolvedResumeRuntime | undefined;
+	/** Receives the rendered page map (header, section and item boxes) after each render. */
+	onPageMap?: ((pageMap: PageMap) => void) | undefined;
 };
 
 const getLayoutPageKey = (page: LayoutPage, pageIndex: number) =>
@@ -42,6 +46,7 @@ export const ResumeDocument = ({
 	renderOptions,
 	resolveSectionTitle,
 	semanticRuntime,
+	onPageMap,
 }: ResumeDocumentProps) => {
 	const TemplatePageComponent = getTemplatePage(template);
 	const creationDate = useMemo(() => new Date(), []);
@@ -67,6 +72,19 @@ export const ResumeDocument = ({
 		[resumeData, semanticRuntime, stylesheetMode, template],
 	);
 	const semanticMode = semanticRuntime ? "semantic" : stylesheetMode;
+	// React PDF calls `onRender` inside its stream handler, so a throw here would fail the render.
+	const pageMapProps = onPageMap
+		? {
+				onRender: (params: unknown) => {
+					try {
+						const layout = (params as { _INTERNAL__LAYOUT__DATA_?: unknown } | undefined)?._INTERNAL__LAYOUT__DATA_;
+						onPageMap(extractPageMap(layout));
+					} catch {
+						// The page map is an editor aid; a PDF must never fail because of it.
+					}
+				},
+			}
+		: {};
 
 	return (
 		<SemanticRenderProvider
@@ -85,6 +103,7 @@ export const ResumeDocument = ({
 					creator={resumeData.basics.name}
 					subject={resumeData.basics.headline}
 					language={resumeData.metadata.page.locale}
+					{...pageMapProps}
 				>
 					{resumeData.metadata.layout.pages.map((page, index) => (
 						<TemplatePageComponent

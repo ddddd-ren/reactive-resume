@@ -36,7 +36,7 @@ describe("SectionShell", () => {
 		expect(source).toContain(
 			"const resolvedSectionStyle = composeStyles(sectionStyle, sectionRuleStyle, resolved.style)",
 		);
-		expect(source).toContain("<View style={resolvedSectionStyle} {...flowProps}>");
+		expect(source).toContain("<View style={resolvedSectionStyle} {...flowProps} data-resume-node={sectionNodeKey}>");
 		expect(source).toContain("<Heading style={composeStyles(sectionHeadingStyle, sectionHeadingRuleStyle)}>");
 	});
 

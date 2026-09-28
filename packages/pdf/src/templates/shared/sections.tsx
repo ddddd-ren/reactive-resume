@@ -347,7 +347,7 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 		// No icon: render heading exactly as before (no structural change)
 		return (
 			<SemanticNodeKeyProvider nodeKey={sectionNodeKey}>
-				<View style={resolvedSectionStyle} {...flowProps}>
+				<View style={resolvedSectionStyle} {...flowProps} data-resume-node={sectionNodeKey}>
 					{showHeading && sectionHeadingEnabled && (
 						<Heading style={composeStyles(sectionHeadingStyle, sectionHeadingRuleStyle)}>{sectionTitle}</Heading>
 					)}
@@ -360,7 +360,7 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 	// With icon: wrap in a flex row container that inherits the heading's border/decoration
 	return (
 		<SemanticNodeKeyProvider nodeKey={sectionNodeKey}>
-			<View style={resolvedSectionStyle} {...flowProps}>
+			<View style={resolvedSectionStyle} {...flowProps} data-resume-node={sectionNodeKey}>
 				{showHeading && sectionHeadingEnabled && sectionHeadingVisible && (
 					<View
 						{...resolvedPdfFlowProps(sectionHeadingResolved)}

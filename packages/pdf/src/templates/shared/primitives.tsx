@@ -119,6 +119,7 @@ export const Div = ({
 	return (
 		<View
 			{...props}
+			data-resume-node={resolvedNodeKey}
 			{...resolvedPdfFlowProps(resolved)}
 			style={composeStyles(divStyle, style as Style | Style[] | undefined, resolved.style)}
 		/>
@@ -341,6 +342,7 @@ export const SemanticHeaderView = ({ style, ...props }: ComponentProps<typeof Vi
 		<SemanticNodeKeyProvider nodeKey={nodeKey}>
 			<View
 				{...props}
+				data-resume-node={nodeKey}
 				{...resolvedPdfFlowProps(regionResolved)}
 				{...resolvedPdfFlowProps(resolved)}
 				style={composeStyles(asStyleInput(style), regionResolved.style, resolved.style)}
