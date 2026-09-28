@@ -1151,6 +1151,7 @@ What changed:
   - Accept, Reject, Accept all (one undo step), A/R on the focused edit, and ↑/↓ between edits. After an undo they show as pending again. Out-of-date ones offer Suggest again.
 - **Parser view:** "What a person sees / What a parser reads" floats over the canvas and switches instantly. The parser view reads the PDF on the page as a parser does: the text layer and column count, the fields it finds (name, email, phone, location, links, sections, dates), then the text in reading order under the headings it recognises. Lines and fields behind open issues are flagged.
 - **Phones and tablets:** on phones, Show on page switches to the page with an "Issue n of m" bar (‹ ›) and the fix below (B2), and card buttons are touch size. On tablets the pins stay on the page, and tapping one opens the drawer on its card.
+- **DOCX (deferred from M4):** pages print as they do in the PDF. One-column templates print their sidebar sections after the main ones instead of in a two-column table, and full-width pages print no sidebar.
 - **Removed:** the builder's ATS section and deep-check UI, and the old finding messages and jump targets.
 
 Differences from the plan, with reasons:
@@ -1170,14 +1171,15 @@ Differences from the plan, with reasons:
 
 Verification:
 
-- Typecheck is clean for web, api, resume, schema, mcp and ai.
-- Tests pass: resume 1321, schema 236, api 480, web 888, mcp 67, ai 40, pdf 1056. New tests cover:
+- Typecheck is clean for web, api, resume, schema, mcp, ai and docx.
+- Tests pass: resume 1321, schema 236, api 480, web 888, mcp 67, ai 40, pdf 1056, docx 80. New tests cover:
   - categories, scoring, keys, ignores and the two-column rule;
   - issue numbering, targets and each one-step fix;
   - passages, proposals (apply, out of date, undone, marks) and review mapping;
   - the proposal list (A/R and arrow keys, Accept all as one undo step, out of date);
   - the review's passages and one-pass prompt;
-  - Check state redaction.
+  - Check state redaction;
+  - how DOCX lays out each kind of page.
 - knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
 - E2E: added `check-mode`, which covers:
   - the pin, a fix with undo, and Ignore kept across a reload, then Show them again;
