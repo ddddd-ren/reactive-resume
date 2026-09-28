@@ -883,3 +883,8 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `metadata.stylesheet.source` | `object` | yes | — | — |
 | `metadata.stylesheet.source.languageVersion` | `integer` | yes | exclusiveMinimum: 0; maximum: 9007199254740991 | — |
 | `metadata.stylesheet.source.text` | `string` | yes | — | — |
+| `metadata.check` | `object` | no | — | The author's Check choices for this resume. Not printed; missing until a choice is made. |
+| `metadata.check.ignored` | `array` | yes | default: [] | Check issues the author chose to ignore, by issue key (the rule code and where it applies). |
+| `metadata.check.ignored[]` | `string` | — | — | — |
+| `metadata.check.hiddenTerms` | `array` | yes | default: [] | Job-posting terms the author hid from Job match as not true for them. |
+| `metadata.check.hiddenTerms[]` | `string` | — | — | — |

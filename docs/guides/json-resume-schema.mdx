@@ -4752,6 +4752,32 @@ The full JSON Schema for Reactive Resume follows. You can also fetch the latest 
 						"source"
 					],
 					"additionalProperties": false
+				},
+				"check": {
+					"description": "The author's Check choices for this resume. Not printed; missing until a choice is made.",
+					"type": "object",
+					"properties": {
+						"ignored": {
+							"default": [],
+							"description": "Check issues the author chose to ignore, by issue key (the rule code and where it applies).",
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"hiddenTerms": {
+							"default": [],
+							"description": "Job-posting terms the author hid from Job match as not true for them.",
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": [
+						"ignored",
+						"hiddenTerms"
+					]
 				}
 			},
 			"required": [
