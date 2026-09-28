@@ -1,4 +1,4 @@
-import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { LayoutPage, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import {
 	BorderStyle,
@@ -14,6 +14,7 @@ import {
 	TextRun,
 	WidthType,
 } from "docx";
+import { templateLayouts } from "@reactive-resume/schema/templates";
 import { parseColorString } from "@reactive-resume/utils/color";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { shouldShowResumeHeader } from "./cover-letter";
@@ -85,6 +86,20 @@ export const TEMPLATE_CONFIGS: Record<Template, TemplateConfig> = {
 	rhyhorn: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
 	scizor: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
 };
+
+type PagePlan = { kind: "single"; sections: string[] } | { kind: "split" };
+
+/**
+ * How a layout page prints, as in the PDF: a full-width page prints no sidebar, a one-column template prints its
+ * sidebar sections after the main ones, and only a two-column template with sidebar sections splits the page.
+ */
+export function planPageColumns(page: LayoutPage, template: Template): PagePlan {
+	const sidebar = page.fullWidth ? [] : page.sidebar;
+	if (templateLayouts[template].columns === 1 || sidebar.length === 0) {
+		return { kind: "single", sections: [...page.main, ...sidebar] };
+	}
+	return { kind: "split" };
+}
 
 /**
  * Blends a hex color toward white at the given opacity (0-1).
@@ -401,11 +416,11 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 
 	// Process each page in the layout
 	for (const layoutPage of data.metadata.layout.pages) {
-		const isFullWidth = layoutPage.fullWidth || layoutPage.sidebar.length === 0;
+		const plan = planPageColumns(layoutPage, data.metadata.template);
 
-		if (isFullWidth) {
+		if (plan.kind === "single") {
 			setRenderConfig(mainConfig);
-			for (const sectionId of [...layoutPage.main, ...layoutPage.sidebar]) {
+			for (const sectionId of plan.sections) {
 				documentChildren.push(...renderSection(sectionId, data, colorHex, resolveTitle));
 			}
 		} else {
