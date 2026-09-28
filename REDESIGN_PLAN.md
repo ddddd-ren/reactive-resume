@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 and M1 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0, M1 and M2 are done; see §11 and §12.
 
 Inputs:
 
@@ -892,3 +892,34 @@ Differences from the plan, with reasons:
 
 Verification: typecheck for ui, web, pdf, schema and tooling; tests for ui (361), web (963), schema (132) and tooling (109); `turbo boundaries`, knip, Biome and markdownlint clean. Checked in the browser against an isolated database: sign-up, dashboard, the create dialog and its menu, the builder with a sample resume (preview renders), toasts and the command bar, in light and dark.
 
+### M2 · Editor shell (done 28 Sep 2026)
+
+What changed:
+
+- **Shell:** `/builder/$resumeId` is one editor: a 56px bar over the panel and the page canvas. The mode lives in `?mode=` (Write is the default) and switches at once; the URL follows in the background, because every navigation first refetches the session and flags. Tablets get a 380px drawer that tapping the page closes and tapping a line opens on that entry; in landscape it can be pinned beside the page. Phones get the Write · Page · Design · Check tabs, and the page pauses rendering while hidden.
+- **Editor bar:** back link, the document name (opens the document menu) with the save status under it, the mode switch with the Check badge (open-issue count or a check), then Undo, Version history, Assistant, Share (with the live dot) and the Download PDF split button, whose ▾ opens every format. Tablets and phones collapse Share and Download to icons.
+- **Document menu:** Rename, Duplicate, Lock/Unlock (no confirmation, since it's reversible), Notes, Information, Print and Delete.
+- **Save status:** Saving…, Saved, "Offline · saved on this device" and "Not saved · Retry". Failed saves keep the draft on the device (localStorage, per resume), retry when the connection returns, and restore when the editor opens again. The failure toast is gone; the status line says it. While offline, the panel shows the banner from the prototype, and Share, Download and their shortcuts are disabled.
+- **Undo:** 200 steps held as immer's shared trees instead of deep copies. Typing in one field within a second is one step; structural actions (hide, sort, reorder, add, delete) are steps of their own.
+- **Page canvas:** the sunken desk with the page caption, page shadow and the zoom bar (−, Fit, +, page count; 60–150%, ⌘0 fits). Zoom re-renders the page at the new scale instead of transforming it, so `react-zoom-pan-pinch` is gone.
+- **Page map and selection:** a pointer layer over each page tints blocks on hover. Clicking one selects its entry, outlines it with the "Editing" tag and scrolls the Write panel to it; focusing a field in the panel outlines its block on the page. On phones, tapping a line shows the dark "Edit entry" bar.
+- **Keymap:** 1, 2 and 3 switch modes outside fields; ⌘Z, ⇧⌘Z and Ctrl+Y undo and redo outside fields; ⌘P downloads the PDF; ⌘⇧S opens Share; ⌘⇧E opens Download; ⌘J toggles the assistant; Esc clears the selection.
+- **Hosted panels (no gaps):** Write hosts today's section editors, Design the template, layout, typography, design, page and custom-style sections, and Check the ATS check. The Share & export sheet hosts sharing, statistics and a "More download formats…" button (the only path to other formats on phones).
+- **Icons** draw their glyph from `data-icon` in a pseudo-element, so icon names no longer leak into copied text, find-in-page or text queries.
+- **Removed:** the resizable-panel shells, both icon rails, the dock, the header, the mobile shell, the focus-mode sizing helper and the sidebar store.
+
+Differences from the plan, with reasons:
+
+- **Undo labels** for the toast ("Entry deleted · Undo") arrive in M3 with the first toast that uses them.
+- **Key decoding** needs no test of its own: the keymap uses `@tanstack/react-hotkeys` rather than a custom decoder. The mode hook and the hand-off between a picked mode and the URL are tested instead.
+- **Motion (JS) mirrors** of the durations are still unneeded: every M2 animation is CSS.
+- **Delete** still deletes permanently after a confirmation; it becomes Move to Trash with undo in M6.
+- **Redo** has no button, as in the spec's bar; ⇧⌘Z and Ctrl+Y redo.
+- **The account menu** left the editor, as the spec's bar has none. ⌘K still switches theme and language from the editor; signing out is on the dashboard.
+- **Phones:** pinch-to-zoom is the browser's own for now, and "Improve" joins "Edit entry" in M10.
+- **Tablet pinning** lasts for the open document rather than being remembered.
+- **Render cost:** re-measuring the preview in the browser (render and paint) moves to the start of M3. The in-app browser throttles hidden pages, so its numbers weren't trustworthy.
+
+Verification: typecheck for web, ui and pdf; tests for web (946) and ui (369); `turbo boundaries`, knip and Biome clean; catalogs extracted. Checked in the browser against the isolated database at 1440, tablet portrait and landscape, and phone widths, in light and dark: modes, page click to panel, panel focus to page, document menu, Download dialog, Share sheet, tablet drawer and pin, the phone "Edit entry" bar, and offline → online replay.
+
+E2E: specs updated for the new editor (`builder-save-navigation`, `section-recovery`, `section-date-sorting`, `preview-direction`, `template-switch`, `json-export-import`, `hyphenation`, `offline-fonts`, `preview-export-geometry`) and the shared helpers (`openSidebarSection` now picks the mode or opens the Share sheet; new `openDownloadDialog`). Run locally against the dev server: save-navigation, section recovery, editing and date sorting, preview direction (all four), template switch, JSON export and import, lock, sharing, password and download preference all pass. Hyphenation passes up to its server-side PDF step, which fails only under the dev server: `tsx watch` compiles `packages/pdf` with its `"jsx": "preserve"` tsconfig into `React.createElement` calls. That's unrelated to this change; the production build used by CI isn't affected. The opt-in geometry spec was adapted to page-scale zoom (Fit, 100%, 70%) but not run.
