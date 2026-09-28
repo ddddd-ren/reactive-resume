@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M8 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M9 are done; see §11 and §12.
 
 **PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
 
@@ -1257,3 +1257,63 @@ Verification:
 - knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
 - E2E: rewrote `applications-tracker` (add from a posting, move, note, close with a reason, Show closed; CSV import with the column match, then a bulk close) and updated `applications-export`.
 - The full suite passes against the dev server except the known dev-only server-PDF steps (35 passed, 7 opt-in diagnostics skipped). `applications-tracker`, `applications-export`, `check-mode`, `documents-new`, `hyphenation` and `public-resume-locale` pass against the production build.
+
+### M9 · Cover letters on the editor shell (done 28 Sep 2026)
+
+What changed:
+
+- **Data (§3.8):**
+  - Letters have a `layout`. New letters are structured: the recipient's name or team, company and date, a greeting from the name ("Dear Dana," or "Dear hiring team,"), the body and a sign-off over the sender's name. Existing letters stay freeform and read exactly as before.
+  - `sender_linked` and `design_linked`: a letter made with a resume takes its sender details and design live from it, resolved when the letter is read. Unlinking keeps them exactly as they read at that moment. Existing letters are unlinked copies, as before.
+  - `cover_letter_version` mirrors resume versions: one per editing session (refreshed every two minutes), named, before-restore, restored and sent, with the same retention. Restoring keeps the current state as "Before restore" first.
+  - `application.sent_cover_letter_version_id`: when an application reaches Applied, its letter is saved as a "Sent to {company}" version alongside the resume.
+- **Letter editor** at `/builder/letter/$coverLetterId`, on the editor shell with Write and Design (no Check):
+  - The bar: back, the name with its menu (Rename, Duplicate, Lock, Move to Trash) and save state, History, Share and Download PDF.
+  - FOR: the application card with Change, or Link an application. Linking fills the recipient from its company and first contact, and makes this the application's letter.
+  - TO: Name or team, Company and Date, with the note. FROM: the resume and "Use details from '{resume}'".
+  - The body, with the greeting above it and the sign-off below. Empty, it offers Draft from the posting or Write it myself.
+  - Length: the word count against the shaded 180–320 band, with the hints. DESIGN: what the letter looks like, with "Change it in Design."
+  - The page shows the letter as it prints. Clicking the sender's header leads to From, and clicking the letter leads to the body.
+- **Draft from the posting:** a streaming endpoint (no Redis) drafts the body from the linked resume and the application's posting, using only their facts.
+  - The draft streams onto a green wash, beside the body, never in it. The dark chip "Draft · uses only your resume and the posting" offers Keep, Shorter, More personal and Discard.
+  - A failure says "Drafting stopped: {provider} didn't respond. Nothing on the page changed." with Try again. Reduced motion shows the whole draft at once.
+- **Design:** "Match '{resume}'" is on by default, with a link to change the resume's design. Turned off, the letter keeps its own design, starting with its template (hover previews it on the page).
+- **Share & export:** Download (PDF, Resume + letter as two PDFs named to match, Word, Markdown, JSON) and History with the same timeline as resumes.
+- **C2:** a linked letter says once, per device, when details it takes from the resume changed ("Your phone number changed on the resume. The letter updated too.").
+- **Resume Download:** "Also download the {company} cover letter" when the resume's application has a letter; it comes in the same format.
+- **Elsewhere:**
+  - Documents opens letters in the editor, and old `/dashboard?letter=` links redirect there.
+  - Applications' Write a letter creates a structured letter and opens it. Open goes to the version that was sent, like resumes.
+  - Copy to Documents offers Open. The copilot's drafted letter opens in the editor.
+  - MCP's letter tools take the structured fields and links.
+- **Removed:** the letter library dialog and editor (`apps/web/src/features/cover-letters`), and "Attach PDF" to an application (replaced by linking, as the spec says).
+
+Differences from the plan, with reasons:
+
+- **The body is edited in the panel (Q10 fallback, as agreed).** The page updates as you type. On phones, Write shows the panel and Page shows the letter, so there's no tune sheet or keyboard toolbar; Improve arrives with the assistant (M10).
+- **The greeting, sign-off and date follow the app's language**, not the letter's page language: they're composed in the browser from the app's catalogs.
+- **Letters have no public link.** Share opens Download and History. The prototype's "letters can have their own link" was a placeholder with no data behind it.
+- **An unlinked letter's Design is its template**, as the old editor offered. Type, color and page presets for letters wait for Forme.
+- **Restoring a letter version keeps its links**, so linked details and design keep coming from the resume.
+- **Links end with the resume:** once the resume is deleted for good, the letter reads from its copies and shows as unlinked.
+- **A new letter from Documents takes the most recently edited resume** for its details and design.
+- **Moving a letter to another application moves it as that application's letter** (from its FOR card or Documents' Link to application). A new letter becomes its application's letter only when the application has none.
+- **Drafting is offered while the body is empty**, as in the prototype, and needs an AI provider (otherwise it links to AI settings). While streaming, Stop cancels it.
+- **Azurill shows no sender header on letters:** its header lives in the sidebar, which a letter's full-width page leaves out. Waits for Forme.
+- **Found and fixed:**
+  - Letters printed without the sender's header, because the semantic tree ignored the header option. This was a one-line fix in `packages/pdf/src/document.tsx`. It also fixes "Include the resume's header" for letters inside resumes.
+  - The letter integration tests had not run cleanly since M5: their setup applied only the first letter migration.
+  - MCP described deleting a letter as permanent; it moves to Trash.
+
+Verification:
+
+- Typecheck is clean across the workspace.
+- Tests pass: api 493 (plus 10 opt-in integration tests, all passing against a disposable database), web 901, resume 1323, pdf 1056, mcp 67, schema 236. New tests cover:
+  - greeting derivation and structured composition, including that freeform letters are unchanged;
+  - sender and design link sync, unlinking, resume deletion, application linking and History (session, named, sent, restore);
+  - the draft prompt, streaming and provider failure;
+  - length hints;
+  - the editor store's autosave, conflict, Keep and Discard.
+- knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
+- E2E: replaced `cover-letter-library` with `cover-letter-editor`. It covers writing a letter for an application (recipient, greeting, body, length, rename), downloading PDF and JSON, opening it from the application and the old link, and naming, restoring and copying into a resume.
+- The full suite passes against the dev server except the known dev-only server-PDF steps. Six specs that timed out under full parallel load pass when rerun. `cover-letter-editor`, `applications-tracker`, `share-history`, `documents-new` and `json-export-import` pass against the production build.
