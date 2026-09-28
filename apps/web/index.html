@@ -7,13 +7,15 @@
 		<meta name="theme-color" content="#100F0C" media="(prefers-color-scheme: dark)" />
 		<!-- Apply the saved or system theme before first paint, so nothing flashes. Mirrors libs/theme.ts. -->
 		<script>
-			(function () {
+			(() => {
 				try {
-					var match = document.cookie.match(/(?:^|; )theme=([^;]*)/);
-					var theme = match ? decodeURIComponent(match[1]) : "system";
-					var dark = theme === "dark" || (theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+					const match = document.cookie.match(/(?:^|; )theme=([^;]*)/);
+					const theme = match ? decodeURIComponent(match[1]) : "system";
+					const dark = theme === "dark" || (theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 					document.documentElement.classList.toggle("dark", dark);
-				} catch (error) {}
+				} catch {
+					// Without cookies or matchMedia the page starts light, and the app corrects it once it loads.
+				}
 			})();
 		</script>
 		<meta name="application-name" content="Reactive Resume" />
@@ -57,7 +59,6 @@
 			.initial-loader__logo-dark, html.dark .initial-loader__logo-light { display: none; }
 			html.dark .initial-loader__logo-dark { display: block; }
 			#app:not(:empty) ~ #initial-loader { display: none; }
-			html.dark .initial-loader__spinner { border-color: rgba(239, 238, 235, 0.2); border-top-color: #efeeeb; }
 			.initial-loader__spinner {
 				width: 24px;
 				height: 24px;
@@ -66,6 +67,7 @@
 				border-radius: 9999px;
 				animation: app-spin 0.7s linear infinite;
 			}
+			html.dark .initial-loader__spinner { border-color: rgba(239, 238, 235, 0.2); border-top-color: #efeeeb; }
 			.initial-loader__sr-only {
 				position: absolute;
 				width: 1px;
