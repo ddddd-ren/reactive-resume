@@ -15,7 +15,7 @@ export const FONT_PAIRINGS = [
 
 export type FontPairingId = (typeof FONT_PAIRINGS)[number]["id"];
 
-export function matchFontPairing(metadata: Metadata): FontPairingId | null {
+export function matchFontPairing(metadata: Pick<Metadata, "typography">): FontPairingId | null {
 	const { heading, body } = metadata.typography;
 	return (
 		FONT_PAIRINGS.find((pairing) => pairing.heading === heading.fontFamily && pairing.body === body.fontFamily)?.id ??

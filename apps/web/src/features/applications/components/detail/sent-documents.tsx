@@ -15,8 +15,6 @@ import { PIPELINE } from "../../stages";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { FileAttachmentField } from "../file-attachment-field";
 
-const escapeHtml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
 /** When the application was sent: its first stage at Applied or beyond. */
 function sentOn(application: Application) {
 	const applied = PIPELINE.indexOf("applied");
@@ -52,17 +50,16 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 	const letter = documents?.find((document) => document.type === "letter" && document.id === application.coverLetterId);
 	const date = sentOn(application).toLocaleDateString(i18n.locale, { month: "short", day: "numeric" });
 
+	// A structured letter: the server fills the recipient from the application and makes it the application's letter.
 	const writeLetter = async () => {
 		try {
 			const created = await createLetter.mutateAsync({
 				name: t`Cover letter — ${application.company}`.slice(0, 100),
-				recipient: `<p>${escapeHtml(t`Hiring team, ${application.company}`)}</p>`,
 				applicationId: application.id,
 				...(application.resumeId ? { resumeId: application.resumeId } : {}),
 			});
-			await update.mutateAsync({ id: application.id, coverLetterId: created.id });
-			toast.add({ description: t`Letter created with the recipient filled in` });
-			void navigate({ to: "/dashboard", search: { letter: created.id } });
+			invalidate(application.id);
+			void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: created.id } });
 		} catch (error) {
 			toast.add({
 				type: "error",
@@ -113,12 +110,17 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 					<div className="grid min-w-0 flex-1">
 						<span className="truncate font-medium text-sm">{letter?.name ?? t`Cover letter`}</span>
 						<span className="text-ink-3 text-xs">
-							<Trans>Cover letter</Trans>
+							{application.sentCoverLetterVersionId ? (
+								<Trans>Version sent {date}</Trans>
+							) : (
+								<Trans>Linked · not sent yet</Trans>
+							)}
 						</span>
 					</div>
 					<Link
-						to="/dashboard"
-						search={{ letter: application.coverLetterId }}
+						to="/builder/letter/$coverLetterId"
+						params={{ coverLetterId: application.coverLetterId }}
+						search={application.sentCoverLetterVersionId ? { version: application.sentCoverLetterVersionId } : {}}
 						className={buttonVariants({ size: "sm", variant: "secondary" })}
 					>
 						<Trans>Open</Trans>

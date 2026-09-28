@@ -8,8 +8,7 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const mocks = vi.hoisted(() => ({ draft: vi.fn(), other: vi.fn() }));
-type MockEditorDialogProps = { letterId: string };
+const mocks = vi.hoisted(() => ({ draft: vi.fn(), other: vi.fn(), navigate: vi.fn() }));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		applications: {
@@ -22,9 +21,12 @@ vi.mock("@/libs/orpc/client", () => ({
 		coverLetters: { list: { key: () => ["cover-letters"] } },
 	},
 }));
-vi.mock("@/features/cover-letters/editor-dialog", () => ({
-	CoverLetterEditorDialog: ({ letterId }: MockEditorDialogProps) => <div role="dialog">Saved letter {letterId}</div>,
-}));
+vi.mock("@tanstack/react-router", () => ({ useNavigate: () => mocks.navigate }));
+
+const opened = (coverLetterId: string) =>
+	waitFor(() =>
+		expect(mocks.navigate).toHaveBeenCalledWith({ to: "/builder/letter/$coverLetterId", params: { coverLetterId } }),
+	);
 
 const { ApplicationAiCopilot } = await import("./application-ai-copilot");
 const application: Application = {
@@ -38,6 +40,7 @@ const application: Application = {
 	closedReason: null,
 	coverLetterId: null,
 	sentResumeVersionId: null,
+	sentCoverLetterVersionId: null,
 	sentCheckScore: null,
 	requirements: [],
 	resumeId: null,
@@ -102,7 +105,7 @@ it.each(["cover-letter", "follow-up"] as const)(
 				kind === "cover-letter" ? { text: "Letter", coverLetterId: "letter-one" } : { text: "Follow-up" },
 			),
 		);
-		if (kind === "cover-letter") expect(await screen.findByRole("dialog")).toHaveTextContent("letter-one");
+		if (kind === "cover-letter") await opened("letter-one");
 		else expect(await screen.findByText("Follow-up")).toBeVisible();
 		expect(coverLetter).toBeEnabled();
 		expect(followUp).toBeEnabled();
@@ -125,6 +128,6 @@ it("prevents duplicate saved letters after an earlier follow-up completed", asyn
 	await userEvent.click(coverLetter);
 	expect(mocks.draft).toHaveBeenCalledTimes(2);
 	await act(async () => request.resolve({ text: "Saved letter", coverLetterId: "letter-two" }));
-	expect(await screen.findByRole("dialog")).toHaveTextContent("letter-two");
+	await opened("letter-two");
 	expect(screen.queryByText("Earlier follow-up")).not.toBeInTheDocument();
 });

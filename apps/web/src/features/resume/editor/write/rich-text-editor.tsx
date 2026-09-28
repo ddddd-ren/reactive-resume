@@ -82,13 +82,26 @@ type RichTextEditorProps = {
 	hint?: ReactNode;
 	disabled?: boolean;
 	className?: string;
+	/** The text area's id, so other controls can focus it. */
+	id?: string;
+	/** Replaces the text area's default height (88px to 360px). */
+	heightClassName?: string;
 };
 
 /**
  * Rich text for descriptions: the toolbar and footer show while the text has focus, the toolbar never
  * takes focus from it, and Markdown shortcuts work ("- " starts a list, "**bold**").
  */
-export function RichTextEditor({ label, value, onChange, hint, disabled = false, className }: RichTextEditorProps) {
+export function RichTextEditor({
+	label,
+	value,
+	onChange,
+	hint,
+	disabled = false,
+	className,
+	id,
+	heightClassName = "max-h-[360px] min-h-[88px]",
+}: RichTextEditorProps) {
 	const [focused, setFocused] = useState(false);
 	const actions = useToolbarActions();
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
@@ -101,12 +114,14 @@ export function RichTextEditor({ label, value, onChange, hint, disabled = false,
 		shouldRerenderOnTransaction: false,
 		editorProps: {
 			attributes: {
+				...(id ? { id } : {}),
 				"aria-label": label,
 				"aria-multiline": "true",
 				role: "textbox",
 				spellcheck: "true",
 				class: cn(
-					"wysiwyg max-h-[360px] min-h-[88px] overflow-y-auto px-3 py-2 text-sm outline-none",
+					"wysiwyg overflow-y-auto px-3 py-2 text-sm outline-none",
+					heightClassName,
 					"[&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
 				),
 			},

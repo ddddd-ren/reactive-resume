@@ -12,7 +12,6 @@ import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/comp
 import { Tabs, TabsCount, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
 import { useDialogStore } from "@/dialogs/store";
-import { CoverLetterEditorDialog } from "@/features/cover-letters/editor-dialog";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
 import { orpc } from "@/libs/orpc/client";
 import { LinkApplicationDialog, TagsDialog } from "./document-actions";
@@ -26,8 +25,6 @@ export type DocumentsSearch = {
 	tags: string[];
 	sort: DocumentSort;
 	view?: "grid" | "list" | undefined;
-	/** A letter open in the letter editor. */
-	letter?: string | undefined;
 };
 
 type DocumentsPageProps = {
@@ -67,7 +64,6 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	};
 	const filtered = search.q.trim() !== "" || search.tags.length > 0;
 	const itemProps = {
-		onOpenLetter: (id: string) => onSearchChange({ letter: id }),
 		onTags: setTagsFor,
 		onLink: setLinkFor,
 	};
@@ -245,9 +241,6 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			<DropToImport />
 			<TagsDialog document={tagsFor} onClose={() => setTagsFor(null)} />
 			<LinkApplicationDialog document={linkFor} onClose={() => setLinkFor(null)} />
-			{search.letter && (
-				<CoverLetterEditorDialog letterId={search.letter} onClose={() => onSearchChange({ letter: undefined })} />
-			)}
 		</div>
 	);
 }

@@ -16,7 +16,7 @@ import { WritePanel } from "./write-panel";
 const routerParams = vi.hoisted(() => ({ resumeId: "write-panel" }));
 const toastState = vi.hoisted(() => ({ add: vi.fn() }));
 
-vi.mock("@tanstack/react-router", () => ({ useParams: () => routerParams }));
+vi.mock("@tanstack/react-router", () => ({ useParams: () => routerParams, useNavigate: () => vi.fn() }));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		resume: {

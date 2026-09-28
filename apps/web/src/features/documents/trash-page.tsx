@@ -65,13 +65,7 @@ export function TrashPage() {
 					</thead>
 					<tbody>
 						{documents?.map((document) => (
-							<DocumentRow
-								key={`${document.type}:${document.id}`}
-								document={document}
-								onOpenLetter={noop}
-								onTags={noop}
-								onLink={noop}
-							/>
+							<DocumentRow key={`${document.type}:${document.id}`} document={document} onTags={noop} onLink={noop} />
 						))}
 					</tbody>
 				</table>

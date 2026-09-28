@@ -1,10 +1,13 @@
 import type { ResumeExportTarget } from "@reactive-resume/resume/export-sections";
 import type { IconName } from "@reactive-resume/ui/components/icon";
+import type { ReactNode } from "react";
+import type { Resume } from "@/features/resume/builder/draft";
 import type { ExportFormat } from "@/features/resume/export/use-resume-export";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { resumeHasCoverLetter } from "@reactive-resume/resume/export-sections";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -14,14 +17,25 @@ import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/comp
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
-import { cn } from "@reactive-resume/utils/style";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { useLetterWords } from "@/features/letters/compose";
+import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useCurrentResume } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
 import { createExportFile, getDefaultFileName, sanitizeFileName } from "@/features/resume/export/use-resume-export";
+import { client } from "@/libs/orpc/client";
 
-type Format = { id: ExportFormat; label: string; extension: string; icon: IconName; description: string };
+export type DownloadFormat<Id extends string = ExportFormat> = {
+	id: Id;
+	label: string;
+	/** ".pdf", or what's made ("2 files"). */
+	extension: string;
+	icon: IconName;
+	description: string;
+	disabled?: boolean;
+};
 
-const getFormats = (): Format[] => [
+export const getExportFormats = (): DownloadFormat[] => [
 	{
 		id: "pdf",
 		label: "PDF",
@@ -52,6 +66,148 @@ const getFormats = (): Format[] => [
 	},
 ];
 
+type FormatRadioGroupProps<Id extends string> = {
+	formats: DownloadFormat<Id>[];
+	value: Id;
+	onChange: (value: Id) => void;
+};
+
+/** Format radio cards: icon, name, extension and when to use it. PDF is marked "Best for applying". */
+export function FormatRadioGroup<Id extends string>({ formats, value, onChange }: FormatRadioGroupProps<Id>) {
+	return (
+		<RadioGroup
+			aria-label={t`Format`}
+			value={value}
+			onValueChange={(next) => onChange(next as Id)}
+			className="grid gap-1.5"
+		>
+			{formats.map((option) => (
+				<Radio.Root
+					key={option.id}
+					value={option.id}
+					disabled={option.disabled}
+					className="group/format flex cursor-pointer items-start gap-3 rounded-[10px] border border-line p-3 text-start transition-colors duration-quick hover:border-line-2 data-disabled:cursor-not-allowed data-checked:border-accent data-checked:bg-accent-soft data-disabled:opacity-45"
+				>
+					<span className="grid size-9 shrink-0 place-items-center rounded-lg bg-sunken text-ink-2">
+						<Icon name={option.icon} size={22} />
+					</span>
+					<span className="grid min-w-0 flex-1 gap-0.5">
+						<span className="flex flex-wrap items-center gap-2">
+							<span className="font-semibold text-sm">{option.label}</span>
+							<span className="font-medium font-mono text-[11px] text-ink-3">{option.extension}</span>
+							{option.id === "pdf" && (
+								<span className="rounded bg-accent-soft px-1.5 font-semibold text-[11px] text-accent-text leading-[18px]">
+									<Trans>Best for applying</Trans>
+								</span>
+							)}
+						</span>
+						<span className="text-[13px] text-ink-2 leading-[18px]">{option.description}</span>
+					</span>
+					<span className="mt-0.5 grid size-[18px] shrink-0 place-items-center rounded-full border-[1.5px] border-line-2 group-data-checked/format:border-accent">
+						<span className="size-2 rounded-full bg-accent opacity-0 group-data-checked/format:opacity-100" />
+					</span>
+				</Radio.Root>
+			))}
+		</RadioGroup>
+	);
+}
+
+type FileNameFieldProps = { value: string; extension: string; hint: ReactNode; onChange: (value: string) => void };
+
+/** The file name recruiters see, with the extension shown after it. Characters file systems reject are dropped. */
+export function FileNameField({ value, extension, hint, onChange }: FileNameFieldProps) {
+	const id = useId();
+
+	return (
+		<div className="grid gap-1.5">
+			<label htmlFor={id} className="font-medium text-ink-2 text-xs">
+				<Trans>File name</Trans>
+			</label>
+			<div className="flex h-[38px] items-center overflow-hidden rounded-lg border border-line-2 bg-raised focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft">
+				<input
+					id={id}
+					value={value}
+					spellCheck={false}
+					aria-describedby={`${id}-hint`}
+					onChange={(event) => onChange(sanitizeFileName(event.target.value))}
+					className="h-full min-w-0 flex-1 bg-transparent ps-2.5 font-medium font-mono text-[13px] text-ink outline-none"
+				/>
+				<span className="px-2.5 font-medium font-mono text-[13px] text-ink-3">{extension}</span>
+			</div>
+			<span id={`${id}-hint`} className="text-ink-3 text-xs">
+				{hint}
+			</span>
+		</div>
+	);
+}
+
+export type DownloadState = "idle" | "busy" | "error";
+
+type DownloadActionsProps = {
+	state: DownloadState;
+	label: string;
+	onDownload: () => void;
+	/** Offered when a file other than a PDF fails. */
+	onDownloadPdf?: (() => void) | undefined;
+};
+
+/** The failure alert (with PDF as the fallback) and the 44px button that shows its progress. */
+export function DownloadActions({ state, label, onDownload, onDownloadPdf }: DownloadActionsProps) {
+	return (
+		<>
+			{state === "error" && (
+				<div
+					role="alert"
+					className="flex flex-wrap items-start gap-2.5 rounded-[10px] bg-danger-soft px-3 py-2.5 text-[13px] text-danger-text leading-[19px]"
+				>
+					<Icon name="error" size={20} />
+					<span className="min-w-0 flex-1">
+						<Trans>The {label} file couldn't be generated. Try again, or download PDF instead.</Trans>
+					</span>
+					{onDownloadPdf && (
+						<Button size="sm" variant="secondary" onClick={onDownloadPdf}>
+							<Trans>Download PDF instead</Trans>
+						</Button>
+					)}
+				</div>
+			)}
+
+			<Button
+				className="h-11 gap-2 text-[15px]"
+				aria-busy={state === "busy"}
+				disabled={state === "busy"}
+				onClick={onDownload}
+			>
+				{state === "busy" ? (
+					<>
+						<Spinner decorative className="size-4" />
+						<Trans>Preparing {label} file…</Trans>
+					</>
+				) : state === "error" ? (
+					<>
+						<Icon name="refresh" />
+						<Trans>Try again</Trans>
+					</>
+				) : (
+					<>
+						<Icon name="download" />
+						<Trans>Download {label}</Trans>
+					</>
+				)}
+			</Button>
+		</>
+	);
+}
+
+/** The letter written for this resume's application, which can be downloaded along with it. */
+function useLinkedLetter(resume: Resume) {
+	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const application = applications?.find(
+		(item) => item.coverLetterId && (item.id === resume.applicationId || item.resumeId === resume.id),
+	);
+	return application?.coverLetterId ? { id: application.coverLetterId, company: application.company } : null;
+}
+
 type DownloadTabProps = {
 	/** Opens Check; the note about open issues links there. */
 	onReview: () => void;
@@ -59,24 +215,31 @@ type DownloadTabProps = {
 
 /**
  * Download: every format explained by when to use it, the file name recruiters see, and a button that shows
- * its progress. Open Check issues are mentioned but never block. A failed file offers PDF instead.
+ * its progress. Open Check issues are mentioned but never block. A failed file offers PDF instead. With a letter
+ * written for the resume's application, that letter can come along as a second file.
  */
 export function DownloadTab({ onReview }: DownloadTabProps) {
 	const resume = useCurrentResume();
 	const issues = useOpenIssueCount();
-	const fileNameId = useId();
+	const words = useLetterWords();
+	const linkedLetter = useLinkedLetter(resume);
+	const headerId = useId();
 	const hasLetter = resumeHasCoverLetter(resume.data);
 	const [target, setTarget] = useState<ResumeExportTarget>("resume");
 	const [format, setFormat] = useState<ExportFormat>("pdf");
 	const [includeHeader, setIncludeHeader] = useState(false);
+	const [withLetter, setWithLetter] = useState(false);
 	const [fileName, setFileName] = useState<string | null>(null);
-	const [state, setState] = useState<"idle" | "busy" | "error">("idle");
+	const [state, setState] = useState<DownloadState>("idle");
 
 	const activeTarget = hasLetter ? target : "resume";
 	// JSON is the whole document's data, so it isn't offered for the letter on its own.
 	const activeFormat = activeTarget === "cover-letter" && format === "json" ? "pdf" : format;
-	const formats = getFormats();
-	const selected = formats.find((option) => option.id === activeFormat) ?? (formats[0] as Format);
+	const formats = getExportFormats().map((option) => ({
+		...option,
+		disabled: option.id === "json" && activeTarget === "cover-letter",
+	}));
+	const selected = formats.find((option) => option.id === activeFormat) ?? (formats[0] as DownloadFormat);
 	const name = fileName ?? getDefaultFileName(resume, activeTarget);
 
 	const download = async (as: ExportFormat) => {
@@ -86,8 +249,14 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 			const blob = await createExportFile(resume, as, activeTarget, { includeCoverLetterHeader: includeHeader });
 			const file = `${sanitizeFileName(name) || getDefaultFileName(resume, activeTarget)}${extension}`;
 			downloadWithAnchor(blob, file);
+			if (withLetter && linkedLetter && activeTarget === "resume") {
+				const letter = await client.coverLetters.getById({ id: linkedLetter.id });
+				downloadWithAnchor(await createLetterFile(letter, words, as), `${letterFileName(letter, words)}${extension}`);
+				toast.add({ description: t`Downloaded ${file} and the cover letter` });
+			} else {
+				toast.add({ description: t`Downloaded ${file}` });
+			}
 			setState("idle");
-			toast.add({ description: t`Downloaded ${file}` });
 		} catch {
 			setState("error");
 		}
@@ -117,11 +286,11 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 					{activeTarget === "cover-letter" && (
 						<div className="flex items-center gap-2.5 text-sm">
 							<Checkbox
-								id={`${fileNameId}-header`}
+								id={`${headerId}-header`}
 								checked={includeHeader}
 								onCheckedChange={(checked) => setIncludeHeader(checked === true)}
 							/>
-							<label htmlFor={`${fileNameId}-header`} className="cursor-pointer">
+							<label htmlFor={`${headerId}-header`} className="cursor-pointer">
 								<Trans>Include the resume's header</Trans>
 							</label>
 						</div>
@@ -129,66 +298,34 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 				</div>
 			)}
 
-			<RadioGroup
-				aria-label={t`Format`}
+			<FormatRadioGroup
+				formats={formats}
 				value={activeFormat}
-				onValueChange={(value) => {
-					setFormat(value as ExportFormat);
+				onChange={(value) => {
+					setFormat(value);
 					setState("idle");
 				}}
-				className="grid gap-1.5"
-			>
-				{formats.map((option) => {
-					const unavailable = option.id === "json" && activeTarget === "cover-letter";
-					return (
-						<Radio.Root
-							key={option.id}
-							value={option.id}
-							disabled={unavailable}
-							className="group/format flex cursor-pointer items-start gap-3 rounded-[10px] border border-line p-3 text-start transition-colors duration-quick hover:border-line-2 data-disabled:cursor-not-allowed data-checked:border-accent data-checked:bg-accent-soft data-disabled:opacity-45"
-						>
-							<span className="grid size-9 shrink-0 place-items-center rounded-lg bg-sunken text-ink-2">
-								<Icon name={option.icon} size={22} />
-							</span>
-							<span className="grid min-w-0 flex-1 gap-0.5">
-								<span className="flex flex-wrap items-center gap-2">
-									<span className="font-semibold text-sm">{option.label}</span>
-									<span className="font-medium font-mono text-[11px] text-ink-3">{option.extension}</span>
-									{option.id === "pdf" && (
-										<span className="rounded bg-accent-soft px-1.5 font-semibold text-[11px] text-accent-text leading-[18px]">
-											<Trans>Best for applying</Trans>
-										</span>
-									)}
-								</span>
-								<span className="text-[13px] text-ink-2 leading-[18px]">{option.description}</span>
-							</span>
-							<span className="mt-0.5 grid size-[18px] shrink-0 place-items-center rounded-full border-[1.5px] border-line-2 group-data-checked/format:border-accent">
-								<span className="size-2 rounded-full bg-accent opacity-0 group-data-checked/format:opacity-100" />
-							</span>
-						</Radio.Root>
-					);
-				})}
-			</RadioGroup>
+			/>
 
-			<div className="grid gap-1.5">
-				<label htmlFor={fileNameId} className="font-medium text-ink-2 text-xs">
-					<Trans>File name</Trans>
-				</label>
-				<div className="flex h-[38px] items-center overflow-hidden rounded-lg border border-line-2 bg-raised focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft">
-					<input
-						id={fileNameId}
-						value={name}
-						spellCheck={false}
-						aria-describedby={`${fileNameId}-hint`}
-						onChange={(event) => setFileName(sanitizeFileName(event.target.value))}
-						className="h-full min-w-0 flex-1 bg-transparent ps-2.5 font-medium font-mono text-[13px] text-ink outline-none"
+			<FileNameField
+				value={name}
+				extension={selected.extension}
+				hint={<Trans>Recruiters see this name. Your name plus “Resume” works well.</Trans>}
+				onChange={setFileName}
+			/>
+
+			{linkedLetter && activeTarget === "resume" && (
+				<div className="flex items-center gap-2.5 text-sm">
+					<Checkbox
+						id={`${headerId}-letter`}
+						checked={withLetter}
+						onCheckedChange={(checked) => setWithLetter(checked === true)}
 					/>
-					<span className="px-2.5 font-medium font-mono text-[13px] text-ink-3">{selected.extension}</span>
+					<label htmlFor={`${headerId}-letter`} className="cursor-pointer">
+						<Trans>Also download the {linkedLetter.company} cover letter</Trans>
+					</label>
 				</div>
-				<span id={`${fileNameId}-hint`} className="text-ink-3 text-xs">
-					<Trans>Recruiters see this name. Your name plus “Resume” works well.</Trans>
-				</span>
-			</div>
+			)}
 
 			{issues > 0 && (
 				<div className="flex gap-2.5 rounded-[10px] bg-warn-soft px-3 py-2.5 text-[13px] text-warn-text leading-[19px]">
@@ -206,46 +343,12 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 				</div>
 			)}
 
-			{state === "error" && (
-				<div
-					role="alert"
-					className="flex flex-wrap items-start gap-2.5 rounded-[10px] bg-danger-soft px-3 py-2.5 text-[13px] text-danger-text leading-[19px]"
-				>
-					<Icon name="error" size={20} />
-					<span className="min-w-0 flex-1">
-						<Trans>The {selected.label} file couldn't be generated. Try again, or download PDF instead.</Trans>
-					</span>
-					{activeFormat !== "pdf" && (
-						<Button size="sm" variant="secondary" onClick={() => void download("pdf")}>
-							<Trans>Download PDF instead</Trans>
-						</Button>
-					)}
-				</div>
-			)}
-
-			<Button
-				className={cn("h-11 gap-2 text-[15px]")}
-				aria-busy={state === "busy"}
-				disabled={state === "busy"}
-				onClick={() => void download(activeFormat)}
-			>
-				{state === "busy" ? (
-					<>
-						<Spinner decorative className="size-4" />
-						<Trans>Preparing {selected.label} file…</Trans>
-					</>
-				) : state === "error" ? (
-					<>
-						<Icon name="refresh" />
-						<Trans>Try again</Trans>
-					</>
-				) : (
-					<>
-						<Icon name="download" />
-						<Trans>Download {selected.label}</Trans>
-					</>
-				)}
-			</Button>
+			<DownloadActions
+				state={state}
+				label={selected.label}
+				onDownload={() => void download(activeFormat)}
+				onDownloadPdf={activeFormat === "pdf" ? undefined : () => void download("pdf")}
+			/>
 		</div>
 	);
 }

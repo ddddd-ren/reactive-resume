@@ -36,6 +36,7 @@ import { Route as DashboardSettingsRouteRouteImport } from "./routes/dashboard/s
 import { Route as DashboardTrashRouteImport } from "./routes/dashboard/trash";
 import { Route as TemplatesSplatRouteImport } from "./routes/templates/$";
 import { Route as BuilderResumeIdIndexRouteImport } from "./routes/builder/$resumeId/index";
+import { Route as BuilderLetterCoverLetterIdRouteImport } from "./routes/builder/letter/$coverLetterId";
 import { Route as DashboardApplicationsIndexRouteImport } from "./routes/dashboard/applications/index";
 import { Route as DashboardResumesIndexRouteImport } from "./routes/dashboard/resumes/index";
 import { Route as DashboardSettingsAccountRouteImport } from "./routes/dashboard/settings/account";
@@ -180,6 +181,12 @@ const BuilderResumeIdIndexRoute = BuilderResumeIdIndexRouteImport.update({
   path: "/",
   getParentRoute: () => BuilderResumeIdRouteRoute,
 } as any);
+const BuilderLetterCoverLetterIdRoute =
+  BuilderLetterCoverLetterIdRouteImport.update({
+    id: "/builder/letter/$coverLetterId",
+    path: "/builder/letter/$coverLetterId",
+    getParentRoute: () => rootRouteImport,
+  } as any);
 const DashboardApplicationsIndexRoute =
   DashboardApplicationsIndexRouteImport.update({
     id: "/applications/",
@@ -261,6 +268,7 @@ export interface FileRoutesByFullPath {
   "/auth/": typeof AuthIndexRoute;
   "/dashboard/": typeof DashboardIndexRoute;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
+  "/builder/letter/$coverLetterId": typeof BuilderLetterCoverLetterIdRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
@@ -294,6 +302,7 @@ export interface FileRoutesByTo {
   "/auth": typeof AuthIndexRoute;
   "/dashboard": typeof DashboardIndexRoute;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
+  "/builder/letter/$coverLetterId": typeof BuilderLetterCoverLetterIdRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
@@ -333,6 +342,7 @@ export interface FileRoutesById {
   "/auth/": typeof AuthIndexRoute;
   "/dashboard/": typeof DashboardIndexRoute;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
+  "/builder/letter/$coverLetterId": typeof BuilderLetterCoverLetterIdRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
@@ -372,6 +382,7 @@ export interface FileRouteTypes {
     | "/auth/"
     | "/dashboard/"
     | "/dashboard/settings/integrations"
+    | "/builder/letter/$coverLetterId"
     | "/dashboard/settings/account"
     | "/dashboard/settings/api-keys"
     | "/dashboard/settings/job-search"
@@ -405,6 +416,7 @@ export interface FileRouteTypes {
     | "/auth"
     | "/dashboard"
     | "/dashboard/settings/integrations"
+    | "/builder/letter/$coverLetterId"
     | "/dashboard/settings/account"
     | "/dashboard/settings/api-keys"
     | "/dashboard/settings/job-search"
@@ -443,6 +455,7 @@ export interface FileRouteTypes {
     | "/auth/"
     | "/dashboard/"
     | "/dashboard/settings/integrations"
+    | "/builder/letter/$coverLetterId"
     | "/dashboard/settings/account"
     | "/dashboard/settings/api-keys"
     | "/dashboard/settings/job-search"
@@ -462,6 +475,7 @@ export interface RootRouteChildren {
   BuilderResumeIdRouteRoute: typeof BuilderResumeIdRouteRouteWithChildren;
   UsernameSlugRoute: typeof UsernameSlugRoute;
   TemplatesSplatRoute: typeof TemplatesSplatRoute;
+  BuilderLetterCoverLetterIdRoute: typeof BuilderLetterCoverLetterIdRoute;
 }
 
 declare module "@tanstack/react-router" {
@@ -654,6 +668,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/builder/$resumeId/";
       preLoaderRoute: typeof BuilderResumeIdIndexRouteImport;
       parentRoute: typeof BuilderResumeIdRouteRoute;
+    };
+    "/builder/letter/$coverLetterId": {
+      id: "/builder/letter/$coverLetterId";
+      path: "/builder/letter/$coverLetterId";
+      fullPath: "/builder/letter/$coverLetterId";
+      preLoaderRoute: typeof BuilderLetterCoverLetterIdRouteImport;
+      parentRoute: typeof rootRouteImport;
     };
     "/dashboard/applications/": {
       id: "/dashboard/applications/";
@@ -850,6 +871,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuilderResumeIdRouteRoute: BuilderResumeIdRouteRouteWithChildren,
   UsernameSlugRoute: UsernameSlugRoute,
   TemplatesSplatRoute: TemplatesSplatRoute,
+  BuilderLetterCoverLetterIdRoute: BuilderLetterCoverLetterIdRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,5 +1,5 @@
 import type { DocumentsSearch } from "@/features/documents/documents-page";
-import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
+import { createFileRoute, redirect, stripSearchParams } from "@tanstack/react-router";
 import z from "zod";
 import { DocumentsPage } from "@/features/documents/documents-page";
 
@@ -13,9 +13,15 @@ export const Route = createFileRoute("/dashboard/")({
 		sort: z.enum(["edited", "name", "created"]).default("edited").catch("edited"),
 		// Without one, the page uses the last view picked on this device.
 		view: z.enum(["grid", "list"]).optional().catch(undefined),
+		// Older links opened letters here; they open in the letter editor now.
 		letter: z.string().optional().catch(undefined),
 	}),
 	search: { middlewares: [stripSearchParams(defaults)] },
+	beforeLoad: ({ search }) => {
+		if (search.letter) {
+			throw redirect({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: search.letter }, replace: true });
+		}
+	},
 	component: RouteComponent,
 });
 

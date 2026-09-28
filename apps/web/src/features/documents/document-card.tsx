@@ -17,7 +17,6 @@ import { ResumeThumbnail } from "./resume-thumbnail";
 
 export type DocumentItemProps = {
 	document: DocumentSummary;
-	onOpenLetter: (id: string) => void;
 	onTags: (document: DocumentSummary) => void;
 	onLink: (document: DocumentSummary) => void;
 };
@@ -31,46 +30,28 @@ function useDocumentMeta(document: DocumentSummary) {
 	return t`${type} · Edited ${formatRelativeTime(document.updatedAt, formatter)}`;
 }
 
-/** Opens the document: resumes in the editor, letters in the letter editor. */
+/** Opens the document in its editor: resumes and letters share the editor shell. */
 function OpenLink({
 	document,
-	onOpenLetter,
 	className,
 	children,
 	label,
-}: Pick<DocumentItemProps, "document" | "onOpenLetter"> & {
+}: Pick<DocumentItemProps, "document"> & {
 	className?: string;
 	children: React.ReactNode;
 	label?: string;
 }) {
 	const markOpened = useNewDocumentsStore((state) => state.markOpened);
+	const common = { "aria-label": label, className, onClick: () => markOpened(document.id) };
 
-	if (document.type === "resume") {
-		return (
-			<Link
-				to="/builder/$resumeId"
-				params={{ resumeId: document.id }}
-				aria-label={label}
-				className={className}
-				onClick={() => markOpened(document.id)}
-			>
-				{children}
-			</Link>
-		);
-	}
-
-	return (
-		<button
-			type="button"
-			aria-label={label}
-			className={className}
-			onClick={() => {
-				markOpened(document.id);
-				onOpenLetter(document.id);
-			}}
-		>
+	return document.type === "resume" ? (
+		<Link to="/builder/$resumeId" params={{ resumeId: document.id }} {...common}>
 			{children}
-		</button>
+		</Link>
+	) : (
+		<Link to="/builder/letter/$coverLetterId" params={{ coverLetterId: document.id }} {...common}>
+			{children}
+		</Link>
 	);
 }
 
@@ -122,8 +103,8 @@ function LetterThumbnail({ name }: { name: string }) {
 }
 
 /** A 204px card: the real first page, title with ⋯, "Resume · Edited 2h ago" and the linked application. */
-export function DocumentCard({ document, onOpenLetter, onTags, onLink }: DocumentItemProps) {
-	const openDocument = useOpenDocument(onOpenLetter);
+export function DocumentCard({ document, onTags, onLink }: DocumentItemProps) {
+	const openDocument = useOpenDocument();
 	const [renaming, setRenaming] = useState(false);
 	const isNew = useNewDocumentsStore((state) => state.ids.includes(document.id)) && !document.trashedAt;
 	const meta = useDocumentMeta(document);
@@ -142,7 +123,6 @@ export function DocumentCard({ document, onOpenLetter, onTags, onLink }: Documen
 			>
 				<OpenLink
 					document={document}
-					onOpenLetter={onOpenLetter}
 					label={document.name}
 					className={cn(
 						"relative block aspect-page overflow-hidden rounded-[6px] shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[transform,box-shadow] duration-quick hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)]",
@@ -208,9 +188,9 @@ export function DocumentCard({ document, onOpenLetter, onTags, onLink }: Documen
 }
 
 /** The list view's row: Name, Type, Application, Edited, ⋯. */
-export function DocumentRow({ document, onOpenLetter, onTags, onLink }: DocumentItemProps) {
+export function DocumentRow({ document, onTags, onLink }: DocumentItemProps) {
 	const { i18n } = useLingui();
-	const openDocument = useOpenDocument(onOpenLetter);
+	const openDocument = useOpenDocument();
 	const [renaming, setRenaming] = useState(false);
 	const isNew = useNewDocumentsStore((state) => state.ids.includes(document.id)) && !document.trashedAt;
 	const formatter = new Intl.RelativeTimeFormat(i18n.locale, { numeric: "auto" });
@@ -242,7 +222,6 @@ export function DocumentRow({ document, onOpenLetter, onTags, onLink }: Document
 						) : (
 							<OpenLink
 								document={document}
-								onOpenLetter={onOpenLetter}
 								className="min-w-0 truncate text-start font-semibold text-sm hover:underline"
 							>
 								{document.name}
@@ -289,11 +268,14 @@ export function DocumentRow({ document, onOpenLetter, onTags, onLink }: Document
 }
 
 /** Open from a menu: resumes in the editor, letters in the letter editor. */
-function useOpenDocument(onOpenLetter: (id: string) => void) {
+function useOpenDocument() {
 	const navigate = useNavigate();
 	return (document: DocumentSummary) => {
 		useNewDocumentsStore.getState().markOpened(document.id);
-		if (document.type === "letter") return onOpenLetter(document.id);
+		if (document.type === "letter") {
+			void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: document.id } });
+			return;
+		}
 		void navigate({ to: "/builder/$resumeId", params: { resumeId: document.id } });
 	};
 }

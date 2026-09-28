@@ -1,16 +1,14 @@
 import type { EditorMode } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { Link } from "@tanstack/react-router";
-import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { Button } from "@reactive-resume/ui/components/button";
 import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
-import { cn } from "@reactive-resume/utils/style";
 import { useCurrentBuilderResumeSelector, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
+import { BackLink, DrawerControls } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { BuilderAiAssistant } from "./ai-assistant";
@@ -57,28 +55,6 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 				<DownloadButtons compact={layout === "mobile"} disabled={offline} />
 			</div>
 		</header>
-	);
-}
-
-/** Leaving the editor is navigation, so it's a link styled as an icon button. */
-function BackLink() {
-	const label = t`Back to documents`;
-
-	return (
-		<Tooltip>
-			<TooltipTrigger
-				render={
-					<Link
-						to="/dashboard"
-						aria-label={label}
-						className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
-					/>
-				}
-			>
-				<Icon name="arrow_back" />
-			</TooltipTrigger>
-			<TooltipContent side="bottom">{label}</TooltipContent>
-		</Tooltip>
 	);
 }
 
@@ -129,41 +105,6 @@ function UndoButton() {
 
 	return (
 		<IconButton icon="undo" label={t`Undo`} shortcut="⌘Z" className="text-ink-2" disabled={!canUndo} onClick={undo} />
-	);
-}
-
-/** Tablet: show or hide the panel drawer and, in landscape, pin it beside the page. */
-function DrawerControls({ pinnable }: { pinnable: boolean }) {
-	const open = useEditorStore((state) => state.drawerOpen);
-	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
-	const setOpen = useEditorStore((state) => state.setDrawerOpen);
-	const setPinned = useEditorStore((state) => state.setDrawerPinned);
-
-	return (
-		<>
-			{!pinned && (
-				<IconButton
-					icon={open ? "left_panel_close" : "left_panel_open"}
-					label={open ? t`Hide panel` : t`Show panel`}
-					aria-expanded={open}
-					className="text-ink-2"
-					onClick={() => setOpen(!open)}
-				/>
-			)}
-			{pinnable && (open || pinned) && (
-				<IconButton
-					icon="vertical_split"
-					label={t`Keep the panel beside the page`}
-					aria-pressed={pinned}
-					className={cn("text-ink-2", pinned && "bg-accent-soft text-accent-text")}
-					onClick={() => {
-						// Unpinning leaves the drawer open over the page.
-						setPinned(!pinned);
-						setOpen(true);
-					}}
-				/>
-			)}
-		</>
 	);
 }
 

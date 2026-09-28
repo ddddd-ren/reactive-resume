@@ -12,10 +12,10 @@ import {
 	SpinnerGapIcon,
 } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
-import { CoverLetterEditorDialog } from "@/features/cover-letters/editor-dialog";
 import { orpc } from "@/libs/orpc/client";
 import { applicationsListQueryKey } from "../queries";
 
@@ -103,7 +103,7 @@ type Props = { application: Application };
 export function ApplicationAiCopilot({ application }: Props) {
 	const queryClient = useQueryClient();
 	const [draft, setDraft] = useState<{ kind: string; text: string } | null>(null);
-	const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
+	const navigate = useNavigate();
 
 	const invalidate = () => {
 		void queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });
@@ -132,8 +132,9 @@ export function ApplicationAiCopilot({ application }: Props) {
 			onSuccess: (result, variables) => {
 				if (result.coverLetterId) {
 					setDraft(null);
-					setCoverLetterId(result.coverLetterId);
 					void queryClient.invalidateQueries({ queryKey: orpc.coverLetters.list.key() });
+					// The saved letter opens in the letter editor.
+					void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: result.coverLetterId } });
 				} else {
 					setDraft({ kind: variables.kind, text: result.text });
 				}
@@ -284,7 +285,6 @@ export function ApplicationAiCopilot({ application }: Props) {
 					</p>
 				</div>
 			)}
-			{coverLetterId && <CoverLetterEditorDialog letterId={coverLetterId} onClose={() => setCoverLetterId(null)} />}
 		</section>
 	);
 }

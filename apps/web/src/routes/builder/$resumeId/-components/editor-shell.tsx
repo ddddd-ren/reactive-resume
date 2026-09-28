@@ -3,13 +3,14 @@ import type { EditorMode, MobileView } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { getRouteApi, Outlet } from "@tanstack/react-router";
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { IssueStepper } from "@/features/resume/editor/check/page-layer";
+import { useIsLandscape } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
@@ -18,21 +19,6 @@ import { EditorBar } from "./editor-bar";
 import { ModePanel } from "./mode-panels";
 import { ShareSheet } from "./share-sheet";
 import { useEditorHotkeys } from "./use-editor-hotkeys";
-
-const LANDSCAPE_QUERY = "(orientation: landscape)";
-
-function subscribeToOrientation(onChange: () => void) {
-	const list = window.matchMedia(LANDSCAPE_QUERY);
-	list.addEventListener("change", onChange);
-	return () => list.removeEventListener("change", onChange);
-}
-
-const useIsLandscape = () =>
-	useSyncExternalStore(
-		subscribeToOrientation,
-		() => window.matchMedia(LANDSCAPE_QUERY).matches,
-		() => false,
-	);
 
 /**
  * The editor: a 56px bar over a 400px panel and the page canvas (desktop). On tablets the panel is a 380px

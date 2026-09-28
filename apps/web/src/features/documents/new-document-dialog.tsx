@@ -64,9 +64,9 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 		closeDialog();
 		void navigate({ to: "/builder/$resumeId", params: { resumeId } });
 	};
-	const openLetter = (letterId: string) => {
+	const openLetter = (coverLetterId: string) => {
 		closeDialog();
-		void navigate({ to: "/dashboard", search: { type: "letter", letter: letterId } });
+		void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId } });
 	};
 
 	const importFile = async (file: File) => {
@@ -375,9 +375,19 @@ export function useStartDocument() {
 		},
 		newLetter: async () => {
 			try {
-				const letter = await createLetter({ name: t`Untitled letter`, recipient: "", content: "" });
+				// A new letter takes its sender details and design from the resume edited most recently.
+				const documents = queryClient.getQueryData(orpc.documents.list.queryKey({ input: { trashed: false } }));
+				const resume = documents
+					?.filter((document) => document.type === "resume")
+					.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())[0];
+				const letter = await createLetter({
+					name: t`Untitled letter`,
+					recipient: "",
+					content: "",
+					...(resume ? { resumeId: resume.id } : {}),
+				});
 				created(letter.id);
-				void navigate({ to: "/dashboard", search: { type: "letter", letter: letter.id } });
+				void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: letter.id } });
 			} catch (error) {
 				failed(error);
 			}

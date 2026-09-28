@@ -11,6 +11,7 @@ const application: Application = {
 	closedReason: null,
 	coverLetterId: null,
 	sentResumeVersionId: null,
+	sentCoverLetterVersionId: null,
 	sentCheckScore: null,
 	requirements: [],
 	location: "Berlin",

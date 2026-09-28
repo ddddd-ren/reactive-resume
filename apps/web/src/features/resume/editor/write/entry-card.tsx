@@ -8,6 +8,7 @@ import { msg, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import {
@@ -247,6 +248,7 @@ type EntryMenuProps = { section: WriteSection; entry: Entry };
 /** Hide from page, Duplicate, Move to… and Delete. */
 function EntryMenu({ section, entry }: EntryMenuProps) {
 	const resume = useCurrentResume();
+	const navigate = useNavigate();
 	const updateResumeData = useUpdateResumeData();
 	const customSectionId = section.kind === "custom" ? section.id : undefined;
 	const moveTargets = useMemo(
@@ -281,7 +283,15 @@ function EntryMenu({ section, entry }: EntryMenuProps) {
 		copyLetter(
 			{ resumeId: resume.id, sectionId: section.id, itemId: entry.id },
 			{
-				onSuccess: () => toast.add({ description: t`Copied to Documents` }),
+				onSuccess: (letter) =>
+					toast.add({
+						description: t`Copied to Documents`,
+						actionProps: {
+							children: t`Open`,
+							onClick: () =>
+								void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: letter.id } }),
+						},
+					}),
 				onError: () => toast.add({ type: "error", description: t`Couldn't copy the letter. Save and try again.` }),
 			},
 		);
