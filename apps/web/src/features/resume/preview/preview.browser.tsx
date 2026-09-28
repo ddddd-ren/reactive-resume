@@ -1,3 +1,4 @@
+import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { CSSProperties } from "react";
 import type { ResolvedResumePreviewProps } from "./preview.shared";
@@ -19,6 +20,7 @@ import { ResumeAccessibleText } from "./resume-accessible-text";
 type PreviewPdf = {
 	file: Blob;
 	id: number;
+	pageMap: PageMap | undefined;
 	numPages: number;
 	pageSizes: Record<number, PreviewPageSize>;
 	phase: "active" | "exiting" | "staged";
@@ -32,9 +34,16 @@ const UPDATE_DEBOUNCE_MS = 100;
 const INCOMING_TRANSITION = { duration: 0.15, ease: EASE_OUT_STRONG };
 const EXITING_TRANSITION = { duration: 0.1, delay: 0.18 };
 
-const createPreviewPdf = (file: Blob, id: number, hasExistingPreview: boolean, template: Template): PreviewPdf => ({
+const createPreviewPdf = (
+	file: Blob,
+	id: number,
+	hasExistingPreview: boolean,
+	template: Template,
+	pageMap: PageMap | undefined,
+): PreviewPdf => ({
 	file,
 	id,
+	pageMap,
 	numPages: 0,
 	pageSizes: {},
 	phase: hasExistingPreview ? "staged" : "active",
@@ -102,6 +111,9 @@ export function ResumePreviewClient({
 	pageScale,
 	pageClassName,
 	showPageNumbers,
+	renderPageCaption,
+	renderPageOverlay,
+	onPageCount,
 }: ResolvedResumePreviewProps) {
 	const builderResumeData = useResumeData();
 	const resumeData = data ?? builderResumeData;
@@ -125,7 +137,12 @@ export function ResumePreviewClient({
 		const generatePdfPreview = async () => {
 			try {
 				if (cancelled || requestId !== requestIdRef.current) return;
-				const blob = await createResumePdfBlob(resumeData);
+				let pageMap: PageMap | undefined;
+				const blob = await createResumePdfBlob(resumeData, undefined, undefined, {
+					onPageMap: (map) => {
+						pageMap = map;
+					},
+				});
 
 				if (!cancelled && requestId === requestIdRef.current) {
 					const nextPdf = createPreviewPdf(
@@ -133,6 +150,7 @@ export function ResumePreviewClient({
 						pdfIdRef.current++,
 						hasPreviewRef.current,
 						resumeData.metadata.template,
+						pageMap,
 					);
 
 					hasPreviewRef.current = true;
@@ -157,6 +175,11 @@ export function ResumePreviewClient({
 			window.clearTimeout(timeoutId);
 		};
 	}, [paused, resumeData]);
+
+	const activePageCount = getActivePreviewLayer(previewLayers)?.numPages ?? 0;
+	useEffect(() => {
+		if (activePageCount > 0) onPageCount?.(activePageCount);
+	}, [activePageCount, onPageCount]);
 
 	if (!resumeData) return null;
 
@@ -228,6 +251,12 @@ export function ResumePreviewClient({
 												totalPages={totalPages}
 												className={pageClassName}
 												showPageNumbers={showPageNumbers}
+												caption={renderPageCaption?.({ pageNumber, totalPages })}
+												overlay={
+													visiblePdf.phase === "active"
+														? renderPageOverlay?.({ pageIndex: index, pageMap: visiblePdf.pageMap })
+														: undefined
+												}
 												onLoadSuccess={(_, pageSize) => {
 													setPreviewLayers((current) =>
 														setPreviewPageSize(current, visiblePdf.id, pageNumber, pageSize),

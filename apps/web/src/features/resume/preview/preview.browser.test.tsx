@@ -108,7 +108,12 @@ describe("ResumePreviewClient", () => {
 			expect(previewMock.toBlob).toHaveBeenCalledTimes(1);
 		});
 
-		expect(previewMock.toBlob).toHaveBeenCalledWith(sampleResumeData);
+		expect(previewMock.toBlob).toHaveBeenCalledWith(
+			sampleResumeData,
+			undefined,
+			undefined,
+			expect.objectContaining({ onPageMap: expect.any(Function) }),
+		);
 	});
 
 	it("keeps the rendered template identity on the active layer while its replacement renders", async () => {
@@ -145,7 +150,12 @@ describe("ResumePreviewClient", () => {
 		render(<ResumePreviewClient pageLayout="vertical" pageScale={1.25} showPageNumbers={false} />);
 
 		await waitFor(() => expect(previewMock.toBlob).toHaveBeenCalledTimes(1));
-		expect(previewMock.toBlob).toHaveBeenCalledWith(previewMock.builderResumeData);
+		expect(previewMock.toBlob).toHaveBeenCalledWith(
+			previewMock.builderResumeData,
+			undefined,
+			undefined,
+			expect.objectContaining({ onPageMap: expect.any(Function) }),
+		);
 
 		expect(previewMock.toBlob).toHaveBeenCalledTimes(1);
 	});

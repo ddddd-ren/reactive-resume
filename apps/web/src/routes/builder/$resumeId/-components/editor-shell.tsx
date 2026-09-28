@@ -1,0 +1,227 @@
+import type { IconName } from "@reactive-resume/ui/components/icon";
+import type { EditorMode } from "@/features/resume/editor/store";
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
+import { Outlet } from "@tanstack/react-router";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { Icon } from "@reactive-resume/ui/components/icon";
+import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { cn } from "@reactive-resume/utils/style";
+import { usePreviewPausedStore } from "@/features/resume/builder/draft";
+import { useEditorStore } from "@/features/resume/editor/store";
+import { EditorBar } from "./editor-bar";
+import { ModePanel } from "./mode-panels";
+import { revealSelectionInPanel } from "./reveal-selection";
+import { ShareSheet } from "./share-sheet";
+import { useEditorHotkeys } from "./use-editor-hotkeys";
+import { useEditorMode } from "./use-editor-mode";
+
+const LANDSCAPE_QUERY = "(orientation: landscape)";
+
+function subscribeToOrientation(onChange: () => void) {
+	const list = window.matchMedia(LANDSCAPE_QUERY);
+	list.addEventListener("change", onChange);
+	return () => list.removeEventListener("change", onChange);
+}
+
+const useIsLandscape = () =>
+	useSyncExternalStore(
+		subscribeToOrientation,
+		() => window.matchMedia(LANDSCAPE_QUERY).matches,
+		() => false,
+	);
+
+/**
+ * The editor: a 56px bar over a 400px panel and the page canvas (desktop). On tablets the panel is a 380px
+ * drawer over the page, pinnable beside it in landscape; on phones one view shows at a time, switched by
+ * Write · Page · Design · Check tabs.
+ */
+export function EditorShell() {
+	const [mode, setMode] = useEditorMode();
+	const breakpoint = useBreakpoint();
+	const layout = breakpoint === "mobile" ? "mobile" : breakpoint === "tablet" ? "tablet" : "desktop";
+	const landscape = useIsLandscape();
+	const pinnable = layout === "tablet" && landscape;
+	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
+	const resetEditor = useEditorStore((state) => state.reset);
+
+	// Selection, zoom and open sheets belong to one document.
+	useEffect(() => resetEditor, [resetEditor]);
+
+	return (
+		<Tabs value={mode} onValueChange={(value) => setMode(value as EditorMode)} className="contents">
+			<div className="grid h-svh grid-rows-[var(--editor-bar)_minmax(0,1fr)] overflow-hidden bg-bg">
+				<a
+					href="#main-content"
+					className="sr-only rounded-md bg-raised px-4 py-2 text-sm focus:not-sr-only focus:absolute focus:inset-s-2 focus:top-2 focus:z-[100]"
+				>
+					<Trans>Skip to the page</Trans>
+				</a>
+
+				<EditorBar layout={layout} pinnable={pinnable} />
+
+				{(layout === "desktop" || pinned) && <DesktopBody mode={mode} />}
+				{layout === "tablet" && !pinned && <TabletBody mode={mode} />}
+				{layout === "mobile" && <MobileBody mode={mode} onModeChange={setMode} />}
+
+				<ShareSheet />
+				<EditorHotkeys onModeChange={setMode} />
+			</div>
+		</Tabs>
+	);
+}
+
+function EditorHotkeys({ onModeChange }: { onModeChange: (mode: EditorMode) => void }) {
+	useEditorHotkeys(onModeChange);
+	return null;
+}
+
+const panelLabels = (): Record<EditorMode, string> => ({ write: t`Content`, design: t`Design`, check: t`Check` });
+
+/** The panel beside the page: 400px on desktop, 380px when pinned on a tablet. */
+function DesktopBody({ mode }: { mode: EditorMode }) {
+	return (
+		<div className="grid min-h-0 grid-cols-[var(--editor-panel)_minmax(0,1fr)] max-lg:grid-cols-[380px_minmax(0,1fr)]">
+			<TabsContent
+				value={mode}
+				aria-label={panelLabels()[mode]}
+				className="min-h-0 overflow-y-auto border-line border-e bg-surface"
+			>
+				<ModePanel mode={mode} />
+			</TabsContent>
+			<main id="main-content" className="min-h-0 min-w-0">
+				<Outlet />
+			</main>
+		</div>
+	);
+}
+
+function TabletBody({ mode }: { mode: EditorMode }) {
+	const drawerOpen = useEditorStore((state) => state.drawerOpen);
+
+	return (
+		<div className="relative min-h-0">
+			<main id="main-content" className="h-full min-w-0">
+				<Outlet />
+			</main>
+			<TabsContent
+				value={mode}
+				aria-label={panelLabels()[mode]}
+				inert={!drawerOpen}
+				className={cn(
+					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-line border-e bg-surface shadow-e3 transition-transform duration-emphasized ease-enter",
+					!drawerOpen && "-translate-x-full rtl:translate-x-full",
+				)}
+			>
+				<ModePanel mode={mode} />
+			</TabsContent>
+		</div>
+	);
+}
+
+type MobileView = "page" | EditorMode;
+
+type MobileBodyProps = {
+	mode: EditorMode;
+	onModeChange: (mode: EditorMode) => void;
+};
+
+const MOBILE_TABS: { view: MobileView; icon: IconName }[] = [
+	{ view: "write", icon: "edit" },
+	{ view: "page", icon: "description" },
+	{ view: "design", icon: "palette" },
+	{ view: "check", icon: "fact_check" },
+];
+
+function MobileBody({ mode, onModeChange }: MobileBodyProps) {
+	const [view, setView] = useState<MobileView>(mode);
+	const setPreviewPaused = usePreviewPausedStore((state) => state.setPaused);
+	const labels: Record<MobileView, string> = { write: t`Write`, page: t`Page`, design: t`Design`, check: t`Check` };
+
+	// The page stays mounted so zoom survives switching views; it doesn't re-render while hidden.
+	useEffect(() => {
+		setPreviewPaused(view !== "page");
+		return () => setPreviewPaused(false);
+	}, [view, setPreviewPaused]);
+
+	return (
+		<div className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto]">
+			<div className="relative min-h-0">
+				<main id="main-content" className={cn("h-full", view !== "page" && "invisible")}>
+					<Outlet />
+				</main>
+				{view === "page" && (
+					<SelectionBar
+						onEdit={() => {
+							setView("write");
+							onModeChange("write");
+						}}
+					/>
+				)}
+				{view !== "page" && (
+					<TabsContent value={mode} className="absolute inset-0 overflow-y-auto bg-surface">
+						<ModePanel mode={mode} />
+					</TabsContent>
+				)}
+			</div>
+
+			<nav
+				aria-label={t`Editor views`}
+				className="flex border-line border-t bg-surface pb-[env(safe-area-inset-bottom)]"
+			>
+				{MOBILE_TABS.map(({ view: tab, icon }) => {
+					const active = tab === view;
+
+					return (
+						<button
+							key={tab}
+							type="button"
+							aria-current={active ? "page" : undefined}
+							onClick={() => {
+								setView(tab);
+								if (tab !== "page") onModeChange(tab);
+							}}
+							className={cn(
+								"flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 text-[11px]",
+								active ? "font-semibold text-ink" : "text-ink-2",
+							)}
+						>
+							<span
+								className={cn(
+									"flex h-7 w-[52px] items-center justify-center rounded-full transition-colors duration-quick",
+									active && "bg-accent-soft text-accent-text",
+								)}
+							>
+								<Icon name={icon} size={24} filled={active} />
+							</span>
+							{labels[tab]}
+						</button>
+					);
+				})}
+			</nav>
+		</div>
+	);
+}
+
+/** Phones: tapping a line on the page selects it and offers to edit that entry. Improve joins it in M10. */
+function SelectionBar({ onEdit }: { onEdit: () => void }) {
+	const selection = useEditorStore((state) => state.selection);
+	if (!selection) return null;
+
+	return (
+		<div className="absolute bottom-[76px] left-1/2 z-10 flex -translate-x-1/2 items-center rounded-xl bg-ink p-1 text-bg shadow-e3">
+			<button
+				type="button"
+				className="flex h-10 items-center gap-1.5 rounded-lg px-3 font-semibold text-[15px]"
+				onClick={() => {
+					onEdit();
+					revealSelectionInPanel(selection);
+				}}
+			>
+				<Icon name="edit" size={20} />
+				<Trans>Edit entry</Trans>
+			</button>
+		</div>
+	);
+}

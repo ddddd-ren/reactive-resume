@@ -14,9 +14,12 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@reactive-resume/ui/components/empty";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { cn } from "@reactive-resume/utils/style";
+import { useEditorStore } from "@/features/resume/editor/store";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -140,19 +143,19 @@ function AiAssistantPanel({ resumeId, onClose }: BuilderAiAssistantProps & { onC
 }
 
 export function BuilderAiAssistant({ resumeId }: BuilderAiAssistantProps) {
-	const [open, setOpen] = useState(false);
+	const open = useEditorStore((state) => state.assistantOpen);
+	const setOpen = useEditorStore((state) => state.setAssistantOpen);
 
 	return (
 		<Sheet open={open} onOpenChange={setOpen}>
-			<Button
-				size="icon"
-				variant="ghost"
-				aria-label={t`Open AI assistant`}
+			<IconButton
+				icon="auto_awesome"
+				label={t`Assistant`}
+				shortcut="⌘J"
 				aria-pressed={open}
-				onClick={() => setOpen(true)}
-			>
-				<SparkleIcon weight={open ? "fill" : "regular"} />
-			</Button>
+				className={cn("text-ink-2", open && "bg-accent-soft text-accent-text hover:bg-accent-soft")}
+				onClick={() => setOpen(!open)}
+			/>
 
 			<SheetContent
 				side="right"

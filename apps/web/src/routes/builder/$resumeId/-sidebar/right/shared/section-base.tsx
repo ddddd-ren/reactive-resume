@@ -1,6 +1,7 @@
 import type { RightSidebarSection } from "@/libs/resume/section";
 import { t } from "@lingui/core/macro";
 import { CaretDownIcon } from "@phosphor-icons/react";
+import { createContext, use } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@reactive-resume/ui/components/accordion";
 import { Button } from "@reactive-resume/ui/components/button";
 import { cn } from "@reactive-resume/utils/style";
@@ -11,10 +12,28 @@ type Props = React.ComponentProps<typeof AccordionContent> & {
 	type: RightSidebarSection;
 };
 
+/**
+ * When a section is shown inside a host that already titles it (a dialog, a sheet or an editor mode),
+ * it renders its content only, without the collapsible heading.
+ */
+const SectionChromeContext = createContext<"collapsible" | "bare">("collapsible");
+export const BareSectionChrome = ({ children }: { children: React.ReactNode }) => (
+	<SectionChromeContext value="bare">{children}</SectionChromeContext>
+);
+
 export function SectionBase({ type, className, ...props }: Props) {
+	const chrome = use(SectionChromeContext);
 	const collapsed = useSectionStore((state) => state.sections[type]?.collapsed ?? false);
 	const toggleCollapsed = useSectionStore((state) => state.toggleCollapsed);
 	const sectionTitle = getSectionTitle(type);
+
+	if (chrome === "bare") {
+		return (
+			<div id={`sidebar-${type}`} className={cn("space-y-4", className)}>
+				{props.children as React.ReactNode}
+			</div>
+		);
+	}
 
 	return (
 		<Accordion

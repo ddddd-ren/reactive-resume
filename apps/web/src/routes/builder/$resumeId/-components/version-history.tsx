@@ -2,10 +2,8 @@ import type { Resume } from "@/features/resume/builder/draft";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ClockCounterClockwiseIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -15,6 +13,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useResumeStore } from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -61,15 +60,9 @@ export function BuilderVersionHistory({ resumeId }: BuilderVersionHistoryProps) 
 
 	return (
 		<DropdownMenu open={open} onOpenChange={setOpen}>
-			<DropdownMenuTrigger
-				render={
-					<Button size="icon" variant="ghost" aria-label={t`Version history`}>
-						<ClockCounterClockwiseIcon />
-					</Button>
-				}
-			/>
+			<DropdownMenuTrigger render={<IconButton icon="history" label={t`Version history`} className="text-ink-2" />} />
 
-			<DropdownMenuContent align="start" className="w-64">
+			<DropdownMenuContent align="end" className="w-64">
 				<DropdownMenuGroup>
 					<DropdownMenuLabel>
 						<Trans>Version history</Trans>

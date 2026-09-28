@@ -2,13 +2,13 @@
 
 import type { ExperienceItem, ResumeData } from "@reactive-resume/schema/resume/data";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const resumeState = vi.hoisted(() => ({ data: undefined as ResumeData | undefined }));
-const sidebarState = vi.hoisted(() => ({ toggleSidebar: vi.fn() }));
+const editorModeState = vi.hoisted(() => ({ setMode: vi.fn() }));
 const sectionState = vi.hoisted(() => ({ setCollapsed: vi.fn() }));
 
 const deepCheckMocks = vi.hoisted(() => ({
@@ -55,8 +55,8 @@ vi.mock("@/features/ats-checker/ai-review/ai-review-card", () => ({
 vi.mock("@/features/resume/builder/draft", () => ({
 	useResumeData: () => resumeState.data,
 }));
-vi.mock("../../../-store/sidebar", () => ({
-	useBuilderSidebar: () => sidebarState,
+vi.mock("../../../-components/use-editor-mode", () => ({
+	useEditorMode: () => ["check", editorModeState.setMode],
 }));
 vi.mock("../../../-store/section", () => ({
 	useSectionStore: (selector: SectionStoreSelector) => selector(sectionState),
@@ -158,7 +158,7 @@ describe("AtsCheckSectionBuilder", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: /Basics/ }));
 
-		expect(sidebarState.toggleSidebar).toHaveBeenCalledWith("left", true);
+		expect(editorModeState.setMode).toHaveBeenCalledWith("write");
 		expect(sectionState.setCollapsed).toHaveBeenCalledWith("basics", false);
 	});
 
@@ -170,7 +170,7 @@ describe("AtsCheckSectionBuilder", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: /Typography/ }));
 
-		expect(sidebarState.toggleSidebar).toHaveBeenCalledWith("right", true);
+		expect(editorModeState.setMode).toHaveBeenCalledWith("design");
 		expect(sectionState.setCollapsed).toHaveBeenCalledWith("typography", false);
 	});
 });
@@ -229,6 +229,17 @@ describe("the deep check tier", () => {
 });
 
 describe("navigating to a finding", () => {
+	// The jump switches editor mode first and scrolls on the next frame, once the panel has rendered.
+	beforeEach(() => {
+		vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+			callback(0);
+			return 0;
+		});
+	});
+	afterEach(() => {
+		vi.unstubAllGlobals();
+	});
+
 	const stubElement = (id: string) => {
 		const element = document.createElement("div");
 		element.id = id;

@@ -30,14 +30,11 @@ import {
 import { isFatalStylesheetDiagnostic } from "@reactive-resume/resume/stylesheet";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
-import { useIsMobile } from "@reactive-resume/ui/hooks/use-mobile";
 import { ColorPicker } from "@/components/input/color-picker";
 import { useIsResumeLocked, useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useTheme } from "@/features/theme/provider";
-import { useBuilderSidebarStore } from "@/routes/builder/$resumeId/-store/sidebar";
 import { serializeStylesheetColor, toStylesheetPickerColor } from "./color-format";
 import { compositionAwareDocumentListener, createSemanticCssEditorExtensions } from "./editor-extensions";
-import { enterStylesheetFocusMode } from "./focus-mode";
 import { formatEditorDocument } from "./formatter";
 import { LegacyStylesheetBanner } from "./legacy-banner";
 import { StylesheetStatus } from "./status";
@@ -383,13 +380,11 @@ const createEditorMetadata = (data: ResumeData): SemanticCssEditorMetadata => {
 
 function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps) {
 	const { resolvedTheme: theme } = useTheme();
-	const isMobile = useIsMobile();
 	const [focusOpen, setFocusOpen] = useState(false);
 	const [diagnostics, setDiagnostics] = useState<readonly SemanticCssDiagnostic[]>([]);
 	const [colorTokens, setColorTokens] = useState<readonly SemanticCssColorToken[]>([]);
 	const [status, setStatus] = useState<"idle" | "compiling" | "error">("compiling");
 	const [compiler, setCompiler] = useState<ReturnType<typeof createCompileWorkerClient>>();
-	const restoreDesktopRef = useRef<(() => void) | null>(null);
 	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();
 	const isLocked = useIsResumeLocked();
@@ -422,13 +417,6 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	const hasFatalErrors = status === "error" || diagnostics.some(isFatalStylesheetDiagnostic);
 	const isChecking = status === "compiling";
 	const disabled = readOnly || isLocked;
-
-	useEffect(
-		() => () => {
-			restoreDesktopRef.current?.();
-		},
-		[],
-	);
 
 	useEffect(() => {
 		if (!compiler || !data) return;
@@ -485,27 +473,8 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 		});
 	};
 
-	const toggleFocus = () => {
-		if (isMobile) {
-			setFocusOpen((open) => !open);
-			return;
-		}
-
-		if (restoreDesktopRef.current) {
-			restoreDesktopRef.current();
-			restoreDesktopRef.current = null;
-			setFocusOpen(false);
-			return;
-		}
-
-		const { rightSidebar, layout, setLayout } = useBuilderSidebarStore.getState();
-		restoreDesktopRef.current = enterStylesheetFocusMode({
-			rightPanel: rightSidebar,
-			currentLayout: layout,
-			setLayout,
-		});
-		setFocusOpen(true);
-	};
+	// Focus mode opens the editor in a large dialog; the editor panel has a fixed width.
+	const toggleFocus = () => setFocusOpen((open) => !open);
 
 	const editor = (
 		<StylesheetCodeEditor
@@ -564,7 +533,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				</span>
 			</p>
 
-			<div className={focusOpen ? (isMobile ? "h-[55svh]" : "h-[calc(100svh-14rem)]") : "h-72"}>{editor}</div>
+			<div className={focusOpen ? "h-[55svh] sm:h-[calc(100svh-14rem)]" : "h-72"}>{editor}</div>
 
 			<StylesheetStatus mode={mode} status={status} diagnostics={diagnostics} />
 		</div>
@@ -572,13 +541,13 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 
 	return (
 		<div>
-			{!(isMobile && focusOpen) && editorChrome}
-			<Sheet open={isMobile && focusOpen} onOpenChange={setFocusOpen}>
+			{!focusOpen && editorChrome}
+			<Sheet open={focusOpen} onOpenChange={setFocusOpen}>
 				<SheetContent side="right" className="w-full max-w-full gap-3 overflow-hidden p-4 sm:max-w-full">
 					<SheetTitle>
 						<Trans>Semantic CSS stylesheet</Trans>
 					</SheetTitle>
-					<div className="min-h-0 flex-1 overflow-y-auto">{isMobile && focusOpen ? editorChrome : null}</div>
+					<div className="min-h-0 flex-1 overflow-y-auto">{focusOpen ? editorChrome : null}</div>
 				</SheetContent>
 			</Sheet>
 		</div>

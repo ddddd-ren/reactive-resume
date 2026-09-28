@@ -27,8 +27,8 @@ import {
 	getAtsFindingMessage,
 	getAtsFindingTarget,
 } from "@/libs/resume/ats";
+import { useEditorMode } from "../../../-components/use-editor-mode";
 import { useSectionStore } from "../../../-store/section";
-import { useBuilderSidebar } from "../../../-store/sidebar";
 import { SectionBase } from "../shared/section-base";
 
 const MAX_JOB_DESCRIPTION_CHARS = 20_000;
@@ -105,7 +105,7 @@ function AtsFindingRow({ finding, onJump }: AtsFindingRowProps) {
 
 function LiveLintTier() {
 	const data = useResumeData();
-	const { toggleSidebar } = useBuilderSidebar();
+	const [, setMode] = useEditorMode();
 	const setCollapsed = useSectionStore((state) => state.setCollapsed);
 
 	const report = useMemo(() => (data ? lintResumeForAts(data) : null), [data]);
@@ -115,14 +115,17 @@ function LiveLintTier() {
 			const target = getAtsFindingTarget(pointer, data);
 			if (!target) return;
 
-			toggleSidebar(target.side, true);
+			// Content findings open Write, design findings open Design; then the field scrolls into view.
+			setMode(target.side === "left" ? "write" : "design");
 			setCollapsed(target.section, false);
 
-			const item = target.itemId ? document.getElementById(atsFindingItemElementId(target.itemId)) : null;
-			const destination = item ?? document.getElementById(`sidebar-${target.section}`);
-			destination?.scrollIntoView({ block: "start", inline: "nearest", behavior: getScrollBehavior() });
+			requestAnimationFrame(() => {
+				const item = target.itemId ? document.getElementById(atsFindingItemElementId(target.itemId)) : null;
+				const destination = item ?? document.getElementById(`sidebar-${target.section}`);
+				destination?.scrollIntoView({ block: "start", inline: "nearest", behavior: getScrollBehavior() });
+			});
 		},
-		[data, setCollapsed, toggleSidebar],
+		[data, setCollapsed, setMode],
 	);
 
 	if (!report) return null;

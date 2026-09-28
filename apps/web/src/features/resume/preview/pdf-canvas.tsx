@@ -20,7 +20,9 @@ type PdfCanvasDocumentProps = {
 };
 
 type PdfCanvasPageProps = {
+	caption?: ReactNode;
 	className?: string;
+	overlay?: ReactNode;
 	document: PDFDocumentProxy;
 	onLoadSuccess: (pageNumber: number, pageSize: PreviewPageSize) => void;
 	onRenderSuccess?: () => void;
@@ -84,7 +86,9 @@ export function PdfCanvasDocument({ children, file, onLoadSuccess }: PdfCanvasDo
 }
 
 export function PdfCanvasPage({
+	caption,
 	className,
+	overlay,
 	document,
 	onLoadSuccess,
 	onRenderSuccess,
@@ -179,14 +183,16 @@ export function PdfCanvasPage({
 
 	return (
 		<figure className="shrink-0">
-			{showPageNumbers ? (
-				<figcaption className="mb-1 font-medium text-[0.625rem] text-muted-foreground">
-					Page {pageNumber} of {totalPages}
-				</figcaption>
-			) : null}
+			{caption ??
+				(showPageNumbers ? (
+					<figcaption className="mb-1 font-medium text-[0.625rem] text-muted-foreground">
+						Page {pageNumber} of {totalPages}
+					</figcaption>
+				) : null)}
 
-			<div style={scaledPageSize} className={cn("aspect-page overflow-hidden rounded-md", className)}>
+			<div style={scaledPageSize} className={cn("relative aspect-page overflow-hidden rounded-md", className)}>
 				<canvas ref={canvasRef} aria-label={`Resume page ${pageNumber} of ${totalPages}`} />
+				{overlay}
 			</div>
 		</figure>
 	);

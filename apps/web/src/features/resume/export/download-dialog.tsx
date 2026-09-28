@@ -30,7 +30,11 @@ type DownloadableResume = Parameters<typeof useResumeExport>[0];
 
 type ResumeDownloadDialogProps = {
 	resume: DownloadableResume;
-	trigger: (disabled: boolean) => ReactElement;
+	/** Omitted when something else opens the dialog through `open`. */
+	trigger?: (disabled: boolean) => ReactElement;
+	/** Controlled open state, e.g. for the ⌘⇧E shortcut. */
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
 };
 
 type FormatRowProps = {
@@ -61,8 +65,10 @@ function FormatRow({ action, description, disabled, icon, title }: FormatRowProp
 	);
 }
 
-export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogProps) {
-	const [open, setOpen] = useState(false);
+export function ResumeDownloadDialog({ resume, trigger, open: openProp, onOpenChange }: ResumeDownloadDialogProps) {
+	const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+	const open = openProp ?? uncontrolledOpen;
+	const setOpen = onOpenChange ?? setUncontrolledOpen;
 	const [scope, setScope] = useState<ResumeExportTarget>("resume");
 	const [includeCoverLetterHeader, setIncludeCoverLetterHeader] = useState(false);
 	const includeHeaderSwitchId = useId();
@@ -81,7 +87,7 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger render={trigger(disabled)} />
+			{trigger && <DialogTrigger render={trigger(disabled)} />}
 			<DialogContent className="gap-5 sm:max-w-lg">
 				<DialogHeader className="pe-8">
 					<DialogTitle>

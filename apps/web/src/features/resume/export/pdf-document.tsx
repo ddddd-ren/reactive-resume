@@ -1,3 +1,4 @@
+import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { useMemo } from "react";
@@ -7,6 +8,11 @@ import { createSectionTitleResolverForLocale, useSectionTitleResolver } from "@/
 
 type ResumePdfRenderOptions = {
 	includeCoverLetterHeader?: boolean;
+};
+
+type CreateResumePdfBlobExtras = {
+	/** Receives the page map (header, section and item boxes) of this render; used by the editor canvas. */
+	onPageMap?: (pageMap: PageMap) => void;
 };
 
 export const useLocalizedResumeDocument = (data?: ResumeData, template?: Template) => {
@@ -29,6 +35,7 @@ export const createResumePdfBlob = async (
 	data: ResumeData,
 	template?: Template,
 	renderOptions?: ResumePdfRenderOptions,
+	{ onPageMap }: CreateResumePdfBlobExtras = {},
 ) => {
 	const sectionTitleResolver = await createSectionTitleResolverForLocale(data.metadata.page.locale);
 
@@ -37,5 +44,6 @@ export const createResumePdfBlob = async (
 		template,
 		...(renderOptions ? { renderOptions } : {}),
 		resolveSectionTitle: sectionTitleResolver,
+		onPageMap,
 	});
 };

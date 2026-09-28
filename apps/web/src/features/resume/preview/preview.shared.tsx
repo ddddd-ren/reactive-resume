@@ -1,5 +1,6 @@
+import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { DEFAULT_PDF_PAGE_SIZE, getResumePreviewGapValue, getScaledPreviewPageSize } from "./preview.shared.utils";
@@ -12,6 +13,12 @@ export type ResumePreviewProps = {
 	pageScale?: number;
 	pageClassName?: string;
 	showPageNumbers?: boolean;
+	/** Drawn above each page (e.g. "Page 1 · Letter"). Replaces the small page-number caption. */
+	renderPageCaption?: (page: { pageNumber: number; totalPages: number }) => ReactNode;
+	/** Drawn over each page, in page-relative coordinates; receives the page map of the render on screen. */
+	renderPageOverlay?: (page: { pageIndex: number; pageMap: PageMap | undefined }) => ReactNode;
+	/** Called with the number of physical pages whenever the render on screen changes. */
+	onPageCount?: (pageCount: number) => void;
 };
 
 export type ResolvedResumePreviewProps = ResumePreviewProps & {
