@@ -49,7 +49,10 @@ export const resumeDto = {
 
 	getById: {
 		input: resumeSchema.pick({ id: true }),
-		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({
+			hasPassword: z.boolean(),
+			applicationId: z.string().nullable().describe("The job application this resume was made for, if any."),
+		}),
 	},
 
 	getBySlug: {

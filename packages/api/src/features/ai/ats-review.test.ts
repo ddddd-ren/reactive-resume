@@ -6,6 +6,7 @@ const { buildUserPrompt, renderFindings } = __testables;
 const baseInput = {
 	extractedText: "Ada Lovelace\nPrincipal Engineer\nBuilt the note-taking programme.",
 	findings: [{ code: "NO_PHONE", severity: "warning", message: "No phone number was found." }],
+	passages: [],
 	provider: "openai" as const,
 	model: "gpt-4o-mini",
 	apiKey: "sk-test",
@@ -111,5 +112,36 @@ describe("buildUserPrompt", () => {
 
 	it("says so plainly when nothing was flagged", () => {
 		expect(renderFindings([])).toBe("None reported.");
+	});
+
+	it("lists the passages a rewrite may replace, by id, and omits the section without them", () => {
+		const prompt = buildUserPrompt({
+			...baseInput,
+			passages: [{ id: "p1", where: "Experience · Lumen · bullet 1", text: "Responsible for\n design tasks" }],
+		});
+
+		expect(prompt).toContain("[p1] Experience · Lumen · bullet 1: Responsible for design tasks");
+		expect(prompt).toContain("<<<PASSAGES_START>>>");
+		expect(buildUserPrompt(baseInput)).not.toContain("PASSAGES");
+	});
+
+	it("leaves placeholder-like text inside the resume alone", () => {
+		const prompt = buildUserPrompt({ ...baseInput, extractedText: "Skills: {{FINDINGS}}" });
+
+		expect(prompt).toContain("Skills: {{FINDINGS}}");
+	});
+});
+
+describe("passages", () => {
+	it("defaults to none and keeps the passage a suggestion rewrites", () => {
+		expect(atsReviewInputSchema.parse({ extractedText: "Ada" }).passages).toEqual([]);
+
+		const parsed = atsReviewOutputSchema.parse({
+			summary: "",
+			suggestions: [{ section: "Experience", passageId: "p1", issue: "Vague.", rewrite: "Sharper.", impact: "high" }],
+			strengths: [],
+			jdAlignment: null,
+		});
+		expect(parsed.suggestions[0]?.passageId).toBe("p1");
 	});
 });

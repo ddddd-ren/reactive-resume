@@ -442,6 +442,7 @@ export const resumeService = {
 				showDownloadButtons: schema.resume.showDownloadButtons,
 				updatedAt: schema.resume.updatedAt,
 				hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
+				applicationId: schema.resume.applicationId,
 			})
 			.from(schema.resume)
 			.where(and(eq(schema.resume.id, input.id), eq(schema.resume.userId, input.userId)));
