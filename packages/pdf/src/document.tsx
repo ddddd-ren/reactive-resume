@@ -65,11 +65,15 @@ export const ResumeDocument = ({
 	const resumeData = useMemo(() => ({ ...data, metadata: { ...data.metadata, typography } }), [data, typography]);
 	const pageSize = getTemplatePageSize(resumeData.metadata.page.format);
 	const pageMinHeightStyle = getTemplatePageMinHeightStyle(resumeData.metadata.page.format);
-	const headerResumeData = renderOptions ? { ...resumeData, renderOptions } : resumeData;
+	const headerResumeData = useMemo(
+		() => (renderOptions ? { ...resumeData, renderOptions } : resumeData),
+		[resumeData, renderOptions],
+	);
 	const stylesheetMode = resolveStylesheetMode(resumeData);
+	// The tree is built with the render options, so a letter printed with its header keeps it.
 	const runtime = useMemo(
-		() => semanticRuntime ?? resolveResumeRuntime({ data: resumeData, template, mode: stylesheetMode }),
-		[resumeData, semanticRuntime, stylesheetMode, template],
+		() => semanticRuntime ?? resolveResumeRuntime({ data: headerResumeData, template, mode: stylesheetMode }),
+		[headerResumeData, semanticRuntime, stylesheetMode, template],
 	);
 	const semanticMode = semanticRuntime ? "semantic" : stylesheetMode;
 	// React PDF calls `onRender` inside its stream handler, so a throw here would fail the render.
