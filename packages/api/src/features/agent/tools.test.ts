@@ -3,12 +3,7 @@ import { describe, expect, it } from "vitest";
 import { buildAgentInstructions, buildAgentTools } from "./tools";
 
 const handlers = {
-	readResume: async () => ({
-		id: "resume-1",
-		name: "Resume",
-		updatedAt: "2026-05-13T00:00:00.000Z",
-		data: {},
-	}),
+	readDocument: async () => ({ name: "Resume", updatedAt: "2026-05-13T00:00:00.000Z", data: {} }),
 	readAttachment: async () => ({
 		id: "attachment-1",
 		filename: "job.md",
@@ -16,25 +11,16 @@ const handlers = {
 		size: 128,
 		content: "Job description",
 	}),
-	applyResumePatch: async () => ({
-		actionId: "action-1",
-		resumeId: "resume-1",
-		title: "Update resume",
-		summary: null,
-		operations: [],
-		appliedUpdatedAt: "2026-05-13T00:00:00.000Z",
-	}),
+	proposeEdits: async () => ({ title: "Tighten", edits: [], skipped: [] }),
 };
 
 function buildTools(
 	provider: AIProvider,
-	options?: { model?: string; baseURL?: string; requirePatchApproval?: boolean },
+	options?: { model?: string; baseURL?: string; document?: "resume" | "letter" | null },
 ) {
 	return buildAgentTools({
 		provider: { provider, model: options?.model ?? "gpt-5-mini", apiKey: "test-key", baseURL: options?.baseURL ?? "" },
-		...(options?.requirePatchApproval !== undefined
-			? { options: { requirePatchApproval: options.requirePatchApproval } }
-			: {}),
+		document: options?.document === undefined ? "resume" : options.document,
 		handlers,
 	});
 }
@@ -82,31 +68,43 @@ describe("agent tools", () => {
 		},
 	);
 
-	it("marks apply_resume_patch as needing approval only when review is required", () => {
-		const gated = buildTools("openai-compatible", { requirePatchApproval: true });
-		const open = buildTools("openai-compatible");
-
-		expect(gated.apply_resume_patch).toMatchObject({ needsApproval: true });
-		expect(open.apply_resume_patch?.needsApproval).toBeUndefined();
+	it("offers the document's read tool and propose_edits only while the document is shared", () => {
+		expect(Object.keys(buildTools("openai-compatible")).sort()).toEqual([
+			"ask_user_question",
+			"propose_edits",
+			"read_attachment",
+			"read_resume",
+		]);
+		expect(buildTools("openai-compatible", { document: "letter" })).toHaveProperty("read_letter");
+		const withoutDocument = buildTools("openai-compatible", { document: null });
+		expect(withoutDocument).not.toHaveProperty("propose_edits");
+		expect(withoutDocument).not.toHaveProperty("read_resume");
+		// Nothing edits the document directly.
+		expect(buildTools("openai-compatible")).not.toHaveProperty("apply_resume_patch");
 	});
 
-	it("keeps instructions explicit about native search availability", () => {
-		expect(buildAgentInstructions({ hasProviderNativeSearch: true })).toContain("Use web_search");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: true })).toContain("user-provided public URLs");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).not.toContain("Use web_search");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("Live web research is unavailable");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain(
-			"paste or attach the relevant content",
-		);
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("Batch related JSON Patch operations");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("/basics/name");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain(
-			"/sections/experience/items/0/description",
-		);
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain(
-			"/customSections/0/items/0/description",
-		);
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("never prefixed with /data");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("clean Markdown");
+	it("names the document, includes the posting when shared, and is explicit about web search", () => {
+		const document = { kind: "resume" as const, name: "Product Designer" };
+		const posting = { role: "Designer", company: "Lumen", text: "Scale a design system." };
+
+		const withAll = buildAgentInstructions({ document, posting, hasProviderNativeSearch: true });
+		expect(withAll).toContain('the resume "Product Designer"');
+		expect(withAll).toContain("`read_resume`");
+		expect(withAll).toContain("Designer at Lumen");
+		expect(withAll).toContain("<<<POSTING_START>>>\nScale a design system.\n<<<POSTING_END>>>");
+		expect(withAll).toContain("Use `web_search`");
+		expect(withAll).not.toMatch(/\{\{\w+\}\}/);
+
+		const bare = buildAgentInstructions({ document: null, posting: null, hasProviderNativeSearch: false });
+		expect(bare).toContain("chose not to share");
+		expect(bare).not.toContain("POSTING_START");
+		expect(bare).toContain("can't browse the web");
+		expect(
+			buildAgentInstructions({
+				document: { kind: "letter", name: "Lumen" },
+				posting: null,
+				hasProviderNativeSearch: false,
+			}),
+		).toContain("`read_letter`");
 	});
 });

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+	assistantSystemPromptTemplate,
 	atsReviewSystemPrompt,
 	atsReviewUserPromptTemplate,
-	chatSystemPromptTemplate,
 	docxParserSystemPrompt,
 	docxParserUserPrompt,
 	pdfParserSystemPrompt,
@@ -13,7 +13,7 @@ describe("prompts", () => {
 	it("loads markdown prompts as strings in Node runtimes", () => {
 		expect(atsReviewSystemPrompt).toContain("resume");
 		expect(atsReviewUserPromptTemplate).toContain("{{EXTRACTED_TEXT}}");
-		expect(chatSystemPromptTemplate).toContain("resume");
+		expect(assistantSystemPromptTemplate).toContain("{{DOCUMENT}}");
 		expect(docxParserSystemPrompt).toContain("DOCX");
 		expect(docxParserUserPrompt).toContain("Microsoft Word");
 		expect(pdfParserSystemPrompt).toContain("PDF");

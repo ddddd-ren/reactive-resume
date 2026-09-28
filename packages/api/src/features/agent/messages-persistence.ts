@@ -17,6 +17,69 @@ type StepContentPart = Record<string, unknown> & { type: string };
 
 type AgentStepLike = { content: ReadonlyArray<unknown> };
 
+type EditStatus = "pending" | "accepted" | "rejected";
+type ProposeEditsPart = UiMessagePart & {
+	toolCallId?: string;
+	state?: string;
+	output?: { edits?: Array<{ id: string; status: EditStatus }> };
+};
+
+const proposeEditsParts = (message: UIMessage) =>
+	message.parts.filter(
+		(part): part is ProposeEditsPart =>
+			part.type === "tool-propose_edits" && (part as ProposeEditsPart).state === "output-available",
+	);
+
+/** The edits a message proposed, with what the user did with each. */
+export const proposedEditsOf = (message: UIMessage) =>
+	proposeEditsParts(message).flatMap((part) => part.output?.edits ?? []);
+
+/** The message with edit statuses set, in one propose_edits result (by tool call) or in all of them. */
+export function withEditStatuses(
+	message: UIMessage,
+	toolCallId: string | null,
+	statuses: ReadonlyMap<string, EditStatus>,
+): UIMessage {
+	if (statuses.size === 0) return message;
+	return {
+		...message,
+		parts: message.parts.map((part) => {
+			const edits = (part as ProposeEditsPart).output?.edits;
+			if (part.type !== "tool-propose_edits" || !edits) return part;
+			if (toolCallId && (part as ProposeEditsPart).toolCallId !== toolCallId) return part;
+			const output = (part as ProposeEditsPart).output;
+			return {
+				...part,
+				output: { ...output, edits: edits.map((edit) => ({ ...edit, status: statuses.get(edit.id) ?? edit.status })) },
+			} as UiMessagePart;
+		}),
+	};
+}
+
+// A run rewrites its message as it goes, always with edits pending; what the user already did with them (they can
+// accept while the reply is still streaming) is kept.
+async function withStoredEditStatuses(
+	input: { userId: string; threadId: string; rowId?: string; message: UIMessage },
+	database: AgentMessagesDb,
+) {
+	if (proposeEditsParts(input.message).length === 0) return input.message;
+	const rows = await database
+		.select({ uiMessage: schema.agentMessage.uiMessage })
+		.from(schema.agentMessage)
+		.where(
+			and(
+				eq(schema.agentMessage.threadId, input.threadId),
+				eq(schema.agentMessage.userId, input.userId),
+				input.rowId
+					? eq(schema.agentMessage.id, input.rowId)
+					: sql`${schema.agentMessage.uiMessage}->>'id' = ${input.message.id}`,
+			),
+		);
+	const stored = rows[0]?.uiMessage as unknown as UIMessage | undefined;
+	if (!stored?.parts) return input.message;
+	return withEditStatuses(input.message, null, new Map(proposedEditsOf(stored).map((edit) => [edit.id, edit.status])));
+}
+
 function toolPartFromCall(part: StepContentPart): UiMessagePart {
 	if (part.dynamic) {
 		return {
@@ -181,9 +244,10 @@ export async function upsertAssistantUiMessage(
 	},
 	database: AgentMessagesDb = db,
 ) {
+	const message = await withStoredEditStatuses(input, database);
 	const set = {
 		status: input.status,
-		uiMessage: input.message as unknown as Record<string, unknown>,
+		uiMessage: message as unknown as Record<string, unknown>,
 	};
 	const isFinal = input.status !== "streaming";
 
@@ -232,10 +296,10 @@ export async function upsertAssistantUiMessage(
 		.values({
 			userId: input.userId,
 			threadId: input.threadId,
-			role: input.message.role,
+			role: message.role,
 			status: input.status,
 			sequence,
-			uiMessage: input.message as unknown as Record<string, unknown>,
+			uiMessage: message as unknown as Record<string, unknown>,
 		})
 		.returning({ id: schema.agentMessage.id });
 
@@ -262,4 +326,26 @@ export async function deleteDraftIfEmpty(
 				sql`jsonb_array_length(${schema.agentMessage.uiMessage}->'parts') = 0`,
 			),
 		);
+}
+
+/**
+ * The row of a user message already saved for this thread: a retry sends the same message again, and it's kept
+ * once.
+ */
+export async function findUserMessageRow(
+	input: { userId: string; threadId: string; uiMessageId: string },
+	database: AgentMessagesDb = db,
+) {
+	const [row] = await database
+		.select({ id: schema.agentMessage.id })
+		.from(schema.agentMessage)
+		.where(
+			and(
+				eq(schema.agentMessage.threadId, input.threadId),
+				eq(schema.agentMessage.userId, input.userId),
+				eq(schema.agentMessage.role, "user"),
+				sql`${schema.agentMessage.uiMessage}->>'id' = ${input.uiMessageId}`,
+			),
+		);
+	return row ?? null;
 }

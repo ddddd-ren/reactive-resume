@@ -1,6 +1,12 @@
 import type { UIMessage } from "ai";
 import { describe, expect, it } from "vitest";
-import { applyStepToUiMessage, upsertAssistantUiMessage, withAccumulatedUsageMetadata } from "./messages-persistence";
+import {
+	applyStepToUiMessage,
+	proposedEditsOf,
+	upsertAssistantUiMessage,
+	withAccumulatedUsageMetadata,
+	withEditStatuses,
+} from "./messages-persistence";
 
 function emptyMessage(): UIMessage {
 	return { id: "ui-1", role: "assistant", parts: [] };
@@ -223,5 +229,54 @@ describe("upsertAssistantUiMessage", () => {
 		expect(result).toEqual({ rowId: "inserted-row" });
 		expect(database.inserts).toHaveLength(1);
 		expect(database.inserts[0]).toMatchObject({ role: "assistant", status: "completed", sequence: 4 });
+	});
+});
+
+describe("proposed edit statuses", () => {
+	const proposing = (statuses: string[]): UIMessage =>
+		({
+			id: "ui-1",
+			role: "assistant",
+			parts: [
+				{ type: "text", text: "Three edits." },
+				{
+					type: "tool-propose_edits",
+					toolCallId: "call-1",
+					state: "output-available",
+					input: {},
+					output: {
+						title: "Tailor",
+						edits: statuses.map((status, index) => ({ id: `e${index}`, status })),
+						skipped: [],
+					},
+				},
+			],
+		}) as never;
+
+	it("sets statuses on one result and reads them back", () => {
+		const message = withEditStatuses(proposing(["pending", "pending"]), "call-1", new Map([["e1", "accepted"]]));
+		expect(proposedEditsOf(message).map((edit) => edit.status)).toEqual(["pending", "accepted"]);
+		expect(withEditStatuses(message, "call-2", new Map([["e0", "rejected"]]))).toEqual(message);
+	});
+
+	it("keeps what the user did while a run rewrites its message", async () => {
+		const database = scriptedDatabase([[{ id: "row-1" }]]);
+		database.select = () => ({
+			from: () => ({ where: async () => [{ uiMessage: proposing(["accepted", "rejected"]) }] }),
+		});
+
+		await upsertAssistantUiMessage(
+			{
+				userId: "user-1",
+				threadId: "thread-1",
+				rowId: "row-1",
+				message: proposing(["pending", "pending"]),
+				status: "completed",
+			},
+			database as never,
+		);
+
+		const written = database.updates[0] as { uiMessage: UIMessage };
+		expect(proposedEditsOf(written.uiMessage).map((edit) => edit.status)).toEqual(["accepted", "rejected"]);
 	});
 });

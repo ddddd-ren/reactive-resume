@@ -8,7 +8,7 @@ function isAgentEnvironmentUnavailable(error: unknown) {
 
 function throwUnavailable(): never {
 	throw new ORPCError("PRECONDITION_FAILED", {
-		message: "AI agent workspace is unavailable because REDIS_URL or ENCRYPTION_SECRET is not configured.",
+		message: "The assistant isn't set up on this server: ENCRYPTION_SECRET is not configured.",
 	});
 }
 

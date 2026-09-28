@@ -180,4 +180,20 @@ describe("agent stream lifecycle", () => {
 		await expect(readStream(await lifecycle.resume("stream-1"))).resolves.toEqual([]);
 		await expect(readStream(emptyAgentStream())).resolves.toEqual([]);
 	});
+
+	it("streams directly, without resuming, when there's no Redis", async () => {
+		const lifecycle = createAgentStreamLifecycle({ getContext: () => null });
+		const stream = await lifecycle.create(
+			"stream-1",
+			() =>
+				new ReadableStream({
+					start(controller) {
+						controller.enqueue({ type: "start" });
+						controller.close();
+					},
+				}),
+		);
+		expect(await readStream(stream)).toEqual([`data: ${JSON.stringify({ type: "start" })}\n\n`, "data: [DONE]\n\n"]);
+		expect(await readStream(await lifecycle.resume("stream-1"))).toEqual([]);
+	});
 });

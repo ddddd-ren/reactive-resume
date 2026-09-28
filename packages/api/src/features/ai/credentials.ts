@@ -84,25 +84,14 @@ export function redactEncryptedCredential(fields: StoredCredentialFields): Redac
 	};
 }
 
-// Domain-separated from the AES key. Deterministic derivation (no new env var) means an approval
-// signature minted when a run halts still verifies at continuation, even across a server restart.
-export function getAgentToolApprovalSecret() {
-	const secret = getEncryptionSecret();
-	if (!secret) throw new Error("AI_CREDENTIAL_ENCRYPTION_UNAVAILABLE");
-
-	return createHash("sha256").update(`${secret}:agent-tool-approval`).digest("hex");
-}
-
 function isCredentialEncryptionConfigured() {
 	return !!getEncryptionSecret();
 }
 
-function isAgentStreamingConfigured() {
-	return !!env.REDIS_URL?.trim();
-}
-
+// The assistant needs stored keys, so ENCRYPTION_SECRET. Redis is optional: with it, replies survive a reload
+// and Stop reaches a run on another server; without it, both work within one server.
 export function isAgentEnvironmentConfigured() {
-	return isCredentialEncryptionConfigured() && isAgentStreamingConfigured();
+	return isCredentialEncryptionConfigured();
 }
 
 export function assertCredentialEncryptionConfigured() {

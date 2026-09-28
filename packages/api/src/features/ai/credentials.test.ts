@@ -55,15 +55,13 @@ describe("AI credential encryption", () => {
 });
 
 describe("AI agent environment", () => {
-	it("is available only when Redis and encryption secret are configured", () => {
+	it("needs the encryption secret, and works without Redis", () => {
 		expect(isAgentEnvironmentConfigured()).toBe(true);
 		expect(() => assertAgentEnvironment()).not.toThrow();
 
 		envMock.REDIS_URL = "";
-		expect(isAgentEnvironmentConfigured()).toBe(false);
-		expect(() => assertAgentEnvironment()).toThrow("AGENT_ENVIRONMENT_UNAVAILABLE");
+		expect(isAgentEnvironmentConfigured()).toBe(true);
 
-		envMock.REDIS_URL = "redis://localhost:6379";
 		envMock.ENCRYPTION_SECRET = "";
 		expect(isAgentEnvironmentConfigured()).toBe(false);
 		expect(() => assertAgentEnvironment()).toThrow("AGENT_ENVIRONMENT_UNAVAILABLE");

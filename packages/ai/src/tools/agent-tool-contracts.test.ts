@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
 	agentMessageMetadataSchema,
-	applyResumePatchInputSchema,
-	applyResumePatchOutputSchema,
 	askUserQuestionInputSchema,
+	proposeEditsInputSchema,
 } from "./agent-tool-contracts";
 
 describe("askUserQuestionInputSchema", () => {
@@ -21,52 +20,19 @@ describe("askUserQuestionInputSchema", () => {
 	});
 });
 
-describe("applyResumePatchInputSchema", () => {
-	it("requires a title and at least one operation", () => {
+describe("proposeEditsInputSchema", () => {
+	it("takes a titled set of edits, each on a passage with a reason", () => {
 		expect(
-			applyResumePatchInputSchema.safeParse({
-				title: "Edit",
-				operations: [{ op: "replace", path: "/basics/name", value: "Bob" }],
+			proposeEditsInputSchema.safeParse({
+				title: "Tighten",
+				edits: [{ passageId: "p_1", text: "Led the redesign", why: "Stronger verb." }],
 			}).success,
 		).toBe(true);
-		expect(applyResumePatchInputSchema.safeParse({ title: "Edit", operations: [] }).success).toBe(false);
-	});
-
-	it("accepts a strict ISO baseUpdatedAt and rejects malformed values", () => {
-		const operations = [{ op: "replace", path: "/basics/name", value: "Bob" }];
-
+		expect(proposeEditsInputSchema.safeParse({ title: "Tighten", edits: [] }).success).toBe(false);
 		expect(
-			applyResumePatchInputSchema.safeParse({
-				title: "Edit",
-				baseUpdatedAt: "2026-08-20T10:15:00.000Z",
-				operations,
-			}).success,
-		).toBe(true);
-		expect(
-			applyResumePatchInputSchema.safeParse({ title: "Edit", baseUpdatedAt: "yesterday", operations }).success,
-		).toBe(false);
-	});
-});
-
-describe("applyResumePatchOutputSchema", () => {
-	const base = {
-		actionId: "action-1",
-		resumeId: "resume-1",
-		title: "Edit",
-		summary: null,
-		operations: [{ op: "remove" as const, path: "/sections/experience/items/0" }],
-		appliedUpdatedAt: "2026-08-20T00:00:00.000Z",
-	};
-
-	it("accepts legacy outputs without changedPaths or resume", () => {
-		expect(applyResumePatchOutputSchema.safeParse(base).success).toBe(true);
-	});
-
-	it("accepts fresh outputs carrying the post-patch document", () => {
-		expect(
-			applyResumePatchOutputSchema.safeParse({ ...base, changedPaths: ["/basics/name"], resume: { basics: {} } })
+			proposeEditsInputSchema.safeParse({ title: "Tighten", edits: [{ passageId: "p_1", text: " ", why: "x" }] })
 				.success,
-		).toBe(true);
+		).toBe(false);
 	});
 });
 
