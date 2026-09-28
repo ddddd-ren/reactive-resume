@@ -88,7 +88,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 				<div className="flex flex-wrap items-center gap-x-3 gap-y-2">
 					<div className="flex items-baseline gap-2">
 						<h2 className="font-semibold text-lg capitalize">{monthFormat.format(month)}</h2>
-						<span className="text-muted-foreground text-sm">
+						<span className="text-ink-3 text-sm">
 							{monthCount === 0 ? (
 								<Trans>No interviews</Trans>
 							) : monthCount === 1 ? (
@@ -121,11 +121,11 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 					</div>
 				</div>
 
-				<div className="grid shrink-0 grid-cols-7 overflow-hidden rounded-xl border border-border bg-card">
+				<div className="grid shrink-0 grid-cols-7 overflow-hidden rounded-xl border border-line bg-surface">
 					{days.slice(0, 7).map((day) => (
 						<div
 							key={`weekday-${day.getDay()}`}
-							className="border-border border-b px-2 py-2 text-center font-medium text-[11px] text-muted-foreground uppercase tracking-wide"
+							className="border-line border-b px-2 py-2 text-center font-medium text-[11px] text-ink-3 uppercase tracking-wide"
 						>
 							{weekdayFormat.format(day)}
 						</div>
@@ -144,10 +144,10 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 								key={key}
 								data-day={key}
 								className={cn(
-									"group/day relative flex min-h-16 flex-col gap-1 border-border p-1 sm:min-h-24 sm:p-1.5",
+									"group/day relative flex min-h-16 flex-col gap-1 border-line p-1 sm:min-h-24 sm:p-1.5",
 									i % 7 !== 6 && "border-e",
 									i < 35 && "border-b",
-									!inMonth && "bg-muted/30",
+									!inMonth && "bg-sunken/30",
 								)}
 							>
 								<div className="flex items-center justify-between">
@@ -155,7 +155,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 										type="button"
 										title={scheduleLabel}
 										aria-label={scheduleLabel}
-										className="flex size-6 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground focus-visible:opacity-100 group-hover/day:opacity-100 max-sm:hidden"
+										className="flex size-6 items-center justify-center rounded-md text-ink-3 opacity-0 transition-opacity hover:bg-sunken hover:text-ink focus-visible:opacity-100 group-hover/day:opacity-100 max-sm:hidden"
 										onClick={() => schedule(day)}
 									>
 										<PlusIcon className="size-3.5" />
@@ -163,8 +163,8 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 									<span
 										className={cn(
 											"flex size-6 items-center justify-center rounded-full text-xs",
-											!inMonth && "text-muted-foreground/60",
-											isToday && "bg-primary font-semibold text-primary-foreground",
+											!inMonth && "text-ink-3/60",
+											isToday && "bg-accent font-semibold text-on-accent",
 										)}
 									>
 										{day.getDate()}
@@ -184,7 +184,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 											render={
 												<button
 													type="button"
-													className="self-start rounded-md px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground"
+													className="self-start rounded-md px-1.5 py-0.5 text-[11px] text-ink-3 hover:bg-sunken hover:text-ink"
 												/>
 											}
 										>
@@ -208,7 +208,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 					})}
 				</div>
 
-				<div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground text-xs">
+				<div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-ink-3 text-xs">
 					{INTERVIEW_KINDS.map((kind) => (
 						<span key={kind.value} className="flex items-center gap-1.5">
 							<span className="size-2 rounded-full" style={{ background: kind.color }} />
@@ -224,15 +224,15 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 				</h3>
 
 				{upcoming.length === 0 ? (
-					<div className="flex flex-col items-center gap-3 rounded-xl border border-border border-dashed px-4 py-8 text-center">
-						<div className="flex size-10 items-center justify-center rounded-full bg-muted">
-							<CalendarBlankIcon className="size-5 text-muted-foreground" />
+					<div className="flex flex-col items-center gap-3 rounded-xl border border-line border-dashed px-4 py-8 text-center">
+						<div className="flex size-10 items-center justify-center rounded-full bg-sunken">
+							<CalendarBlankIcon className="size-5 text-ink-3" />
 						</div>
 						<div className="space-y-1">
 							<p className="font-medium text-sm">
 								<Trans>Nothing scheduled yet</Trans>
 							</p>
-							<p className="text-muted-foreground text-xs">
+							<p className="text-ink-3 text-xs">
 								<Trans>Add screening calls and technical interviews to see them here and on the calendar.</Trans>
 							</p>
 						</div>
@@ -247,7 +247,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						if (!first) return null;
 						return (
 							<div key={dayKey(first.start)} className="flex flex-col gap-2">
-								<h4 className="font-medium text-muted-foreground text-xs">{dayHeading(first.start)}</h4>
+								<h4 className="font-medium text-ink-3 text-xs">{dayHeading(first.start)}</h4>
 								{group.map((item) => (
 									<UpcomingCard
 										key={item.interview.id}
@@ -289,26 +289,26 @@ function UpcomingCard({ item, timeRange, locale, onEdit, onOpenApplication }: Up
 	return (
 		<div
 			data-upcoming-interview={item.interview.id}
-			className="relative overflow-hidden rounded-xl border border-border bg-card ps-4 text-sm"
+			className="relative overflow-hidden rounded-xl border border-line bg-surface ps-4 text-sm"
 		>
 			<span className="absolute inset-y-0 start-0 w-1" style={{ background: kind?.color }} />
 			<button type="button" className="block w-full py-3 pe-3 text-start hover:opacity-80" onClick={onEdit}>
 				<span className="flex items-center justify-between gap-2 text-xs">
 					<span className="font-medium">{timeRange}</span>
-					<span className="text-muted-foreground">{formatDuration(item.interview.durationMinutes, locale)}</span>
+					<span className="text-ink-3">{formatDuration(item.interview.durationMinutes, locale)}</span>
 				</span>
 				<span className="mt-1 block truncate font-semibold">{item.application.company}</span>
-				<span className="block truncate text-muted-foreground text-xs">
+				<span className="block truncate text-ink-3 text-xs">
 					{kind?.label ?? item.interview.kind} · {item.application.role}
 				</span>
 				{item.interview.location && (
-					<span className="mt-1.5 flex items-center gap-1 text-muted-foreground text-xs">
+					<span className="mt-1.5 flex items-center gap-1 text-ink-3 text-xs">
 						<MapPinIcon className="shrink-0" />
 						<span className="truncate">{item.interview.location}</span>
 					</span>
 				)}
 			</button>
-			<button type="button" className="mb-2 text-primary text-xs hover:underline" onClick={onOpenApplication}>
+			<button type="button" className="mb-2 text-accent-text text-xs hover:underline" onClick={onOpenApplication}>
 				<Trans>View application</Trans>
 			</button>
 		</div>
@@ -327,13 +327,13 @@ function InterviewChip({ item, time, onOpen }: InterviewChipProps) {
 		<button
 			type="button"
 			title={`${time} · ${kind?.label ?? item.interview.kind} · ${item.application.company} — ${item.application.role}`}
-			className="flex min-w-0 items-center gap-1.5 rounded-md border-s-2 bg-muted/60 px-1.5 py-0.5 text-start text-[11px] leading-tight hover:bg-muted max-sm:justify-center max-sm:border-s-0 max-sm:bg-transparent"
+			className="flex min-w-0 items-center gap-1.5 rounded-md border-s-2 bg-sunken/60 px-1.5 py-0.5 text-start text-[11px] leading-tight hover:bg-sunken max-sm:justify-center max-sm:border-s-0 max-sm:bg-transparent"
 			style={{ borderInlineStartColor: kind?.color }}
 			onClick={onOpen}
 		>
 			<span className="size-2 shrink-0 rounded-full sm:hidden" style={{ background: kind?.color }} />
 			<span className="flex min-w-0 items-baseline gap-1.5 max-sm:hidden">
-				<span className="shrink-0 text-muted-foreground tabular-nums">{time}</span>
+				<span className="shrink-0 text-ink-3 tabular-nums">{time}</span>
 				<span className="truncate font-medium">{item.application.company}</span>
 			</span>
 		</button>

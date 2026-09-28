@@ -62,7 +62,7 @@ export function ResetPasswordPage({ token }: Props) {
 					<Trans>Reset your password</Trans>
 				</h1>
 
-				<div className="text-muted-foreground">
+				<div className="text-ink-3">
 					<Trans>Enter a new password for your account</Trans>
 				</div>
 			</div>

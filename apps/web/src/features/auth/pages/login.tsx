@@ -124,7 +124,7 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 				</h1>
 
 				{!disableSignups && (
-					<div className="text-muted-foreground">
+					<div className="text-ink-3">
 						<Trans>
 							Don't have an account?{" "}
 							<Button

@@ -313,7 +313,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 							<div className="space-y-4">
 								<div className="grid grid-cols-2 gap-2">
 									{backupCodes.map((code) => (
-										<div key={code} className="rounded-md border border-border p-2 text-center font-mono text-sm">
+										<div key={code} className="rounded-md border border-line p-2 text-center font-mono text-sm">
 											{code}
 										</div>
 									))}

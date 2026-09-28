@@ -74,7 +74,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 				<h1 className="font-semibold text-2xl tracking-tight">
 					{backupCode ? <Trans>Verify with a Backup Code</Trans> : <Trans>Two-Factor Authentication</Trans>}
 				</h1>
-				<div className="text-muted-foreground">
+				<div className="text-ink-3">
 					{backupCode ? (
 						<Trans>Enter one of your saved backup codes to access your account</Trans>
 					) : (

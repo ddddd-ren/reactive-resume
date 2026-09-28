@@ -565,8 +565,8 @@ export function RichInput({
 				"data-fullscreen": isFullscreen ? "true" : "false",
 				class: cn(
 					"wysiwyg group/editor overflow-y-auto p-3 pb-4 [&_[data-resume-whitespace=preserve]]:whitespace-pre-wrap",
-					"rounded-md rounded-t-none border outline-none focus-visible:border-ring",
-					"[td:has(.selectedCell)]:bg-primary",
+					"rounded-md rounded-t-none border outline-none focus-visible:border-accent",
+					"[td:has(.selectedCell)]:bg-accent",
 					"data-[fullscreen=false]:max-h-[400px] data-[fullscreen=false]:min-h-[100px]",
 					"data-[fullscreen=true]:max-h-none data-[fullscreen=true]:min-h-full",
 					editorClassName,
@@ -596,7 +596,7 @@ export function RichInput({
 	const editorElement = (
 		<div className="relative">
 			{hasUnsupportedTable ? (
-				<div role="status" className="rounded-md rounded-b-none border border-b-0 bg-muted px-3 py-2 text-sm">
+				<div role="status" className="rounded-md rounded-b-none border border-b-0 bg-sunken px-3 py-2 text-sm">
 					<span>
 						<Trans>
 							Original table formatting is preserved. This content is read-only because it cannot be edited safely.
@@ -897,7 +897,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 								size={isFullscreen ? "lg" : "sm"}
 								tabIndex={-1}
 								variant="ghost"
-								className={cn("rounded-none px-2", state.isHighlight && "bg-muted text-foreground")}
+								className={cn("rounded-none px-2", state.isHighlight && "bg-sunken text-ink")}
 								title={t`Highlight`}
 								disabled={!state.canHighlightColor}
 							>
@@ -916,7 +916,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				<PopoverHeader className="flex-row items-start justify-between gap-2">
 					<div className="flex items-center gap-2.5">
 						<span
-							className="grid size-9 place-items-center rounded-lg border border-border bg-muted/60 text-sm shadow-xs"
+							className="grid size-9 place-items-center rounded-lg border border-line bg-sunken/60 text-sm shadow-xs"
 							style={{ backgroundColor: visibleHighlightColor ?? defaultHighlightColor }}
 						>
 							<HighlighterCircleIcon className="size-4" />
@@ -926,7 +926,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 							<PopoverTitle>
 								<Trans>Highlight Color</Trans>
 							</PopoverTitle>
-							<span className="text-muted-foreground text-xs">
+							<span className="text-ink-3 text-xs">
 								<Trans comment="Preset or custom shade refer to the color picker">
 									Choose a preset or custom shade.
 								</Trans>
@@ -957,7 +957,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 								size={isFullscreen ? "lg" : "sm"}
 								tabIndex={-1}
 								variant="ghost"
-								className={cn("rounded-none px-2", state.textColor && "bg-muted text-foreground")}
+								className={cn("rounded-none px-2", state.textColor && "bg-sunken text-ink")}
 								title={t`Text Color`}
 								disabled={!state.canTextColor}
 							>
@@ -976,7 +976,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				<PopoverHeader className="flex-row items-start justify-between gap-2">
 					<div className="flex items-center gap-2.5">
 						<span
-							className="grid size-9 place-items-center rounded-lg border border-border bg-muted/60 font-semibold text-sm shadow-xs"
+							className="grid size-9 place-items-center rounded-lg border border-line bg-sunken/60 font-semibold text-sm shadow-xs"
 							style={{ color: state.textColor ?? "currentColor" }}
 						>
 							A
@@ -986,7 +986,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 							<PopoverTitle>
 								<Trans>Text Color</Trans>
 							</PopoverTitle>
-							<span className="text-muted-foreground text-xs">
+							<span className="text-ink-3 text-xs">
 								<Trans comment="Preset or custom shade refer to the color picker">
 									Choose a preset or custom shade.
 								</Trans>
@@ -1006,7 +1006,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				</PopoverHeader>
 			</ColorPicker>
 
-			<div className="mx-1 h-5 w-px bg-border" />
+			<div className="mx-1 h-5 w-px bg-line" />
 
 			<DropdownMenu>
 				<DropdownMenuTrigger
@@ -1141,7 +1141,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			<div className="mx-1 h-5 w-px bg-border" />
+			<div className="mx-1 h-5 w-px bg-line" />
 
 			<Toggle
 				size={isFullscreen ? "lg" : "sm"}
@@ -1191,7 +1191,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				<TextIndentIcon className="size-3.5" />
 			</Button>
 
-			<div className="mx-1 h-5 w-px bg-border" />
+			<div className="mx-1 h-5 w-px bg-line" />
 
 			{state.isLink ? (
 				<Button
@@ -1251,7 +1251,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				<MinusIcon className="size-3.5" />
 			</Button>
 
-			<span className="ml-auto px-2 text-muted-foreground text-xs tabular-nums" aria-live="polite">
+			<span className="ml-auto px-2 text-ink-3 text-xs tabular-nums" aria-live="polite">
 				<Trans comment="Character count readout for the rich-text editor">{state.characterCount} characters</Trans>
 			</span>
 		</div>

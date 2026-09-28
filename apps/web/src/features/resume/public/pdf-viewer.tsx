@@ -245,11 +245,11 @@ export function PdfViewer({
 			</div>
 
 			{error ? (
-				<div className="absolute inset-0 flex items-center justify-center bg-background px-6 text-center text-muted-foreground text-sm">
+				<div className="absolute inset-0 flex items-center justify-center bg-bg px-6 text-center text-ink-3 text-sm">
 					Unable to display PDF preview.
 				</div>
 			) : isReady ? null : (
-				<div className="absolute inset-0 flex items-center justify-center bg-background">
+				<div className="absolute inset-0 flex items-center justify-center bg-bg">
 					<Spinner className="size-6" />
 				</div>
 			)}

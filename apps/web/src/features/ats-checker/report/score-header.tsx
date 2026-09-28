@@ -21,15 +21,15 @@ export function ScoreHeader({ report }: ScoreHeaderProps) {
 	const [cap] = report.cappedBy;
 
 	return (
-		<div className="space-y-3 rounded-md border bg-card p-3">
+		<div className="space-y-3 rounded-md border bg-surface p-3">
 			<div className="flex items-baseline gap-2">
 				<span className={cn("font-bold text-4xl tabular-nums leading-none", tone.text)}>{report.score}</span>
-				<span className="text-muted-foreground text-sm">
+				<span className="text-ink-3 text-sm">
 					<Trans>out of 100</Trans>
 				</span>
 			</div>
 
-			<div className="h-1.5 overflow-hidden rounded-full bg-muted">
+			<div className="h-1.5 overflow-hidden rounded-full bg-sunken">
 				<div
 					className={cn(
 						"h-full translate-x-(--fill) rounded-full transition-[translate] duration-300 ease-out-strong rtl:-translate-x-(--fill)",
@@ -39,7 +39,7 @@ export function ScoreHeader({ report }: ScoreHeaderProps) {
 				/>
 			</div>
 
-			<div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground text-xs">
+			<div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-ink-3 text-xs">
 				<span>
 					<Trans>
 						{report.passedChecks} of {report.applicableChecks} applicable checks passed
@@ -67,7 +67,7 @@ export function ScoreHeader({ report }: ScoreHeaderProps) {
 			</div>
 
 			{cap && (
-				<p className="rounded-md bg-muted/60 p-2 text-muted-foreground text-xs leading-normal">
+				<p className="rounded-md bg-sunken/60 p-2 text-ink-3 text-xs leading-normal">
 					<Trans>The score is capped because of a blocking problem: {getPdfFindingMessage(cap).title}</Trans>
 				</p>
 			)}

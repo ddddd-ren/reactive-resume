@@ -181,7 +181,7 @@ export function ResumesCommandGroup() {
 							>
 								<BriefcaseIcon />
 								<span className="min-w-0 truncate">{application.company}</span>
-								<span className="truncate text-muted-foreground text-xs">{application.role}</span>
+								<span className="truncate text-ink-3 text-xs">{application.role}</span>
 							</CommandItem>
 						))
 					)}
@@ -207,7 +207,7 @@ export function ResumesCommandGroup() {
 								>
 									<ChatCircleDotsIcon />
 									<span className="min-w-0 truncate">{thread.title}</span>
-									<span className="truncate text-muted-foreground text-xs">{documentName}</span>
+									<span className="truncate text-ink-3 text-xs">{documentName}</span>
 								</CommandItem>
 							);
 						})

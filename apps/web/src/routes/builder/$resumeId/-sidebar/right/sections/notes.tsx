@@ -30,7 +30,7 @@ function NotesSectionForm() {
 
 			<RichInput value={notes} onChange={onChange} />
 
-			<p className="text-muted-foreground">
+			<p className="text-ink-3">
 				<Trans>For example, note which companies you sent this resume to, or links to the job descriptions.</Trans>
 			</p>
 		</div>

@@ -212,16 +212,16 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 					{/* Pasted job description: stored with the application and used for every AI action.
 					    Collapsed by default so the form stays short; hidden entirely when AI is off. */}
 					{aiEnabled && (
-						<Accordion className="rounded-lg border border-border border-dashed px-3">
+						<Accordion className="rounded-lg border border-line border-dashed px-3">
 							<AccordionItem value="job-description">
 								<AccordionTrigger>
 									<span className="flex items-center gap-1.5">
-										<SparkleIcon className="text-primary" />
+										<SparkleIcon className="text-accent-text" />
 										<Trans>Job description</Trans>
 									</span>
 								</AccordionTrigger>
 								<AccordionContent className="flex flex-col gap-2">
-									<p className="text-muted-foreground text-xs">
+									<p className="text-ink-3 text-xs">
 										<Trans>
 											Copy the entire job description from the posting and paste it below. We'll fill in the fields for
 											you and keep the text with this application for match scoring and tailoring.
@@ -239,7 +239,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 										onPaste={(event) => runAutofill(event.clipboardData.getData("text"))}
 									/>
 									<div className="flex items-center justify-between gap-2">
-										<p className="text-[11px] text-muted-foreground">
+										<p className="text-[11px] text-ink-3">
 											{autofill.isPending ? (
 												<Trans>Reading the posting…</Trans>
 											) : (
@@ -348,7 +348,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 								attachLabel={t`Or upload a resume PDF`}
 								onChange={(value) => set("resumeFile", value)}
 							/>
-							<p className="text-[11px] text-muted-foreground">
+							<p className="text-[11px] text-ink-3">
 								<Trans>Link a Reactive Resume to use AI match scoring and tailoring.</Trans>
 							</p>
 						</div>
@@ -401,9 +401,9 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
 	return (
 		<div className="grid gap-1.5">
-			<Label className="text-muted-foreground text-xs">
+			<Label className="text-ink-3 text-xs">
 				{label}
-				{required && <span className="text-destructive"> *</span>}
+				{required && <span className="text-danger-text"> *</span>}
 			</Label>
 			{children}
 		</div>
@@ -455,13 +455,13 @@ function TagsField({ value, suggestions, onChange }: TagsFieldProps) {
 					{value.map((tag) => (
 						<span
 							key={tag}
-							className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-muted-foreground text-xs"
+							className="inline-flex items-center gap-1 rounded-full bg-sunken px-2 py-0.5 text-ink-3 text-xs"
 						>
 							{tag}
 							<button
 								type="button"
 								title={t`Remove tag`}
-								className="hover:text-destructive"
+								className="hover:text-danger-text"
 								onClick={() => onChange(value.filter((t) => t !== tag))}
 							>
 								<XIcon className="size-3" />

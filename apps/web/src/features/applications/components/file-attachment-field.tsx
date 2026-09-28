@@ -55,8 +55,8 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 	return (
 		<>
 			{value ? (
-				<div className="flex items-center gap-3 rounded-lg border border-border p-2.5">
-					<span className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary">
+				<div className="flex items-center gap-3 rounded-lg border border-line p-2.5">
+					<span className="flex size-8 items-center justify-center rounded-md bg-accent/10 text-accent-text">
 						<FilePdfIcon />
 					</span>
 					<a
@@ -71,7 +71,7 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 						type="button"
 						title={t`Remove file`}
 						disabled={disabled}
-						className="text-muted-foreground hover:text-destructive disabled:opacity-40"
+						className="text-ink-3 hover:text-danger-text disabled:opacity-40"
 						onClick={clear}
 					>
 						<XIcon />
@@ -82,7 +82,7 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 					type="button"
 					disabled={disabled || upload.isPending}
 					onClick={() => inputRef.current?.click()}
-					className="flex w-full items-center gap-2 rounded-lg border border-border border-dashed p-2.5 text-muted-foreground text-sm hover:bg-muted/50 disabled:opacity-60"
+					className="flex w-full items-center gap-2 rounded-lg border border-line border-dashed p-2.5 text-ink-3 text-sm hover:bg-sunken/50 disabled:opacity-60"
 				>
 					<UploadSimpleIcon />
 					{upload.isPending ? <Trans>Uploading…</Trans> : attachLabel}

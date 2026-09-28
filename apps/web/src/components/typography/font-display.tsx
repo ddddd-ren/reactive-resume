@@ -38,7 +38,7 @@ export function FontDisplay({ family, label, type, url }: FontDisplayProps) {
 			>
 				{label}
 			</span>
-			{label !== family && <span className="text-muted-foreground text-xs">{family}</span>}
+			{label !== family && <span className="text-ink-3 text-xs">{family}</span>}
 		</div>
 	);
 }

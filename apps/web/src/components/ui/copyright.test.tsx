@@ -44,7 +44,7 @@ describe("Copyright", () => {
 		const { container } = renderCopyright({ className: "extra-class" });
 		const wrapper = container.firstChild as HTMLElement;
 		expect(wrapper.className).toContain("extra-class");
-		expect(wrapper.className).toContain("text-muted-foreground");
+		expect(wrapper.className).toContain("text-ink-3");
 	});
 
 	it("opens external links in a new tab", () => {

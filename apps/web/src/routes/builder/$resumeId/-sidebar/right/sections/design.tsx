@@ -180,7 +180,7 @@ function QuickColorCircle({ color, active, onSelect, className, ...props }: Quic
 			onClick={() => onSelect(color)}
 			className={cn(
 				"relative flex size-8 items-center justify-center rounded-md bg-transparent",
-				"transition-[scale,background-color] duration-150 ease-out-strong hover:bg-secondary/80 active:scale-[0.97]",
+				"transition-[scale,background-color] duration-150 ease-out-strong hover:bg-sunken/80 active:scale-[0.97]",
 				className,
 			)}
 			{...props}
@@ -196,7 +196,7 @@ function QuickColorCircle({ color, active, onSelect, className, ...props }: Quic
 						transition={{ duration: 0.16, ease: EASE_OUT_STRONG }}
 						className="absolute inset-0 flex size-8 items-center justify-center"
 					>
-						<div className="size-4 rounded-md bg-foreground" />
+						<div className="size-4 rounded-md bg-ink" />
 					</m.div>
 				)}
 			</AnimatePresence>

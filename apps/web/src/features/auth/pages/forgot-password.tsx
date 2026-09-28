@@ -57,7 +57,7 @@ export function ForgotPasswordPage() {
 					<Trans>Forgot your password?</Trans>
 				</h1>
 
-				<div className="text-muted-foreground">
+				<div className="text-ink-3">
 					<Trans>
 						Remember your password?{" "}
 						<Button
@@ -122,7 +122,7 @@ function PostForgotPasswordScreen() {
 				<h1 className="font-semibold text-2xl tracking-tight">
 					<Trans>You've got mail!</Trans>
 				</h1>
-				<p className="text-muted-foreground">
+				<p className="text-ink-3">
 					<Trans>Check your email for a link to reset your password.</Trans>
 				</p>
 			</div>

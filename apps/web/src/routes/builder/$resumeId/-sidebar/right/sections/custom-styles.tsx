@@ -7,7 +7,7 @@ export function CustomStylesSectionBuilder() {
 	return (
 		<SectionBase type="styles" className="space-y-4">
 			<Suspense
-				fallback={<div role="status" className="h-72 animate-pulse rounded-md bg-muted" aria-label="Loading editor" />}
+				fallback={<div role="status" className="h-72 animate-pulse rounded-md bg-sunken" aria-label="Loading editor" />}
 			>
 				<StylesheetEditorShell />
 			</Suspense>

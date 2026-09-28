@@ -224,7 +224,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 				render ?? (
 					<Button
 						variant="secondary"
-						className={cn("justify-start text-left font-normal hover:bg-muted/20", className)}
+						className={cn("justify-start text-left font-normal hover:bg-sunken/20", className)}
 					/>
 				)
 			}
@@ -254,7 +254,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 						<ComboboxClear
 							aria-label={t`Clear selection`}
 							disabled={disabled}
-							className="absolute end-7 top-1/2 z-10 -translate-y-1/2 text-muted-foreground opacity-70 hover:opacity-100 focus-visible:opacity-100"
+							className="absolute end-7 top-1/2 z-10 -translate-y-1/2 text-ink-3 opacity-70 hover:opacity-100 focus-visible:opacity-100"
 						/>
 					)}
 				</div>

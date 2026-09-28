@@ -16,7 +16,7 @@ type JdCoverageProps = {
 export function JdCoverage({ jd }: JdCoverageProps) {
 	if (jd.totalTerms === 0) {
 		return (
-			<p className="rounded-md border border-dashed p-3 text-muted-foreground text-xs leading-normal">
+			<p className="rounded-md border border-dashed p-3 text-ink-3 text-xs leading-normal">
 				<Trans>
 					No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the
 					requirements section for a more useful comparison.
@@ -29,21 +29,21 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 	const missing = jd.terms.filter((term) => term.resumeCount === 0);
 
 	return (
-		<div className="space-y-3 rounded-md border bg-card p-3">
+		<div className="space-y-3 rounded-md border bg-surface p-3">
 			<div className="space-y-1">
 				<p className="font-medium text-sm leading-none">
 					<Trans>
 						{jd.matchedCount} of {jd.totalTerms} terms found
 					</Trans>
 				</p>
-				<p className="text-muted-foreground text-xs leading-normal">
+				<p className="text-ink-3 text-xs leading-normal">
 					<Trans>Counted separately from the parse score. Coverage does not predict anything.</Trans>
 				</p>
 			</div>
 
 			{missing.length > 0 && (
 				<div className="space-y-1.5">
-					<p className="font-medium text-muted-foreground text-xs">
+					<p className="font-medium text-ink-3 text-xs">
 						<Trans>Not in your resume</Trans>
 					</p>
 					<div className="flex flex-wrap gap-1.5">
@@ -58,7 +58,7 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 
 			{matched.length > 0 && (
 				<div className="space-y-1.5">
-					<p className="font-medium text-muted-foreground text-xs">
+					<p className="font-medium text-ink-3 text-xs">
 						<Trans>Already covered</Trans>
 					</p>
 					<div className="flex flex-wrap gap-1.5">
@@ -72,7 +72,7 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 			)}
 
 			{jd.stuffedTerms.length > 0 && (
-				<p className="text-muted-foreground text-xs leading-normal">
+				<p className="text-ink-3 text-xs leading-normal">
 					<Trans>
 						Repeated far more often than the posting itself uses them: {jd.stuffedTerms.join(", ")}. Recruiters notice.
 					</Trans>
@@ -80,7 +80,7 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 			)}
 
 			{jd.documentHasHiddenText && (
-				<p className="text-muted-foreground text-xs leading-normal">
+				<p className="text-ink-3 text-xs leading-normal">
 					<Trans>This file contains text a reader cannot see, so some of these matches may be against it.</Trans>
 				</p>
 			)}

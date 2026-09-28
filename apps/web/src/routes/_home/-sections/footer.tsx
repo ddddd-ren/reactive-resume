@@ -61,7 +61,7 @@ export function Footer() {
 
 					<div className="space-y-2">
 						<h2 className="font-semibold text-lg tracking-tight">Reactive Resume</h2>
-						<p className="max-w-xs text-muted-foreground text-sm leading-relaxed">
+						<p className="max-w-xs text-ink-3 text-sm leading-relaxed">
 							<Trans>
 								A free and open-source resume builder that makes it easy to create, update, and share your resume.
 							</Trans>
@@ -109,7 +109,7 @@ export function Footer() {
 function FooterLinkGroup({ title, links }: FooterLinkGroupProps) {
 	return (
 		<div className="space-y-4">
-			<h2 className="font-medium text-muted-foreground text-sm tracking-tight">{title}</h2>
+			<h2 className="font-medium text-ink-3 text-sm tracking-tight">{title}</h2>
 
 			<ul className="space-y-3">
 				{links.map((link) => (
@@ -127,7 +127,7 @@ function FooterLink({ url, label }: FooterLinkItem) {
 				href={url}
 				target="_blank"
 				rel="noopener noreferrer"
-				className="relative inline-block text-sm transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:rounded-md after:bg-primary after:content-[''] hover:text-foreground hover:after:scale-x-100 rtl:after:origin-right after:[transition:scale_200ms_var(--ease-out-strong)]"
+				className="relative inline-block text-sm transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:rounded-md after:bg-accent after:content-[''] hover:text-ink hover:after:scale-x-100 rtl:after:origin-right after:[transition:scale_200ms_var(--ease-out-strong)]"
 			>
 				{label}
 

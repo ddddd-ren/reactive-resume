@@ -43,7 +43,7 @@ function ChipDragPreview({ chip }: ChipDragPreviewProps) {
 	return (
 		<Badge
 			variant="outline"
-			className="h-6 max-w-44 cursor-grabbing select-none justify-start rounded-md border-ring bg-muted px-2 font-medium text-foreground text-xs shadow-lg ring-2 ring-ring/25 sm:max-w-52"
+			className="h-6 max-w-44 cursor-grabbing select-none justify-start rounded-md border-accent bg-sunken px-2 font-medium text-ink text-xs shadow-lg ring-2 ring-accent/25 sm:max-w-52"
 		>
 			<span className="truncate">{chip}</span>
 		</Badge>
@@ -84,9 +84,9 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 			<Badge
 				variant="outline"
 				className={cn(
-					"h-6 max-w-full cursor-grab select-none justify-start gap-0 rounded-md border-border bg-muted/55 px-2 font-medium text-foreground text-xs transition-colors hover:border-foreground/20 hover:bg-muted active:cursor-grabbing",
-					isEditing && "border-primary bg-primary/10 ring-1 ring-primary/40",
-					isDragging && "border-ring bg-muted shadow-sm",
+					"h-6 max-w-full cursor-grab select-none justify-start gap-0 rounded-md border-line bg-sunken/55 px-2 font-medium text-ink text-xs transition-colors hover:border-ink/20 hover:bg-sunken active:cursor-grabbing",
+					isEditing && "border-accent bg-accent/10 ring-1 ring-accent/40",
+					isDragging && "border-accent bg-sunken shadow-sm",
 				)}
 			>
 				<span className="max-w-32 truncate sm:max-w-44">{chip}</span>
@@ -99,7 +99,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 					<button
 						type="button"
 						tabIndex={-1}
-						className="rounded-sm p-0.5 text-foreground/70 transition-colors hover:bg-secondary hover:text-foreground focus:outline-none"
+						className="rounded-sm p-0.5 text-ink/70 transition-colors hover:bg-sunken hover:text-ink focus:outline-none"
 						aria-label={t({
 							comment:
 								"Screen reader label for button that edits a keyword chip. Variable is the current keyword text.",
@@ -115,7 +115,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 					<button
 						type="button"
 						tabIndex={-1}
-						className="rounded-sm p-0.5 text-foreground/70 transition-colors hover:bg-destructive/10 hover:text-destructive focus:outline-none"
+						className="rounded-sm p-0.5 text-ink/70 transition-colors hover:bg-danger/10 hover:text-danger-text focus:outline-none"
 						aria-label={t({
 							comment:
 								"Screen reader label for button that removes a keyword chip. Variable is the current keyword text.",
@@ -344,11 +344,11 @@ export function ChipInput({
 				<div
 					role="none"
 					onClick={() => inputRef.current?.focus()}
-					className="overflow-hidden rounded-lg border border-input bg-background/40 transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/20"
+					className="overflow-hidden rounded-lg border border-line-2 bg-bg/40 transition-colors focus-within:border-accent focus-within:ring-3 focus-within:ring-accent/50 dark:bg-line-2/20"
 				>
 					<div className="flex flex-col">
 						<div
-							className={cn("max-h-24 overflow-y-auto px-2 py-1.5", hasChips ? "border-border/70 border-b" : "hidden")}
+							className={cn("max-h-24 overflow-y-auto px-2 py-1.5", hasChips ? "border-line/70 border-b" : "hidden")}
 						>
 							<SortableContext items={chips} strategy={rectSortingStrategy}>
 								<div className="flex flex-wrap gap-1">
@@ -390,8 +390,8 @@ export function ChipInput({
 									className={cn(
 										"flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md border px-1.5 font-medium text-[0.7rem] tabular-nums",
 										isEditingKeyword
-											? "border-primary/30 bg-primary/10 text-primary"
-											: "border-border bg-muted/50 text-foreground/80 opacity-80",
+											? "border-accent/30 bg-accent/10 text-accent-text"
+											: "border-line bg-sunken/50 text-ink/80 opacity-80",
 									)}
 								>
 									{isEditingKeyword ? <Trans>Edit</Trans> : chips.length}
@@ -404,7 +404,7 @@ export function ChipInput({
 			</DndContext>
 
 			{!hideDescription && (
-				<p className="text-muted-foreground text-xs">
+				<p className="text-ink-3 text-xs">
 					<Trans>
 						Press <Kbd>{RETURN_KEY}</Kbd> or <Kbd>{COMMA_KEY}</Kbd> to add or save the current keyword.
 					</Trans>

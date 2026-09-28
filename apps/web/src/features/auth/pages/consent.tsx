@@ -58,7 +58,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 				<h1 className="font-semibold text-2xl tracking-tight">
 					<Trans>Connect an application</Trans>
 				</h1>
-				<p className="wrap-anywhere text-muted-foreground text-sm">
+				<p className="wrap-anywhere text-ink-3 text-sm">
 					<Trans>Signed in as {email}</Trans>
 				</p>
 			</div>
@@ -74,7 +74,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 				<div className="space-y-4">
 					<div className="wrap-anywhere space-y-1">
 						<p className="font-medium">{client.client_name || clientId}</p>
-						<p className="text-muted-foreground text-xs">
+						<p className="text-ink-3 text-xs">
 							<Trans>Client ID</Trans>: {clientId}
 						</p>
 					</div>
@@ -104,7 +104,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 						)}
 					</ul>
 					{error && (
-						<p role="alert" className="text-destructive text-sm">
+						<p role="alert" className="text-danger-text text-sm">
 							{error}
 						</p>
 					)}

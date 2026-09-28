@@ -94,7 +94,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 					<Trans>Create a new account</Trans>
 				</h1>
 
-				<div className="text-muted-foreground">
+				<div className="text-ink-3">
 					<Trans>
 						Already have an account?{" "}
 						<Button
@@ -268,7 +268,7 @@ function PostSignupScreen() {
 				<h1 className="font-semibold text-2xl tracking-tight">
 					<Trans>You've got mail!</Trans>
 				</h1>
-				<p className="text-muted-foreground">
+				<p className="text-ink-3">
 					<Trans>Check your email for a link to verify your account.</Trans>
 				</p>
 			</div>

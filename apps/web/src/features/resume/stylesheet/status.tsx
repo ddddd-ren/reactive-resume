@@ -72,7 +72,7 @@ export function StylesheetStatus({ mode, status, diagnostics }: StylesheetStatus
 						{diagnostics.map((diagnostic) => (
 							<li key={`${diagnostic.code}-${diagnostic.range.start.offset}`} className="space-y-0.5">
 								<p className="font-medium">{diagnostic.message}</p>
-								<p className="text-muted-foreground">
+								<p className="text-ink-3">
 									<Trans>
 										Line {diagnostic.range.start.line}, column {diagnostic.range.start.column}
 									</Trans>

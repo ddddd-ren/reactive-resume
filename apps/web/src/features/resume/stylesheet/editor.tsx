@@ -330,7 +330,7 @@ export function StylesheetCodeEditor({
 										type="button"
 										title={t`Edit color ${selectedColor.token.value}`}
 										aria-label={t`Edit color ${selectedColor.token.value}`}
-										className="pointer-events-auto size-3 rounded-full border border-foreground/40"
+										className="pointer-events-auto size-3 rounded-full border border-ink/40"
 										style={{ backgroundColor: selectedColor.token.value }}
 									/>
 								}
@@ -514,12 +514,12 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				onFocusToggle={toggleFocus}
 			/>
 
-			<p className="flex items-center gap-1.5 text-muted-foreground text-xs">
+			<p className="flex items-center gap-1.5 text-ink-3 text-xs">
 				<BookOpenIcon aria-hidden="true" className="shrink-0" />
 				<span>
 					<Trans>Not sure what to write?</Trans>{" "}
 					<a
-						className="text-primary underline underline-offset-4"
+						className="text-accent-text underline underline-offset-4"
 						href="https://docs.rxresu.me/applying-custom-styles"
 						target="_blank"
 						rel="noopener noreferrer"

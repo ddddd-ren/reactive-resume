@@ -79,7 +79,7 @@ function PicturePreviewControls({
 				type="button"
 				onClick={picture.url ? onDeletePicture : onSelectPicture}
 				aria-label={picture.url ? t`Delete picture` : t`Upload picture`}
-				className="group/picture relative size-18 cursor-pointer overflow-hidden rounded-md bg-secondary transition-colors hover:bg-secondary/50"
+				className="group/picture relative size-18 cursor-pointer overflow-hidden rounded-md bg-sunken transition-colors hover:bg-sunken/50"
 			>
 				{normalizedPictureUrl && (
 					<img
@@ -293,7 +293,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 										onAutoSave();
 									}}
 								>
-									<div className="aspect-square min-h-3 min-w-3 border border-primary" />
+									<div className="aspect-square min-h-3 min-w-3 border border-accent" />
 								</Button>
 								<Button
 									size="icon"
@@ -307,7 +307,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 										onAutoSave();
 									}}
 								>
-									<div className="aspect-1.5/1 min-h-3 min-w-3 border border-primary" />
+									<div className="aspect-1.5/1 min-h-3 min-w-3 border border-accent" />
 								</Button>
 								<Button
 									size="icon"
@@ -321,7 +321,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 										onAutoSave();
 									}}
 								>
-									<div className="aspect-1/1.5 min-h-3 min-w-3 border border-primary" />
+									<div className="aspect-1/1.5 min-h-3 min-w-3 border border-accent" />
 								</Button>
 							</ButtonGroup>
 						</div>
@@ -368,7 +368,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 										onAutoSave();
 									}}
 								>
-									<div className="size-3 rounded-none border border-primary" />
+									<div className="size-3 rounded-none border border-accent" />
 								</Button>
 								<Button
 									size="icon"
@@ -379,7 +379,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 										onAutoSave();
 									}}
 								>
-									<div className="size-3 rounded-[10%] border border-primary" />
+									<div className="size-3 rounded-[10%] border border-accent" />
 								</Button>
 								<Button
 									size="icon"
@@ -390,7 +390,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 										onAutoSave();
 									}}
 								>
-									<div className="size-3 rounded-full border border-primary" />
+									<div className="size-3 rounded-full border border-accent" />
 								</Button>
 							</ButtonGroup>
 						</div>
@@ -632,7 +632,7 @@ export function PictureSettings() {
 					</DialogHeader>
 
 					{cropState && (
-						<div className="relative h-64 w-full overflow-hidden rounded-md bg-secondary ring-1 ring-border ring-inset">
+						<div className="relative h-64 w-full overflow-hidden rounded-md bg-sunken ring-1 ring-line ring-inset">
 							<Cropper
 								image={cropState.imageSrc}
 								crop={crop}
@@ -652,10 +652,10 @@ export function PictureSettings() {
 							<FormLabel className="mb-0">
 								<Trans>Zoom</Trans>
 							</FormLabel>
-							<span className="text-muted-foreground text-xs tabular-nums">{zoom.toFixed(1)}×</span>
+							<span className="text-ink-3 text-xs tabular-nums">{zoom.toFixed(1)}×</span>
 						</div>
 						<div className="flex items-center gap-x-3">
-							<MagnifyingGlassMinusIcon className="size-4 shrink-0 text-muted-foreground" />
+							<MagnifyingGlassMinusIcon className="size-4 shrink-0 text-ink-3" />
 							<Slider
 								min={1}
 								max={3}
@@ -667,7 +667,7 @@ export function PictureSettings() {
 									setZoom(Array.isArray(value) ? value[0] : value);
 								}}
 							/>
-							<MagnifyingGlassPlusIcon className="size-4 shrink-0 text-muted-foreground" />
+							<MagnifyingGlassPlusIcon className="size-4 shrink-0 text-ink-3" />
 						</div>
 					</div>
 

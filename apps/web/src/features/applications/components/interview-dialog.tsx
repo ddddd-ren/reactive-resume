@@ -200,9 +200,7 @@ export function InterviewDialog({
 										aria-pressed={selected}
 										className={cn(
 											"flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors",
-											selected
-												? "border-foreground bg-foreground text-background"
-												: "border-border text-muted-foreground hover:bg-muted hover:text-foreground",
+											selected ? "border-ink bg-ink text-bg" : "border-line text-ink-3 hover:bg-sunken hover:text-ink",
 										)}
 										onClick={() => set("kind", kind.value)}
 									>
@@ -259,7 +257,7 @@ export function InterviewDialog({
 						<Button
 							type="button"
 							variant="ghost"
-							className="text-destructive"
+							className="text-danger-text"
 							disabled={pending}
 							onClick={async () => {
 								const confirmed = await confirm(t`Delete this interview?`, {
@@ -294,9 +292,9 @@ type FieldProps = { label: string; htmlFor?: string; required?: boolean; childre
 function Field({ label, htmlFor, required, children }: FieldProps) {
 	return (
 		<div className="grid gap-1.5">
-			<Label htmlFor={htmlFor} className="text-muted-foreground text-xs">
+			<Label htmlFor={htmlFor} className="text-ink-3 text-xs">
 				{label}
-				{required && <span className="text-destructive"> *</span>}
+				{required && <span className="text-danger-text"> *</span>}
 			</Label>
 			{children}
 		</div>
