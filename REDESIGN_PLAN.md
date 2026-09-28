@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0, M1 and M2 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M3 are done; see §11 and §12.
 
 Inputs:
 
@@ -923,3 +923,48 @@ Differences from the plan, with reasons:
 Verification: typecheck for web, ui and pdf; tests for web (946) and ui (369); `turbo boundaries`, knip and Biome clean; catalogs extracted. Checked in the browser against the isolated database at 1440, tablet portrait and landscape, and phone widths, in light and dark: modes, page click to panel, panel focus to page, document menu, Download dialog, Share sheet, tablet drawer and pin, the phone "Edit entry" bar, and offline → online replay.
 
 E2E: specs updated for the new editor (`builder-save-navigation`, `section-recovery`, `section-date-sorting`, `preview-direction`, `template-switch`, `json-export-import`, `hyphenation`, `offline-fonts`, `preview-export-geometry`) and the shared helpers (`openSidebarSection` now picks the mode or opens the Share sheet; new `openDownloadDialog`). Run locally against the dev server: save-navigation, section recovery, editing and date sorting, preview direction (all four), template switch, JSON export and import, lock, sharing, password and download preference all pass. Hyphenation passes up to its server-side PDF step, which fails only under the dev server: `tsx watch` compiles `packages/pdf` with its `"jsx": "preserve"` tsconfig into `React.createElement` calls. That's unrelated to this change; the production build used by CI isn't affected. The opt-in geometry spec was adapted to page-scale zoom (Fit, 100%, 70%) but not run.
+
+### M3 · Write (done 28 Sep 2026)
+
+What changed:
+
+- **Structured dates** (§3.2). Dated entries and roles carry `dates` (`start`, `end`, `present`, and `raw` when the text couldn't be read exactly). `@reactive-resume/schema/resume/dates` owns the model: the parser (moved from `packages/resume`, now reporting how each date was written), the reading of legacy text, the formatter (Mar 2022, March 2022, 03/2022, 2022-03) and `syncResumeDates`, which keeps the legacy `period`/`date` text in step (the dual write). `parseResumeData` upgrades on read: it fills `dates`, infers `metadata.page.dateFormat` from how dates were typed, and rewrites the text from the dates. Every API write validates, upgrades and syncs against the stored data, so a client that edits only the text still works. The editor's draft store runs the same sync, so autosave echoes stay identical to the draft.
+- **Readers:** `resume.getById` and `getBySlug` now return upgraded data (they returned stored data as-is). ATS date rules and "Sort by date" read `dates`. The JSON Resume and LinkedIn importers map their structured dates directly. The MCP patch tool documents `dates`, and the MCP schema resource is generated live (the committed `schema.json` was stale and is gone).
+- **Drafts:** title fields no longer require text, so a new entry saves as a draft. The renderer already skipped untitled entries.
+- **Write panel** (`apps/web/src/features/resume/editor/write`):
+  - The Basics card: initials, name and "headline · location", the photo row (the existing picture options in a popover), contact fields with email validation on blur, and "Add field".
+  - The outline in print order, with page dividers and a "Sidebar" divider on two-column pages. Each row has a drag handle, title, count, "n to check" for dates to review, eye and chevron, plus a ⋯ menu: add, sort by date, move up/down, rename, icon, heading, columns, keyword layout, keep together, start on a new page, and clear or delete (both with Undo).
+  - Sections and entries reorder by dnd-kit drag or ⌥↑/⌥↓, with Move up/down in the row menu. Drops write the layout.
+  - Entry cards: title and "company · location · dates". One is open at a time (the editor selection), with fields in a two-column grid and a delete icon (Undo toast). The ⋯ menu offers hide, duplicate, move to another section or page, and delete.
+  - Drafts show "Untitled", "Draft · not printed" and what they still need.
+  - The structured date field: typed month-year in any readable form, year-only allowed, a Present switch, and the review note for `raw`.
+  - Rich text with the restricted toolbar on focus (Bold, Italic, Link, lists, Clear formatting), Markdown shortcuts and a character count. The summary shows "2–3 sentences reads best".
+  - Add section: unused sections in two columns, plus Custom section by type. Each new section starts with a focused draft entry. A blank resume shows suggested sections as chips, "Import it", and opens into the name field.
+  - Page ↔ panel: a click on the page opens the entry, collapses Basics and scrolls it 60 px from the top. Focusing a field outlines its block. Phones push an open entry full screen with "‹ Section" and delete.
+- **Preview:** while a field has focus, the page waits 250 ms for a pause in typing (100 ms otherwise).
+- **Removed:** the left section sidebar, the 14 entry dialogs and their registry, the hidden-sections list (hidden sections stay in the outline), and the helpers only they used.
+
+Differences from the plan, with reasons:
+
+- **The formatter lives next to the parser** in `packages/schema`, because `parseResumeData` needs it to keep the legacy text in step. That is the same reason the plan moved the parser.
+- **Renderers still print `period`/`date`.** Parsing rewrites that text from `dates`, and both PDF entry points and DOCX parse their input, so the templates needed no change. Only code that interprets dates (ATS rules, sorting) reads `dates`.
+- **Approximate dates print as typed** ("Summer 2016") until someone reviews them, rather than printing the approximate reading. Existing resumes don't change on upgrade.
+- **"Present"** comes from a generated catalog (`present-labels.json`, from the web's "Present" message). Locales without a translation fall back to the parser's word for the language ("Heute").
+- **The date format is inferred** on upgrade from how the dates were typed, so "March 2022" stays long. The Design → Advanced control comes in M4.
+- **AI import still preserves dates as written.** The save reads them and flags uncertain ones, which gives the D2 review flags.
+- **Smaller controls:**
+  - Section icons are set from the row menu, because the spec's row has no icon slot.
+  - Roles and custom fields reorder with up/down buttons.
+- **Not yet built:**
+  - The mobile toolbar docked over the keyboard with Done.
+  - The D2 "Imported from…" banner, which comes with the import flow in M6.
+  - Improve, which comes in M10.
+- **Render cost (re-measured in production, headless Chromium):** 2 pages p50 228 ms / p95 285 ms; 4 pages p50 289 / p95 559. Both include pdf.js painting and the page swap. This is above the ~150 ms threshold at which the plan falls back to rendering in a Web Worker. The typing pause keeps renders out of keystrokes. **Moving react-pdf into a worker is the open follow-up; it needs your go-ahead.**
+
+Verification:
+
+- Typecheck is clean for schema, resume, api, import, mcp, pdf, docx, ai, tooling, ui and web.
+- Tests pass: schema 236, resume 1315, api 440, import 176, mcp 67, pdf 1056, docx 76, ai 40, tooling 110, ui 369, web 919.
+- knip, `turbo boundaries` and Biome are clean, and catalogs are extracted.
+- E2E: updated `section-editing` (inline add), `section-date-sorting` (row menu, structured dates, locked read-only), `section-recovery` (eye on the row), `picture-upload` (photo row), `json-export-import` and `builder-save-navigation` (Full name). Added `click-to-select`. `public-download-preference` now waits for the share address, which fixes a race.
+- Every builder spec passes locally against the dev server. Checked in the browser at desktop and phone widths.
