@@ -106,7 +106,7 @@ function TemplateCard({ id, metadata, isActive, onSelect }: TemplateCardProps) {
 					{metadata.tags
 						.toSorted((a, b) => a.localeCompare(b))
 						.map((tag) => (
-							<Badge key={tag} variant="secondary" className="text-xs">
+							<Badge key={tag} variant="neutral" className="text-xs">
 								{tag}
 							</Badge>
 						))}

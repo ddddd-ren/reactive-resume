@@ -367,7 +367,7 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 								/>
 
 								<Button
-									variant="outline"
+									variant="secondary"
 									className="h-auto w-full flex-col border-dashed py-8 font-normal group-hover/upload:bg-muted group-hover/upload:text-foreground"
 									onClick={onSelectFile}
 								>

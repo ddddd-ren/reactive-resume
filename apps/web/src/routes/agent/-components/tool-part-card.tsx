@@ -35,9 +35,9 @@ function toolDisplay(part: ToolPartFields): { label: string; icon: React.ReactNo
 }
 
 function stateBadge(state: string | undefined, errorText: string | undefined) {
-	if (state === "output-error" || errorText) return { label: t`Failed`, variant: "destructive" as const };
+	if (state === "output-error" || errorText) return { label: t`Failed`, variant: "danger" as const };
 	if (state === "output-available") return { label: t`Done`, variant: "outline" as const };
-	return { label: t`Running…`, variant: "secondary" as const };
+	return { label: t`Running…`, variant: "neutral" as const };
 }
 
 function payloadPreview(value: unknown) {
@@ -64,7 +64,7 @@ export function ToolPartCard({ part }: ToolPartCardProps) {
 			</summary>
 
 			<div className="mt-2 space-y-2 rounded-md border bg-muted/20 p-3">
-				{fields.errorText ? <p className="text-rose-500">{fields.errorText}</p> : null}
+				{fields.errorText ? <p className="text-danger-text">{fields.errorText}</p> : null}
 				{inputPreview && inputPreview !== "{}" ? (
 					<pre className="max-h-40 overflow-auto whitespace-pre-wrap break-words rounded border bg-background p-2 font-mono text-[0.7rem]">
 						{inputPreview}

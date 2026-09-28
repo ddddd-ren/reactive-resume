@@ -121,7 +121,7 @@ export function PasskeysSection() {
 						<Trans>Passkeys</Trans>
 					</h2>
 
-					<Button variant="outline" onClick={handleRegisterPasskey} disabled={registerPasskeyMutation.isPending}>
+					<Button variant="secondary" onClick={handleRegisterPasskey} disabled={registerPasskeyMutation.isPending}>
 						<PlusIcon />
 						<Trans>Register New Device</Trans>
 					</Button>
@@ -145,7 +145,7 @@ export function PasskeysSection() {
 
 									<div className="flex items-center gap-2">
 										<Button
-											variant="destructive"
+											variant="danger"
 											size="sm"
 											onClick={() => handleDeletePasskey(passkey.id)}
 											disabled={deletePasskeyMutation.isPending}

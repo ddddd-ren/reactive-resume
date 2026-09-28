@@ -3,25 +3,20 @@ import { describe, expect, it } from "vitest";
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "./alert";
 
 describe("Alert", () => {
-	it("renders children with role='alert'", () => {
-		render(<Alert>Heads up!</Alert>);
-		expect(screen.getByRole("alert")).toHaveTextContent("Heads up!");
+	it("announces only errors", () => {
+		render(<Alert variant="error">Couldn't reach OpenAI.</Alert>);
+		expect(screen.getByRole("alert")).toHaveTextContent("Couldn't reach OpenAI.");
 	});
 
-	it("applies data-slot='alert' for slotting", () => {
-		render(<Alert>x</Alert>);
-		expect(screen.getByRole("alert")).toHaveAttribute("data-slot", "alert");
+	it("keeps static guidance out of the live region", () => {
+		render(<Alert variant="info">Job match uses the posting from Lumen Health.</Alert>);
+		expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+		expect(screen.getByText("Job match uses the posting from Lumen Health.")).toHaveAttribute("data-slot", "alert");
 	});
 
 	it("merges custom className", () => {
 		render(<Alert className="my-class">x</Alert>);
-		expect(screen.getByRole("alert")).toHaveClass("my-class");
-	});
-
-	it("supports destructive variant", () => {
-		render(<Alert variant="destructive">x</Alert>);
-		// We just verify the component renders without error
-		expect(screen.getByRole("alert")).toBeInTheDocument();
+		expect(screen.getByText("x")).toHaveClass("my-class");
 	});
 });
 
@@ -64,7 +59,7 @@ describe("AlertAction", () => {
 describe("Alert composition", () => {
 	it("composes all subcomponents", () => {
 		render(
-			<Alert>
+			<Alert variant="error">
 				<AlertTitle>Title</AlertTitle>
 				<AlertDescription>Body</AlertDescription>
 				<AlertAction>OK</AlertAction>

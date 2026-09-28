@@ -224,12 +224,12 @@ export function ProfileSettingsPage({ session }: Props) {
 						/>
 						<FormMessage errors={field.state.meta.errors} />
 						{session.user.emailVerified === true ? (
-							<p className="flex items-center gap-x-1.5 text-green-700 text-xs">
+							<p className="flex items-center gap-x-1.5 text-accent-text text-xs">
 								<CheckIcon />
 								<Trans>Verified</Trans>
 							</p>
 						) : smtpEnabled ? (
-							<p className="flex items-center gap-x-1.5 text-amber-600 text-xs">
+							<p className="flex items-center gap-x-1.5 text-warn-text text-xs">
 								<WarningIcon className="size-3.5" />
 								<Trans>Unverified</Trans>
 								<span>|</span>

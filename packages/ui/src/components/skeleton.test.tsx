@@ -8,9 +8,9 @@ describe("Skeleton", () => {
 		expect(screen.getByTestId("sk")).toHaveAttribute("data-slot", "skeleton");
 	});
 
-	it("applies pulse animation classes", () => {
+	it("stays still: loading placeholders never loop", () => {
 		render(<Skeleton data-testid="sk" />);
-		expect(screen.getByTestId("sk")).toHaveClass("animate-pulse");
+		expect(screen.getByTestId("sk").className).not.toMatch(/animate-/);
 	});
 
 	it("merges custom className", () => {

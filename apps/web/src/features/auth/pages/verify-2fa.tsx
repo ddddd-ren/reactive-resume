@@ -128,7 +128,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 
 				<div className="flex gap-x-2">
 					<Button
-						variant="outline"
+						variant="secondary"
 						className="flex-1"
 						nativeButton={false}
 						render={

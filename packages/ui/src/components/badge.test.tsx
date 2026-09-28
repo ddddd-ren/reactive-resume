@@ -14,7 +14,7 @@ describe("Badge", () => {
 		expect(screen.getByText("x")).toHaveClass("my-extra");
 	});
 
-	it.each([["default"], ["secondary"], ["destructive"], ["outline"]] as const)(
+	it.each([["neutral"], ["accent"], ["solid"], ["warn"], ["danger"], ["info"], ["outline"], ["inverse"]] as const)(
 		"renders variant=%s without throwing",
 		(variant) => {
 			render(<Badge variant={variant}>{variant}</Badge>);

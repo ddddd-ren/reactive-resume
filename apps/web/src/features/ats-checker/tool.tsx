@@ -104,7 +104,7 @@ export function AtsCheckerTool({ renderAiTier }: AtsCheckerToolProps) {
 			</div>
 
 			{file && !isRunning && (
-				<Button variant="outline" size="sm" onClick={() => void run(file, jobDescription)}>
+				<Button variant="secondary" size="sm" onClick={() => void run(file, jobDescription)}>
 					<ArrowClockwiseIcon />
 					<Trans>Check again</Trans>
 				</Button>
@@ -118,7 +118,7 @@ export function AtsCheckerTool({ renderAiTier }: AtsCheckerToolProps) {
 			)}
 
 			{error != null && (
-				<Alert variant="destructive">
+				<Alert variant="error">
 					<WarningCircleIcon />
 					<AlertDescription>{errorMessage(error)}</AlertDescription>
 				</Alert>

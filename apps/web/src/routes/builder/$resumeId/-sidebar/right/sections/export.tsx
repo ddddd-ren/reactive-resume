@@ -16,7 +16,7 @@ export function ExportSectionBuilder() {
 				resume={resume}
 				trigger={(disabled) => (
 					<Button
-						variant="outline"
+						variant="secondary"
 						disabled={disabled}
 						className="h-auto w-full gap-x-4 whitespace-normal p-4! text-start font-normal active:scale-98"
 					>

@@ -52,7 +52,7 @@ export function AtsUploader({ onSelect, disabled, selectedFileName }: UploaderPr
 			<input ref={inputRef} type="file" accept="application/pdf,.pdf" className="hidden" onChange={onChange} />
 
 			<Button
-				variant="outline"
+				variant="secondary"
 				disabled={disabled || isChecking}
 				className="h-auto w-full flex-col gap-2 border-dashed py-6"
 				onClick={() => inputRef.current?.click()}

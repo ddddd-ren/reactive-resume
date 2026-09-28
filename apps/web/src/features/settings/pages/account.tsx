@@ -91,7 +91,7 @@ export function AccountSettingsPage() {
 				</p>
 
 				<Button
-					variant="outline"
+					variant="secondary"
 					className="justify-self-start"
 					onClick={() => exportData(undefined)}
 					disabled={isExporting}
@@ -115,7 +115,7 @@ export function AccountSettingsPage() {
 			/>
 
 			<Button
-				variant="destructive"
+				variant="danger"
 				className="justify-self-end"
 				onClick={handleDeleteAccount}
 				disabled={confirmationText !== CONFIRMATION_TEXT}

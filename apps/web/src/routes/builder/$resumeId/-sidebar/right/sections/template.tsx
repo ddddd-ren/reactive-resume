@@ -51,7 +51,7 @@ function TemplateSectionForm() {
 
 				<div className="flex flex-wrap gap-2.5">
 					{metadata.tags.map((tag) => (
-						<Badge key={tag} variant="secondary">
+						<Badge key={tag} variant="neutral">
 							{tag}
 						</Badge>
 					))}

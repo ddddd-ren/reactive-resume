@@ -102,6 +102,9 @@ export function UserDropdownMenu({ children }: Props) {
 								<DropdownMenuRadioItem value="dark">
 									<Trans comment="Appearance theme option for dark mode">Dark</Trans>
 								</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="system">
+									<Trans comment="Appearance theme option that follows the operating system">System</Trans>
+								</DropdownMenuRadioItem>
 							</DropdownMenuRadioGroup>
 						</DropdownMenuSubContent>
 					</DropdownMenuSub>

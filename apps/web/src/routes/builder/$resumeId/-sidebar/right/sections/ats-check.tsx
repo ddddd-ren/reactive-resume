@@ -37,9 +37,9 @@ const SEVERITIES = ["error", "warning", "info"] as const;
 
 function severityDotClass(severity: AtsSeverity) {
 	return match(severity)
-		.with("error", () => "bg-rose-600")
-		.with("warning", () => "bg-amber-600")
-		.with("info", () => "bg-sky-600")
+		.with("error", () => "bg-danger")
+		.with("warning", () => "bg-warn")
+		.with("info", () => "bg-info-text")
 		.exhaustive();
 }
 
@@ -88,7 +88,7 @@ function AtsFindingRow({ finding, onJump }: AtsFindingRowProps) {
 					<p className="text-muted-foreground text-xs leading-normal">{message.action}</p>
 				</div>
 
-				<Badge variant="secondary" className="shrink-0">
+				<Badge variant="neutral" className="shrink-0">
 					{severityLabel(finding.severity)}
 				</Badge>
 			</div>
@@ -165,7 +165,7 @@ function LiveLintTier() {
 
 			{findings.length === 0 ? (
 				<div className="flex items-center gap-3 rounded-md border border-dashed p-3">
-					<CheckCircleIcon className="size-5 shrink-0 text-emerald-600" />
+					<CheckCircleIcon className="size-5 shrink-0 text-accent-text" />
 					<p className="text-muted-foreground text-sm leading-normal">
 						<Trans>Every check passed. Nothing here should stop a parser from reading your resume.</Trans>
 					</p>
@@ -249,7 +249,7 @@ function DeepCheckTier() {
 			</div>
 
 			{error && (
-				<Alert variant="destructive">
+				<Alert variant="error">
 					<WarningCircleIcon />
 					<AlertDescription>{error}</AlertDescription>
 				</Alert>

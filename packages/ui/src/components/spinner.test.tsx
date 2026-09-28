@@ -23,17 +23,8 @@ describe("Spinner", () => {
 		expect(screen.getByRole("status")).toHaveClass("animate-spin");
 	});
 
-	it("uses currentColor by default (mapped to SVG fill/stroke by Phosphor)", () => {
+	it("draws with the current text color, so it inherits from the button or text around it", () => {
 		render(<Spinner />);
-		const svg = screen.getByRole("status");
-		// Phosphor maps the `color` prop to inline style (fill/stroke), not an attribute.
-		// The hex/RGB or "currentColor" appears somewhere in style/attr — verify presence in serialized output.
-		expect(svg.outerHTML).toContain("currentColor");
-	});
-
-	it("respects color override", () => {
-		render(<Spinner color="red" />);
-		const svg = screen.getByRole("status");
-		expect(svg.outerHTML).toMatch(/red/);
+		expect(screen.getByRole("status")).toHaveClass("border-current");
 	});
 });

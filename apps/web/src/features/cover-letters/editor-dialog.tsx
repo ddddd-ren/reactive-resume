@@ -121,7 +121,7 @@ export function CoverLetterEditorDialog({
 						<Button onClick={() => void query.refetch()}>
 							<Trans>Retry</Trans>
 						</Button>
-						<Button variant="outline" onClick={onClose}>
+						<Button variant="secondary" onClick={onClose}>
 							<Trans>Close</Trans>
 						</Button>
 					</div>
@@ -202,12 +202,12 @@ function CoverLetterActions({
 			<Separator />
 			<fieldset disabled={disabled} className="min-w-0 space-y-4">
 				<div className="flex flex-wrap gap-2">
-					<Button type="button" variant="outline" onClick={() => setPreview(!preview)}>
+					<Button type="button" variant="secondary" onClick={() => setPreview(!preview)}>
 						{preview ? <Trans>Hide preview</Trans> : <Trans>Preview PDF</Trans>}
 					</Button>
 					<Button
 						type="button"
-						variant="outline"
+						variant="secondary"
 						onClick={() =>
 							void run(async () => downloadWithAnchor(await createPdf(), generateFilename(letter.name, "pdf")))
 						}
@@ -216,7 +216,7 @@ function CoverLetterActions({
 					</Button>
 					<Button
 						type="button"
-						variant="outline"
+						variant="secondary"
 						onClick={() =>
 							void run(async () => {
 								const document = await orpc.coverLetters.export.call({ id: letter.id });
@@ -231,7 +231,7 @@ function CoverLetterActions({
 					</Button>
 					<Button
 						type="button"
-						variant="outline"
+						variant="secondary"
 						onClick={() =>
 							void run(async () => {
 								await orpc.coverLetters.duplicate.call({ id: letter.id });
@@ -244,7 +244,7 @@ function CoverLetterActions({
 					</Button>
 					<Button
 						type="button"
-						variant="destructive"
+						variant="danger"
 						onClick={() =>
 							void run(async () => {
 								if (
@@ -304,7 +304,7 @@ function CoverLetterActions({
 						/>
 						<Button
 							type="button"
-							variant="outline"
+							variant="secondary"
 							disabled={disabled || !resumeId || !sourceReady}
 							onClick={() =>
 								void run(async () => {
@@ -354,7 +354,7 @@ function CoverLetterActions({
 						/>
 						<Button
 							type="button"
-							variant="outline"
+							variant="secondary"
 							disabled={disabled || !selectedApplicationId}
 							onClick={() =>
 								void run(async () => {

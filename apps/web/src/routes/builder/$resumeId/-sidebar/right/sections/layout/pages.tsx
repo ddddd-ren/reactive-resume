@@ -265,7 +265,7 @@ export function LayoutPages() {
 					/>
 				))}
 
-				<Button variant="outline" className="self-end" onClick={handleAddPage}>
+				<Button variant="secondary" className="self-end" onClick={handleAddPage}>
 					<PlusIcon />
 					<Trans>Add Page</Trans>
 				</Button>

@@ -229,7 +229,7 @@ export function PdfViewer({ className, data, publicResume, includeCoverLetterHea
 	return (
 		<div
 			ref={rootRef}
-			className={cn("pdf-viewer relative bg-neutral-100", viewerHeight ? "min-h-0" : "min-h-48", className)}
+			className={cn("pdf-viewer relative bg-sunken", viewerHeight ? "min-h-0" : "min-h-48", className)}
 			style={viewerHeight ? { height: viewerHeight } : undefined}
 		>
 			<div ref={containerRef} className="absolute inset-0 overflow-visible">

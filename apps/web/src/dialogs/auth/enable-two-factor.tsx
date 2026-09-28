@@ -296,7 +296,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 								</verifyForm.Field>
 
 								<DialogFooter className="gap-x-2">
-									<Button type="button" variant="outline" onClick={requestClose}>
+									<Button type="button" variant="secondary" onClick={requestClose}>
 										<Trans comment="Secondary action button to close two-factor setup dialog">Cancel</Trans>
 									</Button>
 									<Button type="submit">
@@ -320,7 +320,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 								</div>
 
 								<div className="flex items-center gap-x-2">
-									<Button type="button" variant="outline" onClick={handleDownloadBackupCodes} className="flex-1">
+									<Button type="button" variant="secondary" onClick={handleDownloadBackupCodes} className="flex-1">
 										<ArrowDownIcon className="me-2 size-4" />
 										<Trans comment="Action button to download two-factor backup codes as a text file">Download</Trans>
 									</Button>

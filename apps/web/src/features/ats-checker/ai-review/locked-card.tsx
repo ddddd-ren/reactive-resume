@@ -24,7 +24,7 @@ export function LockedAiCard() {
 				</Trans>
 			</p>
 
-			<Button size="sm" variant="outline" nativeButton={false} render={<Link to="/auth/login" />}>
+			<Button size="sm" variant="secondary" nativeButton={false} render={<Link to="/auth/login" />}>
 				<Trans>Sign in</Trans>
 				<ArrowRightIcon />
 			</Button>

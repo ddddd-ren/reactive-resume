@@ -63,7 +63,7 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 					</p>
 					<div className="flex flex-wrap gap-1.5">
 						{matched.map((term) => (
-							<Badge key={term.term} variant="secondary" className="font-normal">
+							<Badge key={term.term} variant="neutral" className="font-normal">
 								{term.term}
 							</Badge>
 						))}

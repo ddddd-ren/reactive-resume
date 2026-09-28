@@ -107,7 +107,7 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 				<Button disabled={busy} onClick={() => setCreating(!creating)}>
 					<Trans>Create</Trans>
 				</Button>
-				<Button variant="outline" disabled={busy} onClick={() => importInput.current?.click()}>
+				<Button variant="secondary" disabled={busy} onClick={() => importInput.current?.click()}>
 					<Trans>Import JSON</Trans>
 				</Button>
 				<input
@@ -207,7 +207,7 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 									emptyMessage={t`This resume has no embedded cover letters.`}
 								/>
 								<Button
-									variant="outline"
+									variant="secondary"
 									disabled={busy || !sourceReady || !selectedEmbedded || !resumeId}
 									onClick={() =>
 										void run(async () => {
@@ -245,7 +245,7 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 			) : query.error ? (
 				<div className="space-y-2">
 					<p role="alert">{getReadableErrorMessage(query.error, t`Could not load cover letters.`)}</p>
-					<Button variant="outline" onClick={() => void query.refetch()}>
+					<Button variant="secondary" onClick={() => void query.refetch()}>
 						<Trans>Retry</Trans>
 					</Button>
 				</div>
@@ -280,7 +280,7 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 			{(offset > 0 || (query.data?.total ?? 0) > 20) && (
 				<div className="flex items-center justify-between gap-3">
 					<Button
-						variant="outline"
+						variant="secondary"
 						disabled={offset === 0 || query.isFetching}
 						onClick={() => setOffset(Math.max(0, offset - 20))}
 					>
@@ -290,7 +290,7 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 						<Trans>Page {Math.floor(offset / 20) + 1}</Trans>
 					</span>
 					<Button
-						variant="outline"
+						variant="secondary"
 						disabled={offset + 20 >= (query.data?.total ?? 0) || query.isFetching}
 						onClick={() => setOffset(offset + 20)}
 					>

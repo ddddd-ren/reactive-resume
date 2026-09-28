@@ -172,20 +172,20 @@ const emptyForm = {
 function statusBadge(provider: SavedProvider) {
 	if (provider.testStatus === "success") {
 		return (
-			<Badge className="bg-emerald-600 text-white">
+			<Badge variant="accent">
 				<Trans>Connected</Trans>
 			</Badge>
 		);
 	}
 	if (provider.testStatus === "failure") {
 		return (
-			<Badge variant="destructive">
+			<Badge variant="danger">
 				<Trans>Connection failed</Trans>
 			</Badge>
 		);
 	}
 	return (
-		<Badge variant="secondary">
+		<Badge variant="neutral">
 			<Trans>Not connected</Trans>
 		</Badge>
 	);
@@ -316,7 +316,7 @@ function ProviderRow({ provider }: ProviderRowProps) {
 					<p>
 						<Trans>Key</Trans>: {provider.apiKeyPreview}
 					</p>
-					{provider.testError ? <p className="text-rose-600">{provider.testError}</p> : null}
+					{provider.testError ? <p className="text-danger-text">{provider.testError}</p> : null}
 				</div>
 			</div>
 
@@ -345,7 +345,7 @@ function ProviderRow({ provider }: ProviderRowProps) {
 				</div>
 
 				<Button
-					variant="outline"
+					variant="secondary"
 					disabled={isMutating}
 					onClick={() =>
 						testProvider(
@@ -592,14 +592,14 @@ function CreateProviderForm() {
 					className={cn(
 						"mt-4 flex items-start gap-2 rounded-md border p-3 text-sm",
 						result.ok
-							? "border-emerald-300 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/20 dark:text-emerald-200"
-							: "border-rose-300 bg-rose-50 text-rose-950 dark:bg-rose-950/20 dark:text-rose-200",
+							? "border-accent/40 bg-accent-soft text-accent-text"
+							: "border-danger/40 bg-danger-soft text-danger-text",
 					)}
 				>
 					{result.ok ? (
-						<CheckCircleIcon className="mt-0.5 shrink-0 text-emerald-600" />
+						<CheckCircleIcon className="mt-0.5 shrink-0 text-accent-text" />
 					) : (
-						<WarningCircleIcon className="mt-0.5 shrink-0 text-rose-600" />
+						<WarningCircleIcon className="mt-0.5 shrink-0 text-danger-text" />
 					)}
 					<span>{result.message}</span>
 				</div>
@@ -640,11 +640,11 @@ export function AISettingsSection() {
 
 				<p className="flex items-center gap-2 text-sm">
 					{hasUsableProvider ? (
-						<CheckCircleIcon className="text-emerald-600" />
+						<CheckCircleIcon className="text-accent-text" />
 					) : (
-						<XCircleIcon className="text-rose-600" />
+						<XCircleIcon className="text-danger-text" />
 					)}
-					<span className={cn(hasUsableProvider ? "text-emerald-700" : "text-muted-foreground")}>
+					<span className={cn(hasUsableProvider ? "text-accent-text" : "text-muted-foreground")}>
 						{hasUsableProvider ? <Trans>Agent ready</Trans> : <Trans>No tested provider</Trans>}
 					</span>
 				</p>
@@ -655,8 +655,8 @@ export function AISettingsSection() {
 					className={cn(
 						"rounded-md border p-4 text-sm",
 						isConfigError
-							? "border-amber-300 bg-amber-50 text-amber-950 dark:bg-amber-950/20 dark:text-amber-200"
-							: "border-rose-300 bg-rose-50 text-rose-950 dark:bg-rose-950/20 dark:text-rose-200",
+							? "border-warn/40 bg-warn-soft text-warn-text"
+							: "border-danger/40 bg-danger-soft text-danger-text",
 					)}
 				>
 					{isConfigError ? (

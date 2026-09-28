@@ -69,7 +69,7 @@ export function NewThreadSetup({ resumeId }: NewThreadSetupProps) {
 			</div>
 
 			{providersError ? (
-				<div className="rounded-md border border-amber-300 bg-amber-50 p-4 text-amber-950 text-sm dark:bg-amber-950/20 dark:text-amber-200">
+				<div className="rounded-md border border-warn/40 bg-warn-soft p-4 text-sm text-warn-text">
 					{isAgentConfigError(providersError) ? (
 						<Trans>AI agent setup is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured.</Trans>
 					) : (
@@ -104,7 +104,7 @@ export function NewThreadSetup({ resumeId }: NewThreadSetupProps) {
 									</span>
 									<Button
 										size="sm"
-										variant="outline"
+										variant="secondary"
 										nativeButton={false}
 										render={<Link to="/dashboard/settings/integrations" />}
 									>
@@ -136,7 +136,7 @@ export function NewThreadSetup({ resumeId }: NewThreadSetupProps) {
 								onValueChange={(value) => setSourceResumeIdOverride(value && value !== "__scratch__" ? value : null)}
 							/>
 							<div className="flex flex-wrap items-center gap-2 text-muted-foreground text-sm">
-								<Badge variant="secondary" className="h-7 gap-1.5 rounded-md px-2">
+								<Badge variant="neutral" className="h-7 gap-1.5 rounded-md px-2">
 									<FilePlusIcon />
 									{sourceResumeId ? <Trans>Duplicate as AI draft</Trans> : <Trans>Blank draft</Trans>}
 								</Badge>

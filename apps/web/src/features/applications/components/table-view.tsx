@@ -22,7 +22,6 @@ import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { orpc } from "@/libs/orpc/client";
 import { applicationsListQueryKey } from "../queries";
-import { tileColor } from "../tile-color";
 import { ApplicationActionsMenu } from "./application-actions-menu";
 
 const PAGE_SIZE = 25;
@@ -238,8 +237,7 @@ export function ApplicationTable({ applications, onOpen, onEdit }: Props) {
 										<button type="button" className="flex items-center gap-2.5 text-left" onClick={() => onOpen(app)}>
 											<span
 												className={cn(
-													"flex size-7 shrink-0 items-center justify-center rounded-md font-bold text-[10px] text-white",
-													tileColor(app.company),
+													"flex size-7 shrink-0 items-center justify-center rounded-md bg-sunken font-semibold text-[11px] text-ink-2",
 												)}
 											>
 												{getInitials(app.company)}
@@ -261,7 +259,7 @@ export function ApplicationTable({ applications, onOpen, onEdit }: Props) {
 									<td className="px-3 py-2">
 										<div className="flex max-w-40 flex-wrap gap-1">
 											{app.tags.slice(0, 2).map((tag) => (
-												<Badge key={tag} variant="secondary" className="text-[10px]">
+												<Badge key={tag} variant="neutral" className="text-[10px]">
 													{tag}
 												</Badge>
 											))}
@@ -308,8 +306,7 @@ export function ApplicationTable({ applications, onOpen, onEdit }: Props) {
 							>
 								<span
 									className={cn(
-										"flex size-8 shrink-0 items-center justify-center rounded-md font-bold text-[10px] text-white",
-										tileColor(app.company),
+										"flex size-8 shrink-0 items-center justify-center rounded-md bg-sunken font-semibold text-[11px] text-ink-2",
 									)}
 								>
 									{getInitials(app.company)}
@@ -338,7 +335,7 @@ export function ApplicationTable({ applications, onOpen, onEdit }: Props) {
 				</span>
 				{pageCount > 1 && (
 					<div className="ms-auto flex items-center gap-1.5">
-						<Button size="sm" variant="outline" disabled={safePage === 0} onClick={() => setPage(safePage - 1)}>
+						<Button size="sm" variant="secondary" disabled={safePage === 0} onClick={() => setPage(safePage - 1)}>
 							‹
 						</Button>
 						<span className="text-xs">
@@ -346,7 +343,7 @@ export function ApplicationTable({ applications, onOpen, onEdit }: Props) {
 						</span>
 						<Button
 							size="sm"
-							variant="outline"
+							variant="secondary"
 							disabled={safePage >= pageCount - 1}
 							onClick={() => setPage(safePage + 1)}
 						>

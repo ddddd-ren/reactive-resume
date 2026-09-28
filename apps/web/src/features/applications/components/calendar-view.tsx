@@ -105,7 +105,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						</Button>
 						<Button
 							size="sm"
-							variant="outline"
+							variant="secondary"
 							disabled={isCurrentMonth}
 							onClick={() => setMonth(new Date(today.getFullYear(), today.getMonth(), 1))}
 						>
@@ -236,7 +236,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 								<Trans>Add screening calls and technical interviews to see them here and on the calendar.</Trans>
 							</p>
 						</div>
-						<Button size="sm" variant="outline" onClick={() => schedule()}>
+						<Button size="sm" variant="secondary" onClick={() => schedule()}>
 							<CalendarPlusIcon />
 							<Trans>Schedule interview</Trans>
 						</Button>

@@ -126,7 +126,7 @@ export function PatchApprovalCard({ part, disabled, onRespond }: PatchApprovalCa
 						</Button>
 						<Button
 							size="sm"
-							variant="outline"
+							variant="secondary"
 							onClick={() =>
 								onRespond({ id: approvalId, approved: false, ...(reason.trim() ? { reason: reason.trim() } : {}) })
 							}

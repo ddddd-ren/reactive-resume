@@ -297,21 +297,23 @@ describe("FormMessage", () => {
 		expect(container.querySelector("[data-slot=form-message]")).not.toBeInTheDocument();
 	});
 
-	it("uses destructive class when hasError=true", () => {
-		render(
+	it("shows errors in danger text with the error icon", () => {
+		const { container } = render(
 			<FormItem hasError>
 				<FormMessage errors={["Bad"]} />
 			</FormItem>,
 		);
-		expect(screen.getByText("Bad")).toHaveClass("text-destructive");
+		expect(container.querySelector("[data-slot=form-message]")).toHaveClass("text-danger-text");
+		expect(container.querySelector('[data-slot=form-message] [data-icon="error"]')).toBeInTheDocument();
 	});
 
-	it("uses muted class when hasError=false but errors are passed", () => {
-		render(
+	it("shows messages without an error in meta ink and without the icon", () => {
+		const { container } = render(
 			<FormItem>
 				<FormMessage errors={["Hint"]} />
 			</FormItem>,
 		);
-		expect(screen.getByText("Hint")).toHaveClass("text-muted-foreground");
+		expect(container.querySelector("[data-slot=form-message]")).toHaveClass("text-ink-3");
+		expect(container.querySelector('[data-slot=form-message] [data-icon="error"]')).not.toBeInTheDocument();
 	});
 });

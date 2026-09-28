@@ -84,7 +84,7 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 			{showDownloadButtons && (
 				<Button
 					size="icon-lg"
-					variant="outline"
+					variant="secondary"
 					disabled={isExporting}
 					onClick={() => void onDownloadPDF()}
 					aria-label={t`Download PDF`}

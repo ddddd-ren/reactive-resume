@@ -7,7 +7,7 @@ import { i18n } from "@lingui/core";
 const toggleTheme = vi.hoisted(() => vi.fn());
 
 vi.mock("./provider", () => ({
-	useTheme: () => ({ theme: "light", setTheme: vi.fn(), toggleTheme }),
+	useTheme: () => ({ theme: "light", resolvedTheme: "light", setTheme: vi.fn(), toggleTheme }),
 }));
 
 const { ThemeToggleButton } = await import("./toggle-button");

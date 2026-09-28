@@ -297,16 +297,14 @@ function PatchToolCard({ part, action, onRevert, isReverting }: PatchToolCardPro
 				<div className="flex items-center justify-between gap-3">
 					<div className="min-w-0">
 						<p className="truncate font-medium text-foreground">{title}</p>
-						{status === "conflicted" && revertMessage ? (
-							<p className="mt-1 text-amber-600 dark:text-amber-300">{revertMessage}</p>
-						) : null}
+						{status === "conflicted" && revertMessage ? <p className="mt-1 text-warn-text">{revertMessage}</p> : null}
 						{status === "rolled_back" && revertMessage ? (
 							<p className="mt-1 text-muted-foreground">{revertMessage}</p>
 						) : null}
-						{errorText ? <p className="mt-1 text-rose-500">{errorText}</p> : null}
+						{errorText ? <p className="mt-1 text-danger-text">{errorText}</p> : null}
 					</div>
 					{actionId ? (
-						<Button size="xs" variant="ghost" disabled={revertDisabled} onClick={() => onRevert(actionId)}>
+						<Button size="sm" variant="ghost" disabled={revertDisabled} onClick={() => onRevert(actionId)}>
 							<ClockCounterClockwiseIcon />
 							<Trans>Restore</Trans>
 						</Button>
@@ -422,7 +420,7 @@ function StarterPromptMarquee({ onSelect }: StarterPromptMarqueeProps) {
 							<Button
 								key={id}
 								type="button"
-								variant="outline"
+								variant="secondary"
 								className="h-8 shrink-0 rounded-full bg-background/70 px-3 font-normal text-muted-foreground hover:text-foreground"
 								onClick={() => onSelect(prompt)}
 							>
@@ -1162,7 +1160,7 @@ function AgentChatReadOnlyBanner({ isReadOnly, readOnlyReason }: AgentChatReadOn
 	if (!isReadOnly) return null;
 
 	return (
-		<div className="border-amber-300 border-b bg-amber-50 px-4 py-2 text-amber-950 text-sm dark:bg-amber-950/20 dark:text-amber-200">
+		<div className="border-warn/40 border-b bg-warn-soft px-4 py-2 text-sm text-warn-text">
 			{readOnlyReason === "archived" ? (
 				<Trans>This thread is archived. You can't send new messages.</Trans>
 			) : (
@@ -1235,10 +1233,10 @@ function AgentChatMessages({
 
 						{error ? (
 							<MessageScrollerItem>
-								<Marker className="items-center justify-between gap-3 rounded-md border border-rose-300 bg-rose-50 p-3 text-rose-950 dark:bg-rose-950/20 dark:text-rose-200">
+								<Marker className="items-center justify-between gap-3 rounded-md border border-danger/40 bg-danger-soft p-3 text-danger-text">
 									<MarkerContent>{error.message}</MarkerContent>
 									{!isReadOnly ? (
-										<Button size="sm" variant="outline" type="button" onClick={onRetry}>
+										<Button size="sm" variant="secondary" type="button" onClick={onRetry}>
 											<ArrowClockwiseIcon />
 											<Trans>Retry</Trans>
 										</Button>
@@ -1434,7 +1432,7 @@ function AgentChatComposer({
 						className="max-h-40 min-h-9 resize-none border-0 bg-transparent p-2 leading-5 shadow-none focus-visible:ring-0"
 					/>
 					{isStreaming && !isReadOnly ? (
-						<Button type="button" size="icon" variant="outline" aria-label={t`Stop generation`} onClick={onStopRun}>
+						<Button type="button" size="icon" variant="secondary" aria-label={t`Stop generation`} onClick={onStopRun}>
 							<StopIcon />
 						</Button>
 					) : (

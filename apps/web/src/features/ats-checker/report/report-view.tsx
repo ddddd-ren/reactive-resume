@@ -16,9 +16,9 @@ type ReportViewProps = {
 };
 
 function categoryTone(score: number) {
-	if (score >= 80) return "text-emerald-600";
-	if (score >= 60) return "text-amber-600";
-	return "text-rose-600";
+	if (score >= 80) return "text-accent-text";
+	if (score >= 60) return "text-warn-text";
+	return "text-danger-text";
 }
 
 /**
@@ -85,7 +85,7 @@ function CategorySection({ category, findings }: CategorySectionProps) {
 			<AccordionTrigger>
 				<span className="flex min-w-0 flex-1 items-center gap-2 pe-2">
 					<span className="min-w-0 truncate">{getPdfCategoryLabel(category.category)}</span>
-					<Badge variant="secondary" className="shrink-0 tabular-nums">
+					<Badge variant="neutral" className="shrink-0 tabular-nums">
 						<span className={categoryTone(category.score)}>{category.score}</span>
 					</Badge>
 					{findings.length > 0 && (
@@ -106,7 +106,7 @@ function CategorySection({ category, findings }: CategorySectionProps) {
 
 				{findings.length === 0 ? (
 					<div className="flex items-center gap-2 rounded-md border border-dashed p-2.5">
-						<CheckCircleIcon className="size-4 shrink-0 text-emerald-600" />
+						<CheckCircleIcon className="size-4 shrink-0 text-accent-text" />
 						<span className="text-muted-foreground text-xs leading-normal">
 							<Trans>Nothing to fix here.</Trans>
 						</span>
@@ -145,7 +145,7 @@ function WritingSection({ tips }: WritingSectionProps) {
 
 				{tips.length === 0 ? (
 					<div className="flex items-center gap-2 rounded-md border border-dashed p-2.5">
-						<CheckCircleIcon className="size-4 shrink-0 text-emerald-600" />
+						<CheckCircleIcon className="size-4 shrink-0 text-accent-text" />
 						<span className="text-muted-foreground text-xs leading-normal">
 							<Trans>Nothing to suggest.</Trans>
 						</span>

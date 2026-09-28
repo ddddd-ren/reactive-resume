@@ -4,17 +4,17 @@ import { cva } from "class-variance-authority";
 import { cn } from "@reactive-resume/utils/style";
 
 const toggleVariants = cva(
-	"group/toggle inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-lg font-medium text-sm outline-none transition hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 aria-pressed:bg-muted aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+	"group/toggle inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium text-ink-2 text-sm transition-colors duration-quick hover:bg-hover hover:text-ink disabled:pointer-events-none disabled:text-ink-3 aria-pressed:bg-sunken aria-pressed:text-ink [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
 				default: "bg-transparent",
-				outline: "border border-input bg-transparent hover:bg-muted",
+				outline: "border border-line-2 bg-surface hover:bg-sunken",
 			},
 			size: {
-				default: "h-9 min-w-9 px-2.5 has-data-[icon=inline-start]:ps-2 has-data-[icon=inline-end]:pe-2",
-				sm: "h-8 min-w-8 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] has-data-[icon=inline-start]:ps-1.5 has-data-[icon=inline-end]:pe-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-				lg: "h-10 min-w-10 px-2.5 has-data-[icon=inline-start]:ps-2 has-data-[icon=inline-end]:pe-2",
+				default: "h-9 min-w-9 px-2.5",
+				sm: "h-7 min-w-7 rounded-sm px-2 text-[13px] [&_svg:not([class*='size-'])]:size-3.5",
+				lg: "h-11 min-w-11 rounded-lg px-3 text-base",
 			},
 		},
 		defaultVariants: {

@@ -1,7 +1,7 @@
 import type * as React from "react";
 import type { Button } from "./button";
-import { CheckIcon } from "@phosphor-icons/react";
 import { Questionnaire as QuestionnairePrimitive } from "@shadcn/react/questionnaire";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { buttonVariants } from "./button";
 
@@ -70,15 +70,17 @@ function QuestionnaireChoice({
 			<span
 				aria-hidden="true"
 				data-slot="questionnaire-choice-indicator"
-				className="pointer-events-none relative flex size-4 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[4px] border border-input group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[type=radio]/questionnaire-choice:rounded-full group-data-checked/questionnaire-choice:border-primary group-data-checked/questionnaire-choice:bg-primary group-data-checked/questionnaire-choice:text-primary-foreground dark:bg-input/30 dark:group-data-checked/questionnaire-choice:bg-primary"
+				className="pointer-events-none relative flex size-4 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[5px] border-[1.5px] border-line-2 group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[type=radio]/questionnaire-choice:rounded-full group-data-checked/questionnaire-choice:border-accent group-data-checked/questionnaire-choice:bg-accent group-data-checked/questionnaire-choice:text-on-accent"
 			>
 				<span
 					data-slot="questionnaire-choice-indicator-dot"
-					className="hidden size-2 rounded-full bg-primary-foreground group-data-checked/questionnaire-choice:block group-data-[type=checkbox]/questionnaire-choice:hidden"
+					className="hidden size-2 rounded-full bg-on-accent group-data-checked/questionnaire-choice:block group-data-[type=checkbox]/questionnaire-choice:hidden"
 				/>
-				<CheckIcon
+				<Icon
+					name="check"
+					size={16}
 					data-slot="questionnaire-choice-indicator-check"
-					className="hidden size-3.5 group-data-checked/questionnaire-choice:block group-data-[type=radio]/questionnaire-choice:hidden"
+					className="hidden group-data-checked/questionnaire-choice:inline-block group-data-[type=radio]/questionnaire-choice:hidden"
 				/>
 			</span>
 			<QuestionnairePrimitive.ChoiceLabel
@@ -138,7 +140,7 @@ function QuestionnaireSubmit({
 	children,
 	className,
 	size = "default",
-	variant = "default",
+	variant = "primary",
 	...props
 }: React.ComponentProps<typeof QuestionnairePrimitive.Submit> &
 	Pick<React.ComponentProps<typeof Button>, "size" | "variant">) {

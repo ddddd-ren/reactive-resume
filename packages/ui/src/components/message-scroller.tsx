@@ -1,13 +1,13 @@
 "use client";
 
 import type * as React from "react";
-import { ArrowDownIcon } from "@phosphor-icons/react";
 import {
 	MessageScroller as MessageScrollerPrimitive,
 	useMessageScroller,
 	useMessageScrollerScrollable,
 	useMessageScrollerVisibility,
 } from "@shadcn/react/message-scroller";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { Button } from "./button";
 
@@ -87,7 +87,7 @@ function MessageScrollerButton({
 			data-size={size}
 			direction={direction}
 			className={cn(
-				"absolute inset-s-1/2 -translate-x-1/2 border-border bg-background text-foreground transition-[translate,scale,opacity] duration-200 hover:bg-muted hover:text-foreground data-[direction=end]:data-[active=false]:translate-y-full data-[direction=start]:data-[active=false]:-translate-y-full data-[active=false]:pointer-events-none data-[direction=start]:top-4 data-[direction=end]:bottom-4 data-[active=true]:translate-y-0 data-[active=false]:scale-95 data-[active=true]:scale-100 data-[active=false]:opacity-0 data-[active=true]:opacity-100 data-[active=false]:duration-150 data-[active=false]:ease-out-strong data-[active=true]:ease-out-strong rtl:translate-x-1/2 data-[direction=start]:[&_svg]:rotate-180",
+				"absolute inset-s-1/2 -translate-x-1/2 border-line-2 bg-raised text-ink shadow-e2 transition-[translate,scale,opacity] duration-standard hover:bg-sunken data-[direction=end]:data-[active=false]:translate-y-full data-[direction=start]:data-[active=false]:-translate-y-full data-[active=false]:pointer-events-none data-[direction=start]:top-4 data-[direction=end]:bottom-4 data-[active=true]:translate-y-0 data-[active=false]:scale-95 data-[active=true]:scale-100 data-[active=false]:opacity-0 data-[active=true]:opacity-100 data-[active=false]:duration-150 data-[active=false]:ease-out-strong data-[active=true]:ease-out-strong rtl:translate-x-1/2 data-[direction=start]:[&_[data-slot=icon]]:rotate-180",
 				className,
 			)}
 			render={render ?? <Button variant={variant} size={size} />}
@@ -95,7 +95,7 @@ function MessageScrollerButton({
 		>
 			{children ?? (
 				<>
-					<ArrowDownIcon />
+					<Icon name="arrow_downward" />
 					<span className="sr-only">{direction === "end" ? "Scroll to end" : "Scroll to start"}</span>
 				</>
 			)}

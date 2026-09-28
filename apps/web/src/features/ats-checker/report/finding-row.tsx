@@ -6,9 +6,9 @@ import { getPdfFindingMessage, getPdfSeverityLabel } from "../messages";
 
 function severityDotClass(severity: PdfSeverity) {
 	return match(severity)
-		.with("blocker", () => "bg-rose-600")
-		.with("warning", () => "bg-amber-600")
-		.with("tip", () => "bg-sky-600")
+		.with("blocker", () => "bg-danger")
+		.with("warning", () => "bg-warn")
+		.with("tip", () => "bg-info-text")
 		.exhaustive();
 }
 
@@ -30,7 +30,7 @@ export function FindingRow({ finding }: FindingRowProps) {
 					<p className="text-muted-foreground text-xs leading-normal">{message.action}</p>
 				</div>
 
-				<Badge variant="secondary" className="shrink-0">
+				<Badge variant="neutral" className="shrink-0">
 					{getPdfSeverityLabel(finding.severity)}
 				</Badge>
 			</div>

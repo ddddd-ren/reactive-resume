@@ -27,7 +27,7 @@ export function TwoFactorSection() {
 				</h2>
 
 				<Button
-					variant="outline"
+					variant="secondary"
 					onClick={() => openDialog(hasTwoFactor ? "auth.two-factor.disable" : "auth.two-factor.enable", undefined)}
 				>
 					{hasTwoFactor ? (

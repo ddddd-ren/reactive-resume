@@ -51,7 +51,7 @@ describe("Sheet", () => {
 				<SheetContent>x</SheetContent>
 			</Sheet>,
 		);
-		expect(screen.getByText("Close")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
 	});
 
 	it("hides close button with showCloseButton=false", () => {

@@ -129,7 +129,7 @@ export function CoverLetterEditor({
 				</p>
 			)}
 			<div className="flex flex-wrap justify-end gap-2">
-				<Button type="button" variant="outline" disabled={pending || disabled} onClick={onClose}>
+				<Button type="button" variant="secondary" disabled={pending || disabled} onClick={onClose}>
 					<Trans>Close</Trans>
 				</Button>
 				<Button type="submit" disabled={!dirty || pending || disabled}>

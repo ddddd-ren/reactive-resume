@@ -132,11 +132,11 @@ function RouteComponent() {
 				actions={
 					!isEmpty ? (
 						<>
-							<Button size="sm" variant="outline" onClick={() => setExportOpen(true)}>
+							<Button size="sm" variant="secondary" onClick={() => setExportOpen(true)}>
 								<DownloadSimpleIcon />
 								<Trans>Export CSV</Trans>
 							</Button>
-							<Button size="sm" variant="outline" onClick={() => setImportOpen(true)}>
+							<Button size="sm" variant="secondary" onClick={() => setImportOpen(true)}>
 								<DownloadSimpleIcon />
 								<Trans>Import CSV</Trans>
 							</Button>
@@ -193,7 +193,7 @@ function RouteComponent() {
 						{archivedCount > 0 && view !== "insights" && (
 							<Button
 								size="sm"
-								variant={archived ? "secondary" : "outline"}
+								variant={archived ? "primary" : "secondary"}
 								className="shrink-0 max-sm:hidden"
 								onClick={() => setUrlSearch({ archived: !archived })}
 							>
@@ -207,7 +207,7 @@ function RouteComponent() {
 							<Popover>
 								<PopoverTrigger
 									render={
-										<Button size="icon-sm" variant="outline" className="relative shrink-0 sm:hidden">
+										<Button size="icon-sm" variant="secondary" className="relative shrink-0 sm:hidden">
 											<FunnelIcon />
 											{(tags.length > 0 || archived) && (
 												<span className="absolute end-1 top-1 size-1.5 rounded-full bg-primary" />
@@ -245,7 +245,7 @@ function RouteComponent() {
 									{archivedCount > 0 && (
 										<Button
 											size="sm"
-											variant={archived ? "secondary" : "outline"}
+											variant={archived ? "primary" : "secondary"}
 											className="w-full"
 											onClick={() => setUrlSearch({ archived: !archived })}
 										>
@@ -307,7 +307,7 @@ function RouteComponent() {
 								</p>
 								<Button
 									size="sm"
-									variant="outline"
+									variant="secondary"
 									onClick={() => {
 										setTextSearch("");
 										setUrlSearch({ search: "", tags: [], archived: false });
@@ -377,7 +377,7 @@ function EmptyState({ onAdd, onImport }: { onAdd: () => void; onImport: () => vo
 					<PlusIcon />
 					<Trans>Add application</Trans>
 				</Button>
-				<Button variant="outline" onClick={onImport}>
+				<Button variant="secondary" onClick={onImport}>
 					<DownloadSimpleIcon />
 					<Trans>Import from CSV</Trans>
 				</Button>

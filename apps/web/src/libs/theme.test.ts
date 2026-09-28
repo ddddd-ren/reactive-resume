@@ -10,9 +10,12 @@ describe("isTheme", () => {
 		expect(isTheme("dark")).toBe(true);
 	});
 
+	it("returns true for 'system', which follows the operating system", () => {
+		expect(isTheme("system")).toBe(true);
+	});
+
 	it("returns false for unknown theme", () => {
 		expect(isTheme("auto")).toBe(false);
-		expect(isTheme("system")).toBe(false);
 	});
 
 	it("returns false for empty string", () => {
@@ -29,5 +32,6 @@ describe("themeMap", () => {
 	it("includes a descriptor for each theme", () => {
 		expect(themeMap.light).toBeDefined();
 		expect(themeMap.dark).toBeDefined();
+		expect(themeMap.system).toBeDefined();
 	});
 });

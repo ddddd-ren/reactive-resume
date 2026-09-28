@@ -19,13 +19,13 @@ export function PasswordSection() {
 			</h2>
 
 			{hasPassword ? (
-				<Button variant="outline" onClick={() => openDialog("auth.change-password", undefined)}>
+				<Button variant="secondary" onClick={() => openDialog("auth.change-password", undefined)}>
 					<PencilSimpleLineIcon />
 					<Trans>Update Password</Trans>
 				</Button>
 			) : (
 				<Button
-					variant="outline"
+					variant="secondary"
 					nativeButton={false}
 					render={
 						<Link to="/auth/forgot-password">

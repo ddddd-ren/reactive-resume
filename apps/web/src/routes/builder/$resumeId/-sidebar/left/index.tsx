@@ -101,8 +101,8 @@ function LockBanner() {
 	};
 
 	return (
-		<div className="flex items-center gap-x-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-3">
-			<LockSimpleIcon className="size-5 shrink-0 text-amber-600 dark:text-amber-500" />
+		<div className="flex items-center gap-x-3 rounded-md border border-warn/40 bg-warn-soft p-3">
+			<LockSimpleIcon className="size-5 shrink-0 text-warn-text" />
 			<div className="min-w-0 flex-1">
 				<p className="font-medium text-sm">
 					<Trans>This resume is locked</Trans>

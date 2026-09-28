@@ -62,22 +62,23 @@ const editorTheme = (dark: boolean): Extension =>
 		{
 			"&": {
 				height: "100%",
-				backgroundColor: "var(--background)",
-				color: "var(--foreground)",
+				backgroundColor: "var(--raised)",
+				color: "var(--ink)",
 				direction: "ltr",
 			},
 			".cm-scroller": {
 				overflow: "auto",
-				fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+				fontFamily: '"JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
 				lineHeight: "1.5",
 			},
 			".cm-content": { minHeight: "100%", padding: "0.75rem 0" },
 			".cm-gutters": {
-				backgroundColor: "var(--muted)",
-				borderRight: "1px solid var(--border)",
+				backgroundColor: "var(--sunken)",
+				color: "var(--ink-3)",
+				borderRight: "1px solid var(--line)",
 			},
 			".cm-activeLine, .cm-activeLineGutter": {
-				backgroundColor: "var(--accent)",
+				backgroundColor: "var(--hover)",
 			},
 			"&.cm-focused": { outline: "none" },
 		},
@@ -381,7 +382,7 @@ const createEditorMetadata = (data: ResumeData): SemanticCssEditorMetadata => {
 };
 
 function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps) {
-	const { theme } = useTheme();
+	const { resolvedTheme: theme } = useTheme();
 	const isMobile = useIsMobile();
 	const [focusOpen, setFocusOpen] = useState(false);
 	const [diagnostics, setDiagnostics] = useState<readonly SemanticCssDiagnostic[]>([]);

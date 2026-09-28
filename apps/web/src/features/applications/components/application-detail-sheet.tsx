@@ -169,7 +169,7 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 								{current.location ? ` · ${current.location}` : ""}
 							</div>
 						</div>
-						<Button size="sm" variant="outline" className="shrink-0" onClick={() => onEdit(current)}>
+						<Button size="sm" variant="secondary" className="shrink-0" onClick={() => onEdit(current)}>
 							<PencilSimpleIcon />
 							<Trans>Edit</Trans>
 						</Button>
@@ -191,7 +191,7 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 						{nextStage && (
 							<Button
 								size="sm"
-								variant="outline"
+								variant="secondary"
 								disabled={update.isPending}
 								onClick={() => update.mutate({ id: current.id, status: nextStage.value })}
 							>
@@ -293,7 +293,7 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 
 					<Section title={t`Interviews`}>
 						<InterviewList activity={current.activity} onOpen={openInterview} />
-						<Button size="sm" variant="outline" className="self-start" onClick={() => openInterview(null)}>
+						<Button size="sm" variant="secondary" className="self-start" onClick={() => openInterview(null)}>
 							<CalendarPlusIcon />
 							<Trans>Schedule interview</Trans>
 						</Button>
@@ -312,7 +312,7 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 					{/* follow-up */}
 					{current.followUpAt && (
 						<Section title={t`Follow-up`}>
-							<div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-2.5 text-sm">
+							<div className="rounded-lg border border-warn/40 bg-warn-soft p-2.5 text-sm">
 								<span className="font-medium">{new Date(current.followUpAt).toLocaleDateString()}</span>
 								{current.followUpNote ? ` — ${current.followUpNote}` : ""}
 							</div>
@@ -446,7 +446,7 @@ function ApplicationTimeline({
 							}
 						}}
 					/>
-					<Button type="button" variant="outline" disabled={!note.trim() || pending} onClick={add}>
+					<Button type="button" variant="secondary" disabled={!note.trim() || pending} onClick={add}>
 						<Trans>Add</Trans>
 					</Button>
 				</div>
@@ -549,7 +549,7 @@ function ApplicationTimeline({
 						onChange={(event) => setDateDraft(event.target.value)}
 					/>
 					<DialogFooter>
-						<Button type="button" variant="outline" onClick={() => setEditingDate(null)}>
+						<Button type="button" variant="secondary" onClick={() => setEditingDate(null)}>
 							<Trans>Cancel</Trans>
 						</Button>
 						<Button
@@ -580,7 +580,7 @@ function ApplicationTimeline({
 					</DialogHeader>
 					<Textarea value={noteDraft} rows={4} onChange={(event) => setNoteDraft(event.target.value)} />
 					<DialogFooter>
-						<Button type="button" variant="outline" onClick={() => setEditingNote(null)}>
+						<Button type="button" variant="secondary" onClick={() => setEditingNote(null)}>
 							<Trans>Cancel</Trans>
 						</Button>
 						<Button

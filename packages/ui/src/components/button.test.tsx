@@ -52,7 +52,7 @@ describe("Button", () => {
 		expect(screen.getByRole("button")).toBeDisabled();
 	});
 
-	it.each([["default"], ["outline"], ["secondary"], ["ghost"], ["destructive"], ["link"]] as const)(
+	it.each([["primary"], ["secondary"], ["ghost"], ["danger"], ["link"]] as const)(
 		"renders variant=%s without throwing",
 		(variant) => {
 			render(<Button variant={variant}>x</Button>);
@@ -60,13 +60,27 @@ describe("Button", () => {
 		},
 	);
 
-	it.each([["default"], ["xs"], ["sm"], ["lg"], ["icon"], ["icon-xs"], ["icon-sm"], ["icon-lg"]] as const)(
+	it.each([["default"], ["sm"], ["lg"], ["icon"], ["icon-xs"], ["icon-sm"], ["icon-lg"]] as const)(
 		"renders size=%s without throwing",
 		(size) => {
 			render(<Button size={size}>x</Button>);
 			expect(screen.getByRole("button")).toBeInTheDocument();
 		},
 	);
+
+	it("shows a spinner, sets aria-busy and ignores clicks while loading", async () => {
+		const onClick = vi.fn();
+		render(
+			<Button loading onClick={onClick}>
+				Preparing…
+			</Button>,
+		);
+		const button = screen.getByRole("button", { name: "Preparing…" });
+		expect(button).toHaveAttribute("aria-busy", "true");
+		expect(button.querySelector('[data-slot="spinner"]')).toHaveAttribute("aria-hidden", "true");
+		await userEvent.click(button);
+		expect(onClick).not.toHaveBeenCalled();
+	});
 
 	it("forwards aria-label", () => {
 		render(<Button aria-label="Close">×</Button>);

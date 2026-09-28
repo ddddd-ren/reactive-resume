@@ -15,7 +15,7 @@ export function GithubStarsButton() {
 
 	return (
 		<Button
-			variant="outline"
+			variant="secondary"
 			nativeButton={false}
 			render={
 				<a

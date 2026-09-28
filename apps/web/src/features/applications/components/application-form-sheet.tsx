@@ -249,7 +249,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 										<Button
 											type="button"
 											size="sm"
-											variant="outline"
+											variant="secondary"
 											disabled={form.jobDescription.trim().length < MIN_AUTOFILL_CHARS || autofill.isPending}
 											onClick={() => runAutofill(form.jobDescription)}
 										>
@@ -386,7 +386,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 				</div>
 
 				<SheetFooter className="flex-row justify-end gap-2">
-					<Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+					<Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button type="button" disabled={!form.company.trim() || !form.role.trim() || pending} onClick={submit}>

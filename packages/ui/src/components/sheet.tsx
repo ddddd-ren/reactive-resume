@@ -1,7 +1,7 @@
 import type * as React from "react";
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
-import { XIcon } from "@phosphor-icons/react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
@@ -25,7 +25,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
 		<SheetPrimitive.Backdrop
 			data-slot="sheet-overlay"
 			className={cn(
-				"fixed inset-0 z-50 bg-black/10 transition-opacity duration-150 ease-out-strong data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+				"fixed inset-0 z-50 bg-(--scrim-sheet) transition-opacity duration-emphasized ease-enter data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)]",
 				className,
 			)}
 			{...props}
@@ -33,16 +33,25 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
 	);
 }
 
+type SheetContentProps = SheetPrimitive.Popup.Props & {
+	side?: "top" | "right" | "bottom" | "left";
+	showCloseButton?: boolean;
+	/** Accessible name of the close button; pass a translated string. */
+	closeLabel?: string;
+};
+
+/**
+ * A task beside the page. Side sheets slide in from their edge over 320ms; the bottom variant is the
+ * mobile form (18px top radius and a grabber).
+ */
 function SheetContent({
 	className,
 	children,
 	side = "right",
 	showCloseButton = true,
+	closeLabel = "Close",
 	...props
-}: SheetPrimitive.Popup.Props & {
-	side?: "top" | "right" | "bottom" | "left";
-	showCloseButton?: boolean;
-}) {
+}: SheetContentProps) {
 	return (
 		<SheetPortal>
 			<SheetOverlay />
@@ -50,19 +59,27 @@ function SheetContent({
 				data-slot="sheet-content"
 				data-side={side}
 				className={cn(
-					"fixed z-50 flex flex-col gap-4 bg-popover bg-clip-padding text-popover-foreground text-sm shadow-lg transition-[translate,opacity] duration-300 ease-drawer data-[side=left]:data-ending-style:-translate-x-10 data-[side=left]:data-starting-style:-translate-x-10 data-[side=right]:data-ending-style:translate-x-10 data-[side=right]:data-starting-style:translate-x-10 data-[side=bottom]:data-ending-style:translate-y-10 data-[side=bottom]:data-starting-style:translate-y-10 data-[side=top]:data-ending-style:-translate-y-10 data-[side=top]:data-starting-style:-translate-y-10 data-[side=bottom]:inset-x-0 data-[side=top]:inset-x-0 data-[side=left]:inset-y-0 data-[side=right]:inset-y-0 data-[side=top]:top-0 data-[side=right]:right-0 data-[side=bottom]:bottom-0 data-[side=left]:left-0 data-[side=bottom]:h-auto data-[side=left]:h-full data-[side=right]:h-full data-[side=top]:h-auto data-[side=left]:w-3/4 data-[side=right]:w-3/4 data-[side=right]:border-s data-[side=left]:border-e data-[side=bottom]:border-t data-[side=top]:border-b data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-200 data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm rtl:data-[side=left]:data-ending-style:translate-x-10 rtl:data-[side=left]:data-starting-style:translate-x-10 rtl:data-[side=right]:data-ending-style:-translate-x-10 rtl:data-[side=right]:data-starting-style:-translate-x-10",
+					"fixed z-50 flex flex-col gap-4 bg-raised text-ink text-sm shadow-e3 outline-none transition-[translate] duration-emphasized ease-enter data-ending-style:duration-[calc(var(--d3)*0.7)]",
+					"data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-full data-[side=left]:sm:max-w-[440px]",
+					"data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-full data-[side=right]:sm:max-w-[440px]",
+					"rtl:data-[side=left]:data-ending-style:translate-x-full rtl:data-[side=left]:data-starting-style:translate-x-full rtl:data-[side=right]:data-ending-style:-translate-x-full rtl:data-[side=right]:data-starting-style:-translate-x-full",
+					"data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full data-[side=top]:inset-x-0 data-[side=top]:top-0",
+					"data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[calc(100svh-2rem)] data-[side=bottom]:rounded-t-3xl data-[side=bottom]:pt-3",
 					className,
 				)}
 				{...props}
 			>
+				{side === "bottom" && (
+					<span aria-hidden="true" className="mx-auto block h-[5px] w-9 shrink-0 rounded-full bg-line-2" />
+				)}
 				{children}
 				{showCloseButton && (
 					<SheetPrimitive.Close
 						data-slot="sheet-close"
-						render={<Button variant="ghost" className="absolute inset-e-3 top-3" size="icon-sm" />}
+						aria-label={closeLabel}
+						render={<Button variant="ghost" className="absolute inset-e-3 top-3 text-ink-2" size="icon" />}
 					>
-						<XIcon />
-						<span className="sr-only">Close</span>
+						<Icon name="close" />
 					</SheetPrimitive.Close>
 				)}
 			</SheetPrimitive.Popup>
@@ -71,18 +88,18 @@ function SheetContent({
 }
 
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="sheet-header" className={cn("flex flex-col gap-0.5 p-4", className)} {...props} />;
+	return <div data-slot="sheet-header" className={cn("flex flex-col gap-1 px-6 pe-14 pt-5", className)} {...props} />;
 }
 
 function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-2 p-4", className)} {...props} />;
+	return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-2 p-6", className)} {...props} />;
 }
 
 function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
 	return (
 		<SheetPrimitive.Title
 			data-slot="sheet-title"
-			className={cn("font-heading font-medium text-base text-foreground", className)}
+			className={cn("font-display font-medium text-[22px] text-ink leading-7", className)}
 			{...props}
 		/>
 	);
@@ -92,10 +109,20 @@ function SheetDescription({ className, ...props }: SheetPrimitive.Description.Pr
 	return (
 		<SheetPrimitive.Description
 			data-slot="sheet-description"
-			className={cn("text-muted-foreground text-sm", className)}
+			className={cn("text-ink-2 text-sm", className)}
 			{...props}
 		/>
 	);
 }
 
-export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger };
+export {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	type SheetContentProps,
+	SheetDescription,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+};

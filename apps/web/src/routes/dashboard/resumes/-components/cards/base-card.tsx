@@ -28,7 +28,7 @@ export function BaseCard({ title, description, tags, className, children, ...pro
 
 					<div className={cn("mt-2 hidden flex-wrap items-center gap-1", tags && tags.length > 0 && "flex")}>
 						{tags?.map((tag) => (
-							<Badge key={tag} variant="secondary">
+							<Badge key={tag} variant="neutral">
 								{tag}
 							</Badge>
 						))}

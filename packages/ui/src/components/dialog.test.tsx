@@ -61,7 +61,7 @@ describe("Dialog", () => {
 				<DialogContent>body</DialogContent>
 			</Dialog>,
 		);
-		expect(screen.getByText("Close")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
 	});
 
 	it("hides close button when showCloseButton=false", () => {

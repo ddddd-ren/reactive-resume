@@ -66,7 +66,7 @@ export function ResumePreviewLoader({
 							aria-label={`Loading resume page ${pageNumber} of ${pageCount}`}
 							style={pageSize}
 							className={cn(
-								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-white text-neutral-400",
+								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-white text-ink-3",
 								pageClassName,
 							)}
 						>

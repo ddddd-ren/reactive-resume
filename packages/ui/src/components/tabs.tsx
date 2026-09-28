@@ -14,13 +14,17 @@ function Tabs({ className, orientation = "horizontal", ...props }: TabsPrimitive
 	);
 }
 
+/**
+ * `default` is the segmented control used for modes (a sunken track with a raised selected
+ * segment). `line` is the underline tab strip used for filters and sheet sections.
+ */
 const tabsListVariants = cva(
-	"group/tabs-list relative inline-flex w-fit items-center justify-center rounded-lg p-[3px] text-muted-foreground data-[variant=line]:rounded-none group-data-horizontal/tabs:h-9 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col",
+	"group/tabs-list relative inline-flex w-fit items-center group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col",
 	{
 		variants: {
 			variant: {
-				default: "bg-muted",
-				line: "gap-1 bg-transparent",
+				default: "rounded-[9px] bg-sunken p-[3px] text-ink-2 group-data-horizontal/tabs:h-9",
+				line: "gap-4 border-line border-b text-ink-2 group-data-horizontal/tabs:h-10",
 			},
 		},
 		defaultVariants: {
@@ -53,7 +57,7 @@ function TabsIndicator({ className, ...props }: TabsPrimitive.Indicator.Props) {
 		<TabsPrimitive.Indicator
 			data-slot="tabs-indicator"
 			className={cn(
-				"absolute top-0 left-0 h-(--active-tab-height) w-(--active-tab-width) translate-x-(--active-tab-left) translate-y-(--active-tab-top) rounded-md border border-transparent bg-background shadow-sm transition-[translate,width,height] duration-200 ease-out-strong dark:border-input dark:bg-input/30",
+				"absolute top-0 left-0 h-(--active-tab-height) w-(--active-tab-width) translate-x-(--active-tab-left) translate-y-(--active-tab-top) rounded-sm bg-raised shadow-e1 transition-[translate,width,height] duration-standard ease-enter",
 				className,
 			)}
 			{...props}
@@ -66,15 +70,19 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
 		<TabsPrimitive.Tab
 			data-slot="tabs-trigger"
 			className={cn(
-				"relative inline-flex h-[calc(100%-1px)] min-w-fit flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent px-1.5 py-0.5 font-medium text-foreground/60 text-sm transition hover:text-foreground focus-visible:border-ring focus-visible:outline-1 focus-visible:outline-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 has-data-[icon=inline-start]:ps-1 has-data-[icon=inline-end]:pe-1 aria-disabled:pointer-events-none aria-disabled:opacity-50 group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start dark:text-muted-foreground dark:hover:text-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-				"group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent dark:group-data-[variant=line]/tabs-list:data-active:border-transparent dark:group-data-[variant=line]/tabs-list:data-active:bg-transparent",
-				"data-active:text-foreground dark:data-active:text-foreground",
-				"after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-vertical/tabs:after:-inset-e-1 group-data-horizontal/tabs:after:inset-x-0 group-data-vertical/tabs:after:inset-y-0 group-data-horizontal/tabs:after:bottom-[-5px] group-data-horizontal/tabs:after:h-0.5 group-data-vertical/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
+				"relative inline-flex min-w-fit items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-colors duration-quick hover:text-ink disabled:pointer-events-none disabled:text-ink-3 aria-disabled:pointer-events-none aria-disabled:text-ink-3 data-active:text-ink group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"group-data-[variant=default]/tabs-list:h-full group-data-[variant=default]/tabs-list:flex-1 group-data-[variant=default]/tabs-list:rounded-sm group-data-[variant=default]/tabs-list:px-3 group-data-[variant=default]/tabs-list:text-[13px]",
+				"group-data-[variant=line]/tabs-list:h-full group-data-[variant=line]/tabs-list:text-sm group-data-[variant=line]/tabs-list:data-active:shadow-[inset_0_-2px_0_var(--ink)]",
 				className,
 			)}
 			{...props}
 		/>
 	);
+}
+
+/** A count after a tab label, in mono. */
+function TabsCount({ className, ...props }: React.ComponentProps<"span">) {
+	return <span data-slot="tabs-count" className={cn("font-mono text-ink-3 text-xs", className)} {...props} />;
 }
 
 function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
@@ -83,4 +91,4 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
 	);
 }
 
-export { Tabs, TabsContent, TabsIndicator, TabsList, TabsTrigger, tabsListVariants };
+export { Tabs, TabsContent, TabsCount, TabsIndicator, TabsList, TabsTrigger, tabsListVariants };

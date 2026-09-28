@@ -66,7 +66,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 				{ name: "description", content: description },
 				{ name: "viewport", content: "width=device-width, initial-scale=1" },
 				// Meta Tags
-				{ name: "theme-color", content: "#09090B" },
+				{ name: "theme-color", content: "#F8F7F3", media: "(prefers-color-scheme: light)" },
+				{ name: "theme-color", content: "#100F0C", media: "(prefers-color-scheme: dark)" },
 				{ name: "application-name", content: "Reactive Resume" },
 				{ name: "mobile-web-app-capable", content: "yes" },
 				{ name: "apple-mobile-web-app-capable", content: "yes" },
@@ -98,11 +99,11 @@ function RootComponent() {
 	// Suppress the app-wide donation toast inside the builder so it doesn't cover the right-sidebar controls.
 	const isBuilder = useRouterState({ select: (s) => s.location.pathname.startsWith("/builder") });
 
+	// The theme class is owned by ThemeProvider, which also follows the system appearance.
 	useEffect(() => {
 		document.documentElement.lang = locale;
 		document.documentElement.dir = dir;
-		document.documentElement.classList.toggle("dark", theme === "dark");
-	}, [dir, locale, theme]);
+	}, [dir, locale]);
 
 	return (
 		<>
@@ -115,7 +116,7 @@ function RootComponent() {
 							<IconContext.Provider value={iconContextValue}>
 								<ThemeProvider theme={theme}>
 									<HotkeysProvider>
-										<DirectionProvider>
+										<DirectionProvider direction={dir}>
 											<TooltipProvider>
 												<ConfirmDialogProvider>
 													<PromptDialogProvider>

@@ -102,7 +102,7 @@ export function CustomSectionBuilder() {
 				))}
 
 			{/* Add Custom Section Button */}
-			<SectionAddItemButton type="custom" variant="outline" className="rounded-md">
+			<SectionAddItemButton type="custom" variant="secondary" className="rounded-md">
 				<Trans>Add a new custom section</Trans>
 			</SectionAddItemButton>
 		</SectionBase>
@@ -141,7 +141,7 @@ function CustomSectionContainer({ section }: CustomSectionContainerProps) {
 						section.hidden && "opacity-50",
 					)}
 				>
-					<Badge variant="secondary" className="mb-1.5 rounded-md">
+					<Badge variant="neutral" className="mb-1.5 rounded-md">
 						{getSectionTitle(section.type)}
 					</Badge>
 					<span className="line-clamp-1 text-wrap font-medium text-base">{section.title}</span>

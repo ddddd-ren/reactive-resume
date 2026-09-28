@@ -11,9 +11,9 @@ type Impact = AtsAiReview["suggestions"][number]["impact"];
 
 function impactDotClass(impact: Impact) {
 	return match(impact)
-		.with("high", () => "bg-rose-600")
-		.with("medium", () => "bg-amber-600")
-		.with("low", () => "bg-emerald-600")
+		.with("high", () => "bg-danger")
+		.with("medium", () => "bg-warn")
+		.with("low", () => "bg-accent")
 		.exhaustive();
 }
 
@@ -52,7 +52,7 @@ export function AiReviewResults({ review }: AiReviewResultsProps) {
 										aria-hidden
 									/>
 									<p className="min-w-0 flex-1 text-sm leading-snug">{suggestion.issue}</p>
-									<Badge variant="secondary" className="shrink-0">
+									<Badge variant="neutral" className="shrink-0">
 										{impactLabel(suggestion.impact)}
 									</Badge>
 								</div>

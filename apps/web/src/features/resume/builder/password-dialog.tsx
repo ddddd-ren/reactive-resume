@@ -124,7 +124,7 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 						</p>
 					)}
 					<DialogFooter>
-						<Button type="button" variant="outline" disabled={isPending} onClick={onClose}>
+						<Button type="button" variant="secondary" disabled={isPending} onClick={onClose}>
 							<Trans>Cancel</Trans>
 						</Button>
 						<Button type="submit" disabled={isPending}>

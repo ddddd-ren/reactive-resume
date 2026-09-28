@@ -160,7 +160,7 @@ function PictureFitField({ form, onAutoSave }: PictureFieldProps) {
 					<ButtonGroup role="group" aria-label={t`Fit`} className="w-full">
 						<Button
 							type="button"
-							variant={field.state.value === "cover" ? "default" : "outline"}
+							variant={field.state.value === "cover" ? "primary" : "secondary"}
 							aria-pressed={field.state.value === "cover"}
 							className="flex-1"
 							onClick={() => {
@@ -172,7 +172,7 @@ function PictureFitField({ form, onAutoSave }: PictureFieldProps) {
 						</Button>
 						<Button
 							type="button"
-							variant={field.state.value === "contain" ? "default" : "outline"}
+							variant={field.state.value === "contain" ? "primary" : "secondary"}
 							aria-pressed={field.state.value === "contain"}
 							className="flex-1"
 							onClick={() => {
@@ -292,7 +292,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 							<ButtonGroup className="shrink-0">
 								<Button
 									size="icon"
-									variant="outline"
+									variant="secondary"
 									title={t({
 										comment: "Preset button for setting picture aspect ratio to square",
 										message: "Square",
@@ -306,7 +306,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 								</Button>
 								<Button
 									size="icon"
-									variant="outline"
+									variant="secondary"
 									title={t({
 										comment: "Preset button for setting picture aspect ratio to landscape orientation",
 										message: "Landscape",
@@ -320,7 +320,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 								</Button>
 								<Button
 									size="icon"
-									variant="outline"
+									variant="secondary"
 									title={t({
 										comment: "Preset button for setting picture aspect ratio to portrait orientation",
 										message: "Portrait",
@@ -370,7 +370,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 							<ButtonGroup className="shrink-0">
 								<Button
 									size="icon"
-									variant="outline"
+									variant="secondary"
 									title="0pt"
 									onClick={() => {
 										field.handleChange(0);
@@ -381,7 +381,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 								</Button>
 								<Button
 									size="icon"
-									variant="outline"
+									variant="secondary"
 									title="10pt"
 									onClick={() => {
 										field.handleChange(10);
@@ -392,7 +392,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 								</Button>
 								<Button
 									size="icon"
-									variant="outline"
+									variant="secondary"
 									title="100pt"
 									onClick={() => {
 										field.handleChange(100);
@@ -680,12 +680,12 @@ function PictureSectionForm() {
 					</div>
 
 					<DialogFooter className="flex-row flex-wrap justify-between">
-						<Button variant="outline" onClick={closeCropDialog}>
+						<Button variant="secondary" onClick={closeCropDialog}>
 							<Trans>Cancel</Trans>
 						</Button>
 						<div className="flex flex-wrap gap-2">
 							<Button
-								variant="outline"
+								variant="secondary"
 								onClick={() => {
 									if (!cropState) return;
 									uploadPictureFile(cropState.file);

@@ -372,7 +372,7 @@ const ResumeForm = withForm({
 									}
 								/>
 
-								<Button size="icon" variant="outline" title={t`Generate a random name`} onClick={onGenerateName}>
+								<Button size="icon" variant="secondary" title={t`Generate a random name`} onClick={onGenerateName}>
 									<MagicWandIcon />
 								</Button>
 							</div>

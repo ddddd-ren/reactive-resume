@@ -22,28 +22,28 @@ export function StylesheetStatus({ mode, status, diagnostics }: StylesheetStatus
 	return (
 		<div className="space-y-2" aria-live="polite">
 			{hasFatalErrors ? (
-				<Badge variant="destructive">
+				<Badge variant="danger">
 					<WarningCircleIcon data-icon="inline-start" />
 					<Trans>Fatal error</Trans>
 				</Badge>
 			) : isPending ? (
 				<Badge variant="outline">{mode === "legacy" ? <Trans>Checking draft</Trans> : <Trans>Checking</Trans>}</Badge>
 			) : hasRecoverableErrors ? (
-				<Badge variant="secondary">
+				<Badge variant="warn">
 					<WarningCircleIcon data-icon="inline-start" />
 					{mode === "legacy" ? <Trans>Ready to activate with errors</Trans> : <Trans>Valid with errors</Trans>}
 				</Badge>
 			) : warnings.length > 0 ? (
-				<Badge variant="secondary">
+				<Badge variant="warn">
 					<WarningIcon data-icon="inline-start" />
 					{mode === "legacy" ? <Trans>Ready to activate with warnings</Trans> : <Trans>Valid with warnings</Trans>}
 				</Badge>
 			) : (
-				<Badge variant="secondary">{mode === "legacy" ? <Trans>Ready to activate</Trans> : <Trans>Valid</Trans>}</Badge>
+				<Badge variant="accent">{mode === "legacy" ? <Trans>Ready to activate</Trans> : <Trans>Valid</Trans>}</Badge>
 			)}
 
 			{hasFatalErrors && (
-				<Alert variant="destructive">
+				<Alert variant="error">
 					<WarningCircleIcon />
 					<AlertTitle>
 						<Trans>Stylesheet has fatal errors</Trans>

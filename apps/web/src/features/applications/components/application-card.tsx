@@ -3,7 +3,6 @@ import { Trans } from "@lingui/react/macro";
 import { FileTextIcon, MapPinIcon } from "@phosphor-icons/react";
 import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
-import { tileColor } from "../tile-color";
 import { ApplicationActionsMenu } from "./application-actions-menu";
 
 type Props = {
@@ -46,8 +45,7 @@ export function ApplicationCard({ application, onClick, onEdit, className, dragg
 			<div className="flex items-start gap-2.5">
 				<div
 					className={cn(
-						"flex size-9 shrink-0 items-center justify-center rounded-lg font-bold text-white text-xs",
-						tileColor(application.company),
+						"flex size-7 shrink-0 items-center justify-center rounded-[7px] bg-sunken font-semibold text-ink-2 text-xs",
 					)}
 				>
 					{getInitials(application.company)}
@@ -59,7 +57,7 @@ export function ApplicationCard({ application, onClick, onEdit, className, dragg
 				{followUp && (
 					<span
 						title="Needs follow-up"
-						className={cn("mt-1 size-2 shrink-0 rounded-full bg-amber-500 ring-2 ring-amber-500/25", onEdit && "me-6")}
+						className={cn("mt-1 size-2 shrink-0 rounded-full bg-warn ring-2 ring-warn/25", onEdit && "me-6")}
 					/>
 				)}
 			</div>

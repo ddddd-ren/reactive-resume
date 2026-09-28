@@ -154,7 +154,7 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 						action={
 							<Button
 								size="sm"
-								variant="outline"
+								variant="secondary"
 								aria-label="Download DOCX"
 								disabled={isExporting}
 								onClick={() => run(() => onDownloadDOCX(activeScope))}
@@ -172,7 +172,7 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 						action={
 							<Button
 								size="sm"
-								variant="outline"
+								variant="secondary"
 								aria-label="Download Markdown"
 								disabled={isExporting}
 								onClick={() => run(() => onDownloadMarkdown(activeScope))}
@@ -191,7 +191,7 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 						action={
 							<Button
 								size="sm"
-								variant="outline"
+								variant="secondary"
 								aria-label="Download JSON"
 								disabled={jsonDisabled}
 								onClick={() => run(onDownloadJSON)}

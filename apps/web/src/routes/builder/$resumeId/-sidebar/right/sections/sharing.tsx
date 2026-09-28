@@ -165,12 +165,12 @@ export function SharingSectionBuilder() {
 					</p>
 
 					{isPasswordProtected ? (
-						<Button variant="outline" onClick={onRemovePassword}>
+						<Button variant="secondary" onClick={onRemovePassword}>
 							<LockSimpleOpenIcon />
 							<Trans>Remove Password</Trans>
 						</Button>
 					) : (
-						<Button variant="outline" onClick={() => setIsPasswordDialogOpen(true)}>
+						<Button variant="secondary" onClick={() => setIsPasswordDialogOpen(true)}>
 							<LockSimpleIcon />
 							<Trans>Set Password</Trans>
 						</Button>

@@ -165,7 +165,7 @@ const ExperienceForm = withForm({
 
 					<Button
 						size="sm"
-						variant="outline"
+						variant="secondary"
 						className="shrink-0"
 						onClick={() => {
 							form.pushFieldValue("roles", {

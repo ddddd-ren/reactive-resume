@@ -63,11 +63,11 @@ function Slider({
 			<SliderPrimitive.Control className="relative flex w-full touch-none select-none items-center data-vertical:h-full data-vertical:min-h-40 data-vertical:w-auto data-vertical:flex-col data-disabled:opacity-50">
 				<SliderPrimitive.Track
 					data-slot="slider-track"
-					className="relative grow select-none overflow-hidden rounded-full bg-muted data-horizontal:h-1 data-vertical:h-full data-horizontal:w-full data-vertical:w-1"
+					className="relative grow select-none overflow-hidden rounded-full bg-line-2 data-horizontal:h-1 data-vertical:h-full data-horizontal:w-full data-vertical:w-1"
 				>
 					<SliderPrimitive.Indicator
 						data-slot="slider-range"
-						className="select-none bg-primary data-horizontal:h-full data-vertical:w-full"
+						className="select-none bg-accent data-horizontal:h-full data-vertical:w-full"
 					/>
 				</SliderPrimitive.Track>
 				{thumbDescriptors.map((thumb) => (
@@ -76,7 +76,7 @@ function Slider({
 						key={thumb.key}
 						aria-describedby={ariaDescribedBy}
 						inputRef={syncThumbInput}
-						className="relative block size-3 shrink-0 select-none rounded-full border border-ring bg-white ring-ring/50 transition-[color,box-shadow] after:absolute after:-inset-2 hover:ring-3 focus-visible:outline-hidden focus-visible:ring-3 active:ring-3 disabled:pointer-events-none disabled:opacity-50"
+						className="relative block size-4 shrink-0 select-none rounded-full border-2 border-accent bg-white shadow-e1 transition-[box-shadow] duration-quick after:absolute after:-inset-2 hover:shadow-[0_0_0_4px_var(--accent-soft)] active:shadow-[0_0_0_4px_var(--accent-soft)] disabled:pointer-events-none disabled:opacity-50 has-focus-visible:outline-2 has-focus-visible:outline-accent has-focus-visible:outline-offset-2"
 					/>
 				))}
 			</SliderPrimitive.Control>

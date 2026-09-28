@@ -1,10 +1,10 @@
 import type { VariantProps } from "class-variance-authority";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { SidebarIcon } from "@phosphor-icons/react";
 import { cva } from "class-variance-authority";
 import * as React from "react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
@@ -260,7 +260,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
 			}}
 			{...props}
 		>
-			<SidebarIcon className="rtl:rotate-180" />
+			<Icon name="left_panel_close" className="rtl:-scale-x-100" />
 			<span className="sr-only">Toggle Sidebar</span>
 		</Button>
 	);

@@ -98,7 +98,7 @@ function StatisticsItem({ label, value, series, timestamp }: StatisticsItemProps
 					<Trans>No prior data</Trans>
 				</span>
 			) : (
-				<span className={cn("text-xs", delta >= 0 ? "text-emerald-600 dark:text-emerald-500" : "text-red-600")}>
+				<span className={cn("text-xs", delta >= 0 ? "text-accent-text" : "text-danger-text")}>
 					{`${delta >= 0 ? "+" : ""}${delta}% `}
 					<Trans>vs previous 30 days</Trans>
 				</span>

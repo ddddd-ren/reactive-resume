@@ -6,7 +6,7 @@ import { SectionBase } from "../shared/section-base";
 export function InformationSectionBuilder() {
 	return (
 		<SectionBase type="information" className="space-y-4">
-			<div className="space-y-2 rounded-md border bg-sky-600 p-5 text-white dark:bg-sky-700">
+			<div className="space-y-2 rounded-lg bg-info-soft p-5 text-info-text">
 				<h4 className="font-medium tracking-tight">
 					<Trans>Support the app by doing what you can!</Trans>
 				</h4>
@@ -26,7 +26,7 @@ export function InformationSectionBuilder() {
 
 				<Button
 					size="sm"
-					variant="default"
+					variant="primary"
 					nativeButton={false}
 					className="mt-2 whitespace-normal px-4! text-xs"
 					render={

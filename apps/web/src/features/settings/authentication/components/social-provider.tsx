@@ -32,7 +32,7 @@ export function SocialProviderSection({ provider, name }: SocialProviderSectionP
 
 				{isConnected ? (
 					<Button
-						variant="outline"
+						variant="secondary"
 						onClick={() => {
 							if (account?.accountId) void unlink(provider, account.accountId);
 						}}
@@ -43,7 +43,7 @@ export function SocialProviderSection({ provider, name }: SocialProviderSectionP
 						</Trans>
 					</Button>
 				) : (
-					<Button variant="outline" onClick={() => void link(provider)}>
+					<Button variant="secondary" onClick={() => void link(provider)}>
 						<LinkIcon />
 						<Trans comment="Authentication settings action to link a social login provider">Connect</Trans>
 					</Button>

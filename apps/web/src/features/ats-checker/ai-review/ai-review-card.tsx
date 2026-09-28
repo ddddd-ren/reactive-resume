@@ -146,7 +146,7 @@ function NoProviderState() {
 
 				<Button
 					size="sm"
-					variant="outline"
+					variant="secondary"
 					nativeButton={false}
 					render={
 						<Link to="/dashboard/settings/integrations">

@@ -139,8 +139,8 @@ function ThreadRow({ thread, activeThreadId }: ThreadRowProps) {
 	return (
 		<div
 			className={cn(
-				"group/thread relative rounded-md transition-colors hover:bg-accent",
-				isActive && "bg-accent",
+				"group/thread relative rounded-md transition-colors hover:bg-hover",
+				isActive && "bg-sunken",
 				isArchived && "opacity-60",
 			)}
 		>

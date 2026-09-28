@@ -109,7 +109,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 						</p>
 					)}
 					<div className="flex gap-2">
-						<Button className="flex-1" variant="outline" disabled={pending} onClick={() => void submit(false)}>
+						<Button className="flex-1" variant="secondary" disabled={pending} onClick={() => void submit(false)}>
 							<Trans>Deny</Trans>
 						</Button>
 						<Button className="flex-1" disabled={pending} onClick={() => void submit(true)}>

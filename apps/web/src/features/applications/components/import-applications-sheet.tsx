@@ -82,7 +82,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: Props) {
 
 				<div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 pb-4">
 					<div className="flex items-center gap-2">
-						<Button size="sm" variant="outline" onClick={() => fileRef.current?.click()}>
+						<Button size="sm" variant="secondary" onClick={() => fileRef.current?.click()}>
 							<UploadSimpleIcon />
 							<Trans>Upload .csv</Trans>
 						</Button>
@@ -114,7 +114,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: Props) {
 					{parsed && (
 						<div className="rounded-lg border border-border p-3 text-sm">
 							<div className="flex items-center gap-2 font-medium">
-								<CheckCircleIcon className="text-emerald-500" />
+								<CheckCircleIcon className="text-accent-text" />
 								<Trans>{importable.length} ready to import</Trans>
 								{parsed.skipped > 0 && (
 									<span className="text-muted-foreground text-xs">
@@ -131,7 +131,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: Props) {
 								</p>
 							)}
 							{overflow > 0 && (
-								<p className="mt-1.5 text-amber-600 text-xs dark:text-amber-500">
+								<p className="mt-1.5 text-warn-text text-xs">
 									<Trans>
 										Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import
 										the rest.
@@ -141,7 +141,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: Props) {
 							{parsed.recognized.length > 0 && (
 								<div className="mt-2 flex flex-wrap gap-1">
 									{parsed.recognized.map((field) => (
-										<Badge key={field} variant="secondary" className="text-[10px]">
+										<Badge key={field} variant="neutral" className="text-[10px]">
 											{field}
 										</Badge>
 									))}
@@ -162,7 +162,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: Props) {
 				</div>
 
 				<SheetFooter className="flex-row justify-end gap-2">
-					<Button variant="outline" onClick={() => onOpenChange(false)}>
+					<Button variant="secondary" onClick={() => onOpenChange(false)}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button

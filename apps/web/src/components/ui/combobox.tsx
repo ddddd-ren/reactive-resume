@@ -223,7 +223,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 			render={
 				render ?? (
 					<Button
-						variant="outline"
+						variant="secondary"
 						className={cn("justify-start text-left font-normal hover:bg-muted/20", className)}
 					/>
 				)

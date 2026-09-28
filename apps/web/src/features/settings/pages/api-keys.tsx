@@ -101,7 +101,7 @@ export function ApiKeysSettingsPage() {
 
 			<div>
 				<Button
-					variant="outline"
+					variant="secondary"
 					className="h-auto w-full py-3"
 					onClick={() => openDialog("api-key.create", undefined)}
 				>

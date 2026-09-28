@@ -138,7 +138,7 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 				</form.Field>
 
 				<DialogFooter>
-					<Button type="submit" variant="destructive">
+					<Button type="submit" variant="danger">
 						<Trans comment="Destructive action button to turn off two-factor authentication">Disable 2FA</Trans>
 					</Button>
 				</DialogFooter>

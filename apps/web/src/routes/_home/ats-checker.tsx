@@ -159,7 +159,7 @@ function HonestyPanel() {
 	return (
 		<>
 			<FactGroup
-				icon={<CheckCircleIcon className="size-4 shrink-0 text-emerald-600" />}
+				icon={<CheckCircleIcon className="size-4 shrink-0 text-accent-text" />}
 				title={<Trans>What this checks</Trans>}
 			>
 				<ul className="space-y-1.5 text-muted-foreground text-sm leading-relaxed">
@@ -182,7 +182,7 @@ function HonestyPanel() {
 			</FactGroup>
 
 			<FactGroup
-				icon={<ProhibitIcon className="size-4 shrink-0 text-rose-600" />}
+				icon={<ProhibitIcon className="size-4 shrink-0 text-danger-text" />}
 				title={<Trans>What this does not do</Trans>}
 			>
 				<ul className="space-y-1.5 text-muted-foreground text-sm leading-relaxed">
@@ -199,7 +199,7 @@ function HonestyPanel() {
 			</FactGroup>
 
 			<FactGroup
-				icon={<ShieldCheckIcon className="size-4 shrink-0 text-sky-600" />}
+				icon={<ShieldCheckIcon className="size-4 shrink-0 text-info-text" />}
 				title={<Trans>Your file stays here</Trans>}
 			>
 				<p className="text-muted-foreground text-sm leading-relaxed">

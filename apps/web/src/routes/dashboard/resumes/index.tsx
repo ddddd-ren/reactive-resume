@@ -93,11 +93,11 @@ function RouteComponent() {
 				actions={
 					(resumes?.length ?? 0) > 0 ? (
 						<>
-							<Button size="sm" variant="outline" onClick={() => openDialog("resume.create", undefined)}>
+							<Button size="sm" variant="secondary" onClick={() => openDialog("resume.create", undefined)}>
 								<PlusIcon />
 								<Trans>Create</Trans>
 							</Button>
-							<Button size="sm" variant="outline" onClick={() => openDialog("resume.import", undefined)}>
+							<Button size="sm" variant="secondary" onClick={() => openDialog("resume.import", undefined)}>
 								<DownloadSimpleIcon />
 								<Trans>Import</Trans>
 							</Button>

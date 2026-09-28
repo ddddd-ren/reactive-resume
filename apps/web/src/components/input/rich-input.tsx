@@ -935,7 +935,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 					</div>
 
 					<Button
-						size="xs"
+						size="sm"
 						variant="ghost"
 						className="shrink-0"
 						onClick={state.unsetHighlightColor}
@@ -995,7 +995,7 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 					</div>
 
 					<Button
-						size="xs"
+						size="sm"
 						variant="ghost"
 						className="shrink-0"
 						onClick={state.unsetTextColor}

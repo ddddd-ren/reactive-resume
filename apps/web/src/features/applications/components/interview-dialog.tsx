@@ -276,7 +276,7 @@ export function InterviewDialog({
 						<span />
 					)}
 					<div className="flex gap-2">
-						<Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+						<Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
 							<Trans>Cancel</Trans>
 						</Button>
 						<Button type="button" disabled={!canSave} onClick={save}>

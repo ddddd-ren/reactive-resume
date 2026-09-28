@@ -32,7 +32,7 @@ export function computeInsights(byStage: StageCount[]): Insights {
 		const prev = i === 0 ? reachedCount : (reached[i - 1] ?? reachedCount);
 		return {
 			label: stage?.label ?? status,
-			color: stage?.color ?? "var(--muted)",
+			color: stage?.color ?? "var(--stage-saved)",
 			count: at(status),
 			reached: reachedCount,
 			pct: total > 0 ? Math.round((reachedCount / total) * 100) : 0,

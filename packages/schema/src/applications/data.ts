@@ -9,12 +9,12 @@ export type ApplicationStatus = z.infer<typeof applicationStatusSchema>;
 
 // Ordered stage metadata shared by the API (validation) and the web board (columns/colors).
 export const STAGES = [
-	{ value: "saved", label: "Saved", color: "oklch(0.62 0 0)" },
-	{ value: "applied", label: "Applied", color: "oklch(0.52 0.19 285)" },
-	{ value: "screening", label: "Screening", color: "oklch(0.45 0.08 195)" },
-	{ value: "interview", label: "Interview", color: "oklch(0.5 0.1 70)" },
-	{ value: "offer", label: "Offer", color: "oklch(0.55 0.15 152)" },
-	{ value: "rejected", label: "Rejected", color: "oklch(0.63 0.12 22)" },
+	{ value: "saved", label: "Saved", color: "oklch(0.64 0.02 95)" },
+	{ value: "applied", label: "Applied", color: "oklch(0.64 0.11 250)" },
+	{ value: "screening", label: "Screening", color: "oklch(0.64 0.11 200)" },
+	{ value: "interview", label: "Interview", color: "oklch(0.64 0.11 80)" },
+	{ value: "offer", label: "Offer", color: "oklch(0.64 0.11 150)" },
+	{ value: "rejected", label: "Rejected", color: "oklch(0.64 0.11 27)" },
 ] as const satisfies ReadonlyArray<{ value: ApplicationStatus; label: string; color: string }>;
 
 export const contactSchema = z.object({

@@ -106,7 +106,7 @@ export function ExportApplicationsSheet({ open, onOpenChange, applications, filt
 						</p>
 					</div>
 					<SheetFooter className="flex-row justify-end gap-2">
-						<Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+						<Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
 							<Trans>Cancel</Trans>
 						</Button>
 						<Button type="submit" disabled={!validRange || selected.length === 0}>

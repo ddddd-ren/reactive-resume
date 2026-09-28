@@ -14,9 +14,9 @@ describe("Switch", () => {
 		expect(screen.getByTestId("sw")).toHaveAttribute("data-size", "default");
 	});
 
-	it("supports size='sm'", () => {
-		render(<Switch data-testid="sw" size="sm" />);
-		expect(screen.getByTestId("sw")).toHaveAttribute("data-size", "sm");
+	it("supports the touch size", () => {
+		render(<Switch data-testid="sw" size="touch" />);
+		expect(screen.getByTestId("sw")).toHaveAttribute("data-size", "touch");
 	});
 
 	it("starts unchecked by default", () => {
