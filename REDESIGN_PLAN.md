@@ -2,6 +2,8 @@
 
 Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M4 are done; see §11 and §12.
 
+**PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
+
 Inputs:
 
 - The handoff spec (`design_handoff_reactive_resume_redesign/README.md`), all 13 prototypes in `designs/` (templates and `class Component` logic), `tokens.css` and `tokens.json`.
@@ -718,6 +720,7 @@ PRs: settings; shared resume; ATS checker.
 
 - Re-check tablet drawer pinning in landscape, press-and-hold previews, bottom sheets and mobile flows on every screen.
 - Accessibility audit against README §4.7 and §9: a keyboard-only pass per screen, focus return, roles (tablist, radiogroup, switch, menu, dialog and alertdialog, log), live regions, contrast, 44 px touch targets and reduced motion. Automated checks with `@axe-core/playwright` if approved (Q8).
+- No preview Web Worker: the engine is replaced with Forme next (see Status).
 - Cleanup: remove the compatibility aliases, Phosphor from app chrome, IBM Plex from the UI, the redirect stubs (per Q2), and unused primitives and dialogs; `pnpm knip` clean.
 - The contract steps in §3.10 are proposed separately, not done here.
 
@@ -744,6 +747,7 @@ PRs: settings; shared resume; ATS checker.
 - **Assistant width:** README §6.5 (300 px, 1fr, 400 px at ≥1280) wins over the Design System note (a 360 px column).
 - **Per-device state:** the "New" badge and the follow-up nudge dismissal are stored per device. Both are cosmetic.
 - **Download count:** covers the last 30 days, like views.
+- **PDF engine work waits for Forme:** Sidebar Left/Right (per-template mirroring) and moving rendering to a Web Worker are dropped from this phase. The Custom CSS editor is hosted in Design → Advanced as it is.
 
 ---
 
@@ -997,11 +1001,11 @@ What changed:
 Differences from the plan, with reasons:
 
 - **Presets are calibrated so Normal equals today's defaults.** Density sets body line height and section gap: Compact 1.35 / 4, Normal 1.5 / 6, Roomy 1.65 / 8. Margins (horizontal / vertical) are Narrow 10 / 8, Normal 14 / 12 and Wide 19 / 16. The spec's 1.32/1.45/1.60 and 30/44/60 pt came from the prototype renderer and would have changed every existing resume.
-- **Sidebar Left/Right is hidden.** The templates hard-code their side, and three put the header in the sidebar. Mirroring needs per-template PDF work, and §8 allows hiding the control.
+- **Sidebar Left/Right is hidden.** The templates hard-code their side, and three put the header in the sidebar. Mirroring needs per-template PDF work, which waits for Forme.
 - **"Reset to template defaults" restores the look only:** type, colours, level display, spacing, icons, link underlines and sidebar width. Paper, language, date format, section placement and custom CSS stay. The prototype also resets paper, language and sidebar sections. Templates have no defaults of their own here, so the reset uses the app defaults.
 - **The template switch reuses the page's layer cross-fade** (150 ms in, then the old layer drops) rather than a separate 0.35 → 1 fade over 200 ms.
 - **The mobile sheet toggles between half and full height** with its handle; there is no drag gesture.
-- **Thumbnails re-render at idle when the content changes** while Design is open: about 15 renders of roughly 230 ms each, one at a time. The M12 worker moves them off the main thread.
+- **Thumbnails re-render at idle when the content changes** while Design is open: about 15 renders of roughly 230 ms each, one at a time. Rendering cost is left to Forme.
 - **Still to come:** the Check "Layout" issue for two-column templates (M7; the live lint already flags sidebar sections) and single-column DOCX layout alignment (M7).
 
 Verification:
