@@ -1,6 +1,6 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M11 are done; see §11 and §12.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M12 are done; see §11 and §12. The contract steps in §3.10 are proposed separately.
 
 **PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
 
@@ -1456,4 +1456,50 @@ Verification:
   - Updated: `public-download-preference` and `root-public-resume`.
   - The full suite passes against the production build: 42 passed, 7 opt-in skipped.
 - Docs: the guides name the new settings pages, the key flow, the export's contents and the new checker.
+
+### M12 · Responsive pass, accessibility audit, cleanup (done 29 Sep 2026)
+
+What changed:
+
+- **Accessibility audit:**
+  - `@axe-core/playwright` (Q8) runs against WCAG 2.1 A and AA on these screens, in light and dark:
+    - the editor's Write, Design and Check;
+    - the assistant, and both Share & export tabs;
+    - Documents and New, the letter editor, the command palette;
+    - Applications (list and board) and the three Settings pages;
+    - the shared resume, the ATS checker and sign-in.
+  - It runs again at phone width on the editor, Documents, Applications, the settings root and the shared resume. Everything passes.
+  - Fixed along the way:
+    - The resume and letter canvases are focusable, labelled regions, so the page scrolls from the keyboard even before its lines load.
+    - A checked switch row's description, and the checked download format's extension, step up to ink-2. Ink-3 measured 4.47:1 on the accent tint.
+    - The phone reflow darkens a template colour that's too faint to read on white.
+- **Keyboard and focus:** a spec opens the Share sheet, the assistant, New and the command palette from the keyboard and checks that closing each returns focus to what opened it. Closing the assistant didn't, and now does.
+- **Touch targets:** on coarse pointers, buttons, switches, checkboxes and tabs get an invisible hit area of at least 44 × 44 around them (a `touch-target` utility), without changing how they look. Inputs already grow to 44 px on touch.
+- **Reduced motion:** the theme and `MotionConfig reducedMotion="user"` already cover it; the audit runs with reduced motion on.
+- **Responsive pass** on an iPad (portrait and landscape) and a phone, across the editor's modes, the sheets, the assistant, Documents and Applications:
+  - The ✦ button was missing below 1024 px, where the assistant opens as a drawer or full screen. It now shows in every layout, in both editors.
+  - In tablet portrait the bar overflowed. Download PDF there is its accent split button without the label.
+- **Cleanup:**
+  - The shadcn colour aliases are gone. Every class uses the Desk & Paper token it resolved to, and text colours use their text tokens.
+  - The app chrome uses Material Symbols instead of Phosphor: auth pages, dialogs, the command palette, the user menu, Applications, the rich-text toolbar, the stylesheet editor and the error screens. The icon subset grew to 151 glyphs.
+  - Removed:
+    - the agent chat primitives (attachment, bubble, empty, marker, message, message scroller, questionnaire), the sidebar and resizable components, and their dependencies (`react-resizable-panels`, `@shadcn/react`);
+    - the unused rich-text form field.
+  - knip, `turbo boundaries` and Biome are clean.
+
+Differences from the plan, with reasons:
+
+- **The redirect stubs stay**, per Q2: through 6.0.x, and they go in 6.1.
+- **Phosphor stays where it isn't chrome:** brand logos in sign-in, the landing page, and the icons printed on resumes (section icons and the icon picker). IBM Plex is used only by the landing page, which the spec leaves as it is.
+- **The Notes dialog keeps the full rich-text editor**, now with Material icons. Its tests guard the shared editor extensions (indentation, tables, literal whitespace).
+- **Touch targets grow invisibly** rather than making every phone control 44 px tall, so the designed density holds.
+- **The §3.10 contract steps are not part of this milestone**, as planned.
+
+Verification:
+
+- Typecheck, knip, `turbo boundaries` and Biome are clean across the workspace, and catalogs are extracted.
+- Unit tests pass in every package. Under a combined `test` + `typecheck` turbo run, a few cold-import tests (auth, api download routing, tooling catalog sync) can time out; they pass when their package runs alone.
+- E2E:
+  - New: `accessibility` and `keyboard`.
+  - The full suite passes against the production build: 46 passed, 7 opt-in skipped.
 
