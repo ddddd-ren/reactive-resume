@@ -1,3 +1,4 @@
+import { gunzipSync } from "node:zlib";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -204,6 +205,32 @@ describe("createApp", () => {
 		expect(response.status).toBe(200);
 		expect(mocks.handleWebApp).toHaveBeenCalledWith(request);
 		expect(mocks.serveWebDistStatic).not.toHaveBeenCalled();
+	});
+
+	it("compresses the web app's HTML but never API streams or the Vercel app", async () => {
+		const { createApp } = await import("./app");
+		const html = `<!doctype html>${"<p>Reactive Resume</p>".repeat(200)}`;
+		const htmlResponse = () =>
+			new Response(html, {
+				headers: { "Content-Type": "text/html; charset=UTF-8", "Cache-Control": "private, no-store", Vary: "Cookie" },
+			});
+		const stream = () => new Response("data: x\n\n".repeat(500), { headers: { "Content-Type": "application/json" } });
+		mocks.handleWebApp.mockImplementation(async () => htmlResponse());
+		mocks.handleRpc.mockImplementation(async () => stream());
+		mocks.handleMcp.mockImplementation(async () => stream());
+		const headers = { "Accept-Encoding": "br, gzip" };
+
+		const page = await createApp().request("http://localhost:3000/", { headers });
+		const rpc = await createApp().request("http://localhost:3000/api/rpc/agent/chat", { headers });
+		const mcp = await createApp().request("http://localhost:3000/mcp", { headers });
+		const vercelPage = await createApp({ serveStatic: false }).request("http://localhost:3000/", { headers });
+
+		expect(page.headers.get("content-encoding")).toBe("gzip");
+		expect(page.headers.get("vary")).toBe("Cookie, Accept-Encoding");
+		expect(page.headers.get("cache-control")).toBe("private, no-store");
+		expect(gunzipSync(Buffer.from(await page.arrayBuffer())).toString()).toBe(html);
+		for (const response of [rpc, mcp, vercelPage]) expect(response.headers.get("content-encoding")).toBeNull();
+		expect(vercelPage.headers.get("vary")).toBe("Cookie");
 	});
 });
 

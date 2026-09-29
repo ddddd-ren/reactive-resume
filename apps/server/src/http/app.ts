@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { isIP } from "node:net";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { Hono } from "hono";
+import { compress } from "hono/compress";
 import { prepareStagedBody, withStagedBody } from "@reactive-resume/api/features/storage/transport";
 import { handleMcp } from "../mcp/handler";
 import { handleOpenApi } from "../openapi/handler";
@@ -80,6 +81,11 @@ export function createApp(options: AppOptions = {}) {
 	app.on(["GET", "HEAD"], "/robots.txt", (c) => handleRobots({ head: c.req.method === "HEAD" }));
 	app.on(["GET", "HEAD"], "/sitemap.xml", (c) => handleSitemap({ head: c.req.method === "HEAD" }));
 	app.on(["GET", "HEAD"], "/llms.txt", (c) => handleLlms({ head: c.req.method === "HEAD" }));
+
+	// Compresses only the web app's files and HTML shells: every route registered above answers before reaching
+	// it, so API, MCP, and upload streams are never buffered or re-encoded. Where a CDN serves the static files
+	// (Vercel), it also compresses at its edge.
+	if (options.serveStatic !== false) app.use("/*", compress());
 
 	// Must precede the static middleware: serveStatic resolves "/" to dist/index.html and would
 	// return it verbatim, skipping the OpenGraph/Twitter/canonical/JSON-LD injection in handleWebApp.
