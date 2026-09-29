@@ -2,6 +2,7 @@ import type { Basics, CustomField } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -72,47 +73,49 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 				</span>
 				<Icon
 					name="expand_more"
-					className={cn("text-ink-2 transition-transform duration-standard", open && "rotate-180")}
+					className={cn("text-ink-2 transition-transform duration-standard ease-enter", open && "rotate-180")}
 				/>
 			</button>
 
-			{open && (
-				<fieldset
-					disabled={locked}
-					className="m-0 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2.5 border-0 border-line border-t px-3 pt-3 pb-3.5"
-				>
-					<PhotoRow locked={locked} />
-					<TextField
-						label={<Trans>Full name</Trans>}
-						wide
-						autoComplete="name"
-						// A blank resume opens straight into the name field.
-						autoFocus={!locked && !basics.name}
-						{...text("name")}
-					/>
-					<TextField label={<Trans>Headline</Trans>} wide {...text("headline")} />
-					<TextField
-						label={<Trans>Email</Trans>}
-						type="email"
-						autoComplete="email"
-						validate={validateEmail}
-						{...text("email")}
-					/>
-					<TextField label={<Trans>Phone</Trans>} type="tel" autoComplete="tel" {...text("phone")} />
-					<TextField label={<Trans>Location</Trans>} wide {...text("location")} />
-					<WebsiteField
-						label={<Trans>Website</Trans>}
-						value={basics.website}
-						allowInlineLink={false}
-						onChange={(website) =>
-							write("website", (target) => {
-								target.website = { url: website.url, label: website.label };
-							})
-						}
-					/>
-					<CustomFields fields={basics.customFields} />
-				</fieldset>
-			)}
+			<Collapsible open={open}>
+				<CollapsibleContent>
+					<fieldset
+						disabled={locked}
+						className="m-0 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2.5 border-0 border-line border-t px-3 pt-3 pb-3.5"
+					>
+						<PhotoRow locked={locked} />
+						<TextField
+							label={<Trans>Full name</Trans>}
+							wide
+							autoComplete="name"
+							// A blank resume opens straight into the name field.
+							autoFocus={!locked && !basics.name}
+							{...text("name")}
+						/>
+						<TextField label={<Trans>Headline</Trans>} wide {...text("headline")} />
+						<TextField
+							label={<Trans>Email</Trans>}
+							type="email"
+							autoComplete="email"
+							validate={validateEmail}
+							{...text("email")}
+						/>
+						<TextField label={<Trans>Phone</Trans>} type="tel" autoComplete="tel" {...text("phone")} />
+						<TextField label={<Trans>Location</Trans>} wide {...text("location")} />
+						<WebsiteField
+							label={<Trans>Website</Trans>}
+							value={basics.website}
+							allowInlineLink={false}
+							onChange={(website) =>
+								write("website", (target) => {
+									target.website = { url: website.url, label: website.label };
+								})
+							}
+						/>
+						<CustomFields fields={basics.customFields} />
+					</fieldset>
+				</CollapsibleContent>
+			</Collapsible>
 		</section>
 	);
 }

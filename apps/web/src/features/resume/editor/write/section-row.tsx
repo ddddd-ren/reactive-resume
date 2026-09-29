@@ -8,6 +8,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useState } from "react";
 import { sortSectionItemsByPeriod } from "@reactive-resume/resume/section-sort";
 import { Badge } from "@reactive-resume/ui/components/badge";
+import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -148,13 +149,17 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 					icon="expand_more"
 					label={open ? t`Close ${title}` : t`Open ${title}`}
 					size="icon-sm"
-					className={cn("text-ink-2 transition-transform duration-standard", open && "rotate-180")}
+					className={cn("text-ink-2 transition-transform duration-standard ease-enter", open && "rotate-180")}
 					onClick={() => setOpen(section.id, !open)}
 				/>
 				{!locked && <SectionMenu section={section} title={title} onMove={onMove} />}
 			</div>
 
-			{open && <div className="grid gap-2 ps-[26px] pt-1 pb-3">{children}</div>}
+			<Collapsible open={open}>
+				<CollapsibleContent>
+					<div className="grid gap-2 ps-[26px] pt-1 pb-3">{children}</div>
+				</CollapsibleContent>
+			</Collapsible>
 		</div>
 	);
 }

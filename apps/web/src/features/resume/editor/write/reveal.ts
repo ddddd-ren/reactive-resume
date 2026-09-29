@@ -1,4 +1,5 @@
 import type { EditorSelection } from "../store";
+import { D2 } from "@/libs/motion";
 import { useEditorStore } from "../store";
 
 /** The id of an entry's card in the Write panel, which the page and Check scroll to. */
@@ -26,7 +27,8 @@ export function selectionFromPanelElement(element: Element): EditorSelection | n
 
 /**
  * Page → panel: opens what was picked (the Basics card for the header; otherwise its section, with Basics
- * collapsed) and scrolls it 60px from the top of the panel, instantly with reduced motion.
+ * collapsed) and scrolls it 60px from the top of the panel (re-aimed once the panels have finished opening and
+ * closing), instantly with reduced motion.
  */
 export function revealSelectionInPanel(selection: EditorSelection) {
 	const editor = useEditorStore.getState();
@@ -37,11 +39,30 @@ export function revealSelectionInPanel(selection: EditorSelection) {
 		editor.setSectionOpen(selection.sectionId, true);
 	}
 
-	requestAnimationFrame(() => {
+	const scroll = () => {
 		const section = document.getElementById(
 			selection.kind === "header" ? "sidebar-basics" : `sidebar-${selection.sectionId}`,
 		);
 		const entry = selection.kind === "item" ? document.getElementById(entryElementId(selection.itemId)) : null;
 		(entry ?? section)?.scrollIntoView({ block: "start", behavior: getScrollBehavior() });
-	});
+	};
+	requestAnimationFrame(scroll);
+	// Opening the target and folding Basics or another entry away animate for D2, moving the target while the first
+	// scroll is under way; aim again once they've settled (a smooth scroll retargets from where it is).
+	window.setTimeout(scroll, D2 * 1000);
+}
+
+/**
+ * Opening an entry closes the one that was open. If that one sat above, this card slides up while it folds away;
+ * once both have settled, bring the card back to 60px from the panel's top if it slid out of view.
+ */
+export function keepOpenedEntryInView(entryId: string) {
+	window.setTimeout(() => {
+		const card = document.getElementById(entryElementId(entryId));
+		const panel = card?.closest('[data-slot="tabs-content"]');
+		if (!card || !panel) return;
+		if (card.getBoundingClientRect().top < panel.getBoundingClientRect().top) {
+			card.scrollIntoView({ block: "start", behavior: getScrollBehavior() });
+		}
+	}, D2 * 1000);
 }

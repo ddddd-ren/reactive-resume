@@ -5,6 +5,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useCallback, useState } from "react";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@reactive-resume/ui/components/collapsible";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import { cn } from "@reactive-resume/utils/style";
@@ -155,14 +156,19 @@ type MoreOptionsProps = { children: ReactNode };
 /** Secondary fields (level, icon, colour) stay out of the way until asked for. */
 export function MoreOptions({ children }: MoreOptionsProps) {
 	return (
-		<details className="group/more col-span-full">
-			<summary className="flex w-fit cursor-pointer list-none items-center gap-1 rounded-sm font-medium text-[13px] text-ink-2 hover:text-ink [&::-webkit-details-marker]:hidden">
-				<span aria-hidden="true" className="transition-transform duration-quick group-open/more:rotate-90">
+		<Collapsible className="col-span-full">
+			<CollapsibleTrigger className="group/more flex w-fit cursor-pointer items-center gap-1 rounded-sm font-medium text-[13px] text-ink-2 transition-colors duration-quick hover:text-ink">
+				<span
+					aria-hidden="true"
+					className="transition-transform duration-standard ease-enter group-data-panel-open/more:rotate-90"
+				>
 					›
 				</span>
 				<Trans>More options</Trans>
-			</summary>
-			<div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2.5">{children}</div>
-		</details>
+			</CollapsibleTrigger>
+			<CollapsibleContent hiddenUntilFound>
+				<div className="grid grid-cols-2 gap-x-3 gap-y-2.5 pt-3">{children}</div>
+			</CollapsibleContent>
+		</Collapsible>
 	);
 }

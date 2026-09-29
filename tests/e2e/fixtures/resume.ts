@@ -39,8 +39,8 @@ export async function openSidebarSection(page: Page, title: string) {
 		await page.getByRole("tab", { name: "Design", exact: true }).click();
 		const panel = page.getByRole("tabpanel", { name: "Design" });
 		if (advancedSections.has(title)) {
-			const advanced = panel.locator("#design-advanced");
-			if ((await advanced.getAttribute("open")) === null) await advanced.locator("summary").click();
+			const advanced = panel.locator("#design-advanced").getByRole("button", { name: "Advanced", exact: true });
+			if ((await advanced.getAttribute("aria-expanded")) !== "true") await advanced.click();
 		}
 		// Groups are level 2; the exact-value sections inside Advanced are level 3 (both have a "Page").
 		const level = advancedSections.has(title) ? 3 : 2;

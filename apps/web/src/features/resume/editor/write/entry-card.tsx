@@ -9,6 +9,7 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useEffect, useMemo } from "react";
 import { Badge } from "@reactive-resume/ui/components/badge";
+import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -31,7 +32,7 @@ import { useEditorStore } from "../store";
 import { EntryFields } from "./entries";
 import { useEntry, useEntryWriter } from "./fields";
 import { createEntry, describeEntry, getEntries, getPrimaryField, isDraftEntry } from "./model";
-import { entryElementId } from "./reveal";
+import { entryElementId, keepOpenedEntryInView } from "./reveal";
 import { useSectionTitle } from "./section-row";
 
 const DRAFT_HINTS: Record<string, MessageDescriptor> = {
@@ -81,7 +82,10 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 	const primaryField = getPrimaryField(section.type);
 	const hint = draft && primaryField ? DRAFT_HINTS[primaryField] : undefined;
 
-	const toggle = () => select(open ? null : { kind: "item", sectionId: section.id, itemId: entryId });
+	const toggle = () => {
+		select(open ? null : { kind: "item", sectionId: section.id, itemId: entryId });
+		if (!open) keepOpenedEntryInView(entryId);
+	};
 	const fields = (
 		<>
 			{hint && <p className="col-span-full text-ink-3 text-xs">{i18n._(hint)}</p>}
@@ -160,13 +164,17 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 				{!locked && <EntryMenu section={section} entry={entry} />}
 			</div>
 
-			{open && !isPhone && (
-				<fieldset
-					disabled={locked}
-					className="m-0 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2.5 border-0 border-line border-t px-3 pt-3 pb-3.5"
-				>
-					{fields}
-				</fieldset>
+			{!isPhone && (
+				<Collapsible open={open}>
+					<CollapsibleContent>
+						<fieldset
+							disabled={locked}
+							className="m-0 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2.5 border-0 border-line border-t px-3 pt-3 pb-3.5"
+						>
+							{fields}
+						</fieldset>
+					</CollapsibleContent>
+				</Collapsible>
 			)}
 
 			{open && isPhone && (

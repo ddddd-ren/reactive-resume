@@ -9,6 +9,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useState } from "react";
 import { ATS_CATEGORIES } from "@reactive-resume/resume/ats";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import {
 	Dialog,
 	DialogContent,
@@ -303,16 +304,19 @@ function CategoryRows({ report }: { report: AtsReport }) {
 								</span>
 								<Icon
 									name="expand_more"
-									className={cn("ms-auto text-ink-3 transition-transform duration-standard", open && "rotate-180")}
+									className={cn(
+										"ms-auto text-ink-3 transition-transform duration-standard ease-enter",
+										open && "rotate-180",
+									)}
 								/>
 							</button>
-							<p
-								id={descriptionId}
-								hidden={!open}
-								className="px-3 ps-[42px] pb-3 text-[13px] text-ink-2 leading-[19px]"
-							>
-								{getCategoryDescription(category)}
-							</p>
+							<Collapsible open={open}>
+								<CollapsibleContent id={descriptionId} keepMounted>
+									<p className="px-3 ps-[42px] pb-3 text-[13px] text-ink-2 leading-[19px]">
+										{getCategoryDescription(category)}
+									</p>
+								</CollapsibleContent>
+							</Collapsible>
 						</div>
 					);
 				})}

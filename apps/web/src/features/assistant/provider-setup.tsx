@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
@@ -54,10 +55,17 @@ export function ProviderSetup() {
 								<Icon
 									name="chevron_right"
 									size={18}
-									className={cn("text-ink-3 transition-transform duration-quick", expanded && "rotate-90")}
+									className={cn(
+										"text-ink-3 transition-transform duration-standard ease-enter",
+										expanded && "rotate-90",
+									)}
 								/>
 							</button>
-							{expanded && <ConnectForm choice={choice} />}
+							<Collapsible open={expanded}>
+								<CollapsibleContent>
+									<ConnectForm choice={choice} />
+								</CollapsibleContent>
+							</Collapsible>
 						</li>
 					);
 				})}

@@ -7,6 +7,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
@@ -390,12 +391,17 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 										<Icon
 											name="expand_more"
 											size={20}
-											className={cn("ms-auto text-ink-3 transition-transform duration-quick", expanded && "rotate-180")}
+											className={cn(
+												"ms-auto text-ink-3 transition-transform duration-standard ease-enter",
+												expanded && "rotate-180",
+											)}
 										/>
 									</button>
-									{expanded && (
-										<div className="px-3.5 ps-11 pb-3.5 text-[13px] text-ink-2 leading-[19px]">{row.body}</div>
-									)}
+									<Collapsible open={expanded}>
+										<CollapsibleContent>
+											<div className="px-3.5 ps-11 pb-3.5 text-[13px] text-ink-2 leading-[19px]">{row.body}</div>
+										</CollapsibleContent>
+									</Collapsible>
 								</div>
 							);
 						})}

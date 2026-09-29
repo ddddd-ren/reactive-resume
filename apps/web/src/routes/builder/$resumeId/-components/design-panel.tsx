@@ -5,6 +5,7 @@ import { Trans } from "@lingui/react/macro";
 import { useState } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
@@ -15,6 +16,7 @@ import { ColorGroup, PageGroup, TypeGroup } from "@/features/resume/editor/desig
 import { TemplateGroup } from "@/features/resume/editor/design/template-group";
 import { OfflineBanner } from "@/features/resume/editor/save-status";
 import { getScrollBehavior } from "@/features/resume/editor/write/reveal";
+import { D2 } from "@/libs/motion";
 import { getSectionTitle } from "@/libs/resume/section";
 import { CustomStylesSectionBuilder } from "../-sidebar/right/sections/custom-styles";
 import { DesignSectionBuilder } from "../-sidebar/right/sections/design";
@@ -47,6 +49,7 @@ function Group({ id, title, children }: { id: string; title: ReactNode; children
  */
 export function DesignPanel() {
 	const locked = useIsResumeLocked();
+	const [advancedOpen, setAdvancedOpen] = useState(false);
 
 	return (
 		<div>
@@ -61,12 +64,11 @@ export function DesignPanel() {
 						onClick={() => {
 							const target = document.getElementById(`design-${group.id}`);
 							const scroll = () => target?.scrollIntoView({ behavior: getScrollBehavior() });
-							// Advanced is collapsed until asked for: jumping to it opens it, then scrolls once its content
-							// has rendered (before that the panel may be too short to bring it to the top).
-							if (target instanceof HTMLDetailsElement && !target.open) {
-								target.addEventListener("toggle", () => requestAnimationFrame(scroll), { once: true });
-								target.open = true;
-								return;
+							// Advanced is collapsed until asked for: jumping to it opens it, then aims again once it has grown
+							// (before that the panel may be too short to bring it to the top).
+							if (group.id === "advanced" && !advancedOpen) {
+								setAdvancedOpen(true);
+								window.setTimeout(scroll, D2 * 1000);
 							}
 							scroll();
 						}}
@@ -90,7 +92,7 @@ export function DesignPanel() {
 				<Group id="page" title={<Trans>Page</Trans>}>
 					<PageGroup />
 				</Group>
-				<AdvancedGroup />
+				<AdvancedGroup open={advancedOpen} onOpenChange={setAdvancedOpen} />
 			</fieldset>
 		</div>
 	);
@@ -170,10 +172,12 @@ const EXACT_SECTIONS = [
 ] as const;
 
 /** Every exact value, the date format, custom CSS and Reset to template defaults, collapsed until asked for. */
-function AdvancedGroup() {
+// The phone sheet leaves it uncontrolled; the desktop panel controls it so its nav can open it.
+type AdvancedGroupProps = { open?: boolean; onOpenChange?: (open: boolean) => void };
+
+function AdvancedGroup({ open, onOpenChange }: AdvancedGroupProps) {
 	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();
-	const [open, setOpen] = useState(false);
 
 	const reset = () => {
 		updateResumeData(
@@ -203,22 +207,17 @@ function AdvancedGroup() {
 	};
 
 	return (
-		<details
-			id="design-advanced"
-			open={open}
-			onToggle={(event) => setOpen(event.currentTarget.open)}
-			className="group/advanced scroll-mt-14 px-4 py-5"
-		>
-			<summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-[15px] [&::-webkit-details-marker]:hidden">
+		<Collapsible id="design-advanced" open={open} onOpenChange={onOpenChange} className="scroll-mt-14 px-4 py-5">
+			<CollapsibleTrigger className="group/advanced flex w-full cursor-pointer items-center justify-between text-start font-semibold text-[15px]">
 				<Trans>Advanced</Trans>
 				<Icon
 					name="expand_more"
-					className="text-ink-2 transition-transform duration-standard group-open/advanced:rotate-180"
+					className="text-ink-2 transition-transform duration-standard ease-enter group-data-panel-open/advanced:rotate-180"
 				/>
-			</summary>
+			</CollapsibleTrigger>
 
-			{open && (
-				<div className="@container mt-4 grid gap-6">
+			<CollapsibleContent>
+				<div className="@container grid gap-6 pt-4">
 					<div className="grid gap-1.5">
 						<label htmlFor="design-date-format" className="font-medium text-[13px]">
 							<Trans>Date format</Trans>
@@ -257,7 +256,7 @@ function AdvancedGroup() {
 						<Trans>Reset to template defaults</Trans>
 					</Button>
 				</div>
-			)}
-		</details>
+			</CollapsibleContent>
+		</Collapsible>
 	);
 }
