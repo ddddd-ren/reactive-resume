@@ -6,6 +6,7 @@ import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
+import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
@@ -113,9 +114,7 @@ function Sidebar() {
 	return (
 		<aside className="sticky top-0 flex h-svh flex-col gap-3 border-line border-e bg-surface p-3 [view-transition-name:app-nav]">
 			<Link to="/" className="flex h-9 items-center gap-2.5 px-1.5">
-				<span className="grid size-6 place-items-center rounded-[5px] bg-ink font-display font-medium text-[13px] text-bg">
-					Rr
-				</span>
+				<BrandIcon variant="icon" alt="" className="size-6 shrink-0" />
 				<span className="font-semibold text-sm">Reactive Resume</span>
 			</Link>
 
@@ -203,12 +202,8 @@ function Rail() {
 
 	return (
 		<aside className="sticky top-0 flex h-svh flex-col items-center gap-2 border-line border-e bg-surface py-3 [view-transition-name:app-nav]">
-			<Link
-				to="/"
-				aria-label="Reactive Resume"
-				className="mb-1 grid size-8 place-items-center rounded-md bg-ink font-display text-[13px] text-bg"
-			>
-				Rr
+			<Link to="/" aria-label="Reactive Resume" className="mb-1 grid size-8 place-items-center rounded-md">
+				<BrandIcon variant="icon" alt="" className="size-6" />
 			</Link>
 			<RailTip label={t`Search`} icon="search">
 				<button
