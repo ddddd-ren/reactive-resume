@@ -6,7 +6,7 @@ describe("createResumeData", () => {
 	it("seeds one canonical empty stylesheet source", () => {
 		expect(createResumeData({}).metadata.stylesheet).toEqual({
 			mode: "semantic",
-			source: { languageVersion: 1, text: "@version 1;\n" },
+			source: { languageVersion: 1, text: "" },
 		});
 	});
 
