@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import type { ResolvedResumePreviewProps } from "./preview.shared";
 import type { PreviewPageSize } from "./preview.shared.utils";
 import { t } from "@lingui/core/macro";
-import { AnimatePresence, m } from "motion/react";
+import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { isRTL } from "@reactive-resume/utils/locale";
@@ -36,6 +36,9 @@ const TYPING_DEBOUNCE_MS = 250;
 // then drops out. Fading both at once dips the page towards the background mid-swap.
 const INCOMING_TRANSITION = { duration: 0.15, ease: EASE_OUT_STRONG };
 const EXITING_TRANSITION = { duration: 0.1, delay: 0.18 };
+// Motion animates in JS, so the CSS reduced-motion rule doesn't reach it: with reduced motion a new render replaces
+// the old one at once, and no half-faded page is ever on screen.
+const INSTANT_TRANSITION = { duration: 0 };
 
 const createPreviewPdf = (
 	file: Blob,
@@ -122,6 +125,7 @@ export function ResumePreviewClient({
 	const builderResumeData = useResumeData();
 	const resumeData = data ?? builderResumeData;
 	const paused = usePreviewPausedStore((state) => state.paused);
+	const reducedMotion = useReducedMotion();
 
 	const [previewLayers, setPreviewLayers] = useState<PreviewPdf[]>([]);
 
@@ -229,7 +233,13 @@ export function ResumePreviewClient({
 						initial={{ opacity: visiblePdf.phase === "active" ? 1 : 0 }}
 						animate={{ opacity: visiblePdf.phase === "active" ? 1 : 0 }}
 						exit={{ opacity: 0 }}
-						transition={visiblePdf.phase === "exiting" ? EXITING_TRANSITION : INCOMING_TRANSITION}
+						transition={
+							reducedMotion
+								? INSTANT_TRANSITION
+								: visiblePdf.phase === "exiting"
+									? EXITING_TRANSITION
+									: INCOMING_TRANSITION
+						}
 						onAnimationComplete={() => {
 							if (visiblePdf.phase !== "exiting") return;
 							setPreviewLayers((current) => removePreviewLayer(current, visiblePdf.id));
