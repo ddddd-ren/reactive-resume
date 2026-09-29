@@ -81,18 +81,23 @@ function RouteComponent() {
 	const [viewSwitched, setViewSwitched] = useState(false);
 
 	const { data: applications, isPending } = useQuery(applicationsListQueryOptions());
-	const setSearch = (patch: Partial<Search>) => void navigate({ search: (prev: Search) => ({ ...prev, ...patch }) });
+	const setSearch = (patch: Partial<Search>) =>
+		void navigate({ resetScroll: false, search: (prev: Search) => ({ ...prev, ...patch }) });
 
 	useEffect(() => {
 		if (!create) return;
 		setAdding(true);
-		void navigate({ replace: true, search: (prev: Search) => ({ ...prev, create: false }) });
+		void navigate({ replace: true, resetScroll: false, search: (prev: Search) => ({ ...prev, create: false }) });
 	}, [create, navigate]);
 
 	useEffect(() => {
 		if (!applicationId || !applications) return;
 		setSelectedId(applicationId);
-		void navigate({ replace: true, search: (prev: Search) => ({ ...prev, applicationId: undefined }) });
+		void navigate({
+			replace: true,
+			resetScroll: false,
+			search: (prev: Search) => ({ ...prev, applicationId: undefined }),
+		});
 	}, [applicationId, applications, navigate]);
 
 	const text = query.trim().toLowerCase();

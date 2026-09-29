@@ -92,9 +92,10 @@ export function LetterShell() {
 							}
 						>
 							<TabsContent
+								key={mode}
 								value={mode}
 								aria-label={panelLabel(mode)}
-								className="relative min-h-0 overflow-y-auto border-line border-e bg-surface"
+								className="relative min-h-0 overflow-y-auto border-line border-e bg-surface [overflow-anchor:none]"
 							>
 								<ModePanel mode={mode} />
 							</TabsContent>
@@ -140,11 +141,12 @@ function TabletBody({ mode }: { mode: LetterMode }) {
 				<LetterPage />
 			</main>
 			<TabsContent
+				key={mode}
 				value={mode}
 				aria-label={panelLabel(mode)}
 				inert={!drawerOpen}
 				className={cn(
-					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-line border-e bg-surface shadow-e3 transition-transform duration-emphasized ease-enter",
+					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-line border-e bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
 					!drawerOpen && "-translate-x-full rtl:translate-x-full",
 				)}
 			>
@@ -184,7 +186,11 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 					<LetterPage />
 				</main>
 				{view !== "page" && (
-					<TabsContent value={mode} className="absolute inset-0 overflow-y-auto bg-surface">
+					<TabsContent
+						key={mode}
+						value={mode}
+						className="absolute inset-0 overflow-y-auto bg-surface [overflow-anchor:none]"
+					>
 						<ModePanel mode={mode} />
 					</TabsContent>
 				)}

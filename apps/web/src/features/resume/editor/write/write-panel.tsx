@@ -82,6 +82,7 @@ function ImportedNote() {
 	const dismiss = () =>
 		void navigate({
 			to: ".",
+			resetScroll: false,
 			search: (previous: Record<string, unknown>) => ({ ...previous, imported: undefined }),
 			replace: true,
 		});

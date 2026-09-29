@@ -19,6 +19,7 @@ export function useEditorMode() {
 			useEditorStore.setState({ pendingMode: next });
 			void navigate({
 				to: ".",
+				resetScroll: false,
 				search: (current: ReturnType<typeof routeApi.useSearch>) => ({
 					...current,
 					mode: next === "write" ? undefined : next,

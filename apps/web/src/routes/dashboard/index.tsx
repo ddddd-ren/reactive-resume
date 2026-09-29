@@ -33,7 +33,11 @@ function RouteComponent() {
 		<DocumentsPage
 			search={search}
 			onSearchChange={(patch) =>
-				void navigate({ search: (previous: DocumentsSearch) => ({ ...previous, ...patch }), replace: true })
+				void navigate({
+					resetScroll: false,
+					search: (previous: DocumentsSearch) => ({ ...previous, ...patch }),
+					replace: true,
+				})
 			}
 		/>
 	);

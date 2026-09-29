@@ -15,6 +15,7 @@ export function useLetterMode() {
 		(next: LetterMode) =>
 			void navigate({
 				to: ".",
+				resetScroll: false,
 				search: (current: ReturnType<typeof routeApi.useSearch>) => ({
 					...current,
 					mode: next === "write" ? undefined : next,
@@ -38,6 +39,7 @@ export function useOpenLetterVersionFromUrl() {
 		editor.setHistoryVersion(version);
 		void navigate({
 			to: ".",
+			resetScroll: false,
 			search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, version: undefined }),
 			replace: true,
 		});
@@ -53,6 +55,7 @@ export function useOpenLetterAssistantFromUrl() {
 		if (!openAssistantFrom({ assistant, ask })) return;
 		void navigate({
 			to: ".",
+			resetScroll: false,
 			search: (current: ReturnType<typeof routeApi.useSearch>) => ({
 				...current,
 				assistant: undefined,

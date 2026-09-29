@@ -99,6 +99,7 @@ function useOpenVersionFromUrl() {
 		editor.setHistoryVersion(version);
 		void navigate({
 			to: ".",
+			resetScroll: false,
 			search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, version: undefined }),
 			replace: true,
 		});
@@ -114,6 +115,7 @@ function useOpenAssistantFromUrl() {
 		if (!openAssistantFrom({ assistant, ask })) return;
 		void navigate({
 			to: ".",
+			resetScroll: false,
 			search: (current: ReturnType<typeof routeApi.useSearch>) => ({
 				...current,
 				assistant: undefined,
@@ -166,11 +168,13 @@ function DesktopBody({ mode, assistant, narrow }: DesktopBodyProps) {
 				}
 			>
 				<TabsContent
+					key={mode}
 					value={mode}
 					aria-label={panelLabels()[mode]}
 					// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
-					// stretching the document, which would let scrollIntoView shift the whole editor.
-					className="relative min-h-0 overflow-y-auto border-line border-e bg-surface"
+					// stretching the document, which would let scrollIntoView shift the whole editor. Keyed by mode so each
+					// mode starts at its top; no scroll anchoring, which yanked the Design panel back while scrolling it.
+					className="relative min-h-0 overflow-y-auto border-line border-e bg-surface [overflow-anchor:none]"
 				>
 					<ModePanel mode={mode} />
 				</TabsContent>
@@ -196,11 +200,12 @@ function TabletBody({ mode }: { mode: EditorMode }) {
 				<Outlet />
 			</main>
 			<TabsContent
+				key={mode}
 				value={mode}
 				aria-label={panelLabels()[mode]}
 				inert={!drawerOpen}
 				className={cn(
-					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-line border-e bg-surface shadow-e3 transition-transform duration-emphasized ease-enter",
+					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-line border-e bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
 					!drawerOpen && "-translate-x-full rtl:translate-x-full",
 				)}
 			>
@@ -253,7 +258,11 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 				)}
 				{view === "design" && <DesignSheet />}
 				{view !== "page" && view !== "design" && (
-					<TabsContent value={mode} className="absolute inset-0 overflow-y-auto bg-surface">
+					<TabsContent
+						key={mode}
+						value={mode}
+						className="absolute inset-0 overflow-y-auto bg-surface [overflow-anchor:none]"
+					>
 						<ModePanel mode={mode} />
 					</TabsContent>
 				)}
