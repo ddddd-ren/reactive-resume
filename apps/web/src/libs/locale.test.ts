@@ -59,16 +59,13 @@ describe("formatRelativeTime", () => {
 	it("selects the largest matching unit", () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(new Date("2026-01-02T12:00:00Z"));
-		const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
-		expect(formatRelativeTime("2026-01-02T10:00:00Z", formatter)).toBe("2 hours ago");
-		expect(formatRelativeTime("2026-01-02T11:59:45Z", formatter)).toBe("now");
+		expect(formatRelativeTime("2026-01-02T10:00:00Z", "en")).toBe("2 hours ago");
+		expect(formatRelativeTime("2026-01-02T11:59:45Z", "en")).toBe("now");
 	});
 
 	it("reads an invalid date as now", () => {
-		const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-
-		expect(formatRelativeTime("invalid", formatter)).toBe("now");
+		expect(formatRelativeTime("invalid", "en")).toBe("now");
 	});
 });
 

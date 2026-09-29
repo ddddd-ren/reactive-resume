@@ -67,16 +67,12 @@ export function useDocumentActions() {
 		},
 
 		duplicate: async (document: DocumentSummary) => {
+			const copied =
+				document.type === "resume"
+					? duplicateResume.mutateAsync({ id: document.id, name: t`${document.name} (copy)`, tags: document.tags })
+					: duplicateLetter.mutateAsync({ id: document.id }).then((letter) => letter.id);
 			try {
-				const id =
-					document.type === "resume"
-						? await duplicateResume.mutateAsync({
-								id: document.id,
-								name: t`${document.name} (copy)`,
-								tags: document.tags,
-							})
-						: (await duplicateLetter.mutateAsync({ id: document.id })).id;
-				markNew(id);
+				markNew(await copied);
 				toast.add({ description: t`Duplicated` });
 			} catch (error) {
 				failed(error);
@@ -215,8 +211,9 @@ export function TagsDialog({ document: requested, onClose }: TagsDialogProps) {
 
 	const save = async () => {
 		if (!document) return;
+		const nextTags = tags ?? document.tags;
 		try {
-			await setDocumentTags.mutateAsync({ type: document.type, id: document.id, tags: tags ?? document.tags });
+			await setDocumentTags.mutateAsync({ type: document.type, id: document.id, tags: nextTags });
 			await queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 			onClose();
 		} catch (error) {

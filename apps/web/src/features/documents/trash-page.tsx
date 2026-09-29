@@ -42,6 +42,9 @@ export function TrashPage() {
 				</div>
 			) : (
 				<table className="w-full border-collapse">
+					<caption className="sr-only">
+						<Trans>Trash</Trans>
+					</caption>
 					<thead>
 						<tr className="border-line border-b font-medium text-ink-3 text-xs">
 							<th className="h-10 ps-3 text-start font-medium">

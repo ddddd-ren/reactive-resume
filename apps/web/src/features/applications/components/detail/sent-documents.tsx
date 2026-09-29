@@ -1,3 +1,4 @@
+import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Application } from "../../types";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -22,6 +23,26 @@ function sentOn(application: Application) {
 		.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime())
 		.find((item) => item.type === "stage" && PIPELINE.indexOf(item.stage) >= applied);
 	return new Date(entry?.at ?? application.appliedAt);
+}
+
+type SentDocumentRowProps = {
+	icon: IconName;
+	name: string;
+	status: React.ReactNode;
+	children: React.ReactNode;
+};
+
+function SentDocumentRow({ icon, name, status, children }: SentDocumentRowProps) {
+	return (
+		<div className="flex items-center gap-2.5 rounded-xl border border-line p-3">
+			<Icon name={icon} className="shrink-0 text-ink-2" />
+			<div className="grid min-w-0 flex-1">
+				<span className="truncate font-medium text-sm">{name}</span>
+				<span className="text-ink-3 text-xs">{status}</span>
+			</div>
+			{children}
+		</div>
+	);
 }
 
 type SentDocumentsProps = { application: Application; disabled: boolean };
@@ -52,12 +73,13 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 
 	// A structured letter: the server fills the recipient from the application and makes it the application's letter.
 	const writeLetter = async () => {
+		const letterInput = {
+			name: t`Cover letter — ${application.company}`.slice(0, 100),
+			applicationId: application.id,
+			...(application.resumeId ? { resumeId: application.resumeId } : {}),
+		};
 		try {
-			const created = await createLetter.mutateAsync({
-				name: t`Cover letter — ${application.company}`.slice(0, 100),
-				applicationId: application.id,
-				...(application.resumeId ? { resumeId: application.resumeId } : {}),
-			});
+			const created = await createLetter.mutateAsync(letterInput);
 			invalidate(application.id);
 			void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: created.id } });
 		} catch (error) {
@@ -75,24 +97,23 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 			</h3>
 
 			{application.resumeId && (
-				<div className="flex items-center gap-2.5 rounded-xl border border-line p-3">
-					<Icon name="description" className="shrink-0 text-ink-2" />
-					<div className="grid min-w-0 flex-1">
-						<span className="truncate font-medium text-sm">{resume?.name ?? t`Linked resume`}</span>
-						<span className="text-ink-3 text-xs">
-							{application.sentResumeVersionId ? (
-								application.sentCheckScore !== null ? (
-									<Trans>
-										Version sent {date} · Check {application.sentCheckScore}
-									</Trans>
-								) : (
-									<Trans>Version sent {date}</Trans>
-								)
+				<SentDocumentRow
+					icon="description"
+					name={resume?.name ?? t`Linked resume`}
+					status={
+						application.sentResumeVersionId ? (
+							application.sentCheckScore !== null ? (
+								<Trans>
+									Version sent {date} · Check {application.sentCheckScore}
+								</Trans>
 							) : (
-								<Trans>Linked · not sent yet</Trans>
-							)}
-						</span>
-					</div>
+								<Trans>Version sent {date}</Trans>
+							)
+						) : (
+							<Trans>Linked · not sent yet</Trans>
+						)
+					}
+				>
 					<Link
 						to="/builder/$resumeId"
 						params={{ resumeId: application.resumeId }}
@@ -101,22 +122,21 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 					>
 						<Trans>Open</Trans>
 					</Link>
-				</div>
+				</SentDocumentRow>
 			)}
 
 			{application.coverLetterId && (
-				<div className="flex items-center gap-2.5 rounded-xl border border-line p-3">
-					<Icon name="mail" className="shrink-0 text-ink-2" />
-					<div className="grid min-w-0 flex-1">
-						<span className="truncate font-medium text-sm">{letter?.name ?? t`Cover letter`}</span>
-						<span className="text-ink-3 text-xs">
-							{application.sentCoverLetterVersionId ? (
-								<Trans>Version sent {date}</Trans>
-							) : (
-								<Trans>Linked · not sent yet</Trans>
-							)}
-						</span>
-					</div>
+				<SentDocumentRow
+					icon="mail"
+					name={letter?.name ?? t`Cover letter`}
+					status={
+						application.sentCoverLetterVersionId ? (
+							<Trans>Version sent {date}</Trans>
+						) : (
+							<Trans>Linked · not sent yet</Trans>
+						)
+					}
+				>
 					<Link
 						to="/builder/letter/$coverLetterId"
 						params={{ coverLetterId: application.coverLetterId }}
@@ -125,7 +145,7 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 					>
 						<Trans>Open</Trans>
 					</Link>
-				</div>
+				</SentDocumentRow>
 			)}
 
 			{(!application.resumeId || !application.coverLetterId) && (

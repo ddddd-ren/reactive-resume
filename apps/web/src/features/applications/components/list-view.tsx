@@ -5,7 +5,7 @@ import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { AnimatePresence, m } from "motion/react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
@@ -61,13 +61,9 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 	const [checked, setChecked] = useState<ReadonlySet<string>>(new Set());
 
 	// Selections only cover what's on screen.
-	useEffect(() => {
-		setChecked((current) => {
-			const visible = new Set(applications.map((application) => application.id));
-			const next = new Set([...current].filter((id) => visible.has(id)));
-			return next.size === current.size ? current : next;
-		});
-	}, [applications]);
+	const checkedIds = applications
+		.filter((application) => checked.has(application.id))
+		.map((application) => application.id);
 
 	const groups = useMemo(() => {
 		const sign = sort.direction === "asc" ? 1 : -1;
@@ -193,7 +189,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 
 			{/* The bulk bar rises from the bottom edge and floats over the list, so the rows never move. */}
 			<AnimatePresence>
-				{checked.size > 0 && (
+				{checkedIds.length > 0 && (
 					<m.div
 						key="bulk-bar"
 						initial={{ opacity: 0, transform: "translateY(100%)" }}
@@ -202,7 +198,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 						transition={{ duration: D2, ease: EASE }}
 						className="sticky bottom-4 z-20 justify-self-center max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]"
 					>
-						<BulkBar ids={[...checked]} onDone={() => setChecked(new Set())} />
+						<BulkBar ids={checkedIds} onDone={() => setChecked(new Set())} />
 					</m.div>
 				)}
 			</AnimatePresence>
@@ -222,7 +218,6 @@ type ApplicationRowProps = {
 function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen }: ApplicationRowProps) {
 	const { i18n } = useLingui();
 	const next = describeNextStep(getNextStep(application), application, i18n.locale);
-	const formatter = new Intl.RelativeTimeFormat(i18n.locale, { numeric: "auto" });
 	const sent = application.status !== "saved";
 	const tone = next.tone === "warn" ? "text-warn-text" : next.tone === "muted" ? "text-ink-3" : "text-ink-2";
 
@@ -309,7 +304,7 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 				)}
 			</td>
 			<td className="whitespace-nowrap px-2 text-ink-3 text-xs max-md:hidden">
-				{formatRelativeTime(application.updatedAt, formatter)}
+				{formatRelativeTime(application.updatedAt, i18n.locale)}
 			</td>
 		</tr>
 	);

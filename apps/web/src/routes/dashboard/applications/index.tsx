@@ -297,8 +297,9 @@ function readDismissed(): string[] {
 function FollowUpNudge({ applications, onOpen }: { applications: Application[]; onOpen: (id: string) => void }) {
 	const [dismissed, setDismissed] = useState(readDismissed);
 
+	const dismissedIds = new Set(dismissed);
 	const waiting = applications
-		.filter((application) => !dismissed.includes(application.id))
+		.filter((application) => !dismissedIds.has(application.id))
 		.flatMap((application) => {
 			const step = getNextStep(application);
 			return step.kind === "no-reply" ? [{ application, days: step.days }] : [];

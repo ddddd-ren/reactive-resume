@@ -137,10 +137,13 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 							accept=".csv,text/csv"
 							className="hidden"
 							onChange={(event) =>
-								void event.target.files?.[0]?.text().then((value) => {
-									setOverrides({});
-									setText(value);
-								})
+								void event.target.files?.[0]
+									?.text()
+									.then((value) => {
+										setOverrides({});
+										setText(value);
+									})
+									.catch(() => toast.add({ type: "error", description: t`Couldn't read that file.` }))
 							}
 						/>
 					</div>

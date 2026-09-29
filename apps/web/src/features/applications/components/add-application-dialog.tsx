@@ -109,22 +109,23 @@ function AddApplicationForm({ onClose, onAdded }: { onClose: () => void; onAdded
 
 	const add = async (tailor: boolean) => {
 		if (!ready) return;
+		const posting = {
+			company: company.trim(),
+			role: role.trim(),
+			status: stage,
+			...(parsed?.location ? { location: parsed.location } : {}),
+			...(parsed?.salary ? { salary: parsed.salary } : {}),
+			...(parsed?.requirements.length ? { requirements: parsed.requirements } : {}),
+			...(link ? { sourceUrl: text } : {}),
+			// The posting's text: read from the page for a link, or what was pasted.
+			...(parsed?.jobDescription
+				? { jobDescription: parsed.jobDescription }
+				: !link && text
+					? { jobDescription: text.slice(0, MAX_POSTING_CHARS) }
+					: {}),
+		};
 		try {
-			const applicationId = await create.mutateAsync({
-				company: company.trim(),
-				role: role.trim(),
-				status: stage,
-				...(parsed?.location ? { location: parsed.location } : {}),
-				...(parsed?.salary ? { salary: parsed.salary } : {}),
-				...(parsed?.requirements.length ? { requirements: parsed.requirements } : {}),
-				...(link ? { sourceUrl: text } : {}),
-				// The posting's text: read from the page for a link, or what was pasted.
-				...(parsed?.jobDescription
-					? { jobDescription: parsed.jobDescription }
-					: !link && text
-						? { jobDescription: text.slice(0, MAX_POSTING_CHARS) }
-						: {}),
-			});
+			const applicationId = await create.mutateAsync(posting);
 			invalidate();
 			toast.add({ description: t`Added ${role.trim()} at ${company.trim()}` });
 			onClose();

@@ -30,6 +30,7 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
+import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
 import { stageSince } from "../next-step";
 import { getClosedReasonLabel, getNextStage, getStageColor, getStageLabel, PIPELINE } from "../stages";
@@ -231,7 +232,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 				</div>
 			</header>
 
-			<div className="grid gap-6 px-5 py-5">
+			<div className="grid gap-6 p-5">
 				<NextStepCard application={application} onScheduleInterview={(entry) => setInterview({ open: true, entry })} />
 				<SentDocuments application={application} disabled={remove.isPending} />
 				<Facts application={application} locale={i18n.locale} />
@@ -353,6 +354,7 @@ function InlineFact({ label, value, onSave }: InlineFactProps) {
 						onChange={(event) => setDraft(event.target.value)}
 						onBlur={commit}
 						onKeyDown={(event) => {
+							if (isImeComposing(event)) return;
 							if (event.key === "Enter") commit();
 							if (event.key === "Escape") {
 								event.stopPropagation();
@@ -442,7 +444,6 @@ function Notes({ application }: { application: Application }) {
 
 	// Closing the sheet mid-sentence still saves what was typed.
 	const latest = useRef(notes);
-	latest.current = notes;
 	useEffect(
 		() => () => {
 			if (latest.current !== saved.current)
@@ -461,7 +462,10 @@ function Notes({ application }: { application: Application }) {
 				rows={3}
 				value={notes}
 				placeholder={t`Anything to remember about this job`}
-				onChange={(event) => setNotes(event.target.value)}
+				onChange={(event) => {
+					latest.current = event.target.value;
+					setNotes(event.target.value);
+				}}
 			/>
 		</section>
 	);

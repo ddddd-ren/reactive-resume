@@ -125,7 +125,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						{days.slice(0, 7).map((day) => (
 							<div
 								key={`weekday-${day.getDay()}`}
-								className="border-line border-b px-2 py-2 text-center font-medium text-[11px] text-ink-3 uppercase tracking-wide"
+								className="border-line border-b p-2 text-center font-medium text-[11px] text-ink-3 uppercase tracking-wide"
 							>
 								{weekdayFormat.format(day)}
 							</div>

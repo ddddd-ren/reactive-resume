@@ -151,56 +151,11 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 					</div>
 
 					{tags.length > 0 && (
-						<fieldset className="m-0 flex flex-wrap gap-1.5 border-0 p-0">
-							<legend className="sr-only">
-								<Trans>Filter by tag</Trans>
-							</legend>
-							{tags.map((tag) => {
-								const active = search.tags.includes(tag);
-								return (
-									<button
-										key={tag}
-										type="button"
-										aria-pressed={active}
-										onClick={() =>
-											onSearchChange({
-												tags: active ? search.tags.filter((known) => known !== tag) : [...search.tags, tag],
-											})
-										}
-										className={cn(
-											"h-7 rounded-full border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
-											active
-												? "border-accent bg-accent-soft text-accent-text"
-												: "border-line-2 text-ink-2 hover:bg-hover",
-										)}
-									>
-										#{tag}
-									</button>
-								);
-							})}
-						</fieldset>
+						<TagFilter tags={tags} active={search.tags} onChange={(next) => onSearchChange({ tags: next })} />
 					)}
 
 					{isPending ? (
-						view === "list" ? (
-							<div className="grid">
-								<div className="h-10 border-line border-b" />
-								{Array.from({ length: 6 }, (_, index) => (
-									<div key={index} className="flex h-[45px] items-center border-line border-b ps-3">
-										<Skeleton className="h-4 w-1/3" />
-									</div>
-								))}
-							</div>
-						) : (
-							<div className="grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4">
-								{Array.from({ length: 6 }, (_, index) => (
-									<div key={index} className="grid gap-2">
-										<Skeleton className="aspect-page rounded-[6px]" />
-										<Skeleton className="h-4 w-3/4 rounded" />
-									</div>
-								))}
-							</div>
-						)
+						<LibrarySkeleton view={view} />
 					) : shown.length === 0 ? (
 						<div className="grid justify-items-center gap-2 py-16 text-center">
 							<Icon name="search_off" size={28} className="text-ink-3" />
@@ -226,6 +181,9 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 						</div>
 					) : view === "list" ? (
 						<table className={cn("w-full border-collapse", viewEnter)}>
+							<caption className="sr-only">
+								<Trans>Documents</Trans>
+							</caption>
 							<thead>
 								<tr className="border-line border-b text-start font-medium text-ink-3 text-xs">
 									<th className="h-10 ps-3 text-start font-medium">
@@ -352,6 +310,60 @@ function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
 	);
 }
 
+type TagFilterProps = { tags: string[]; active: string[]; onChange: (tags: string[]) => void };
+
+function TagFilter({ tags, active, onChange }: TagFilterProps) {
+	return (
+		<fieldset className="m-0 flex flex-wrap gap-1.5 border-0 p-0">
+			<legend className="sr-only">
+				<Trans>Filter by tag</Trans>
+			</legend>
+			{tags.map((tag) => {
+				const isActive = active.includes(tag);
+				return (
+					<button
+						key={tag}
+						type="button"
+						aria-pressed={isActive}
+						onClick={() => onChange(isActive ? active.filter((known) => known !== tag) : [...active, tag])}
+						className={cn(
+							"h-7 rounded-full border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
+							isActive ? "border-accent bg-accent-soft text-accent-text" : "border-line-2 text-ink-2 hover:bg-hover",
+						)}
+					>
+						#{tag}
+					</button>
+				);
+			})}
+		</fieldset>
+	);
+}
+
+function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
+	if (view === "list") {
+		return (
+			<div className="grid">
+				<div className="h-10 border-line border-b" />
+				{Array.from({ length: 6 }, (_, index) => (
+					<div key={index} className="flex h-[45px] items-center border-line border-b ps-3">
+						<Skeleton className="h-4 w-1/3" />
+					</div>
+				))}
+			</div>
+		);
+	}
+	return (
+		<div className="grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4">
+			{Array.from({ length: 6 }, (_, index) => (
+				<div key={index} className="grid gap-2">
+					<Skeleton className="aspect-page rounded-[6px]" />
+					<Skeleton className="h-4 w-3/4 rounded" />
+				</div>
+			))}
+		</div>
+	);
+}
+
 /** A file dragged anywhere over the page shows the drop target, and dropping it starts the import. */
 function DropToImport() {
 	const openDialog = useDialogStore((state) => state.openDialog);
@@ -362,7 +374,7 @@ function DropToImport() {
 		const hasFiles = (event: DragEvent) => Array.from(event.dataTransfer?.types ?? []).includes("Files");
 		const onEnter = (event: DragEvent) => {
 			if (!hasFiles(event)) return;
-			depth++;
+			depth += 1;
 			setDragging(true);
 		};
 		const onLeave = () => {

@@ -78,7 +78,20 @@ export const resolveLocale = (locale: string): Locale => {
 	return isLocale(locale) ? locale : defaultLocale;
 };
 
-export function formatRelativeTime(value: Date | string, formatter: Intl.RelativeTimeFormat) {
+// Changing the locale reloads the page (`changeLocale`), so one formatter per locale is enough.
+const relativeTimeFormatters = new Map<string, Intl.RelativeTimeFormat>();
+
+function getRelativeTimeFormatter(locale: string) {
+	let formatter = relativeTimeFormatters.get(locale);
+	if (!formatter) {
+		formatter = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+		relativeTimeFormatters.set(locale, formatter);
+	}
+	return formatter;
+}
+
+export function formatRelativeTime(value: Date | string, locale: string) {
+	const formatter = getRelativeTimeFormatter(locale);
 	const date = value instanceof Date ? value : new Date(value);
 	const diffMs = date.getTime() - Date.now();
 	if (Number.isNaN(diffMs)) return formatter.format(0, "second");

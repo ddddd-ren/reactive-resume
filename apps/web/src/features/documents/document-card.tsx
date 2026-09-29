@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuTrigger } from "@reactive-resume/ui/component
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { cn } from "@reactive-resume/utils/style";
+import { isImeComposing } from "@/libs/keyboard";
 import { formatRelativeTime } from "@/libs/locale";
 import { ENTER_CLASS, stagger } from "@/libs/motion";
 import { DocumentMenuContent, useDocumentActions } from "./document-actions";
@@ -27,10 +28,9 @@ export type DocumentItemProps = {
 /** "Resume · Edited 2h ago", or the days left for a document in Trash. */
 function useDocumentMeta(document: DocumentSummary) {
 	const { i18n } = useLingui();
-	const formatter = new Intl.RelativeTimeFormat(i18n.locale, { numeric: "auto" });
 	const type = document.type === "resume" ? t`Resume` : t`Letter`;
 	if (document.trashedAt) return t`${type} · ${daysLeftInTrash(document.trashedAt)} days left`;
-	return t`${type} · Edited ${formatRelativeTime(document.updatedAt, formatter)}`;
+	return t`${type} · Edited ${formatRelativeTime(document.updatedAt, i18n.locale)}`;
 }
 
 /** Opens the document in its editor: resumes and letters share the editor shell. */
@@ -78,6 +78,7 @@ function RenameInput({ document, onDone }: { document: DocumentSummary; onDone: 
 			onFocus={(event) => event.target.select()}
 			onBlur={commit}
 			onKeyDown={(event) => {
+				if (isImeComposing(event)) return;
 				if (event.key === "Enter") commit();
 				if (event.key === "Escape") {
 					event.stopPropagation();
@@ -207,7 +208,6 @@ export function DocumentRow({ document, onTags, onLink, introIndex }: DocumentIt
 	const openDocument = useOpenDocument();
 	const [renaming, setRenaming] = useState(false);
 	const isNew = useNewDocumentsStore((state) => state.ids.includes(document.id)) && !document.trashedAt;
-	const formatter = new Intl.RelativeTimeFormat(i18n.locale, { numeric: "auto" });
 	const menuProps = {
 		document,
 		onOpen: () => openDocument(document),
@@ -259,7 +259,7 @@ export function DocumentRow({ document, onTags, onLink, introIndex }: DocumentIt
 					{document.trashedAt ? (
 						<Trans>{daysLeftInTrash(document.trashedAt)} days left</Trans>
 					) : (
-						formatRelativeTime(document.updatedAt, formatter)
+						formatRelativeTime(document.updatedAt, i18n.locale)
 					)}
 				</td>
 				<td className="w-10 pe-2 text-end">

@@ -3,7 +3,7 @@ import type { Application } from "../types";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -92,11 +92,15 @@ export function InterviewDialog({
 	const [draft, setDraft] = useState<Draft>(() => emptyDraft(application?.id ?? ""));
 	const isEditing = !!interview;
 
-	useEffect(() => {
-		if (!open) return;
-		const applicationId = application?.id ?? "";
-		setDraft(interview ? draftFrom(applicationId, interview) : emptyDraft(applicationId, day));
-	}, [open, interview, application?.id, day]);
+	// A fresh draft each time the dialog opens, adjusted during render so the first frame is never stale.
+	const [wasOpen, setWasOpen] = useState(open);
+	if (open !== wasOpen) {
+		setWasOpen(open);
+		if (open) {
+			const applicationId = application?.id ?? "";
+			setDraft(interview ? draftFrom(applicationId, interview) : emptyDraft(applicationId, day));
+		}
+	}
 
 	const onSuccess = (_data: unknown, variables: { id: string }) => {
 		void queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });

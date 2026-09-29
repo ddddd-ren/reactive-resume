@@ -244,7 +244,9 @@ async function uiFontFace(): Promise<string | null> {
 			const url = rule.style.getPropertyValue("src").match(/url\(["']?([^"')]+\.woff2)["']?\)/)?.[1];
 			if (!url) continue;
 			try {
-				const buffer = await (await fetch(url)).arrayBuffer();
+				const res = await fetch(url);
+				if (!res.ok) return null;
+				const buffer = await res.arrayBuffer();
 				return `@font-face{font-family:"Hanken Grotesk Variable";font-style:normal;font-weight:100 900;src:url(data:font/woff2;base64,${toBase64(buffer)}) format("woff2");}`;
 			} catch {
 				return null;
