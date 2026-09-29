@@ -6,7 +6,10 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { useKeyboardInset } from "@reactive-resume/ui/hooks/use-keyboard-inset";
+import { useIsMobile } from "@reactive-resume/ui/hooks/use-mobile";
 import { cn } from "@reactive-resume/utils/style";
 import { hasUnsupportedTableMarkup, richInputExtensions } from "@/components/input/rich-input";
 import { openAssistantFrom } from "@/features/assistant/open";
@@ -110,6 +113,8 @@ export function RichTextEditor({
 	const [improving, setImproving] = useState<ImproveLine | null>(null);
 	const actions = useToolbarActions();
 	const ai = useHasUsableAiProvider();
+	const mobile = useIsMobile();
+	const keyboardInset = useKeyboardInset();
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
 
 	const editor = useEditor({
@@ -168,6 +173,47 @@ export function RichTextEditor({
 		setImproving(lineAtCaret(editor));
 	};
 
+	const buttonSize = mobile ? "size-11" : "size-8";
+	const toolbarButtons = (
+		<>
+			{actions.map((action, index) => (
+				<button
+					key={action.icon}
+					type="button"
+					aria-label={action.label}
+					aria-pressed={action.isActive ? (state?.active[index] ?? false) : undefined}
+					title={action.label}
+					// Keep the caret in the text while formatting.
+					onMouseDown={(event) => event.preventDefault()}
+					onClick={() => editor && void action.run(editor)}
+					className={cn(
+						"flex shrink-0 items-center justify-center rounded-md text-ink-2 transition-colors duration-quick hover:bg-hover",
+						buttonSize,
+						state?.active[index] && "bg-accent-soft text-accent-text",
+						index === 3 && "ms-1.5",
+					)}
+				>
+					<Icon name={action.icon} />
+				</button>
+			))}
+			<button
+				type="button"
+				aria-expanded={improving !== null}
+				disabled={!state?.canImprove && improving === null}
+				title={state?.canImprove ? undefined : t`Put the caret in a line to improve it`}
+				onMouseDown={(event) => event.preventDefault()}
+				onClick={() => (improving ? setImproving(null) : startImprove())}
+				className={cn(
+					"ms-auto flex shrink-0 items-center gap-1.5 rounded-md bg-accent-soft px-2.5 font-semibold text-accent-text text-xs transition-[filter] duration-quick hover:brightness-95 disabled:opacity-50",
+					mobile ? "h-11" : "h-8",
+				)}
+			>
+				<Icon name="auto_awesome" size={16} />
+				<Trans>Improve</Trans>
+			</button>
+		</>
+	);
+
 	return (
 		<div
 			className={cn(
@@ -177,41 +223,38 @@ export function RichTextEditor({
 				className,
 			)}
 		>
-			{editing && !readOnlyTable && (
+			{editing && !readOnlyTable && !mobile && (
 				<div role="toolbar" aria-label={t`Formatting`} className="flex gap-0.5 border-line border-b px-1.5 py-1">
-					{actions.map((action, index) => (
-						<button
-							key={action.icon}
-							type="button"
-							aria-label={action.label}
-							aria-pressed={action.isActive ? (state?.active[index] ?? false) : undefined}
-							title={action.label}
-							// Keep the caret in the text while formatting.
-							onMouseDown={(event) => event.preventDefault()}
-							onClick={() => editor && void action.run(editor)}
-							className={cn(
-								"flex size-8 items-center justify-center rounded-md text-ink-2 transition-colors duration-quick hover:bg-hover",
-								state?.active[index] && "bg-accent-soft text-accent-text",
-								index === 3 && "ms-1.5",
-							)}
-						>
-							<Icon name={action.icon} />
-						</button>
-					))}
-					<button
-						type="button"
-						aria-expanded={improving !== null}
-						disabled={!state?.canImprove && improving === null}
-						title={state?.canImprove ? undefined : t`Put the caret in a line to improve it`}
-						onMouseDown={(event) => event.preventDefault()}
-						onClick={() => (improving ? setImproving(null) : startImprove())}
-						className="ms-auto flex h-8 items-center gap-1.5 rounded-md bg-accent-soft px-2.5 font-semibold text-accent-text text-xs transition-[filter] duration-quick hover:brightness-95 disabled:opacity-50"
-					>
-						<Icon name="auto_awesome" size={16} />
-						<Trans>Improve</Trans>
-					</button>
+					{toolbarButtons}
 				</div>
 			)}
+
+			{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
+			{editing &&
+				!readOnlyTable &&
+				mobile &&
+				createPortal(
+					<div
+						role="toolbar"
+						aria-label={t`Formatting`}
+						style={{ bottom: keyboardInset }}
+						className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-line border-t bg-raised px-1.5 shadow-e2"
+					>
+						{toolbarButtons}
+						<button
+							type="button"
+							onMouseDown={(event) => event.preventDefault()}
+							onClick={() => {
+								setImproving(null);
+								editor?.commands.blur();
+							}}
+							className="flex h-11 items-center rounded-md px-3 font-semibold text-accent-text text-sm"
+						>
+							<Trans>Done</Trans>
+						</button>
+					</div>,
+					document.body,
+				)}
 
 			{readOnlyTable && (
 				<p role="status" className="border-line border-b px-3 py-2 text-ink-2 text-xs">
