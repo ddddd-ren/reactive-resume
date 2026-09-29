@@ -8,6 +8,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
 import {
 	AssistantColumn,
 	AssistantOverlay,
@@ -285,18 +286,12 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 								if (tab !== "page") onModeChange(tab);
 							}}
 							className={cn(
-								"flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 text-[11px]",
+								"relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 text-[11px] transition-[color,scale] duration-quick ease-enter active:scale-[0.97]",
 								active ? "font-semibold text-ink" : "text-ink-2",
 							)}
 						>
-							<span
-								className={cn(
-									"flex h-7 w-[52px] items-center justify-center rounded-full transition-colors duration-quick",
-									active && "bg-accent-soft text-accent-text",
-								)}
-							>
-								<Icon name={icon} size={24} filled={active} />
-							</span>
+							{active && <MobileTabIndicator />}
+							<Icon name={icon} size={24} filled={active} />
 							{labels[tab]}
 						</button>
 					);

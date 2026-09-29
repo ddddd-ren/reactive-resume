@@ -20,6 +20,9 @@ export const EXIT = 0.7;
 /** --ease-out-strong. Landing page only (features/homepage/site-footer.tsx); app code uses EASE. */
 export const EASE_OUT_STRONG = [0.23, 1, 0.32, 1] as const;
 
+/** Springy, a little elastic: the mobile tab bar's marker hopping to the new tab (interruptible mid-flight). */
+export const TAB_SPRING = { type: "spring", duration: 0.4, bounce: 0.3 } as const;
+
 /** dnd-kit timing for things settling into place (sortable shuffles, drop animations): on-screen movement. */
 export const DRAG_SETTLE = { duration: D2 * 1000, easing: `cubic-bezier(${EASE_MOVE.join(", ")})` };
 

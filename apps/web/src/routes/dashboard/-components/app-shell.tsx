@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
@@ -289,6 +290,7 @@ function MobileTabs() {
 
 	const tab = (icon: IconName, label: string, current: boolean) => (
 		<>
+			{current && <MobileTabIndicator />}
 			<Icon name={icon} size={24} filled={current} />
 			<span className={cn("text-[11px]", current ? "font-semibold text-ink" : "text-ink-2")}>{label}</span>
 		</>
@@ -302,14 +304,16 @@ function MobileTabs() {
 			<Link
 				to="/dashboard"
 				aria-current={isCurrent("/dashboard") ? "page" : undefined}
-				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
+				viewTransition={false}
+				className="relative flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>
 				{tab("description", t`Documents`, isCurrent("/dashboard"))}
 			</Link>
 			<Link
 				to="/dashboard/applications"
 				aria-current={isCurrent("/dashboard/applications") ? "page" : undefined}
-				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
+				viewTransition={false}
+				className="relative flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>
 				{tab("work", t`Applications`, isCurrent("/dashboard/applications"))}
 			</Link>
@@ -329,7 +333,8 @@ function MobileTabs() {
 			<Link
 				to="/dashboard/settings"
 				aria-current={isCurrent("/dashboard/settings") ? "page" : undefined}
-				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
+				viewTransition={false}
+				className="relative flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>
 				{tab("account_circle", t`Account`, isCurrent("/dashboard/settings"))}
 			</Link>
