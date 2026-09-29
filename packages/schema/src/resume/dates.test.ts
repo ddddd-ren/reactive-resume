@@ -96,6 +96,10 @@ describe("getPresentLabel", () => {
 		expect(getPresentLabel("de-DE")).toBe("Heute");
 		expect(getPresentLabel("xx-XX")).toBe("Present");
 	});
+
+	it("reads a malformed locale tag by its language instead of throwing", () => {
+		expect(getPresentLabel("de-DE-")).toBe("Heute");
+	});
 });
 
 describe("upgradeResumeDates", () => {

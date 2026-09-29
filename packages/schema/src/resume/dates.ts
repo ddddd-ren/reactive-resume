@@ -55,7 +55,8 @@ export function getPresentLabel(locale: string): string {
 
 	const word = ONGOING_TOKENS_BY_LANGUAGE[language]?.[0];
 	if (!word) return "Present";
-	return word.charAt(0).toLocaleUpperCase(locale) + word.slice(1);
+	// Case the word by its language alone: `locale` can be a malformed tag ("de-DE-") that throws a RangeError.
+	return word.charAt(0).toLocaleUpperCase(language) + word.slice(1);
 }
 
 const toEndpoint = (value: YearMonth): PeriodEndpoint => {
