@@ -4,11 +4,11 @@ import { estimateTokens, pruneAgentModelContext } from "./context";
 
 const BIG_RESUME = { basics: { name: "Alice" }, sections: { summary: { content: "x".repeat(2_000) } } };
 
-function readResumeExchange(callId: string): ModelMessage[] {
+function readResumeExchange(callId: string, toolName = "read_resume"): ModelMessage[] {
 	return [
 		{
 			role: "assistant",
-			content: [{ type: "tool-call", toolCallId: callId, toolName: "read_resume", input: {} }],
+			content: [{ type: "tool-call", toolCallId: callId, toolName, input: {} }],
 		},
 		{
 			role: "tool",
@@ -16,7 +16,7 @@ function readResumeExchange(callId: string): ModelMessage[] {
 				{
 					type: "tool-result",
 					toolCallId: callId,
-					toolName: "read_resume",
+					toolName,
 					output: { type: "json", value: { id: "resume-1", data: BIG_RESUME } },
 				},
 			],
@@ -64,8 +64,21 @@ describe("pruneAgentModelContext — tier 0 (snapshot supersession)", () => {
 		const pruned = pruneAgentModelContext(messages, 1_000_000);
 
 		expect(snapshotValue(pruned[2])).not.toHaveProperty("data");
-		expect(snapshotValue(pruned[2]).note).toContain("Superseded resume snapshot");
+		expect(snapshotValue(pruned[2]).note).toContain("Superseded document snapshot");
 		expect(snapshotValue(pruned[4])).toHaveProperty("resume");
+	});
+
+	it("keeps only the last cover letter snapshot too", () => {
+		const messages = [
+			user("hi"),
+			...readResumeExchange("call-1", "read_letter"),
+			...readResumeExchange("call-2", "read_letter"),
+		];
+
+		const pruned = pruneAgentModelContext(messages, 1_000_000);
+
+		expect(snapshotValue(pruned[2])).not.toHaveProperty("data");
+		expect(snapshotValue(pruned[4])).toHaveProperty("data");
 	});
 
 	it("returns the same array reference when there is at most one snapshot", () => {
