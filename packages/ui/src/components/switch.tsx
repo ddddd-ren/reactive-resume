@@ -28,7 +28,7 @@ function Switch({ className, size = "default", ...props }: SwitchProps) {
 			data-slot="switch"
 			data-size={size}
 			className={cn(
-				"group/switch peer touch-target relative inline-flex shrink-0 rounded-full outline-none data-disabled:cursor-not-allowed",
+				"group/switch peer touch-target relative inline-flex shrink-0 rounded-full data-disabled:cursor-not-allowed",
 				className,
 			)}
 			{...props}
@@ -56,7 +56,7 @@ function SwitchRow({ className, label, description, size = "default", ...props }
 			aria-labelledby={labelId}
 			aria-describedby={description ? descriptionId : undefined}
 			className={cn(
-				"group/switch flex w-full items-center justify-between gap-4 rounded-md py-2 text-start outline-none data-disabled:cursor-not-allowed",
+				"group/switch flex w-full items-center justify-between gap-4 rounded-md py-2 text-start data-disabled:cursor-not-allowed",
 				className,
 			)}
 			{...props}

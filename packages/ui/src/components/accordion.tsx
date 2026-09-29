@@ -22,7 +22,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
 			<AccordionPrimitive.Trigger
 				data-slot="accordion-trigger"
 				className={cn(
-					"group/accordion-trigger relative flex flex-1 items-center justify-between gap-2 rounded-md py-2.5 text-start font-medium text-ink text-sm outline-none aria-disabled:pointer-events-none aria-disabled:text-ink-3 **:data-[slot=accordion-trigger-icon]:ms-auto **:data-[slot=accordion-trigger-icon]:text-ink-3",
+					"group/accordion-trigger relative flex flex-1 items-center justify-between gap-2 rounded-md py-2.5 text-start font-medium text-ink text-sm aria-disabled:pointer-events-none aria-disabled:text-ink-3 **:data-[slot=accordion-trigger-icon]:ms-auto **:data-[slot=accordion-trigger-icon]:text-ink-3",
 					className,
 				)}
 				{...props}

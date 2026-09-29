@@ -35,7 +35,7 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
 		<ToastPrimitive.Root
 			data-slot="toast"
 			className={cn(
-				"group/toast pointer-events-auto flex w-fit max-w-[min(560px,100%)] select-none items-center rounded-lg bg-ink text-bg shadow-e3 outline-none transition-[opacity,translate,transform] duration-emphasized ease-enter [grid-area:1/1] focus-visible:outline-accent data-[swipe-direction=right]:data-ending-style:translate-x-[calc(var(--toast-swipe-movement-x)+100%)] data-[swipe-direction=down]:data-ending-style:translate-y-[calc(var(--toast-swipe-movement-y)+100%)] data-[swipe-direction=right]:data-ending-style:translate-y-0 data-ending-style:translate-y-2.5 data-limited:translate-y-2.5 data-starting-style:translate-y-2.5 data-ending-style:opacity-0 data-limited:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-limited:duration-[calc(var(--d3)*0.7)]",
+				"group/toast pointer-events-auto flex w-fit max-w-[min(560px,100%)] select-none items-center rounded-lg bg-ink text-bg shadow-e3 transition-[opacity,translate,transform] duration-emphasized ease-enter [grid-area:1/1] data-[swipe-direction=right]:data-ending-style:translate-x-[calc(var(--toast-swipe-movement-x)+100%)] data-[swipe-direction=down]:data-ending-style:translate-y-[calc(var(--toast-swipe-movement-y)+100%)] data-[swipe-direction=right]:data-ending-style:translate-y-0 data-ending-style:translate-y-2.5 data-limited:translate-y-2.5 data-starting-style:translate-y-2.5 data-ending-style:opacity-0 data-limited:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-limited:duration-[calc(var(--d3)*0.7)]",
 				className,
 			)}
 			{...props}
@@ -79,7 +79,7 @@ function ToastAction({ className, ...props }: ToastPrimitive.Action.Props) {
 		<ToastPrimitive.Action
 			data-slot="toast-action"
 			className={cn(
-				"-my-1 shrink-0 rounded-sm px-1 py-1 font-semibold text-sm underline underline-offset-3 outline-none transition-opacity hover:opacity-80 focus-visible:outline-accent",
+				"-my-1 shrink-0 rounded-sm px-1 py-1 font-semibold text-sm underline underline-offset-3 transition-opacity hover:opacity-80",
 				className,
 			)}
 			{...props}
@@ -93,7 +93,7 @@ function ToastClose({ className, children, ...props }: ToastPrimitive.Close.Prop
 			data-slot="toast-close"
 			aria-label="Close"
 			className={cn(
-				"-me-2 inline-flex size-7 shrink-0 items-center justify-center rounded-sm opacity-70 outline-none transition-opacity hover:opacity-100 focus-visible:outline-accent",
+				"-me-2 inline-flex size-7 shrink-0 items-center justify-center rounded-sm opacity-70 transition-opacity hover:opacity-100",
 				className,
 			)}
 			{...props}
