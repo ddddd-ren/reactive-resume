@@ -72,8 +72,9 @@ function addCustom(type: CustomSectionType) {
 }
 
 /**
- * Add section: every section not in use, in two columns, plus Custom section, which asks for a type. The
- * new section starts with one draft entry, open and focused.
+ * Add section: every section not in use, in two columns, plus Custom section, which asks for a type. Once every
+ * section is in use, the custom types are listed directly. The new section starts with one draft entry, open and
+ * focused.
  */
 export function AddSectionMenu() {
 	const added = useEditorStore((state) => state.addedSections);
@@ -83,6 +84,12 @@ export function AddSectionMenu() {
 			.join(","),
 	);
 	const unused = unusedKey ? (unusedKey.split(",") as ("summary" | SectionType)[]) : [];
+	const customItems = CUSTOM_SECTION_TYPES.map((type) => (
+		<DropdownMenuItem key={type} onClick={() => addCustom(type)}>
+			<Icon name={SECTION_ICONS[type]} />
+			{getSectionTitle(type)}
+		</DropdownMenuItem>
+	));
 
 	return (
 		<DropdownMenu>
@@ -109,25 +116,30 @@ export function AddSectionMenu() {
 					</DropdownMenuGroup>
 				)}
 				{unused.length > 0 && <DropdownMenuSeparator />}
-				<DropdownMenuSub>
-					<DropdownMenuSubTrigger>
-						<Icon name="add" />
-						<Trans>Custom section</Trans>
-					</DropdownMenuSubTrigger>
-					<DropdownMenuSubContent className="w-56">
-						<DropdownMenuGroup>
-							<DropdownMenuLabel>
-								<Trans>What goes in it?</Trans>
-							</DropdownMenuLabel>
-							{CUSTOM_SECTION_TYPES.map((type) => (
-								<DropdownMenuItem key={type} onClick={() => addCustom(type)}>
-									<Icon name={SECTION_ICONS[type]} />
-									{getSectionTitle(type)}
-								</DropdownMenuItem>
-							))}
-						</DropdownMenuGroup>
-					</DropdownMenuSubContent>
-				</DropdownMenuSub>
+				{unused.length > 0 ? (
+					<DropdownMenuSub>
+						<DropdownMenuSubTrigger>
+							<Icon name="add" />
+							<Trans>Custom section</Trans>
+						</DropdownMenuSubTrigger>
+						<DropdownMenuSubContent className="w-56">
+							<DropdownMenuGroup>
+								<DropdownMenuLabel>
+									<Trans>What goes in it?</Trans>
+								</DropdownMenuLabel>
+								{customItems}
+							</DropdownMenuGroup>
+						</DropdownMenuSubContent>
+					</DropdownMenuSub>
+				) : (
+					// Every built-in section is in use, so the custom types are the only choice: list them here.
+					<DropdownMenuGroup className="grid grid-cols-2">
+						<DropdownMenuLabel className="col-span-2">
+							<Trans>Custom section</Trans>
+						</DropdownMenuLabel>
+						{customItems}
+					</DropdownMenuGroup>
+				)}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
