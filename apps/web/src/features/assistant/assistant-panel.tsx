@@ -358,7 +358,7 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 							type="button"
 							disabled={disabled}
 							onClick={() => onPick(suggestion.label)}
-							className="flex min-h-11 w-full items-center gap-3 rounded-lg border border-line px-3 py-2 text-start transition-colors duration-quick hover:bg-hover disabled:opacity-60"
+							className="flex min-h-11 w-full items-center gap-3 rounded-lg border border-line px-3 py-2 text-start transition-[background-color,scale] duration-quick ease-enter hover:bg-hover enabled:active:scale-[0.98] disabled:opacity-60"
 						>
 							<Icon name={suggestion.icon} size={20} className="shrink-0 text-ink-2" />
 							<span className="grid min-w-0">
@@ -489,7 +489,10 @@ function ConversationRow({ thread, current, detail, onOpen, onDelete }: Conversa
 				type="button"
 				aria-current={current ? "true" : undefined}
 				onClick={onOpen}
-				className={cn("grid min-w-0 flex-1 rounded-lg px-3 py-2 text-start", current && "bg-sunken")}
+				className={cn(
+					"grid min-w-0 flex-1 rounded-lg px-3 py-2 text-start transition-colors duration-quick ease-enter active:bg-press",
+					current && "bg-sunken",
+				)}
 			>
 				<span className="truncate font-medium text-sm">{thread.title}</span>
 				<span className="truncate text-ink-3 text-xs">{detail}</span>
@@ -498,7 +501,7 @@ function ConversationRow({ thread, current, detail, onOpen, onDelete }: Conversa
 				icon="close"
 				label={t`Delete ${thread.title}`}
 				size="icon-sm"
-				className="me-1 text-ink-3 opacity-0 transition-[opacity,background-color,border-color,color,filter] focus-visible:opacity-100 group-hover/row:opacity-100"
+				className="me-1 text-ink-3 opacity-0 transition-[opacity,background-color,border-color,color,filter,scale] focus-visible:opacity-100 group-hover/row:opacity-100"
 				onClick={onDelete}
 			/>
 		</li>

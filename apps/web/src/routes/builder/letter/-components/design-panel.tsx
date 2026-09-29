@@ -152,7 +152,7 @@ export function LetterDesignPanel() {
 								>
 									<span
 										className={cn(
-											"relative block aspect-[1/1.414] overflow-hidden rounded-md border bg-white transition-shadow duration-quick",
+											"relative block aspect-[1/1.414] overflow-hidden rounded-md border bg-white transition-[translate,scale,box-shadow] duration-quick ease-enter group-hover/template:-translate-y-0.5 group-active/template:scale-[0.98]",
 											selected
 												? "border-accent shadow-[0_0_0_2px_var(--accent)]"
 												: "border-line group-hover/template:shadow-e2",

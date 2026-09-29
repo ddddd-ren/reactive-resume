@@ -669,7 +669,7 @@ export function Composer(props: ComposerProps) {
 					disabled={!streaming && (!hasText || disabled)}
 					onClick={streaming ? props.onStop : submit}
 					className={cn(
-						"grid size-[34px] shrink-0 place-items-center rounded-lg transition-colors duration-quick",
+						"grid size-[34px] shrink-0 place-items-center rounded-lg transition-[background-color,color,scale] duration-quick ease-enter enabled:active:scale-[0.97]",
 						streaming ? "bg-ink text-bg" : hasText ? "bg-accent text-on-accent" : "bg-sunken text-ink-3",
 					)}
 				>

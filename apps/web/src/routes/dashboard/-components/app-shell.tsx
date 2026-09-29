@@ -182,7 +182,7 @@ function NavLink({ item, current }: { item: NavItem; current: boolean }) {
 			to={item.to}
 			aria-current={current ? "page" : undefined}
 			className={cn(
-				"flex h-[34px] items-center gap-2.5 rounded-lg px-2.5 text-sm transition-colors duration-quick",
+				"flex h-[34px] items-center gap-2.5 rounded-lg px-2.5 text-sm transition-[background-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
 				current ? "bg-sunken font-medium text-ink" : "text-ink-2 hover:bg-hover hover:text-ink",
 			)}
 		>
@@ -214,7 +214,7 @@ function Rail() {
 					type="button"
 					aria-label={t`Search or run…`}
 					onClick={() => openPalette(true)}
-					className="grid size-10 place-items-center rounded-lg text-ink-2 transition-colors hover:bg-hover"
+					className="grid size-10 place-items-center rounded-lg text-ink-2 transition-[background-color,scale] duration-quick ease-enter hover:bg-hover active:scale-[0.97]"
 				/>
 			</RailTip>
 			<nav aria-label={t`App`} className="grid gap-1">
@@ -225,7 +225,7 @@ function Rail() {
 							aria-label={item.label}
 							aria-current={isCurrent(item.to) ? "page" : undefined}
 							className={cn(
-								"grid size-10 place-items-center rounded-lg transition-colors duration-quick",
+								"grid size-10 place-items-center rounded-lg transition-[background-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
 								isCurrent(item.to) ? "bg-sunken text-ink" : "text-ink-2 hover:bg-hover",
 							)}
 						/>
@@ -238,7 +238,7 @@ function Rail() {
 						<Link
 							to={trash.to}
 							aria-label={t`Trash`}
-							className="grid size-10 place-items-center rounded-lg text-ink-2 transition-colors hover:bg-hover"
+							className="grid size-10 place-items-center rounded-lg text-ink-2 transition-[background-color,scale] duration-quick ease-enter hover:bg-hover active:scale-[0.97]"
 						/>
 					</RailTip>
 				)}
@@ -302,21 +302,21 @@ function MobileTabs() {
 			<Link
 				to="/dashboard"
 				aria-current={isCurrent("/dashboard") ? "page" : undefined}
-				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5"
+				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>
 				{tab("description", t`Documents`, isCurrent("/dashboard"))}
 			</Link>
 			<Link
 				to="/dashboard/applications"
 				aria-current={isCurrent("/dashboard/applications") ? "page" : undefined}
-				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5"
+				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>
 				{tab("work", t`Applications`, isCurrent("/dashboard/applications"))}
 			</Link>
 			<button
 				type="button"
 				onClick={() => openDialog("document.new", undefined)}
-				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5"
+				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>
 				<span className="grid h-[26px] w-[34px] place-items-center rounded-full bg-accent text-on-accent">
 					<Icon name="add" size={20} />
@@ -329,7 +329,7 @@ function MobileTabs() {
 			<Link
 				to="/dashboard/settings"
 				aria-current={isCurrent("/dashboard/settings") ? "page" : undefined}
-				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5"
+				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>
 				{tab("account_circle", t`Account`, isCurrent("/dashboard/settings"))}
 			</Link>

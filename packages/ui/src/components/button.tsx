@@ -5,7 +5,7 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 
 const buttonVariants = cva(
-	"group/button touch-target relative inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap border border-transparent font-medium text-sm transition-[background-color,border-color,color,filter] duration-quick ease-enter disabled:pointer-events-none aria-busy:cursor-progress [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+	"group/button touch-target relative inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap border border-transparent font-medium text-sm transition-[background-color,border-color,color,filter,scale] duration-quick ease-enter disabled:pointer-events-none aria-busy:cursor-progress [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
@@ -27,7 +27,11 @@ const buttonVariants = cva(
 				"icon-lg": "size-11 rounded-lg",
 			},
 		},
-		compoundVariants: [{ variant: "ghost", size: "default", className: "px-3" }],
+		compoundVariants: [
+			{ variant: "ghost", size: "default", className: "px-3" },
+			// Press feedback; a text link doesn't press, and a loading button blocks activation.
+			{ variant: ["primary", "secondary", "ghost", "danger"], className: "not-aria-busy:active:scale-[0.97]" },
+		],
 		defaultVariants: {
 			variant: "primary",
 			size: "default",

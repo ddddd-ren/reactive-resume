@@ -282,7 +282,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 					const file = event.dataTransfer.files[0];
 					if (file) void importFile(file);
 				}}
-				className="flex items-start gap-4 rounded-xl border-[1.5px] border-line-2 border-dashed p-5 text-start transition-colors duration-quick hover:border-accent hover:bg-accent-soft"
+				className="flex items-start gap-4 rounded-xl border-[1.5px] border-line-2 border-dashed p-5 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-accent hover:bg-accent-soft active:scale-[0.98]"
 			>
 				<span className="grid size-11 shrink-0 place-items-center rounded-[10px] bg-sunken text-ink-2">
 					<Icon name="upload_file" size={24} />
@@ -420,7 +420,7 @@ function ChoiceTile({ icon, title, description, onClick, disabled }: ChoiceTileP
 			type="button"
 			disabled={disabled}
 			onClick={onClick}
-			className="flex items-start gap-3 rounded-xl border border-line p-4 text-start transition-colors duration-quick hover:border-line-2 hover:bg-hover disabled:opacity-60"
+			className="flex items-start gap-3 rounded-xl border border-line p-4 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-line-2 hover:bg-hover enabled:active:scale-[0.97] disabled:opacity-60"
 		>
 			<Icon name={icon} size={22} className="mt-0.5 text-ink-2" />
 			<span className="grid gap-0.5">
@@ -578,7 +578,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 								setName(null);
 							}}
 							className={cn(
-								"flex h-8 items-center gap-1.5 rounded-full border px-3 text-[13px] transition-colors duration-quick",
+								"flex h-8 items-center gap-1.5 rounded-full border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
 								jobId === option.id
 									? "border-accent bg-accent-soft text-accent-text"
 									: "border-line-2 text-ink-2 hover:bg-hover",

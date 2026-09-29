@@ -125,8 +125,9 @@ export function DocumentCard({ document, onTags, onLink }: DocumentItemProps) {
 					document={document}
 					label={document.name}
 					className={cn(
-						"relative block aspect-page overflow-hidden rounded-[6px] shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[transform,box-shadow] duration-quick hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)]",
-						isNew && "shadow-[0_0_0_2px_var(--accent),var(--shadow-1)]",
+						"relative block aspect-page overflow-hidden rounded-[6px] shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[translate,scale,box-shadow] duration-quick ease-enter hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)] active:scale-[0.98]",
+						isNew &&
+							"shadow-[0_0_0_2px_var(--accent),var(--shadow-1)] hover:shadow-[0_0_0_2px_var(--accent),var(--shadow-2)]",
 						document.trashedAt && "pointer-events-none",
 					)}
 				>

@@ -182,7 +182,7 @@ export function ColorGroup() {
 						value={accent.hex}
 						aria-label={accent.label}
 						title={accent.label}
-						className="aspect-square cursor-pointer rounded-full transition-shadow duration-quick data-checked:shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--swatch)]"
+						className="aspect-square cursor-pointer rounded-full transition-[box-shadow,scale] duration-quick ease-enter active:scale-[0.97] data-checked:shadow-[0_0_0_2px_var(--surface),0_0_0_4px_var(--swatch)]"
 						style={{ backgroundColor: accent.hex, "--swatch": accent.hex } as CSSProperties}
 					/>
 				))}

@@ -9,7 +9,7 @@ const trackClassName =
 	"relative inline-flex shrink-0 items-center rounded-full bg-line-2 transition-colors duration-quick group-data-checked/switch:bg-accent group-data-disabled/switch:opacity-50 data-[size=default]:h-5 data-[size=default]:w-8 data-[size=touch]:h-[26px] data-[size=touch]:w-11";
 
 const thumbClassName =
-	"pointer-events-none block rounded-full bg-white shadow-e1 transition-transform duration-quick ease-enter group-data-[size=default]/track:ms-0.5 group-data-[size=touch]/track:ms-0.5 group-data-[size=default]/track:size-4 group-data-[size=touch]/track:size-[22px] group-data-[size=default]/track:data-checked:translate-x-3 group-data-[size=touch]/track:data-checked:translate-x-[18px] rtl:group-data-[size=default]/track:data-checked:-translate-x-3 rtl:group-data-[size=touch]/track:data-checked:-translate-x-[18px]";
+	"pointer-events-none block origin-left data-checked:origin-right rtl:origin-right rtl:data-checked:origin-left group-active/switch:not-data-disabled:scale-x-[1.15] rounded-full bg-white shadow-e1 transition-transform duration-quick ease-enter group-data-[size=default]/track:ms-0.5 group-data-[size=touch]/track:ms-0.5 group-data-[size=default]/track:size-4 group-data-[size=touch]/track:size-[22px] group-data-[size=default]/track:data-checked:translate-x-3 group-data-[size=touch]/track:data-checked:translate-x-[18px] rtl:group-data-[size=default]/track:data-checked:-translate-x-3 rtl:group-data-[size=touch]/track:data-checked:-translate-x-[18px]";
 
 function SwitchTrack({ size }: { size: SwitchSize }) {
 	return (

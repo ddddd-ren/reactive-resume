@@ -190,7 +190,7 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 		>
 			<span
 				className={cn(
-					"relative block aspect-page overflow-hidden rounded-md border border-line bg-white shadow-e1 transition-[transform,box-shadow] duration-quick group-hover/card:-translate-y-0.5 group-hover/card:shadow-e2",
+					"relative block aspect-page overflow-hidden rounded-md border border-line bg-white shadow-e1 transition-[translate,scale,box-shadow] duration-quick ease-enter group-hover/card:-translate-y-0.5 group-hover/card:shadow-e2 group-active/card:scale-[0.98]",
 					selected && "ring-2 ring-accent ring-offset-2 ring-offset-surface",
 				)}
 			>

@@ -25,7 +25,8 @@ function Row({ icon, label, value }: RowProps) {
 	);
 }
 
-const rowClass = "flex h-14 items-center gap-3 px-3.5 font-medium text-base";
+const rowClass =
+	"flex h-14 items-center gap-3 px-3.5 font-medium text-base transition-colors duration-quick ease-enter active:bg-press";
 
 /** Phones: the Account tab is the settings root, three rows showing their current values. */
 export function SettingsRoot() {
@@ -66,7 +67,7 @@ export function SettingsRoot() {
 				href="https://docs.rxresu.me"
 				target="_blank"
 				rel="noopener noreferrer"
-				className="flex h-12 items-center rounded-[14px] border border-line bg-surface px-3.5 font-medium"
+				className="flex h-12 items-center rounded-[14px] border border-line bg-surface px-3.5 font-medium transition-colors duration-quick ease-enter active:bg-press"
 			>
 				<Trans>Help & docs</Trans>
 			</a>

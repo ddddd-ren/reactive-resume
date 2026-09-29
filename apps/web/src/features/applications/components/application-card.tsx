@@ -21,7 +21,7 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 	return (
 		<div
 			className={cn(
-				"group relative grid gap-2 rounded-[10px] border border-line bg-surface p-3 shadow-e1 transition-colors duration-quick hover:border-line-2",
+				"group relative grid gap-2 rounded-[10px] border border-line bg-surface p-3 shadow-e1 transition-[border-color,scale] duration-quick ease-enter hover:border-line-2 active:not-has-[[data-slot=button]:active]:scale-[0.98]",
 				dragging && "rotate-1 shadow-e3",
 			)}
 		>
