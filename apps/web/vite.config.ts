@@ -80,6 +80,8 @@ export default defineConfig({
 		}),
 		viteReact(),
 		lingui(),
+		// Keep @babel/core on 7: under Babel 8, React Compiler 1.0 skips every function with a destructuring default
+		// (guarded by src/react-compiler.test.ts).
 		babel({ presets: [reactCompilerPreset(), linguiTransformerBabelPreset()] }),
 	],
 });
