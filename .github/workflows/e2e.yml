@@ -19,6 +19,10 @@ env:
   LOCAL_STORAGE_PATH: /tmp/reactive-resume-e2e-storage
   # The assistant spec talks to a scripted provider on 127.0.0.1.
   FLAG_ALLOW_UNSAFE_AI_BASE_URL: "true"
+  # Real-database unit suites. The cover-letter suite works in its own schema; the OAuth flow suite writes
+  # signing keys under its own secret, so it gets a database the e2e server never reads.
+  COVER_LETTER_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+  OAUTH_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/oauth_test
 
 jobs:
   e2e:
@@ -79,6 +83,11 @@ jobs:
 
       - name: Run Database Migrations
         run: pnpm db:migrate
+
+      - name: Prepare OAuth Test Database
+        run: |
+          psql "$DATABASE_URL" -c "CREATE DATABASE oauth_test"
+          DATABASE_URL="$OAUTH_TEST_DATABASE_URL" pnpm db:migrate
 
       # Runs every workspace package, not a hand-maintained filter list, so a package
       # cannot silently lose coverage by being left out. Serial execution: the PDF
