@@ -3,7 +3,7 @@ import { set } from "es-toolkit/compat";
 import { SEMANTIC_CSS_LIMITS_V1 } from "@reactive-resume/resume/stylesheet";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
-import { adoptLegacyStyles, parseStoredResumeData, parseWritableResumeData } from "./resume-data-validation";
+import { parseStoredResumeData, parseWritableResumeData } from "./resume-data-validation";
 
 describe("parseWritableResumeData", () => {
 	it("rejects stylesheet source above the Semantic CSS byte limit", () => {
@@ -61,60 +61,5 @@ describe("strict write bounds", () => {
 			summary: { keepTogether: false },
 			metadata: { page: { hideSectionIcons: true }, typography: { body: { fontSize: 11 } } },
 		});
-	});
-});
-
-describe("adoptLegacyStyles", () => {
-	const legacy = () => {
-		const data = structuredClone(sampleResumeData);
-		data.metadata.stylesheet = undefined;
-		data.metadata.styleRules = [
-			{
-				id: "rule-1",
-				label: "Teal headings",
-				enabled: true,
-				target: { scope: "global" },
-				slots: { heading: { color: "#0f766e" } },
-			},
-		];
-		return data;
-	};
-
-	it("converts legacy rules into a semantic stylesheet and keeps the rules", () => {
-		const adopted = adoptLegacyStyles(legacy());
-
-		expect(adopted.metadata.stylesheet?.mode).toBe("semantic");
-		expect(adopted.metadata.stylesheet?.source.text).toContain("color: #0f766e;");
-		expect(adopted.metadata.stylesheet?.source.text).not.toContain("@version");
-		expect(adopted.metadata.styleRules).toHaveLength(1);
-	});
-
-	it("keeps an unapplied draft from the old editor as a comment after the conversion", () => {
-		const data = legacy();
-		data.metadata.stylesheet = {
-			mode: "legacy",
-			source: { languageVersion: 1, text: "@version 1;\nname { color: red; } /* note */" },
-		};
-		const text = adoptLegacyStyles(data).metadata.stylesheet?.source.text ?? "";
-
-		expect(text.indexOf("color: #0f766e;")).toBeLessThan(text.indexOf("Unapplied draft"));
-		expect(text).toContain("name { color: red; } /* note *\\/");
-	});
-
-	it("leaves semantic stylesheets alone, and gives a resume with no rules an empty one", () => {
-		const semantic = structuredClone(sampleResumeData);
-		semantic.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: "name { color: red; }" } };
-		expect(adoptLegacyStyles(semantic)).toBe(semantic);
-
-		const plain = structuredClone(defaultResumeData);
-		plain.metadata.stylesheet = undefined;
-		expect(adoptLegacyStyles(plain).metadata.stylesheet).toEqual({
-			mode: "semantic",
-			source: { languageVersion: 1, text: "" },
-		});
-	});
-
-	it("runs on reads", () => {
-		expect(parseStoredResumeData(legacy()).metadata.stylesheet?.mode).toBe("semantic");
 	});
 });

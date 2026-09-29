@@ -1,7 +1,12 @@
 import type { ResumeData, StyleIntent, StyleRule, StyleSlot } from "@reactive-resume/schema/resume/data";
-import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
+import type { SemanticStylesheet, StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
 import type { Style } from "../forme/style-types";
-import { escapeCssComment, escapeCssString, serializeGeneratedStylesheet } from "@reactive-resume/resume/stylesheet";
+import {
+	escapeCssComment,
+	escapeCssString,
+	SEMANTIC_CSS_LIMITS_V1,
+	serializeGeneratedStylesheet,
+} from "@reactive-resume/resume/stylesheet";
 import { styleRulesSchema } from "@reactive-resume/schema/resume/data";
 import { getSectionStyleRuleContext } from "@reactive-resume/schema/resume/style-rules";
 import { rgbaStringToHex } from "@reactive-resume/utils/color";
@@ -261,4 +266,34 @@ export function convertLegacyStyleRules(data: ResumeData): LegacyStyleConversion
 		source: { languageVersion: 1, text },
 		sanitizedRules,
 	};
+}
+
+/**
+ * Data from before Semantic CSS styled itself with legacy style rules (`metadata.styleRules`), which nothing renders
+ * any more. It needs converting when it's still in the old editor's legacy mode, or has rules and no stylesheet at all;
+ * anything already semantic, or with neither, renders the same as it is.
+ */
+export function needsLegacyStyleConversion(
+	metadata: { stylesheet?: unknown; styleRules?: unknown } | undefined,
+): boolean {
+	const stylesheet = metadata?.stylesheet;
+	if (stylesheet && typeof stylesheet === "object") return (stylesheet as { mode?: unknown }).mode === "legacy";
+	return Array.isArray(metadata?.styleRules) && metadata.styleRules.length > 0;
+}
+
+/**
+ * The Semantic CSS stylesheet that reproduces legacy-styled data. A draft typed in the old editor but never activated
+ * was never on the page, so the converted rules (what the page showed) win and the draft is kept after them, commented
+ * out, unless that would push the stylesheet over its size limit. The rules themselves are left in the data.
+ */
+export function convertLegacyStylesheet(data: ResumeData): SemanticStylesheet {
+	const converted = convertLegacyStyleRules(data).source;
+	const draft = data.metadata.stylesheet?.source.text.replace(/^\s*@version\s+\d+\s*;\s*/, "").trim();
+	const withDraft =
+		draft && draft !== converted.text.trim()
+			? `${converted.text}${converted.text ? "\n" : ""}/* Unapplied draft from the old editor:\n${draft.replaceAll("*/", "*\\/")}\n*/\n`
+			: converted.text;
+	const text =
+		new TextEncoder().encode(withDraft).byteLength > SEMANTIC_CSS_LIMITS_V1.maxSourceBytes ? converted.text : withDraft;
+	return { mode: "semantic", source: { ...converted, text } };
 }

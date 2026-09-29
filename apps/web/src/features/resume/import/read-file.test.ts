@@ -75,6 +75,27 @@ describe("parseResumeJson", () => {
 	});
 });
 
+describe("parseResumeJson (legacy styles)", () => {
+	it("converts an old export's legacy style rules into its stylesheet", () => {
+		const data = structuredClone(sampleResumeData);
+		data.metadata.stylesheet = undefined;
+		data.metadata.styleRules = [
+			{
+				id: "r",
+				label: "Teal headings",
+				enabled: true,
+				target: { scope: "global" },
+				slots: { heading: { color: "#0f766e" } },
+			},
+		];
+
+		const imported = parseResumeJson(JSON.stringify(data), "reactive-resume-json");
+
+		expect(imported.metadata.stylesheet?.mode).toBe("semantic");
+		expect(imported.metadata.stylesheet?.source.text).toContain("color: #0f766e;");
+	});
+});
+
 describe("summarizeImport", () => {
 	it("counts sections with content, their entries and dates flagged for a look", () => {
 		const data = parseResumeData(structuredClone(sampleResumeData));

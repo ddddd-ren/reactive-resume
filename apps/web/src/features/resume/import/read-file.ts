@@ -3,6 +3,7 @@ import { t } from "@lingui/core/macro";
 import { parseJSONResume } from "@reactive-resume/import/json-resume";
 import { parseReactiveResumeJSON } from "@reactive-resume/import/reactive-resume-json";
 import { parseReactiveResumeV4JSON } from "@reactive-resume/import/reactive-resume-v4-json";
+import { convertLegacyStylesheet, needsLegacyStyleConversion } from "@reactive-resume/pdf/semantic-legacy";
 import { forEachDatedEntry } from "@reactive-resume/schema/resume/dates";
 import { client } from "@/libs/orpc/client";
 
@@ -20,6 +21,12 @@ type ResumeJsonKind = "reactive-resume-json" | "reactive-resume-v4-json" | "json
 
 /** An import failure worded for the person importing. */
 export class ImportError extends Error {}
+
+// Exports from before Semantic CSS carry legacy style rules, which nothing renders any more: they come in converted.
+const withLegacyStylesConverted = (data: ResumeData): ResumeData =>
+	needsLegacyStyleConversion(data.metadata)
+		? { ...data, metadata: { ...data.metadata, stylesheet: convertLegacyStylesheet(data) } }
+		: data;
 
 export function detectJsonImportKind(parsed: unknown): ImportKind | null {
 	if (!parsed || typeof parsed !== "object") return null;
@@ -82,7 +89,7 @@ export async function detectImportKind(file: File): Promise<ImportKind | null> {
 }
 
 export function parseResumeJson(text: string, kind: ResumeJsonKind): ResumeData {
-	if (kind === "reactive-resume-json") return parseReactiveResumeJSON(text);
+	if (kind === "reactive-resume-json") return withLegacyStylesConverted(parseReactiveResumeJSON(text));
 	if (kind === "reactive-resume-v4-json") return parseReactiveResumeV4JSON(text);
 	return parseJSONResume(text);
 }
