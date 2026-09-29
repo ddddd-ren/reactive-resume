@@ -30,7 +30,7 @@ describe("Sheet", () => {
 				<SheetContent>visible</SheetContent>
 			</Sheet>,
 		);
-		const content = screen.getByText("visible");
+		const content = screen.getByText("visible").closest('[data-slot="sheet-content"]');
 		expect(content).toHaveAttribute("data-side", "right");
 	});
 
@@ -41,7 +41,10 @@ describe("Sheet", () => {
 				<SheetContent side={side}>visible {side}</SheetContent>
 			</Sheet>,
 		);
-		expect(screen.getByText(`visible ${side}`)).toHaveAttribute("data-side", side);
+		expect(screen.getByText(`visible ${side}`).closest('[data-slot="sheet-content"]')).toHaveAttribute(
+			"data-side",
+			side,
+		);
 	});
 
 	it("renders close button by default", () => {

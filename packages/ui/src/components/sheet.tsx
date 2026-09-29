@@ -74,7 +74,8 @@ function SheetContent({
 			{side === "bottom" && (
 				<span aria-hidden="true" className="mx-auto block h-[5px] w-9 shrink-0 rounded-full bg-line-2" />
 			)}
-			{children}
+			{/* Content is where a mouse press clicks rather than starts a swipe; `contents` keeps it out of the layout. */}
+			<SheetPrimitive.Content className="contents">{children}</SheetPrimitive.Content>
 			{showCloseButton && (
 				<SheetPrimitive.Close
 					data-slot="sheet-close"
