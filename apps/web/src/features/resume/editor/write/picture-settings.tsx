@@ -489,7 +489,7 @@ type CropState = {
 /** Every photo option: upload with crop, address, show or hide, delete, fit, size, rotation, shape, border and shadow. */
 export function PictureSettings() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
-	const appOrigin = typeof window === "undefined" ? "" : window.location.origin;
+	const appOrigin = window.location.origin;
 
 	const [cropState, setCropState] = useState<CropState | null>(null);
 	const [crop, setCrop] = useState({ x: 0, y: 0 });

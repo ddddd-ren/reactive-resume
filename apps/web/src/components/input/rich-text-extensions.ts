@@ -359,7 +359,6 @@ const parsedTablesMatchSource = (sourceTables: readonly string[], tables: readon
 };
 
 export const hasUnsupportedTableMarkup = (html: string) => {
-	if (typeof DOMParser === "undefined") return false;
 	const tableMarkers = tableMarkersFrom(html);
 	if (tableMarkers.length === 0) return false;
 	const document = new DOMParser().parseFromString(html, "text/html");

@@ -21,8 +21,4 @@ document.querySelectorAll(serverSeoSelectors.join(",")).forEach((element) => {
 	element.remove();
 });
 
-if (!rootElement.innerHTML) {
-	const root = ReactDOM.createRoot(rootElement);
-
-	root.render(<RouterProvider router={router} />);
-}
+ReactDOM.createRoot(rootElement).render(<RouterProvider router={router} />);

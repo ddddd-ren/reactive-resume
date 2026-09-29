@@ -5,7 +5,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { SettingsSection } from "../section";
 
 export function McpSection() {
-	const address = typeof window === "undefined" ? "/mcp" : `${window.location.origin}/mcp`;
+	const address = `${window.location.origin}/mcp`;
 	const [copied, setCopied] = useState(false);
 	const [, copy] = useCopyToClipboard();
 

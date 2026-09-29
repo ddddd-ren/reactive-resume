@@ -1,19 +1,9 @@
-const productionRootUrl = "https://rxresu.me/";
 const appName = "Reactive Resume";
 const repositoryUrl = "https://github.com/reactive-resume/reactive-resume";
 
 type JsonLd = Record<string, unknown>;
 
-export const getCanonicalRootUrl = (origin?: string): string => {
-	if (!origin) return productionRootUrl;
-
-	const url = new URL(origin);
-	url.pathname = "/";
-	url.search = "";
-	url.hash = "";
-
-	return url.toString();
-};
+export const getCanonicalRootUrl = (origin: string): string => new URL("/", origin).href;
 
 export const createNoindexFollowMeta = () => ({ name: "robots", content: "noindex, follow" });
 

@@ -59,8 +59,6 @@ function ChipDragOverlay({ activeChip }: ChipDragOverlayProps) {
 		<DragOverlay dropAnimation={null}>{activeChip ? <ChipDragPreview chip={activeChip} /> : null}</DragOverlay>
 	);
 
-	if (typeof document === "undefined") return overlay;
-
 	return createPortal(overlay, document.body);
 }
 

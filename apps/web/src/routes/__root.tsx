@@ -48,7 +48,7 @@ const iconContextValue: IconProps = { size: 16, weight: "regular" };
 export const Route = createRootRouteWithContext<RouterContext>()({
 	component: RootComponent,
 	head: () => {
-		const appUrl = typeof window !== "undefined" ? window.location.origin : "https://rxresu.me";
+		const appUrl = window.location.origin;
 
 		return {
 			links: [

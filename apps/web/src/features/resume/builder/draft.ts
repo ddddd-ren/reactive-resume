@@ -182,7 +182,6 @@ function getResumeQueryKey(id: string): QueryKey {
 }
 
 export function isEditableElementFocused(): boolean {
-	if (typeof document === "undefined") return false;
 	const element = document.activeElement as HTMLElement | null;
 	if (!element) return false;
 	return (
@@ -211,7 +210,7 @@ function applyDeferredRemoteResume(id: string) {
 
 	const resume = runtime.deferredRemoteResume;
 	runtime.deferredRemoteResume = undefined;
-	if (runtime.deferredFocusHandler && typeof document !== "undefined") {
+	if (runtime.deferredFocusHandler) {
 		document.removeEventListener("focusout", runtime.deferredFocusHandler, true);
 		runtime.deferredFocusHandler = undefined;
 	}
@@ -228,7 +227,7 @@ function deferRemoteResumeUntilBlur(id: string, resume: Resume) {
 	const runtime = getRuntime(id);
 	runtime.deferredRemoteResume = resume;
 
-	if (runtime.deferredFocusHandler || typeof document === "undefined") return;
+	if (runtime.deferredFocusHandler) return;
 
 	const handler = () => {
 		// Let focus settle (e.g. tabbing between fields) before deciding editing has ended.
@@ -337,17 +336,15 @@ function createRuntime(): Runtime {
 		sessionId: crypto.randomUUID(),
 	};
 
-	if (typeof window !== "undefined") {
-		runtime.beforeUnloadHandler = () => runtime.syncResume.flush();
-		window.addEventListener("beforeunload", runtime.beforeUnloadHandler);
-		// Changes made offline are sent as soon as the connection comes back.
-		runtime.onlineHandler = () => {
-			const current = useResumeStore.getState().resume;
-			if (!runtime.hasPendingLocalChanges || !current) return;
-			queueResumeSave(current);
-		};
-		window.addEventListener("online", runtime.onlineHandler);
-	}
+	runtime.beforeUnloadHandler = () => runtime.syncResume.flush();
+	window.addEventListener("beforeunload", runtime.beforeUnloadHandler);
+	// Changes made offline are sent as soon as the connection comes back.
+	runtime.onlineHandler = () => {
+		const current = useResumeStore.getState().resume;
+		if (!runtime.hasPendingLocalChanges || !current) return;
+		queueResumeSave(current);
+	};
+	window.addEventListener("online", runtime.onlineHandler);
 
 	return runtime;
 }
@@ -376,15 +373,15 @@ function cleanupRuntime(id: string) {
 	runtime.syncResume.flush();
 	runtime.abortController.abort();
 
-	if (runtime.beforeUnloadHandler && typeof window !== "undefined") {
+	if (runtime.beforeUnloadHandler) {
 		window.removeEventListener("beforeunload", runtime.beforeUnloadHandler);
 	}
 
-	if (runtime.onlineHandler && typeof window !== "undefined") {
+	if (runtime.onlineHandler) {
 		window.removeEventListener("online", runtime.onlineHandler);
 	}
 
-	if (runtime.deferredFocusHandler && typeof document !== "undefined") {
+	if (runtime.deferredFocusHandler) {
 		document.removeEventListener("focusout", runtime.deferredFocusHandler, true);
 	}
 

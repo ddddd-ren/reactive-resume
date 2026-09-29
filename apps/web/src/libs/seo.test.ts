@@ -7,10 +7,6 @@ import {
 } from "./seo";
 
 describe("getCanonicalRootUrl", () => {
-	it("uses the production root when no origin is available", () => {
-		expect(getCanonicalRootUrl()).toBe("https://rxresu.me/");
-	});
-
 	it("normalizes an app origin to the root URL", () => {
 		expect(getCanonicalRootUrl("http://localhost:3000")).toBe("http://localhost:3000/");
 		expect(getCanonicalRootUrl("https://rxresu.me/")).toBe("https://rxresu.me/");

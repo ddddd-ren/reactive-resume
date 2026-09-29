@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_home/ats-checker")({
 	// Back from signing up with a checked file to import.
 	validateSearch: z.object({ import: z.coerce.boolean().optional().catch(undefined) }),
 	head: () => {
-		const origin = typeof window === "undefined" ? "https://rxresu.me" : window.location.origin;
+		const origin = window.location.origin;
 		const canonicalUrl = new URL("/ats-checker", origin).toString();
 		const imageUrl = new URL("/opengraph/ats-checker.png", origin).toString();
 

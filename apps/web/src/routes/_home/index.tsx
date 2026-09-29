@@ -1,7 +1,6 @@
 import { ORPCError } from "@orpc/client";
-import { ClientOnly, createFileRoute, lazyRouteComponent, redirect } from "@tanstack/react-router";
+import { createFileRoute, lazyRouteComponent, redirect } from "@tanstack/react-router";
 import { getResumeSocialMeta } from "@reactive-resume/resume/social-meta";
-import { LoadingScreen } from "@/components/layout/loading-screen";
 import { NotFoundScreen } from "@/components/layout/not-found-screen";
 import { Homepage } from "@/features/homepage/page";
 import { orpc } from "@/libs/orpc/client";
@@ -50,7 +49,7 @@ export const Route = createFileRoute("/_home/")({
 				links: [{ rel: "canonical", href: canonicalUrl }],
 			};
 		}
-		const appUrl = typeof window !== "undefined" ? window.location.origin : "https://rxresu.me";
+		const appUrl = window.location.origin;
 		const canonicalUrl = getCanonicalRootUrl(appUrl);
 
 		return {
@@ -70,11 +69,7 @@ function RouteComponent() {
 			</main>
 		);
 	if (root.status === "public") {
-		return (
-			<ClientOnly fallback={<LoadingScreen />}>
-				<PublicResumePage resume={root.resume} username={root.username} slug={root.slug} flags={flags} isRoot />
-			</ClientOnly>
-		);
+		return <PublicResumePage resume={root.resume} username={root.username} slug={root.slug} flags={flags} isRoot />;
 	}
 
 	return <Homepage />;

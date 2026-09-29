@@ -128,7 +128,7 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 	const context = useRouteContext({ strict: false });
 	const smtpEnabled = context.flags?.smtpEnabled ?? false;
 	const user = session.user;
-	const host = typeof window === "undefined" ? "" : window.location.host;
+	const host = window.location.host;
 
 	const updateUser = async (patch: Parameters<typeof authClient.updateUser>[0]) => {
 		const { error } = await authClient.updateUser(patch);

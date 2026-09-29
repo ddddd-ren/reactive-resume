@@ -95,7 +95,6 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 
 	useEffect(() => {
 		if (!("passkey" in providers)) return;
-		if (typeof window === "undefined") return;
 		if (!("PublicKeyCredential" in window)) return;
 		if (!PublicKeyCredential.isConditionalMediationAvailable) return;
 		if (hasStartedConditionalPasskeyRef.current) return;

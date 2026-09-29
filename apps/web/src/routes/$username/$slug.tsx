@@ -9,7 +9,6 @@ import { createNoindexFollowMeta, createResumeSocialMeta, getCanonicalRootUrl } 
 type LoaderData = Omit<RouterOutput["resume"]["getBySlug"], "data"> & { data: ResumeData };
 
 export const Route = createFileRoute("/$username/$slug")({
-	ssr: "data-only",
 	component: lazyRouteComponent(() => import("@/features/resume/public/public-resume"), "PublicResumeRoute"),
 	notFoundComponent: lazyRouteComponent(
 		() => import("@/features/resume/public/public-resume"),
@@ -38,7 +37,7 @@ export const Route = createFileRoute("/$username/$slug")({
 
 		const social = getResumeSocialMeta(resume.data, resume.name || "Resume");
 
-		const base = getCanonicalRootUrl(typeof window === "undefined" ? undefined : window.location.origin);
+		const base = getCanonicalRootUrl(window.location.origin);
 		const canonicalUrl = `${base}${params.username}/${params.slug}`;
 		const imageUrl = `${base}opengraph/banner.jpg`;
 

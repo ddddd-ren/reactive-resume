@@ -122,7 +122,6 @@ function renderRichTextNode(node: ChildNode, key: string): ReactNode {
 
 function RichText({ html }: { html: string }) {
 	if (!html.trim()) return null;
-	if (typeof DOMParser === "undefined") return stripHtml(html);
 
 	const body = new DOMParser().parseFromString(html, "text/html").body;
 	return Array.from(body.childNodes).map((node, index) => renderRichTextNode(node, `rich-text-${index}`));
@@ -130,7 +129,6 @@ function RichText({ html }: { html: string }) {
 
 function hasRenderableRichText(html: string): boolean {
 	if (!html.trim()) return false;
-	if (typeof DOMParser === "undefined") return stripHtml(html).trim().length > 0;
 
 	const body = new DOMParser().parseFromString(html, "text/html").body;
 	const getText = (node: ChildNode): string => {
