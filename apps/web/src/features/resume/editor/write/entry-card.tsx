@@ -142,7 +142,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 						</span>
 						{draft && (
 							<Badge variant="neutral" className="shrink-0">
-								<Trans>Draft · not printed</Trans>
+								<Trans>Draft</Trans>
 							</Badge>
 						)}
 						{entry.hidden && (
@@ -171,7 +171,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 					<CollapsibleContent>
 						<fieldset
 							disabled={locked}
-							className="m-0 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2.5 border-0 border-line border-t px-3 pt-3 pb-3.5"
+							className="m-0 grid min-w-0 gap-y-2.5 border-0 border-line border-t px-3 pt-3 pb-3.5"
 						>
 							{fields}
 						</fieldset>
@@ -237,7 +237,7 @@ function PhoneEntryScreen({ section, title, locked, onBack, onDelete, children }
 			</div>
 			<fieldset
 				disabled={locked}
-				className="m-0 grid min-w-0 flex-1 auto-rows-min grid-cols-2 gap-x-3 gap-y-3 overflow-y-auto border-0 p-4 [&_input]:h-11"
+				className="m-0 grid min-w-0 flex-1 auto-rows-min gap-y-3 overflow-y-auto border-0 p-4 [&_input]:h-11"
 			>
 				{children}
 			</fieldset>

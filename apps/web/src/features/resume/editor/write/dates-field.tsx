@@ -49,7 +49,7 @@ function MonthYearInput({
 	const formatted = value ? formatYearMonth(value, { locale, format }) : "";
 
 	return (
-		<div className="relative w-[132px]">
+		<div className="relative min-w-0 flex-1">
 			<Icon
 				name="calendar_month"
 				size={18}
@@ -109,7 +109,7 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 				{single ? <Trans>Date</Trans> : <Trans>Dates</Trans>}
 			</legend>
 
-			<div className="flex flex-wrap items-center gap-2">
+			<div className="flex items-center gap-2">
 				<MonthYearInput
 					label={single ? t`Date` : t`Start`}
 					value={dates.start}
@@ -134,17 +134,22 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 							onCommit={(end) => onChange({ ...current, end })}
 							onInvalid={setInvalidFor("end")}
 						/>
-						{/* biome-ignore lint/a11y/noLabelWithoutControl: Base UI's Switch is the control; wrapping it in a label is its documented pattern. */}
-						<label className="flex cursor-pointer items-center gap-2 p-1 text-sm">
-							<Switch
-								checked={dates.present}
-								onCheckedChange={(present) => onChange({ ...current, present, end: present ? null : dates.end })}
-							/>
-							<Trans>Present</Trans>
-						</label>
 					</>
 				)}
 			</div>
+
+			{!single && (
+				<>
+					{/* biome-ignore lint/a11y/noLabelWithoutControl: Base UI's Switch is the control; wrapping it in a label is its documented pattern. */}
+					<label className="flex w-fit cursor-pointer items-center gap-2 p-1 text-sm">
+						<Switch
+							checked={dates.present}
+							onCheckedChange={(present) => onChange({ ...current, present, end: present ? null : dates.end })}
+						/>
+						<Trans>Present</Trans>
+					</label>
+				</>
+			)}
 
 			<div id={`${id}-note`}>
 				{hasError ? (

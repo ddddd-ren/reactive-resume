@@ -95,12 +95,12 @@ describe("WritePanel", () => {
 
 		fireEvent.click(within(experience).getByRole("button", { name: "Add experience" }));
 
-		await waitFor(() => expect(within(experience).getByText("Draft · not printed")).toBeInTheDocument());
+		await waitFor(() => expect(within(experience).getByText("Draft", { exact: true })).toBeInTheDocument());
 		expect(document.activeElement).toHaveAttribute("data-entry-field", "position");
 
 		fireEvent.change(within(experience).getByRole("textbox", { name: "Company" }), { target: { value: "Lumen" } });
 
-		expect(within(experience).queryByText("Draft · not printed")).not.toBeInTheDocument();
+		expect(within(experience).queryByText("Draft", { exact: true })).not.toBeInTheDocument();
 		expect(data().sections.experience.items.at(-1)).toMatchObject({ company: "Lumen" });
 	});
 

@@ -167,7 +167,7 @@ export function MoreOptions({ children }: MoreOptionsProps) {
 				<Trans>More options</Trans>
 			</CollapsibleTrigger>
 			<CollapsibleContent hiddenUntilFound>
-				<div className="grid grid-cols-2 gap-x-3 gap-y-2.5 pt-3">{children}</div>
+				<div className="grid gap-y-2.5 pt-3">{children}</div>
 			</CollapsibleContent>
 		</Collapsible>
 	);

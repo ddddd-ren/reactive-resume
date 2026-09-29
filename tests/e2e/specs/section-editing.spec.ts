@@ -12,7 +12,7 @@ test("adds an experience item and persists it across reloads", async ({ authPage
 
 	// The new draft opens in place with its first field focused; it saves as you type.
 	const entry = page.locator("#sidebar-experience [data-entry-id]").last();
-	await expect(entry.getByText("Draft · not printed")).toBeVisible();
+	await expect(entry.getByText("Draft", { exact: true })).toBeVisible();
 	await expect(entry.getByRole("textbox", { name: "Position" })).toBeFocused();
 
 	const savePromise = page.waitForResponse((response) => {
@@ -26,7 +26,7 @@ test("adds an experience item and persists it across reloads", async ({ authPage
 	await savePromise;
 
 	// With a company it's no longer a draft, and its card reads "company · …"
-	await expect(entry.getByText("Draft · not printed")).toHaveCount(0);
+	await expect(entry.getByText("Draft", { exact: true })).toHaveCount(0);
 	await expect(page.getByText(company).filter({ visible: true }).first()).toBeVisible();
 
 	// And it survives a full reload
