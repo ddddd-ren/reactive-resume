@@ -3,7 +3,9 @@ import { Trans } from "@lingui/react/macro";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
+import { cn } from "@reactive-resume/utils/style";
 import { useResumeStore } from "@/features/resume/builder/draft";
+import { ENTER_CLASS } from "@/libs/motion";
 
 /** The save state under the document name: Saved, Saving…, Offline · saved on this device, or Not saved · Retry. */
 export function SaveStatus() {
@@ -25,7 +27,7 @@ export function SaveStatus() {
 				</>
 			)}
 			{status === "offline" && (
-				<span className="flex min-w-0 items-center gap-1.5 text-warn-text">
+				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-warn-text")}>
 					<Icon name="cloud_off" size={16} />
 					<span className="truncate">
 						<Trans>Offline · saved on this device</Trans>
@@ -33,7 +35,7 @@ export function SaveStatus() {
 				</span>
 			)}
 			{status === "error" && (
-				<span className="flex min-w-0 items-center gap-1.5 text-danger-text">
+				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-danger-text")}>
 					<Icon name="sync_problem" size={16} />
 					<Trans>Not saved</Trans>
 					<span aria-hidden="true">·</span>
@@ -57,7 +59,7 @@ export function OfflineBanner({ className }: { className?: string }) {
 	if (!offline) return null;
 
 	return (
-		<Alert variant="warn" role="status" className={className}>
+		<Alert variant="warn" role="status" className={cn(ENTER_CLASS, className)}>
 			<Icon name="wifi_off" size={20} />
 			<AlertDescription>
 				<Trans>You can keep editing. Changes sync when you're back online. Download and Share need a connection.</Trans>

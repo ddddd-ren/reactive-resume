@@ -20,6 +20,7 @@ import { detectImportKind, ImportError, readResumeFile, summarizeImport } from "
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { formatRelativeTime } from "@/libs/locale";
+import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 import { useNewDocumentsStore } from "./new-documents";
 
@@ -169,16 +170,19 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	if (step.name === "copy") {
 		return (
 			<DialogContent className="sm:max-w-[640px]">
-				<CopyForJob
-					initialSourceId={data?.sourceResumeId}
-					initialJobId={data?.applicationId}
-					onBack={data?.step === "copy" ? undefined : () => setStep({ name: "choose" })}
-					onCreated={(resumeId, forJob) => {
-						markNew(resumeId);
-						void refreshDocuments();
-						openResume(resumeId, { withAssistant: forJob });
-					}}
-				/>
+				{/* Each step fades up into place as it replaces the last; the dialog's height changes in the same frame. */}
+				<div key="copy" className={cn(ENTER_CLASS, "grid gap-4")}>
+					<CopyForJob
+						initialSourceId={data?.sourceResumeId}
+						initialJobId={data?.applicationId}
+						onBack={data?.step === "copy" ? undefined : () => setStep({ name: "choose" })}
+						onCreated={(resumeId, forJob) => {
+							markNew(resumeId);
+							void refreshDocuments();
+							openResume(resumeId, { withAssistant: forJob });
+						}}
+					/>
+				</div>
 			</DialogContent>
 		);
 	}
@@ -186,157 +190,172 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	if (step.name !== "choose") {
 		return (
 			<DialogContent className="sm:max-w-[640px]">
-				<DialogHeader>
-					<DialogTitle className="font-display font-medium text-[22px]">
-						{step.name === "failed" ? <Trans>Couldn't import</Trans> : <Trans>Importing</Trans>}
-					</DialogTitle>
-				</DialogHeader>
-				{fileInput}
-				<div className="flex items-center gap-3 rounded-[10px] border border-line p-3">
-					<Icon name="picture_as_pdf" className="text-ink-2" />
-					<span className="grid min-w-0 flex-1">
-						<span className="truncate font-medium text-sm">{step.file.name}</span>
-						<span className="text-ink-3 text-xs">{formatSize(step.file.size)}</span>
-					</span>
-					{step.name === "importing" && (
-						<Button
-							variant="ghost"
-							size="sm"
-							onClick={() => {
-								run.current++;
-								setStep({ name: "choose" });
-							}}
-						>
-							<Trans>Cancel</Trans>
-						</Button>
+				<div key="progress" className={cn(ENTER_CLASS, "grid gap-4")}>
+					<DialogHeader>
+						<DialogTitle className="font-display font-medium text-[22px]">
+							{step.name === "failed" ? <Trans>Couldn't import</Trans> : <Trans>Importing</Trans>}
+						</DialogTitle>
+					</DialogHeader>
+					{fileInput}
+					<div className="flex items-center gap-3 rounded-[10px] border border-line p-3">
+						<Icon name="picture_as_pdf" className="text-ink-2" />
+						<span className="grid min-w-0 flex-1">
+							<span className="truncate font-medium text-sm">{step.file.name}</span>
+							<span className="text-ink-3 text-xs">{formatSize(step.file.size)}</span>
+						</span>
+						{step.name === "importing" && (
+							<Button
+								variant="ghost"
+								size="sm"
+								onClick={() => {
+									run.current++;
+									setStep({ name: "choose" });
+								}}
+							>
+								<Trans>Cancel</Trans>
+							</Button>
+						)}
+					</div>
+
+					{/* One ImportProgress for importing and imported, so its checks don't replay when the import finishes. */}
+					{step.name !== "failed" && (
+						<ImportProgress
+							stage={step.name === "imported" ? 3 : step.stage}
+							notes={
+								step.name === "imported"
+									? [t`file read`, t`${step.sections} sections`, t`${step.entries} entries`]
+									: step.notes
+							}
+						/>
+					)}
+
+					{step.name === "failed" && (
+						<>
+							<div
+								role="alert"
+								className={cn(
+									ENTER_CLASS,
+									"flex gap-2.5 rounded-[10px] bg-danger-soft p-3 text-[13px] text-danger-text leading-[19px]",
+								)}
+							>
+								<Icon name="error" size={20} />
+								<span>{step.message}</span>
+							</div>
+							<div className={cn(ENTER_CLASS, "flex flex-wrap justify-end gap-2")}>
+								<Button variant="secondary" onClick={() => void startBlank()} disabled={creating}>
+									<Trans>Start blank</Trans>
+								</Button>
+								<Button onClick={chooseFile}>
+									<Trans>Choose another file</Trans>
+								</Button>
+							</div>
+						</>
+					)}
+
+					{step.name === "imported" && (
+						<>
+							<p role="status" className={cn(ENTER_CLASS, "flex gap-2 text-[13px] leading-[19px]")}>
+								<Icon
+									name="check_circle"
+									size={20}
+									className="starting:scale-80 text-accent-text starting:opacity-0 transition-[opacity,scale] duration-standard ease-enter"
+								/>
+								<span>
+									<Trans>
+										{step.sections} sections and {step.entries} entries found.
+									</Trans>{" "}
+									{step.flagged > 0 && <Trans>{step.flagged} fields are flagged for a quick look in the editor.</Trans>}
+								</span>
+							</p>
+							<div className={cn(ENTER_CLASS, "flex flex-wrap justify-end gap-2")}>
+								<Button variant="secondary" onClick={closeDialog}>
+									<Trans>Stay here</Trans>
+								</Button>
+								<Button onClick={() => openResume(step.resumeId, { importedFrom: step.file.name })}>
+									<Trans>Open in editor</Trans>
+								</Button>
+							</div>
+						</>
 					)}
 				</div>
-
-				{step.name === "failed" ? (
-					<>
-						<div
-							role="alert"
-							className="flex gap-2.5 rounded-[10px] bg-danger-soft p-3 text-[13px] text-danger-text leading-[19px]"
-						>
-							<Icon name="error" size={20} />
-							<span>{step.message}</span>
-						</div>
-						<div className="flex flex-wrap justify-end gap-2">
-							<Button variant="secondary" onClick={() => void startBlank()} disabled={creating}>
-								<Trans>Start blank</Trans>
-							</Button>
-							<Button onClick={chooseFile}>
-								<Trans>Choose another file</Trans>
-							</Button>
-						</div>
-					</>
-				) : step.name === "importing" ? (
-					<ImportProgress stage={step.stage} notes={step.notes} />
-				) : (
-					<>
-						<ImportProgress
-							stage={3}
-							notes={[t`file read`, t`${step.sections} sections`, t`${step.entries} entries`]}
-						/>
-						<p role="status" className="flex gap-2 text-[13px] leading-[19px]">
-							<Icon
-								name="check_circle"
-								size={20}
-								className="starting:scale-80 text-accent-text starting:opacity-0 transition-[opacity,scale] duration-standard ease-enter"
-							/>
-							<span>
-								<Trans>
-									{step.sections} sections and {step.entries} entries found.
-								</Trans>{" "}
-								{step.flagged > 0 && <Trans>{step.flagged} fields are flagged for a quick look in the editor.</Trans>}
-							</span>
-						</p>
-						<div className="flex flex-wrap justify-end gap-2">
-							<Button variant="secondary" onClick={closeDialog}>
-								<Trans>Stay here</Trans>
-							</Button>
-							<Button onClick={() => openResume(step.resumeId, { importedFrom: step.file.name })}>
-								<Trans>Open in editor</Trans>
-							</Button>
-						</div>
-					</>
-				)}
 			</DialogContent>
 		);
 	}
 
 	return (
 		<DialogContent className="sm:max-w-[640px]">
-			<DialogHeader>
-				<DialogTitle className="font-display font-medium text-[22px]">
-					<Trans>New document</Trans>
-				</DialogTitle>
-				<DialogDescription className="sr-only">
-					<Trans>Import a resume, copy one for a job, or start blank.</Trans>
-				</DialogDescription>
-			</DialogHeader>
-			{fileInput}
+			<div key="choose" className={cn(ENTER_CLASS, "grid gap-4")}>
+				<DialogHeader>
+					<DialogTitle className="font-display font-medium text-[22px]">
+						<Trans>New document</Trans>
+					</DialogTitle>
+					<DialogDescription className="sr-only">
+						<Trans>Import a resume, copy one for a job, or start blank.</Trans>
+					</DialogDescription>
+				</DialogHeader>
+				{fileInput}
 
-			<button
-				type="button"
-				onClick={chooseFile}
-				onDragOver={(event) => event.preventDefault()}
-				onDrop={(event) => {
-					event.preventDefault();
-					const file = event.dataTransfer.files[0];
-					if (file) void importFile(file);
-				}}
-				className="flex items-start gap-4 rounded-xl border-[1.5px] border-line-2 border-dashed p-5 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-accent hover:bg-accent-soft active:scale-[0.98]"
-			>
-				<span className="grid size-11 shrink-0 place-items-center rounded-[10px] bg-sunken text-ink-2">
-					<Icon name="upload_file" size={24} />
-				</span>
-				<span className="grid gap-1">
-					<span className="font-semibold text-[15px]">
-						<Trans>Import a resume</Trans>
-					</span>
-					<span className="text-[13px] text-ink-2 leading-[19px]">
-						<Trans>
-							Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and flag
-							anything we're unsure of.
-						</Trans>
-					</span>
-				</span>
-			</button>
-
-			<div className="grid gap-3 sm:grid-cols-2">
-				<ChoiceTile
-					icon="content_copy"
-					title={t`Copy a resume for a job`}
-					description={t`Start from one you have and link the application.`}
-					onClick={() => setStep({ name: "copy" })}
-				/>
-				<ChoiceTile
-					icon="note_add"
-					title={t`Start blank`}
-					description={t`Opens the editor on your name. Nothing else to fill in first.`}
-					disabled={creating}
-					onClick={() => void startBlank()}
-				/>
-			</div>
-
-			<div className="flex flex-wrap items-center justify-between gap-2 border-line border-t pt-4 text-[13px]">
 				<button
 					type="button"
-					className="flex items-center gap-1.5 text-ink-2 hover:text-ink"
-					onClick={() => void newLetter()}
+					onClick={chooseFile}
+					onDragOver={(event) => event.preventDefault()}
+					onDrop={(event) => {
+						event.preventDefault();
+						const file = event.dataTransfer.files[0];
+						if (file) void importFile(file);
+					}}
+					className="flex items-start gap-4 rounded-xl border-[1.5px] border-line-2 border-dashed p-5 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-accent hover:bg-accent-soft active:scale-[0.98]"
 				>
-					<Icon name="mail" size={18} />
-					<Trans>New cover letter instead</Trans>
+					<span className="grid size-11 shrink-0 place-items-center rounded-[10px] bg-sunken text-ink-2">
+						<Icon name="upload_file" size={24} />
+					</span>
+					<span className="grid gap-1">
+						<span className="font-semibold text-[15px]">
+							<Trans>Import a resume</Trans>
+						</span>
+						<span className="text-[13px] text-ink-2 leading-[19px]">
+							<Trans>
+								Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and flag
+								anything we're unsure of.
+							</Trans>
+						</span>
+					</span>
 				</button>
-				<button
-					type="button"
-					className="text-ink-2 underline underline-offset-2 hover:text-ink"
-					disabled={creating}
-					onClick={() => void trySample()}
-				>
-					<Trans>Try with a sample resume</Trans>
-				</button>
+
+				<div className="grid gap-3 sm:grid-cols-2">
+					<ChoiceTile
+						icon="content_copy"
+						title={t`Copy a resume for a job`}
+						description={t`Start from one you have and link the application.`}
+						onClick={() => setStep({ name: "copy" })}
+					/>
+					<ChoiceTile
+						icon="note_add"
+						title={t`Start blank`}
+						description={t`Opens the editor on your name. Nothing else to fill in first.`}
+						disabled={creating}
+						onClick={() => void startBlank()}
+					/>
+				</div>
+
+				<div className="flex flex-wrap items-center justify-between gap-2 border-line border-t pt-4 text-[13px]">
+					<button
+						type="button"
+						className="flex items-center gap-1.5 text-ink-2 hover:text-ink"
+						onClick={() => void newLetter()}
+					>
+						<Icon name="mail" size={18} />
+						<Trans>New cover letter instead</Trans>
+					</button>
+					<button
+						type="button"
+						className="text-ink-2 underline underline-offset-2 hover:text-ink"
+						disabled={creating}
+						onClick={() => void trySample()}
+					>
+						<Trans>Try with a sample resume</Trans>
+					</button>
+				</div>
 			</div>
 		</DialogContent>
 	);
@@ -451,9 +470,9 @@ function ImportProgress({ stage, notes }: { stage: number; notes: string[] }) {
 							className={cn("flex items-center gap-2.5 text-sm", done || current ? "text-ink" : "text-ink-3")}
 						>
 							{done ? (
-								<Icon name="check_circle" size={18} className="text-accent-text" />
+								<Icon name="check_circle" size={18} className={cn(POP_CLASS, "text-accent-text")} />
 							) : current ? (
-								<Spinner decorative className="size-[18px]" />
+								<Spinner decorative className={cn(POP_CLASS, "size-[18px]")} />
 							) : (
 								<span className="size-[18px] rounded-full border-[1.5px] border-line-2" />
 							)}

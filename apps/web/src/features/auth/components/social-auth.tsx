@@ -10,6 +10,7 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { authClient } from "@/libs/auth/client";
+import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { sessionQueryKey } from "@/libs/root-context";
 import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
@@ -81,7 +82,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 	};
 
 	return (
-		<div className="grid grid-cols-2 gap-4">
+		<div className={cn(ENTER_CLASS, "grid grid-cols-2 gap-4")}>
 			<Button
 				variant="secondary"
 				onClick={() =>

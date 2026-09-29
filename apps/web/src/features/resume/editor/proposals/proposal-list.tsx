@@ -6,9 +6,11 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useId, useState } from "react";
 import { applyProposal, getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
+import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { useEditorStore } from "../store";
 
 /** The visible text of a passage's HTML, for the card. */
@@ -208,14 +210,21 @@ function ProposalItem(props: ProposalItemProps) {
 				</div>
 			) : (
 				<p
+					key={state}
 					className={cn(
-						"flex items-center gap-2 font-medium text-xs",
+						ENTER_CLASS,
+						"flex min-h-7 items-center gap-2 font-medium text-xs",
 						state === "accepted" && "text-accent-text",
 						state === "rejected" && "text-ink-3",
 						state === "stale" && "text-warn-text",
 					)}
 				>
-					{state === "accepted" && <Trans>Applied</Trans>}
+					{state === "accepted" && (
+						<>
+							<Icon name="check" size={16} className={POP_CLASS} />
+							<Trans>Applied</Trans>
+						</>
+					)}
 					{state === "rejected" && <Trans>Rejected</Trans>}
 					{state === "stale" && (
 						<>

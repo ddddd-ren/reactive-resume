@@ -2,6 +2,7 @@ import { Trans } from "@lingui/react/macro";
 import { useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Swap } from "@reactive-resume/ui/components/swap";
 import { SettingsSection } from "../section";
 
 export function McpSection() {
@@ -28,7 +29,7 @@ export function McpSection() {
 						setTimeout(() => setCopied(false), 2000);
 					}}
 				>
-					{copied ? <Trans>Copied</Trans> : <Trans>Copy</Trans>}
+					<Swap swapped={copied} from={<Trans>Copy</Trans>} to={<Trans>Copied</Trans>} />
 				</Button>
 			</div>
 			<a

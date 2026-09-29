@@ -79,6 +79,48 @@ export function AssistantColumn({ children }: AssistantColumnProps) {
 	);
 }
 
+/** 1024–1279: the panel and the assistant swap in one cell. The outgoing side fades out in 140ms, the incoming one
+ * fades up 4px over 200ms; ⌘J swaps at once. */
+const replaceSwap: Variants = {
+	hidden: { opacity: 0, transform: "translateY(4px)" },
+	shown: (instant: boolean) => ({
+		opacity: 1,
+		transform: "translateY(0px)",
+		transition: instant ? { duration: 0 } : { duration: D2, ease: EASE },
+	}),
+	gone: (instant: boolean) => ({
+		opacity: 0,
+		transition: instant ? { duration: 0 } : { duration: D2 * EXIT, ease: EASE },
+	}),
+};
+
+type AssistantReplaceProps = { replaced: boolean; assistant: ReactNode; children: ReactNode };
+
+/**
+ * The editor's first grid cell: the mode panel, or (1024–1279, assistant open) the assistant in its place.
+ * `popLayout` lifts the outgoing side out of the grid, absolutely over the same cell, so the page column never moves.
+ * The grid around it must be `relative`.
+ */
+export function AssistantReplace({ replaced, assistant, children }: AssistantReplaceProps) {
+	const instant = useEditorStore((state) => state.assistantInstant);
+
+	return (
+		<AnimatePresence mode="popLayout" initial={false} custom={instant}>
+			<m.div
+				key={replaced ? "assistant" : "panel"}
+				custom={instant}
+				variants={replaceSwap}
+				initial="hidden"
+				animate="shown"
+				exit="gone"
+				className="grid min-h-0 min-w-0 grid-rows-[minmax(0,1fr)]"
+			>
+				{replaced ? assistant : children}
+			</m.div>
+		</AnimatePresence>
+	);
+}
+
 type AssistantOverlayProps = { place: "drawer" | "screen"; children: ReactNode };
 type OverlayCustom = { instant: boolean; hidden: string; shown: string };
 

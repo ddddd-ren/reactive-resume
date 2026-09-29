@@ -36,6 +36,7 @@ import { ACCENTS, FONT_PAIRINGS, matchFontPairing, rgbaToHex } from "@/features/
 import { RichTextEditor } from "@/features/resume/editor/write/rich-text-editor";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
+import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
 const BODY_ID = "letter-body-editor";
@@ -512,8 +513,30 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 
 	return (
 		<div className="grid gap-2">
+			<div
+				aria-live="polite"
+				aria-busy={streaming}
+				className={cn(
+					"min-h-[120px] whitespace-pre-wrap rounded-lg bg-accent-soft px-3 py-2.5 text-sm leading-relaxed outline-[1.5px] outline-solid transition-[outline-color] duration-standard",
+					draft.phase === "ready" ? "outline-accent" : "outline-transparent",
+				)}
+			>
+				{text}
+				{streaming && (
+					<span className="text-ink-3">
+						{reducedMotion ? <Trans>Drafting…</Trans> : <span aria-hidden="true">▍</span>}
+					</span>
+				)}
+			</div>
+			{streaming && (
+				<Button size="sm" variant="ghost" className="w-fit" onClick={discardLetterDraft}>
+					<Trans>Stop</Trans>
+				</Button>
+			)}
 			{draft.phase === "ready" && (
-				<div className="flex flex-wrap items-center gap-1 rounded-xl bg-ink p-1 ps-3 text-bg shadow-e3">
+				<div
+					className={cn(ENTER_CLASS, "flex flex-wrap items-center gap-1 rounded-xl bg-ink p-1 ps-3 text-bg shadow-e3")}
+				>
 					<span className="me-auto flex items-center gap-1.5 py-1 font-medium text-[13px]">
 						<Icon name="auto_awesome" size={16} />
 						{sources}
@@ -548,26 +571,6 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 						<Trans>Discard</Trans>
 					</button>
 				</div>
-			)}
-			<div
-				aria-live="polite"
-				aria-busy={streaming}
-				className={cn(
-					"min-h-[120px] whitespace-pre-wrap rounded-lg bg-accent-soft px-3 py-2.5 text-sm leading-relaxed outline-[1.5px] outline-solid transition-[outline-color] duration-standard",
-					draft.phase === "ready" ? "outline-accent" : "outline-transparent",
-				)}
-			>
-				{text}
-				{streaming && (
-					<span className="text-ink-3">
-						{reducedMotion ? <Trans>Drafting…</Trans> : <span aria-hidden="true">▍</span>}
-					</span>
-				)}
-			</div>
-			{streaming && (
-				<Button size="sm" variant="ghost" className="w-fit" onClick={discardLetterDraft}>
-					<Trans>Stop</Trans>
-				</Button>
 			)}
 		</div>
 	);

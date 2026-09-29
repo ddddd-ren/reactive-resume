@@ -11,7 +11,9 @@ import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { cn } from "@reactive-resume/utils/style";
 import { authClient } from "@/libs/auth/client";
+import { ENTER_CLASS } from "@/libs/motion";
 import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SocialAuth } from "../components/social-auth";
@@ -267,7 +269,8 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 function PostSignupScreen() {
 	const { callbackURL } = useSearch({ from: "/auth" });
 	return (
-		<>
+		// Replaces the form in place: fades up into the auth column, with the layout's 24px gap.
+		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
 			<div className="space-y-1 text-center">
 				<h1 className="font-semibold text-2xl tracking-tight">
 					<Trans>You've got mail!</Trans>
@@ -295,6 +298,6 @@ function PostSignupScreen() {
 					</a>
 				}
 			/>
-		</>
+		</div>
 	);
 }

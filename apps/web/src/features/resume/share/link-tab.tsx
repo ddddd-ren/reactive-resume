@@ -10,6 +10,7 @@ import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Separator } from "@reactive-resume/ui/components/separator";
+import { Swap } from "@reactive-resume/ui/components/swap";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
@@ -17,6 +18,7 @@ import { useCurrentResume, usePatchResume } from "@/features/resume/builder/draf
 import { ResumePasswordDialog } from "@/features/resume/builder/password-dialog";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
+import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { formatTimeSince, summarizeViews } from "./format";
 
@@ -79,7 +81,7 @@ export function LinkTab() {
 			<AddressField url={url} username={session?.user.username ?? ""} />
 
 			{isPublic && (
-				<div className="grid gap-3">
+				<div className={cn(ENTER_CLASS, "grid gap-3")}>
 					<SwitchRow
 						checked={resume.showDownloadButtons !== false}
 						disabled={isPending || resume.isLocked}
@@ -212,8 +214,21 @@ function AddressField({ url, username }: AddressFieldProps) {
 					)}
 				</div>
 				<Button variant="secondary" className="h-[38px] gap-1.5" disabled={!isPublic || changed} onClick={copy}>
-					<Icon name={copied ? "check" : "content_copy"} size={18} />
-					{copied ? <Trans>Copied</Trans> : <Trans>Copy</Trans>}
+					<Swap
+						swapped={copied}
+						from={
+							<>
+								<Icon name="content_copy" size={18} />
+								<Trans>Copy</Trans>
+							</>
+						}
+						to={
+							<>
+								<Icon name="check" size={18} />
+								<Trans>Copied</Trans>
+							</>
+						}
+					/>
 				</Button>
 			</div>
 			<p

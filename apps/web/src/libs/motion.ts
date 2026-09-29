@@ -42,3 +42,6 @@ export const ENTER_CLASS =
 
 /** The index-th item of a list's first appearance: 30ms apart, capped at 150ms (the first six are staggered). */
 export const stagger = (index: number) => ({ "--stagger": `${Math.min(index, 5) * 30}ms` }) as CSSProperties;
+
+/** A status icon arriving in place (a success check, a spinner taking its slot): fades and scales up from 90% over D1. */
+export const POP_CLASS = "starting:scale-90 starting:opacity-0 transition-[opacity,scale] duration-quick ease-enter";

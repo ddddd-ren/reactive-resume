@@ -16,7 +16,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { ImportError, readResumeFile } from "@/features/resume/import/read-file";
 import { PdfViewer } from "@/features/resume/public/pdf-viewer";
 import { getOrpcErrorMessage } from "@/libs/error-message";
-import { ENTER_CLASS, stagger } from "@/libs/motion";
+import { ENTER_CLASS, POP_CLASS, stagger } from "@/libs/motion";
 import { client } from "@/libs/orpc/client";
 import { PdfPasswordRequiredError, PdfTooLargeError, PdfUnreadableError } from "./extract-client";
 import { getPdfCategoryLabel, getPdfFindingMessage } from "./messages";
@@ -113,27 +113,29 @@ export function AtsChecker({ signedIn, importPending }: AtsCheckerProps) {
 
 	useEffect(() => () => abort.current?.abort(), []);
 
-	if (state.name === "importing")
-		return (
-			<p role="status" className="flex items-center justify-center gap-2 py-24 text-ink-2">
-				<Spinner decorative className="size-4" />
-				<Trans>Importing it into your new resume…</Trans>
-			</p>
-		);
-
-	if (state.name === "busy") return <Progress file={state.file} step={state.step} />;
-
-	if (state.name === "done")
-		return (
-			<Result
-				result={state.result}
-				file={state.file}
-				onFix={() => void fix(state.file)}
-				onReset={() => setState({ name: "idle" })}
-			/>
-		);
-
-	return <Idle error={state.error} posting={posting} onPosting={setPosting} onFile={(file) => void check(file)} />;
+	// Each state fades in as it replaces the last. Opacity only: a translate here would make this wrapper the
+	// containing block for the result's fixed mobile bar while it animates.
+	return (
+		<div key={state.name} className="starting:opacity-0 transition-opacity duration-standard ease-enter">
+			{state.name === "importing" ? (
+				<p role="status" className="flex items-center justify-center gap-2 py-24 text-ink-2">
+					<Spinner decorative className="size-4" />
+					<Trans>Importing it into your new resume…</Trans>
+				</p>
+			) : state.name === "busy" ? (
+				<Progress file={state.file} step={state.step} />
+			) : state.name === "done" ? (
+				<Result
+					result={state.result}
+					file={state.file}
+					onFix={() => void fix(state.file)}
+					onReset={() => setState({ name: "idle" })}
+				/>
+			) : (
+				<Idle error={state.error} posting={posting} onPosting={setPosting} onFile={(file) => void check(file)} />
+			)}
+		</div>
+	);
 }
 
 type IdleProps = {
@@ -255,9 +257,9 @@ function Progress({ file, step }: { file: File; step: number }) {
 					>
 						<span className="flex w-5.5 justify-center">
 							{index < step ? (
-								<Icon name="check" size={20} className="text-accent-text" />
+								<Icon name="check" size={20} className={cn(POP_CLASS, "text-accent-text")} />
 							) : index === step ? (
-								<Spinner decorative className="size-4" />
+								<Spinner decorative className={cn(POP_CLASS, "size-4")} />
 							) : (
 								<span aria-hidden className="size-3 rounded-full border-[1.5px] border-current" />
 							)}
@@ -443,16 +445,28 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 						</TabsList>
 					</Tabs>
 				</div>
-				<div className="flex justify-center px-4 pb-10 sm:px-10">
-					{lens === "page" ? (
-						<div className="w-full max-w-[612px] bg-white shadow-e2">
-							<PdfViewer file={file} className="block w-full" />
-						</div>
-					) : (
-						<pre className="w-full max-w-[612px] whitespace-pre-wrap rounded-[10px] border border-line bg-raised px-7 py-6 font-mono text-[13px] leading-[21px]">
-							{result.fullText || t`No text could be read from this file.`}
-						</pre>
-					)}
+				<div className="grid justify-items-center px-4 pb-10 sm:px-10">
+					{/* Both lenses stay mounted, so switching back never re-reads the PDF. The page lens collapses instead of
+					    display:none, so the viewer keeps its width for "page-width" scaling even if the switch happens while
+					    it is still loading. */}
+					<div
+						inert={lens !== "page"}
+						className={cn(
+							"w-full max-w-[612px] bg-white shadow-e2 transition-opacity duration-standard ease-enter",
+							lens !== "page" && "h-0 overflow-hidden opacity-0 shadow-none",
+						)}
+					>
+						<PdfViewer file={file} className="block w-full" />
+					</div>
+					<pre
+						hidden={lens !== "text"}
+						className={cn(
+							ENTER_CLASS,
+							"w-full max-w-[612px] whitespace-pre-wrap rounded-[10px] border border-line bg-raised px-7 py-6 font-mono text-[13px] leading-[21px]",
+						)}
+					>
+						{result.fullText || t`No text could be read from this file.`}
+					</pre>
 				</div>
 			</section>
 		</div>

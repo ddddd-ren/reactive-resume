@@ -19,6 +19,7 @@ import { applicationsListQueryKey, applicationsListQueryOptions } from "@/featur
 import { openAssistantFrom } from "@/features/assistant/open";
 import { useCurrentBuilderResumeSelector, useIsResumeLocked, usePatchResume } from "@/features/resume/builder/draft";
 import { getOrpcErrorMessage } from "@/libs/error-message";
+import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { useEditorStore } from "../store";
 import { checkStateOf, editWithUndo } from "./actions";
@@ -187,8 +188,9 @@ export function JobMatchTab({ match, data }: JobMatchTabProps) {
 
 							{open && (
 								<section
+									key={open.term}
 									aria-label={t`Add “${open.label}”`}
-									className="grid gap-2 rounded-xl border border-line bg-raised p-3 shadow-e2"
+									className={cn(ENTER_CLASS, "grid gap-2 rounded-xl border border-line bg-raised p-3 shadow-e2")}
 								>
 									<p className="text-[13px] text-ink-2 leading-[19px]">
 										<Plural

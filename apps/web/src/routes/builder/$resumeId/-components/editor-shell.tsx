@@ -11,6 +11,7 @@ import { cn } from "@reactive-resume/utils/style";
 import {
 	AssistantColumn,
 	AssistantOverlay,
+	AssistantReplace,
 	assistantGridTransition,
 	assistantPlaceFor,
 	columnsWithAssistant,
@@ -146,7 +147,7 @@ function DesktopBody({ mode, assistant, narrow }: DesktopBodyProps) {
 
 	return (
 		<div
-			className={cn("grid min-h-0", assistantGridTransition(assistantOpen, assistantInstant))}
+			className={cn("relative grid min-h-0", assistantGridTransition(assistantOpen, assistantInstant))}
 			style={{
 				gridTemplateColumns:
 					assistant === "column"
@@ -156,11 +157,14 @@ function DesktopBody({ mode, assistant, narrow }: DesktopBodyProps) {
 							: "var(--editor-panel) minmax(0,1fr)",
 			}}
 		>
-			{replaced ? (
-				<div className="min-h-0 border-line border-e">
-					<ResumeAssistant />
-				</div>
-			) : (
+			<AssistantReplace
+				replaced={replaced}
+				assistant={
+					<div className="min-h-0 border-line border-e">
+						<ResumeAssistant />
+					</div>
+				}
+			>
 				<TabsContent
 					value={mode}
 					aria-label={panelLabels()[mode]}
@@ -170,7 +174,7 @@ function DesktopBody({ mode, assistant, narrow }: DesktopBodyProps) {
 				>
 					<ModePanel mode={mode} />
 				</TabsContent>
-			)}
+			</AssistantReplace>
 			<main id="main-content" className="min-h-0 min-w-0">
 				<Outlet />
 			</main>

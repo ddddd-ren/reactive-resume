@@ -18,7 +18,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage } from "@/libs/error-message";
-import { ENTER_CLASS } from "@/libs/motion";
+import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 import { attachmentPart, fileToBase64, transcriptOf, useAssistantChat } from "./chat";
 import { AssistantMarkdown } from "./markdown";
@@ -445,7 +445,10 @@ function ToolPartView({ part, message, readOnly, statuses, document, onAnswer, o
 function Status({ working, children }: { working: boolean; children: ReactNode }) {
 	return (
 		<p className="flex items-center gap-1.5 text-ink-3 text-xs">
-			{working ? <Spinner decorative className="size-3" /> : <Icon name="check" size={14} />}
+			{/* A fixed 14px slot, so the label doesn't shift when the spinner turns into a check. */}
+			<span className="grid size-3.5 shrink-0 place-items-center">
+				{working ? <Spinner decorative className="size-3" /> : <Icon name="check" size={14} className={POP_CLASS} />}
+			</span>
 			{children}
 		</p>
 	);

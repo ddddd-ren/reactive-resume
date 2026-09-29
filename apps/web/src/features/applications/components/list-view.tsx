@@ -4,6 +4,7 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
+import { AnimatePresence, m } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -21,6 +22,7 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useConfirm } from "@/hooks/use-confirm";
 import { formatRelativeTime } from "@/libs/locale";
+import { D2, EASE, EXIT } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { describeNextStep, getNextStep } from "../next-step";
 import { CLOSED_REASONS, getClosedReasonLabel, getStageColor, getStageLabel, LIST_ORDER, PIPELINE } from "../stages";
@@ -121,8 +123,6 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 
 	return (
 		<div className="grid min-w-0 content-start gap-3">
-			{checked.size > 0 && <BulkBar ids={[...checked]} onDone={() => setChecked(new Set())} />}
-
 			<table className="w-full border-collapse text-sm">
 				{!phone && (
 					<thead>
@@ -190,6 +190,22 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 					);
 				})}
 			</table>
+
+			{/* The bulk bar rises from the bottom edge and floats over the list, so the rows never move. */}
+			<AnimatePresence>
+				{checked.size > 0 && (
+					<m.div
+						key="bulk-bar"
+						initial={{ opacity: 0, transform: "translateY(100%)" }}
+						animate={{ opacity: 1, transform: "translateY(0%)" }}
+						exit={{ opacity: 0, transform: "translateY(100%)", transition: { duration: D2 * EXIT, ease: EASE } }}
+						transition={{ duration: D2, ease: EASE }}
+						className="sticky bottom-4 z-20 justify-self-center max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]"
+					>
+						<BulkBar ids={[...checked]} onDone={() => setChecked(new Set())} />
+					</m.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }
@@ -327,7 +343,7 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 	});
 
 	return (
-		<div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-ink px-3 py-2 text-bg">
+		<div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-ink px-3 py-2 text-bg shadow-e3">
 			<span className="me-1 font-semibold text-sm">
 				<Plural value={ids.length} one="# selected" other="# selected" />
 			</span>

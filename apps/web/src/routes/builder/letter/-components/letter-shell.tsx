@@ -13,6 +13,7 @@ import { cn } from "@reactive-resume/utils/style";
 import {
 	AssistantColumn,
 	AssistantOverlay,
+	AssistantReplace,
 	assistantGridTransition,
 	assistantPlaceFor,
 	columnsWithAssistant,
@@ -73,7 +74,7 @@ export function LetterShell() {
 
 				{(layout === "desktop" || pinned) && (
 					<div
-						className={cn("grid min-h-0", assistantGridTransition(assistantOpen, assistantInstant))}
+						className={cn("relative grid min-h-0", assistantGridTransition(assistantOpen, assistantInstant))}
 						style={{
 							gridTemplateColumns: assistantColumn
 								? columnsWithAssistant(assistantOpen)
@@ -82,11 +83,14 @@ export function LetterShell() {
 									: "var(--editor-panel) minmax(0,1fr)",
 						}}
 					>
-						{assistantReplaces ? (
-							<div className="min-h-0 border-line border-e">
-								<LetterAssistant />
-							</div>
-						) : (
+						<AssistantReplace
+							replaced={assistantReplaces}
+							assistant={
+								<div className="min-h-0 border-line border-e">
+									<LetterAssistant />
+								</div>
+							}
+						>
 							<TabsContent
 								value={mode}
 								aria-label={panelLabel(mode)}
@@ -94,7 +98,7 @@ export function LetterShell() {
 							>
 								<ModePanel mode={mode} />
 							</TabsContent>
-						)}
+						</AssistantReplace>
 						<main id="main-content" className="min-h-0 min-w-0">
 							<LetterPage />
 						</main>

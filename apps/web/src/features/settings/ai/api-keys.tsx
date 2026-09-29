@@ -16,10 +16,12 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
+import { Swap } from "@reactive-resume/ui/components/swap";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
+import { ENTER_CLASS } from "@/libs/motion";
 import { SettingsSection } from "../section";
 
 const KEYS = ["auth", "api-keys"];
@@ -224,7 +226,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 				</DialogHeader>
 
 				{key ? (
-					<div className="grid gap-3">
+					<div className={cn(ENTER_CLASS, "grid gap-3")}>
 						<p
 							role="status"
 							className="flex gap-2.5 rounded-[10px] bg-warn-soft px-3 py-2.5 text-[13px] text-warn-text"
@@ -243,8 +245,21 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 									setTimeout(() => setCopied(false), 2000);
 								}}
 							>
-								<Icon name={copied ? "check" : "content_copy"} size={16} />
-								{copied ? <Trans>Copied</Trans> : <Trans>Copy</Trans>}
+								<Swap
+									swapped={copied}
+									from={
+										<>
+											<Icon name="content_copy" size={16} />
+											<Trans>Copy</Trans>
+										</>
+									}
+									to={
+										<>
+											<Icon name="check" size={16} />
+											<Trans>Copied</Trans>
+										</>
+									}
+								/>
 							</Button>
 						</div>
 						<DialogFooter>

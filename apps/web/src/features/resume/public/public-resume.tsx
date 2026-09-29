@@ -7,10 +7,12 @@ import { useMemo, useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Swap } from "@reactive-resume/ui/components/swap";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { LoadingScreen } from "@/components/layout/loading-screen";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
+import { POP_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { PdfViewer } from "./pdf-viewer";
 import { ResumeReflow } from "./resume-reflow";
@@ -78,7 +80,7 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 			loading={isExporting}
 			className={phone ? "h-12 flex-1 text-base" : undefined}
 		>
-			{!isExporting && <Icon name="download" size={phone ? 20 : 18} />}
+			{!isExporting && <Icon name="download" size={phone ? 20 : 18} className={POP_CLASS} />}
 			<Trans>Download PDF</Trans>
 		</Button>
 	);
@@ -134,8 +136,21 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 								{subtitle && <p className="truncate text-ink-3 text-xs">{subtitle}</p>}
 							</div>
 							<Button variant="secondary" aria-live="polite" onClick={() => void copyLink()}>
-								<Icon name={copied ? "check" : "link"} size={18} />
-								{copied ? <Trans>Copied</Trans> : <Trans>Copy link</Trans>}
+								<Swap
+									swapped={copied}
+									from={
+										<>
+											<Icon name="link" size={18} />
+											<Trans>Copy link</Trans>
+										</>
+									}
+									to={
+										<>
+											<Icon name="check" size={18} />
+											<Trans>Copied</Trans>
+										</>
+									}
+								/>
 							</Button>
 							{downloads && download}
 						</header>

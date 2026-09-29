@@ -29,6 +29,7 @@ import { ApplicationInsights, InsightsSkeleton } from "@/features/applications/c
 import { ApplicationList } from "@/features/applications/components/list-view";
 import { getNextStep } from "@/features/applications/next-step";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { ENTER_CLASS } from "@/libs/motion";
 
 const VIEWS = ["list", "board", "insights", "calendar"] as const;
 type View = (typeof VIEWS)[number];
@@ -315,8 +316,12 @@ function FollowUpNudge({ applications, onOpen }: { applications: Application[]; 
 
 	return (
 		<div
+			key={waiting.application.id}
 			role="status"
-			className="flex flex-wrap items-center gap-2 rounded-xl bg-warn-soft px-3 py-2 text-sm text-warn-text"
+			className={cn(
+				ENTER_CLASS,
+				"flex flex-wrap items-center gap-2 rounded-xl bg-warn-soft px-3 py-2 text-sm text-warn-text",
+			)}
 		>
 			<Icon name="schedule" size={20} />
 			<span className="min-w-0 flex-1">

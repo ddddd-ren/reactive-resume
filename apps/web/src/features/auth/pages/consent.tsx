@@ -3,7 +3,9 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { cn } from "@reactive-resume/utils/style";
 import { authClient } from "@/libs/auth/client";
+import { ENTER_CLASS } from "@/libs/motion";
 import { isOAuthRedirect } from "../redirect";
 
 type OAuthConsentPageProps = {
@@ -63,7 +65,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 				</p>
 			</div>
 			{!validRequest || isError ? (
-				<p role="alert">
+				<p key="invalid" role="alert" className={ENTER_CLASS}>
 					<Trans>This connection request is invalid or has expired.</Trans>
 				</p>
 			) : isPending ? (
@@ -71,7 +73,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 					<Trans>Loading connection request...</Trans>
 				</p>
 			) : client ? (
-				<div className="space-y-4">
+				<div className={cn(ENTER_CLASS, "space-y-4")}>
 					<div className="wrap-anywhere space-y-1">
 						<p className="font-medium">{client.client_name || clientId}</p>
 						<p className="text-ink-3 text-xs">
@@ -104,7 +106,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 						)}
 					</ul>
 					{error && (
-						<p role="alert" className="text-danger-text text-sm">
+						<p role="alert" className={cn(ENTER_CLASS, "text-danger-text text-sm")}>
 							{error}
 						</p>
 					)}

@@ -223,12 +223,6 @@ export function RichTextEditor({
 				className,
 			)}
 		>
-			{editing && !readOnlyTable && !mobile && (
-				<div role="toolbar" aria-label={t`Formatting`} className="flex gap-0.5 border-line border-b px-1.5 py-1">
-					{toolbarButtons}
-				</div>
-			)}
-
 			{/* On phones the toolbar docks above the keyboard, with Done to put the keyboard away. */}
 			{editing &&
 				!readOnlyTable &&
@@ -265,6 +259,13 @@ export function RichTextEditor({
 			)}
 
 			<EditorContent editor={editor} />
+
+			{/* Under the text, so focusing the field never moves the line you clicked. */}
+			{editing && !readOnlyTable && !mobile && (
+				<div role="toolbar" aria-label={t`Formatting`} className="flex gap-0.5 border-line border-t px-1.5 py-1">
+					{toolbarButtons}
+				</div>
+			)}
 
 			{editor && improving && (
 				<ImprovePanel

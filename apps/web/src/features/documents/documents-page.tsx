@@ -395,10 +395,14 @@ function DropToImport() {
 		};
 	}, [openDialog]);
 
-	if (!dragging) return null;
-
 	return (
-		<div className="pointer-events-none fixed inset-3 z-40 grid place-items-center rounded-2xl border-2 border-accent border-dashed bg-accent-soft/80">
+		<div
+			aria-hidden={!dragging}
+			className={cn(
+				"pointer-events-none fixed inset-3 z-40 grid place-items-center rounded-2xl border-2 border-accent border-dashed bg-accent-soft/80 transition-[opacity,visibility] ease-enter",
+				dragging ? "visible opacity-100 duration-standard" : "invisible opacity-0 duration-[calc(var(--d2)*0.7)]",
+			)}
+		>
 			<div className="grid justify-items-center gap-2 text-center">
 				<Icon name="download" size={32} className="text-accent-text" />
 				<p className="font-semibold text-lg">

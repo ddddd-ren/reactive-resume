@@ -19,6 +19,7 @@ import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { cn } from "@reactive-resume/utils/style";
 import { AssistantButton } from "@/features/assistant/assistant-button";
 import { useLetterWords } from "@/features/letters/compose";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
@@ -27,6 +28,7 @@ import { BackLink, DrawerControls } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { usePrompt } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
+import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
 type LetterBarProps = {
@@ -293,7 +295,7 @@ function LetterSaveStatus() {
 				</>
 			)}
 			{status === "error" && (
-				<span className="flex min-w-0 items-center gap-1.5 text-danger-text">
+				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-danger-text")}>
 					<Icon name="sync_problem" size={16} />
 					<Trans>Not saved</Trans>
 					<span aria-hidden="true">·</span>
@@ -308,7 +310,7 @@ function LetterSaveStatus() {
 				</span>
 			)}
 			{status === "conflict" && (
-				<span className="flex min-w-0 items-center gap-1.5 text-warn-text">
+				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-warn-text")}>
 					<Icon name="sync_problem" size={16} />
 					<span className="truncate">
 						<Trans>Changed elsewhere</Trans>
