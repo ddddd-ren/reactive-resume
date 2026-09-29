@@ -11,7 +11,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { useKeyboardInset } from "@reactive-resume/ui/hooks/use-keyboard-inset";
 import { useIsMobile } from "@reactive-resume/ui/hooks/use-mobile";
 import { cn } from "@reactive-resume/utils/style";
-import { hasUnsupportedTableMarkup, richInputExtensions } from "@/components/input/rich-input";
+import { hasUnsupportedTableMarkup, richTextExtensions } from "@/components/input/rich-text-extensions";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { usePrompt } from "@/hooks/use-prompt";
@@ -118,7 +118,7 @@ export function RichTextEditor({
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
 
 	const editor = useEditor({
-		extensions: richInputExtensions,
+		extensions: richTextExtensions,
 		content: value,
 		editable: !disabled && !readOnlyTable,
 		immediatelyRender: false,

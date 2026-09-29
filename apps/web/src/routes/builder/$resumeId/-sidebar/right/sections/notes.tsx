@@ -1,6 +1,7 @@
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { RichInput } from "@/components/input/rich-input";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { RichTextEditor } from "@/features/resume/editor/write/rich-text-editor";
 import { SectionBase } from "../shared/section-base";
 
 export function NotesSectionBuilder() {
@@ -28,7 +29,7 @@ function NotesSectionForm() {
 				<Trans>Keep private notes about this resume here. Nobody else can see them.</Trans>
 			</p>
 
-			<RichInput value={notes} onChange={onChange} />
+			<RichTextEditor label={t`Notes`} value={notes} onChange={onChange} />
 
 			<p className="text-ink-3">
 				<Trans>For example, note which companies you sent this resume to, or links to the job descriptions.</Trans>

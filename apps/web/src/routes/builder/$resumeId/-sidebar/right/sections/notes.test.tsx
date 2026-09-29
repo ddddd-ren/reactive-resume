@@ -23,8 +23,8 @@ type RichInputProps = {
 vi.mock("../shared/section-base", () => ({
 	SectionBase: ({ children }: SectionBaseProps) => <div data-testid="section-base">{children}</div>,
 }));
-vi.mock("@/components/input/rich-input", () => ({
-	RichInput: (props: RichInputProps) => {
+vi.mock("@/features/resume/editor/write/rich-text-editor", () => ({
+	RichTextEditor: (props: RichInputProps) => {
 		richInputProps.value = props.value;
 		richInputProps.onChange = props.onChange;
 		return <textarea data-testid="rich-input" value={props.value} readOnly />;
