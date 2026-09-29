@@ -36,3 +36,6 @@ export function getPool() {
 // ponytail: two private fns collapsed; getPool() is already a singleton, global cache preserved
 globalThis.__drizzle ??= drizzle({ client: getPool() });
 export const db = globalThis.__drizzle;
+
+/** The client, or a transaction on it: helpers that write take either, so callers choose the transaction. */
+export type DbOrTx = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];

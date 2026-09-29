@@ -8,6 +8,7 @@ const envMock = vi.hoisted(() => ({
 	S3_SECRET_ACCESS_KEY: "test-secret-key",
 	S3_REGION: "us-east-1",
 	S3_ENDPOINT: "",
+	STORAGE_BACKEND: "s3",
 	S3_BUCKET: "test-bucket",
 	S3_FORCE_PATH_STYLE: true,
 }));

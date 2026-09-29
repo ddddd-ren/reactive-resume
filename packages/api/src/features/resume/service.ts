@@ -1,3 +1,4 @@
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { JsonPatchOperation } from "@reactive-resume/resume/patch";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
@@ -5,7 +6,6 @@ import type { ResumeUpdatedEvent } from "./events";
 import { ORPCError } from "@orpc/client";
 import { compare, hash } from "bcrypt";
 import { and, arrayContains, asc, desc, eq, gte, isNotNull, isNull, sql } from "drizzle-orm";
-import { get } from "es-toolkit/compat";
 import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -30,8 +30,6 @@ import {
 } from "./version-history";
 import { clientKeyFromHeaders, shouldCountView } from "./view-dedup";
 
-type DbOrTx = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
-
 function resumeVersionConflict(updatedAt: Date) {
 	return new ORPCError("RESUME_VERSION_CONFLICT", {
 		status: 409,
@@ -40,13 +38,12 @@ function resumeVersionConflict(updatedAt: Date) {
 	});
 }
 
-function invalidPatchOperation(message: string, index?: number, operation?: JsonPatchOperation) {
-	if (index !== undefined && operation !== undefined) {
-		return new ORPCError("INVALID_PATCH_OPERATIONS", { status: 400, message, data: { index, operation } });
-	}
-
-	return new ORPCError("INVALID_PATCH_OPERATIONS", { status: 400, message });
+function invalidPatchOperation(message: string, index: number, operation: JsonPatchOperation) {
+	return new ORPCError("INVALID_PATCH_OPERATIONS", { status: 400, message, data: { index, operation } });
 }
+
+/** The unique constraint a Postgres insert or update broke, if that's why it failed. */
+const uniqueConstraint = (error: unknown) => (error as { cause?: { constraint?: string } } | null)?.cause?.constraint;
 
 function isValidJsonPointer(pointer: string): boolean {
 	if (pointer === "") return true;
@@ -423,9 +420,7 @@ export const resumeService = {
 				and(
 					eq(schema.resume.userId, input.userId),
 					isNull(schema.resume.trashedAt),
-					match(input.tags.length)
-						.with(0, () => undefined)
-						.otherwise(() => arrayContains(schema.resume.tags, input.tags)),
+					input.tags.length > 0 ? arrayContains(schema.resume.tags, input.tags) : undefined,
 				),
 			)
 			.orderBy(
@@ -568,7 +563,7 @@ export const resumeService = {
 
 			return id;
 		} catch (error) {
-			const constraint = get(error, "cause.constraint") as string | undefined;
+			const constraint = uniqueConstraint(error);
 
 			if (constraint === "resume_slug_user_id_unique") {
 				throw new ORPCError("RESUME_SLUG_ALREADY_EXISTS", { status: 400 });
@@ -675,7 +670,7 @@ export const resumeService = {
 			.catch((error: unknown) => {
 				if (error instanceof ORPCError) throw error;
 
-				if (get(error, "cause.constraint") === "resume_slug_user_id_unique") {
+				if (uniqueConstraint(error) === "resume_slug_user_id_unique") {
 					throw new ORPCError("RESUME_SLUG_ALREADY_EXISTS", { status: 400 });
 				}
 
@@ -719,16 +714,6 @@ export const resumeService = {
 	},
 
 	patchInTransaction: applyResumePatchTx,
-
-	notifyResumePatched: async (input: { resumeId: string; userId: string; updatedAt: Date }) => {
-		await notifyResumeUpdated({
-			type: "resume.updated",
-			resumeId: input.resumeId,
-			userId: input.userId,
-			updatedAt: input.updatedAt.toISOString(),
-			mutation: "patch",
-		});
-	},
 
 	setLocked: async (input: { id: string; userId: string; isLocked: boolean }) => {
 		const [resume] = await db

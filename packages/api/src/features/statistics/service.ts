@@ -52,17 +52,13 @@ const getCachedCount = async (
 
 const getCountFromDatabase = async (table: typeof schema.user | typeof schema.resume): Promise<number | null> => {
 	const [result] = await db.select({ count: count() }).from(table);
-	if (!result) return null;
-	return result.count;
+	return result?.count ?? null;
 };
 
 const fetchGitHubStarsOnce = async (): Promise<number | null> => {
-	const controller = new AbortController();
-	const timeoutId = setTimeout(() => controller.abort(), GITHUB_REQUEST_TIMEOUT_MS);
-
 	try {
 		const response = await fetch(GITHUB_API_URL, {
-			signal: controller.signal,
+			signal: AbortSignal.timeout(GITHUB_REQUEST_TIMEOUT_MS),
 			headers: {
 				Accept: "application/vnd.github+json",
 			},
@@ -74,8 +70,6 @@ const fetchGitHubStarsOnce = async (): Promise<number | null> => {
 		return Number.isFinite(stars) && stars > 0 ? stars : null;
 	} catch {
 		return null;
-	} finally {
-		clearTimeout(timeoutId);
 	}
 };
 

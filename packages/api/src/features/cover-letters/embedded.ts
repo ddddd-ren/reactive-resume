@@ -1,4 +1,4 @@
-import type { db } from "@reactive-resume/db/client";
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import * as schema from "@reactive-resume/db/schema";
@@ -6,8 +6,6 @@ import { copyCoverLetterStyle, detachEmbeddedLetters } from "@reactive-resume/re
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { sanitizeCoverLetterHtml } from "./html";
 import { writeLetterVersion } from "./versions";
-
-type DbOrTx = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 /**
  * Letters are documents of their own. Older app versions, API clients, imported files and restored versions can

@@ -131,7 +131,7 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 
 				if (resumes.length === 0) return text(`No resumes found. Use \`${T.createResume}\` to create one.`);
 
-				return text(JSON.stringify(resumes, null, 2));
+				return json(resumes);
 			},
 		),
 	);
@@ -145,7 +145,7 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 
 			if (tags.length === 0) return text("No tags in use yet. Add tags when creating or updating a resume.");
 
-			return text(JSON.stringify(tags, null, 2));
+			return json(tags);
 		}),
 	);
 
@@ -156,7 +156,7 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		withErrorHandling("getting resume", async ({ id }: { id: string }) => {
 			const resume = await client.resume.getById({ id });
 
-			return text(JSON.stringify(resume.data, null, 2));
+			return json(resume.data);
 		}),
 	);
 
@@ -171,20 +171,14 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 
 			const signedUrl = createResumePdfDownloadUrl({ resumeId: id, userId: user.id });
 
-			return text(
-				JSON.stringify(
-					{
-						resumeId: id,
-						name: resume.name,
-						downloadUrl: signedUrl.url,
-						expiresAt: signedUrl.expiresAt,
-						expiresInSeconds: signedUrl.expiresInSeconds,
-						contentType: "application/pdf",
-					},
-					null,
-					2,
-				),
-			);
+			return json({
+				resumeId: id,
+				name: resume.name,
+				downloadUrl: signedUrl.url,
+				expiresAt: signedUrl.expiresAt,
+				expiresInSeconds: signedUrl.expiresInSeconds,
+				contentType: "application/pdf",
+			});
 		}),
 	);
 
@@ -360,7 +354,7 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		withErrorHandling("getting resume statistics", async ({ id }: { id: string }) => {
 			const stats = await client.resume.statistics.getById({ id });
 
-			return text(JSON.stringify(stats, null, 2));
+			return json(stats);
 		}),
 	);
 

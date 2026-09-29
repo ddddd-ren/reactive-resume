@@ -1,11 +1,10 @@
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { CoverLetterVersionData, CoverLetterVersionKind } from "@reactive-resume/db/schema";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import { ORPCError } from "@orpc/client";
 import { and, desc, eq, inArray, lt, notInArray } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-
-type DbOrTx = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 // The same retention as resumes (see resume/version-history.ts): sessions refresh their autosave at most every two
 // minutes; autosaves and restore markers last 90 days; at most 500 autosaves per letter.

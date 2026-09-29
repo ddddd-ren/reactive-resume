@@ -13,11 +13,6 @@ type StoredCredentialFields = {
 	apiKeyPreview: string;
 };
 
-type RedactedCredentialFields = {
-	apiKeyFingerprint: string;
-	apiKeyPreview: string;
-};
-
 function getEncryptionSecret() {
 	return env.ENCRYPTION_SECRET?.trim() ?? "";
 }
@@ -77,27 +72,16 @@ export function decryptCredential(payload: string) {
 	return Buffer.concat([decipher.update(decode(encodedCiphertext)), decipher.final()]).toString("utf8");
 }
 
-export function redactEncryptedCredential(fields: StoredCredentialFields): RedactedCredentialFields {
-	return {
-		apiKeyFingerprint: fields.apiKeyHash,
-		apiKeyPreview: fields.apiKeyPreview,
-	};
-}
-
 function isCredentialEncryptionConfigured() {
 	return !!getEncryptionSecret();
-}
-
-// The assistant needs stored keys, so ENCRYPTION_SECRET. Redis is optional: with it, replies survive a reload
-// and Stop reaches a run on another server; without it, both work within one server.
-export function isAgentEnvironmentConfigured() {
-	return isCredentialEncryptionConfigured();
 }
 
 export function assertCredentialEncryptionConfigured() {
 	if (!isCredentialEncryptionConfigured()) throw new Error("AI_CREDENTIAL_ENCRYPTION_UNAVAILABLE");
 }
 
+// The assistant needs stored keys, so ENCRYPTION_SECRET. Redis is optional: with it, replies survive a reload
+// and Stop reaches a run on another server; without it, both work within one server.
 export function assertAgentEnvironment() {
-	if (!isAgentEnvironmentConfigured()) throw new Error("AGENT_ENVIRONMENT_UNAVAILABLE");
+	if (!isCredentialEncryptionConfigured()) throw new Error("AGENT_ENVIRONMENT_UNAVAILABLE");
 }

@@ -80,13 +80,5 @@ export async function handleHealth() {
 		console.warn("[Healthcheck]", { route: "/api/health", database, storage });
 	}
 
-	const headers = new Headers();
-	const body = JSON.stringify(checks);
-	headers.set("Content-Type", "application/json; charset=UTF-8");
-	headers.set("Content-Length", Buffer.byteLength(body, "utf-8").toString());
-
-	return new Response(body, {
-		headers,
-		status: checks.status === "unhealthy" ? 503 : 200,
-	});
+	return Response.json(checks, { status: checks.status === "unhealthy" ? 503 : 200 });
 }

@@ -1,3 +1,4 @@
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { ResumeVersionKind } from "@reactive-resume/db/schema";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { ORPCError } from "@orpc/client";
@@ -5,8 +6,6 @@ import { and, desc, eq, inArray, lt, notInArray } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { parseStoredResumeData, parseWritableResumeData } from "./resume-data-validation";
-
-type DbOrTx = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 // An editing session's autosave is refreshed at most this often.
 const SESSION_REFRESH_MS = 2 * 60 * 1000;

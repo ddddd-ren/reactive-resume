@@ -59,10 +59,6 @@ vi.mock("../ai/credentials", () => ({
 	assertCredentialEncryptionConfigured: vi.fn(),
 	decryptCredential: vi.fn(() => "decrypted-key"),
 	encryptCredential: vi.fn(),
-	redactEncryptedCredential: vi.fn(() => ({
-		apiKeyFingerprint: "fingerprint",
-		apiKeyPreview: "sk-...test",
-	})),
 }));
 vi.mock("../ai/service", () => ({ testConnection: vi.fn() }));
 vi.mock("../ai/url-policy", () => ({ resolveAiBaseUrl: vi.fn() }));

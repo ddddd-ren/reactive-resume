@@ -330,8 +330,7 @@ export function getStorageService(): StorageService {
 	cachedService ??=
 		env.STORAGE_BACKEND === "blob"
 			? new BlobStorageService()
-			: env.STORAGE_BACKEND === "s3" ||
-					(!env.STORAGE_BACKEND && env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY && env.S3_BUCKET)
+			: env.STORAGE_BACKEND === "s3"
 				? new S3StorageService()
 				: new LocalStorageService();
 	return cachedService;

@@ -39,7 +39,6 @@ const resumeServiceMock = {
 	getById: vi.fn(),
 	patch: vi.fn(),
 	patchInTransaction: vi.fn(),
-	notifyResumePatched: vi.fn(),
 };
 
 const aiProvidersServiceMock = {

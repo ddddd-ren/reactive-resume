@@ -4,12 +4,7 @@ import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { aiProviderSchema } from "@reactive-resume/ai/types";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import {
-	assertCredentialEncryptionConfigured,
-	decryptCredential,
-	encryptCredential,
-	redactEncryptedCredential,
-} from "../ai/credentials";
+import { assertCredentialEncryptionConfigured, decryptCredential, encryptCredential } from "../ai/credentials";
 import { testConnection } from "../ai/service";
 import { resolveAiBaseUrl } from "../ai/url-policy";
 
@@ -54,12 +49,6 @@ type UpdateAiProviderInput = {
 
 function toResponse(row: AiProviderRecord): AiProviderResponse {
 	const provider = aiProviderSchema.parse(row.provider);
-	const { apiKeyFingerprint, apiKeyPreview } = redactEncryptedCredential({
-		encryptedApiKey: row.encryptedApiKey,
-		apiKeySalt: row.apiKeySalt,
-		apiKeyHash: row.apiKeyHash,
-		apiKeyPreview: row.apiKeyPreview,
-	});
 
 	return {
 		id: row.id,
@@ -70,8 +59,9 @@ function toResponse(row: AiProviderRecord): AiProviderResponse {
 		enabled: row.enabled,
 		testStatus: row.testStatus,
 		testError: row.testError,
-		apiKeyPreview,
-		apiKeyFingerprint,
+		apiKeyPreview: row.apiKeyPreview,
+		// The hash identifies the key without revealing it; the ciphertext and salt never leave the server.
+		apiKeyFingerprint: row.apiKeyHash,
 		lastTestedAt: row.lastTestedAt,
 		lastUsedAt: row.lastUsedAt,
 		createdAt: row.createdAt,

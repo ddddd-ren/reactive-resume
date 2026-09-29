@@ -1,9 +1,8 @@
+import type { DbOrTx } from "@reactive-resume/db/client";
 import { and, eq, gt, inArray, like, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { slugify } from "@reactive-resume/utils/string";
-
-type DbOrTx = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 /** Lowercase letters and numbers, in groups joined by single dashes. Only new and changed slugs must match. */
 export const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
