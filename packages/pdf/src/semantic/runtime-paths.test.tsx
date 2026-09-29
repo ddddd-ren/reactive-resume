@@ -18,6 +18,7 @@ vi.mock("../forme/render", () => ({
 			pdf: new TextEncoder().encode("%PDF"),
 			pageMap: { pages: [], nodes: [] },
 			layout: { pages: [] },
+			missingFonts: [],
 			warnings: [],
 		});
 	},

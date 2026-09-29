@@ -105,7 +105,11 @@ const convertStyle = (styleProp: unknown, context: Context, element: HostElement
 	for (const property of converted.dropped)
 		context.warnings.add(`${element.type.slice(3)}: ${property} isn't supported`);
 	const flattened = flattenAlpha(converted.style, context.backdrop);
-	return { ...converted, backdrop: flattened.backdrop, style: fromPaddingBox(flattened.style, context.parentPadding) };
+	return {
+		...converted,
+		backdrop: flattened.backdrop,
+		style: fromPaddingBox(flattened.style, context.parentPadding),
+	};
 };
 
 type ParentStyle = { style: FormeStyle; backdrop: Rgb };
@@ -265,6 +269,35 @@ function strutMinWidth(element: ReactElement, context: Context): ReactElement {
 	);
 }
 
+// What places a box in its row, as opposed to what draws its text.
+const ROW_ITEM_KEYS = new Set([
+	"width",
+	"minWidth",
+	"maxWidth",
+	"height",
+	"minHeight",
+	"maxHeight",
+	"flex",
+	"flexGrow",
+	"flexShrink",
+	"flexBasis",
+	"alignSelf",
+	"margin",
+	"marginTop",
+	"marginRight",
+	"marginBottom",
+	"marginLeft",
+	"marginHorizontal",
+	"marginVertical",
+	"position",
+	"top",
+	"right",
+	"bottom",
+	"left",
+	"wrap",
+	"breakBefore",
+]);
+
 const isEmptyText = (node: HostNode): boolean =>
 	"text" in node
 		? node.text.length === 0
@@ -331,8 +364,24 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 			const spread = unreverseRow(
 				spreadRowGap(style, convertChildren(node.children, childContext(context, converted)), context),
 			);
-			const children = spread.children;
+			let children = spread.children;
 			const viewStyle = flowStyle(props, spread.style);
+			// Forme ignores a page break on an item of a row: the row takes it, as the item can't start a page without it.
+			if (style.flexDirection === "row" || style.flexDirection === "row-reverse") {
+				const breaks = (child: ReactNode): child is ReactElement<{ style: FormeStyle }> =>
+					isValidElement<{ style?: FormeStyle }>(child) && child.props.style?.breakBefore === true;
+				if (children.some(breaks)) {
+					viewStyle.breakBefore = true;
+					children = children.map((child) => {
+						if (!breaks(child)) return child;
+						const { breakBefore: _breakBefore, ...rest } = child.props.style;
+						const next = cloneElement(child, { style: rest });
+						const source = context.sourceMap.get(child);
+						if (source) context.sourceMap.set(next, source);
+						return next;
+					});
+				}
+			}
 			// See `ConvertOptions.keepNestedRowsWhole`.
 			if (
 				context.keepNestedRowsWhole &&
@@ -396,17 +445,27 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 					}
 				}
 				flush();
-				const viewStyle: FormeStyle = { ...flowStyle(props, style), flexDirection: "column" };
+				const viewStyle: FormeStyle = { flexDirection: "column", ...flowStyle(props, style) };
 				const element = createElement(FormeView, { key, style: viewStyle, ...(href ? { href } : {}) }, ...children);
 				tagNode(element, props, context);
 				return element;
 			}
 			const children = convertChildren(node.children, childContext(context, converted, true));
-			const element = createElement(
-				FormeText,
-				{ key, style: { ...context.textDefaults, ...flowStyle(props, style) }, ...(href ? { href } : {}) },
-				...children,
-			);
+			const textStyle: FormeStyle = { ...context.textDefaults, ...flowStyle(props, style) };
+			// Forme 0.25 loses the rest of the page (boxes at y -1.8e308) when a row with a text as a direct child breaks
+			// across pages. The text sits in a box that takes its place in the row.
+			if (context.rowParent && !context.inText) {
+				const box: Record<string, unknown> = {};
+				const text: Record<string, unknown> = {};
+				for (const [property, value] of Object.entries(textStyle))
+					(ROW_ITEM_KEYS.has(property) ? box : text)[property] = value;
+				const inner = createElement(FormeText, { style: text as FormeStyle, ...(href ? { href } : {}) }, ...children);
+				tagNode(inner, props, context);
+				const wrapper = createElement(FormeView, { key, style: box as FormeStyle }, inner);
+				tagNode(wrapper, props, context);
+				return strutMinWidth(wrapper, context);
+			}
+			const element = createElement(FormeText, { key, style: textStyle, ...(href ? { href } : {}) }, ...children);
 			tagNode(element, props, context);
 			return context.inText ? element : strutMinWidth(element, context);
 		}
@@ -448,7 +507,26 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
  * border is drawn by an overlay inset by half its width, which puts the paint where CSS puts it. Thinner borders
  * are left alone: their error is under half a point.
  */
-function insetBorder(style: FormeStyle, children: ReactNode[]): { style: FormeStyle; children: ReactNode[] } {
+const SIDES = ["Top", "Right", "Bottom", "Left"] as const;
+
+/** Four equal sides as one border, so `border: 10pt solid` draws as `borderWidth: 10` does. */
+function uniformSides(style: FormeStyle): FormeStyle {
+	const source = style as Record<string, unknown>;
+	if (!SIDES.some((side) => source[`border${side}Width`] !== undefined || source[`border${side}Color`] !== undefined))
+		return style;
+	const widths = SIDES.map((side) => source[`border${side}Width`] ?? source.borderWidth);
+	const colors = SIDES.map((side) => source[`border${side}Color`] ?? source.borderColor);
+	if (widths.some((width) => width !== widths[0]) || colors.some((color) => color !== colors[0])) return style;
+	const next: Record<string, unknown> = { ...source, borderWidth: widths[0], borderColor: colors[0] };
+	for (const side of SIDES) {
+		delete next[`border${side}Width`];
+		delete next[`border${side}Color`];
+	}
+	return next as FormeStyle;
+}
+
+function insetBorder(input: FormeStyle, children: ReactNode[]): { style: FormeStyle; children: ReactNode[] } {
+	const style = uniformSides(input);
 	const { borderWidth, borderColor, width, height } = style;
 	const perSide = ["borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth"].some(
 		(key) => (style as Record<string, unknown>)[key] !== undefined,
@@ -461,7 +539,7 @@ function insetBorder(style: FormeStyle, children: ReactNode[]): { style: FormeSt
 		typeof width !== "number" ||
 		typeof height !== "number"
 	)
-		return { style, children };
+		return { style: input, children };
 
 	const padding = paddingEdges(style);
 	const {

@@ -135,8 +135,10 @@ test("keeps hyphenation opt-in saved across reloads and resume language changes"
 	await page.getByLabel("Language", { exact: true }).click();
 	await page.getByRole("option", { name: /en-US/ }).click();
 	await expect(page.getByText("Saved", { exact: true })).toBeVisible();
-	const unsupportedText = await downloadPdfText(page, testInfo, "hyphenation-english-enabled");
-	expect(unsupportedText).toBe(disabledText);
+	// Hyphenation follows the page language: English patterns break the word too, just at other points.
+	const englishText = await downloadPdfText(page, testInfo, "hyphenation-english-enabled");
+	expect(englishText).toContain("-");
+	expect(englishText.replaceAll(/[\s-]/g, "")).toContain(longWord);
 	await openSidebarSection(page, "Typography");
 	await expect(toggle).toBeChecked();
 	await page

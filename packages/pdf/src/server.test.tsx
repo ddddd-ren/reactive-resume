@@ -8,6 +8,7 @@ const rendererMock = vi.hoisted(() => ({
 		pdf: new TextEncoder().encode("%PDF"),
 		pageMap: { pages: [], nodes: [] },
 		layout: { pages: [] },
+		missingFonts: [],
 		warnings: [],
 	})),
 }));

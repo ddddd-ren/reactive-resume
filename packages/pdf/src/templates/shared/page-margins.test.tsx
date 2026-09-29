@@ -83,8 +83,8 @@ function backgroundAt(raster: Awaited<ReturnType<typeof rasterizePdf>>[number], 
 
 describe("physical page margins (#3337, #3175)", () => {
 	it.each([
-		["#00ff00", [44, 212, 8]],
-		["rgba(0, 255, 0, 0.5)", [146, 212, 110]],
+		["#00ff00", [0, 255, 0]],
+		["rgba(0, 255, 0, 0.5)", [128, 255, 128]],
 	] as const)("keeps Glalie semantic background continuous through margins (%s)", async (color, expected) => {
 		const { rasters } = await renderOverflow(
 			"glalie",
@@ -105,9 +105,9 @@ describe("physical page margins (#3337, #3175)", () => {
 		const { rasters } = await renderOverflow("glalie", "main", "en-US", "semantic", undefined, "@version 1;", true);
 		const overflow = rasters[1];
 		if (!overflow) throw new Error("Missing overflow raster");
-		expect(backgroundAt(overflow, 3, 100)).toEqual([242, 178, 178]);
-		expect(backgroundAt(overflow, 3, 3)).toEqual([242, 178, 178]);
-		expect(backgroundAt(overflow, 3, overflow.height - 4)).toEqual([242, 178, 178]);
+		expect(backgroundAt(overflow, 3, 100)).toEqual([242, 177, 177]);
+		expect(backgroundAt(overflow, 3, 3)).toEqual([242, 177, 177]);
+		expect(backgroundAt(overflow, 3, overflow.height - 4)).toEqual([242, 177, 177]);
 	});
 	for (const placement of ["main", "sidebar"] as const) {
 		it.each(templates)(`keeps overflowing ${placement} content inside vertical margins (%s)`, async (template) => {
@@ -118,7 +118,8 @@ describe("physical page margins (#3337, #3175)", () => {
 				if (!firstPage) throw new Error("Missing first PDF page");
 				const name = firstPage.lines.find((line) => line.str === "Margin Audit");
 				if (!name) throw new Error("Missing first-page header");
-				expect(firstPage.height - name.transform[5] - name.height).toBeCloseTo(45.9, 1);
+				// The header's box starts at the 48pt margin; its first baseline sits by the font's ascent below that.
+				expect(firstPage.height - name.transform[5] - name.height).toBeCloseTo(47.93, 1);
 				const corner = (pageIndex: number, right: boolean, bottom: boolean) => {
 					const raster = rasters[pageIndex];
 					if (!raster) throw new Error("Missing rasterized PDF page");
@@ -129,12 +130,13 @@ describe("physical page margins (#3337, #3175)", () => {
 				const white = [255, 255, 255];
 				const red = [220, 38, 38];
 				const tint = [248, 212, 212];
-				const doubleTint = [242, 178, 178];
+				// Glalie's single 36% band: what its former pair of 20% layers added up to.
+				const doubleTint = [242, 177, 177];
 				const headerColor =
 					template === "chikorita"
 						? white
 						: template === "leafish"
-							? [251, 233, 233]
+							? [252, 233, 233]
 							: template === "glalie"
 								? doubleTint
 								: red;

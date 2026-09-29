@@ -286,6 +286,14 @@ const LENGTH_KEYS = new Set([
 	"wordSpacing",
 ]);
 
+const RADIUS_KEYS = new Set([
+	"borderRadius",
+	"borderTopLeftRadius",
+	"borderTopRightRadius",
+	"borderBottomRightRadius",
+	"borderBottomLeftRadius",
+]);
+
 // Offsets in percent are placed by `to-forme.tsx`, which knows the element's parent.
 const PERCENT_KEYS = new Set([
 	"width",
@@ -429,6 +437,15 @@ export function toFormeStyle(input: Style, context: Context): ConvertedStyle {
 				continue;
 			}
 			const points = toPoints(value, local);
+			// Forme takes corner radii in points: a percentage one resolves against the box, when its size is known.
+			if (typeof points === "string" && RADIUS_KEYS.has(key)) {
+				const width = toPoints(source.width, local);
+				const height = toPoints(source.height, local);
+				if (typeof width === "number" && typeof height === "number") {
+					style[key] = (Number.parseFloat(points) / 100) * Math.min(width, height);
+					continue;
+				}
+			}
 			// Forme takes percentages for box sizes only.
 			if (points === undefined || (typeof points === "string" && !PERCENT_KEYS.has(key))) dropped.push(key);
 			else style[key] = points;
@@ -471,6 +488,12 @@ export function toFormeStyle(input: Style, context: Context): ConvertedStyle {
 			const spelled = KEYWORD_ALIASES[keyword] ?? keyword;
 			if (keywords.has(spelled)) style[key] = spelled;
 			else dropped.push(key);
+			continue;
+		}
+		if (key === "transform" && /rotate\(/.test(String(value))) {
+			// Forme 0.25 moves a rotated box far from where CSS puts it (3° shifts it some 60pt), so rotation is left
+			// out; a zero rotation is the default anyway.
+			if (!/^\s*rotate\(\s*-?0*\.?0*(?:deg|rad|turn)?\s*\)\s*$/.test(String(value))) dropped.push(key);
 			continue;
 		}
 		if (STRING_KEYS.has(key)) {

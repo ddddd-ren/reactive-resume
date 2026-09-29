@@ -21,7 +21,9 @@ export const createResumePdfBlob = async ({ onPageMap, ...input }: CreateResumeP
 	const data = parseResumeData(input.data);
 	// The 6.5 MB engine downloads with the first PDF, not with the app.
 	await forme.init(wasmUrl);
-	const { pdf, pageMap } = await renderResume(forme, { ...input, data });
+	const { pdf, pageMap, missingFonts } = await renderResume(forme, { ...input, data });
+	// Without its fonts the document would look wrong; callers fall back to the server's PDF instead.
+	if (missingFonts.length > 0) throw new Error(`Fonts could not be loaded: ${missingFonts.join(", ")}`);
 	onPageMap?.(pageMap);
 	return new Blob([pdf as Uint8Array<ArrayBuffer>], { type: "application/pdf" });
 };

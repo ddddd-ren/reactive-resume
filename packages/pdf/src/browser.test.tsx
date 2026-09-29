@@ -8,6 +8,7 @@ const rendererMock = vi.hoisted(() => ({
 		pdf: new TextEncoder().encode("%PDF"),
 		pageMap: { pages: [], nodes: [] },
 		layout: { pages: [] },
+		missingFonts: [] as string[],
 		warnings: [],
 	})),
 }));
@@ -113,6 +114,19 @@ describe("createResumePdfBlob", () => {
 
 		expect(promise).toBeInstanceOf(Promise);
 		await expect(promise).rejects.toThrow("renderer failed");
+	});
+
+	it("rejects when a font can't be downloaded, so callers fall back to the server's PDF", async () => {
+		rendererMock.renderResume.mockResolvedValueOnce({
+			pdf: new TextEncoder().encode("%PDF"),
+			pageMap: { pages: [], nodes: [] },
+			layout: { pages: [] },
+			missingFonts: ["Source Sans 3"],
+			warnings: [],
+		});
+		const { createResumePdfBlob } = await import("./browser");
+
+		await expect(createResumePdfBlob({ data: sampleResumeData })).rejects.toThrow("Source Sans 3");
 	});
 
 	it("renders with base styles when the source is fatal", async () => {

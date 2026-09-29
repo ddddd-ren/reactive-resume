@@ -1509,7 +1509,7 @@ Verification:
 
 Decided 29 Sep 2026: react-pdf is replaced by [Forme](https://www.formepdf.com/) 0.25.0 in a full cutover, and Semantic CSS is ported to it.
 
-The known 0.25.0 defects are accepted until upstream fixes them:
+The known 0.25.0 defects are accepted until upstream fixes them (the full list is in the log below):
 - Extracted text drops the second letter of ligatures ([#156](https://github.com/danmolitor/forme/issues/156)). This one gets a workaround: ligature features are switched off in the bundled font bytes.
 - Arabic, Hindi and Hebrew extracted text is scrambled.
 - A link inside part of a paragraph loses its annotation ([#157](https://github.com/danmolitor/forme/issues/157)).
@@ -1535,4 +1535,49 @@ The known 0.25.0 defects are accepted until upstream fixes them:
 4. Consumers: the web preview and exports, the template gallery, the server export and public PDF, and the ATS deep check. Remove react-pdf.
 5. Tests: port the render and integration tests to Forme; drop the react-pdf-internal tests.
 6. Verification: typecheck, unit tests, e2e, extraction checks and a visual pass across templates.
+
+### Log
+
+Done on `redesign/forme-engine`, 29 Sep 2026, in three local commits. All phases are complete.
+
+- **Result:** `@react-pdf/*`, `react-pdf-html`, `phosphor-icons-react-pdf` and the four patches are gone (58 packages fewer). Every PDF in the app renders through `renderResume()`: preview, downloads, thumbnails, the template gallery, the public page, the server export and the ATS deep check.
+- **Verification:**
+  - Typecheck and `turbo boundaries` are clean.
+  - Unit tests pass: pdf 985 (plus 19 expected failures), web 885, API 485, server 126, resume 1329, tooling 110.
+  - E2E: 46 passed and 7 skipped against the production build.
+  - All 15 templates were checked visually, LTR and RTL.
+  - The ligature test fails without the #156 workaround.
+- **Workarounds for Forme 0.25 defects,** all in `packages/pdf/src/forme`:
+  - Translucent colours are painted opaque, so they are blended over their backdrop.
+  - Borders are stroked centred on the edge, so thick ones are redrawn as an inset overlay.
+  - `row-reverse` is laid out as `row`, so the children are reversed instead.
+  - Absolute boxes are placed against the content box and ignore auto width and percentage offsets.
+  - A text directly inside a splitting row sends later boxes to y = −1.8e308, so the text is wrapped in a box. A render that still misplaces a box is repeated with nested rows kept whole.
+  - `rowGap` breaks across pages, so it becomes margins.
+  - A negative top margin at a page top loses a page.
+  - `minWidth` and `maxWidth` are ignored along a row.
+  - A `Text` drops `View` children.
+  - Empty text gets a full line.
+  - Optimal line breaking overflows ragged text, so breaking is greedy.
+  - Fixed bands are cut short and fall into row layouts.
+  - The image fetch throws on HTTP errors, so pictures are preloaded.
+  - `object-fit` is missing.
+  - The SVG path parser misreads compact numbers.
+  - SVG opacity leaks into later content.
+  - A plain box that breaks across pages drops out of the layout info, so the page map rebuilds it from its contents.
+- **Engine limits left in place** (recorded as expected failures, which pass once Forme fixes them):
+  - A list marker can stay on a page its first line leaves: there is no keep-with-next.
+  - RTL lines are laid out left to right and then right-aligned.
+  - Characters above U+FFFF (for example 👨‍💻) don't draw.
+  - Rotation is left out, because Forme moves rotated boxes; the picture's rotation option has no effect.
+  - Percentage padding is left out.
+  - Dashed and dotted borders draw solid.
+  - `z-index`, `max-lines`, `text-indent`, `vertical-align`, `object-position` and presence hints are ignored.
+  - The Semantic CSS editor warns about each of the ignored properties (`ENGINE_UNSUPPORTED`).
+- **Behaviour changes:**
+  - Hyphenation now follows the page language for every language Forme has patterns for; the toggle text says so.
+  - Glalie's sidebar is one 36% tint band, not two stacked 20% layers, so a custom band colour shows as authored.
+  - The browser renderer rejects a document whose fonts can't be downloaded, so callers fall back to the server PDF, as before.
+  - `packages/pdf` compiles JSX with `react-jsx`.
+- **Docs:** current-state docs, the privacy policy and the terms name the new engine. `third-party-notices.txt` credits Forme. Both the legal wording and the notices need the owner's review.
 

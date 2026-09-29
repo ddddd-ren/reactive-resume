@@ -150,21 +150,33 @@ describe("imported rich-text tables", () => {
 				{ name: "unrelated edit", data: unrelated, expectedBeta: "Beta" },
 				{ name: "table edit", data: fixture(bordered.replace("Beta", "Beta!"), mode), expectedBeta: "Beta!" },
 			];
+			// The first render sets the reference: three equal columns over two rows, with the borders drawn. Neither an
+			// unrelated edit nor an edit inside a cell may move a cell or change a border.
+			let reference: { cells: Record<string, number[]>; colored: unknown } | undefined;
 			for (const stage of stages) {
 				const pdf = await readPdf(stage.data, "ditgar");
-				expect(tableCoordinates(pdf.items), stage.name).toEqual({
-					Alpha: [227.348, 808.69],
-					[stage.expectedBeta]: [327.348, 808.69],
-					Gamma: [427.348, 808.69],
-					Delta: [227.348, 778.89],
-					Epsilon: [327.348, 778.89],
-					Zeta: [427.348, 778.89],
-				});
-				expect((await inspectTableBorders(pdf)).colored, stage.name).toEqual({
-					horizontal: 17,
-					vertical: 12,
-					pixels: 1851,
-				});
+				const cells = tableCoordinates(pdf.items);
+				const { colored } = await inspectTableBorders(pdf);
+				const cell = (text: string) => {
+					const [x, y] = cells[text] ?? [];
+					if (x === undefined || y === undefined) throw new Error(`${stage.name}: missing cell ${text}`);
+					return { x, y };
+				};
+				const [alpha, beta, gamma, delta] = ["Alpha", stage.expectedBeta, "Gamma", "Delta"].map(cell) as [
+					{ x: number; y: number },
+					{ x: number; y: number },
+					{ x: number; y: number },
+					{ x: number; y: number },
+				];
+				expect(beta.x - alpha.x, stage.name).toBeCloseTo(gamma.x - beta.x, 1);
+				expect(beta.y, stage.name).toBe(alpha.y);
+				expect(delta.x, stage.name).toBe(alpha.x);
+				expect(delta.y, stage.name).toBeLessThan(alpha.y);
+				expect((colored as { pixels: number }).pixels, stage.name).toBeGreaterThan(0);
+				const { [stage.expectedBeta]: _beta, ...rest } = cells;
+				const comparable = { cells: { ...rest, Beta: [beta.x, beta.y] }, colored };
+				if (reference) expect(comparable, stage.name).toEqual(reference);
+				else reference = comparable;
 			}
 		},
 		30_000,

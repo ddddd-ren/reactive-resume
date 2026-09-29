@@ -36,6 +36,8 @@ export type RenderedResume = {
 	pageMap: PageMap;
 	/** Forme's layout of every page, for tests and diagnostics. */
 	layout: RenderWithLayoutResult["layout"];
+	/** Font families that couldn't be downloaded; their text falls back to the standard PDF fonts. */
+	missingFonts: string[];
 	/** What the engine couldn't draw as asked; for diagnostics, never shown as errors. */
 	warnings: string[];
 };
@@ -98,7 +100,7 @@ export async function renderResumeElement(engine: FormeEngine, element: ReactEle
 				resumeContentScripts(data),
 			).fonts
 		: [];
-	const [{ fonts, warnings: fontWarnings }] = await Promise.all([loadFonts(fontRequests), loadIcons()]);
+	const [{ fonts, warnings: fontWarnings, missing }] = await Promise.all([loadFonts(fontRequests), loadIcons()]);
 
 	const tree = renderHostTree(element);
 	const { images, warnings: imageWarnings } = await loadImages(imageSources(tree));
@@ -132,6 +134,7 @@ export async function renderResumeElement(engine: FormeEngine, element: ReactEle
 	return {
 		pdf: result.pdf,
 		pageMap: extractPageMap(result.layout),
+		missingFonts: [...new Set(missing)],
 		layout: result.layout,
 		warnings: [...fontWarnings, ...imageWarnings, ...warnings, ...result.warnings],
 	};

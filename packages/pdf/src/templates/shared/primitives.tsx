@@ -469,6 +469,16 @@ export const SemanticHeaderPicture = ({ style, ...props }: ComponentProps<typeof
 		left: borderWidth(pictureStyle.borderLeftWidth ?? pictureStyle.borderWidth),
 	};
 	const hasBorder = Object.values(borderInsets).some((width) => width > 0);
+	// the frame's padding also comes out of the bitmap's box; a percentage one is only known to the engine.
+	const padding = (side: "Top" | "Right" | "Bottom" | "Left") =>
+		pictureStyle[`padding${side}`] ??
+		(side === "Top" || side === "Bottom" ? pictureStyle.paddingVertical : pictureStyle.paddingHorizontal) ??
+		pictureStyle.padding ??
+		0;
+	const paddings = { top: padding("Top"), right: padding("Right"), bottom: padding("Bottom"), left: padding("Left") };
+	const num = (value: unknown) => (typeof value === "number" ? value : 0);
+	const inner = (size: unknown, a: number, b: number, pa: unknown, pb: unknown) =>
+		typeof size === "number" ? size - a - b - num(pa) - num(pb) : "100%";
 	if (!shadow && !hasBorder) return <Image {...props} style={pictureStyle} />;
 	// The frame owns the border and authored padding. Yoga places the bitmap in
 	// its content box, including when padding or picture dimensions are percentages.
@@ -514,20 +524,16 @@ export const SemanticHeaderPicture = ({ style, ...props }: ComponentProps<typeof
 						? { borderRadius: Math.max(0, pictureStyle.borderRadius - Math.max(...Object.values(borderInsets))) }
 						: {}),
 					// In points when the frame's size is known, so the engine can fit the bitmap (`objectFit`) itself.
-					width:
-						typeof pictureStyle.width === "number"
-							? pictureStyle.width - borderInsets.left - borderInsets.right
-							: "100%",
-					height:
-						typeof pictureStyle.height === "number"
-							? pictureStyle.height - borderInsets.top - borderInsets.bottom
-							: "100%",
+					width: inner(pictureStyle.width, borderInsets.left, borderInsets.right, paddings.left, paddings.right),
+					height: inner(pictureStyle.height, borderInsets.top, borderInsets.bottom, paddings.top, paddings.bottom),
 					margin: 0,
 					marginTop: 0,
 					marginRight: 0,
 					marginBottom: 0,
 					marginLeft: 0,
 					transform: "rotate(0deg)",
+					// Forme paints absolute boxes over in-flow ones; the photo joins that layer after its shadow.
+					...(shadow ? { position: "absolute", left: num(paddings.left), top: num(paddings.top) } : {}),
 				})}
 			/>
 		</View>

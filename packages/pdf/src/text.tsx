@@ -67,6 +67,9 @@ const TAG_STYLES: Record<string, Style> = {
 	u: { textDecoration: "underline" },
 	a: { textDecoration: "underline" },
 	li: { display: "flex", flexDirection: "row" },
+	tr: { flexDirection: "row" },
+	td: { flexGrow: 1, flexShrink: 1 },
+	th: { flexGrow: 1, flexShrink: 1, fontWeight: "bold" },
 };
 
 const camelCase = (property: string) =>

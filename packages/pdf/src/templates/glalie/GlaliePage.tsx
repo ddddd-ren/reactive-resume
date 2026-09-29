@@ -131,7 +131,9 @@ const useGlalieTemplate = (): GlalieTemplate => {
 	const { metadata, r, foreground, background, primary, metrics, base } = useTemplateBase();
 
 	return useMemo(() => {
-		const primaryTint = getPrimaryTint(metadata.design.colors.primary, 0.2);
+		// One band at the tint the former column-over-band pair of 20% layers added up to: the column no longer paints
+		// its own, so a custom band colour shows as authored, margins included.
+		const primaryTint = getPrimaryTint(metadata.design.colors.primary, 0.36);
 		const colors: TemplateColorRoles = {
 			foreground,
 			background,
@@ -175,8 +177,6 @@ const useGlalieTemplate = (): GlalieTemplate => {
 				minHeight: "100%",
 			},
 			sidebarColumn: {
-				zIndex: 1,
-				backgroundColor: primaryTint,
 				paddingHorizontal: metrics.page.paddingHorizontal,
 				paddingTop: metrics.page.paddingVertical,
 				rowGap: metrics.sectionGap,
@@ -186,7 +186,6 @@ const useGlalieTemplate = (): GlalieTemplate => {
 			},
 			mainColumn: {
 				flex: 1,
-				zIndex: 1,
 			},
 			mainContent: {
 				paddingHorizontal: metrics.page.paddingHorizontal,

@@ -22,22 +22,24 @@ const load = (src: string) => {
 };
 
 /**
- * The font faces a document needs, as bytes Forme can embed. A face that fails to load is left out, and Forme falls
- * back to its built-in fonts for that text, as react-pdf did.
+ * The font faces a document needs, as bytes Forme can embed. A face that fails to load is left out and listed in
+ * `missing`; Forme falls back to its built-in fonts for that text.
  */
 export async function loadFonts(
 	requests: readonly PdfFontRequest[],
-): Promise<{ fonts: FormeFont[]; warnings: string[] }> {
+): Promise<{ fonts: FormeFont[]; warnings: string[]; missing: string[] }> {
 	const warnings: string[] = [];
+	const missing: string[] = [];
 	const loaded = await Promise.all(
 		requests.map(async (request): Promise<FormeFont | null> => {
 			try {
 				return { family: request.family, weight: request.weight, italic: request.italic, src: await load(request.src) };
 			} catch (error) {
 				warnings.push(error instanceof Error ? error.message : `Font ${request.src} could not be loaded.`);
+				missing.push(request.family);
 				return null;
 			}
 		}),
 	);
-	return { fonts: loaded.filter((font): font is FormeFont => font !== null), warnings };
+	return { fonts: loaded.filter((font): font is FormeFont => font !== null), warnings, missing };
 }

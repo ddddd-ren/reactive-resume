@@ -356,6 +356,13 @@ export const SEMANTIC_CSS_ENGINE_UNSUPPORTED_V1: Readonly<Record<string, true | 
 	"text-decoration-color": true,
 	"text-decoration-style": true,
 	"-resume-min-presence-ahead": true,
+	transform: (value: string) => /rotate\(\s*-?(?:\d*\.)?\d*[1-9]/.test(value),
+	...Object.fromEntries(
+		["padding", "padding-top", "padding-right", "padding-bottom", "padding-left"].map((property) => [
+			property,
+			(value: string) => value.includes("%"),
+		]),
+	),
 	...Object.fromEntries(
 		[
 			"border",
