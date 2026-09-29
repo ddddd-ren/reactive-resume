@@ -23,7 +23,7 @@ export function formatDate(date: string): string {
 }
 
 /** The year and month of an ISO 8601 date ("2024-01-15" → "2024-01"); null when it isn't one. */
-export function toYearMonth(date?: string): YearMonth | null {
+function toYearMonth(date?: string): YearMonth | null {
 	const match = /^(\d{4})(?:-(0[1-9]|1[0-2]))?/.exec(date?.trim() ?? "");
 	if (!match?.[1]) return null;
 	return match[2] ? `${match[1]}-${match[2]}` : match[1];

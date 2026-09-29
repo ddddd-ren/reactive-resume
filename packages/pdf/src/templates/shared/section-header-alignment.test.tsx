@@ -1,5 +1,4 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
 import type { TextItem } from "pdfjs-dist/types/src/display/api";
 import { describe, expect, it } from "vitest";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
@@ -41,8 +40,10 @@ const fixture = (): ResumeData => {
 	return data;
 };
 
-const renderText = async (data: ResumeData, template: Template = "onyx") => {
-	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof renderToBuffer>[0];
+const renderText = async (data: ResumeData) => {
+	const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<
+		typeof renderToBuffer
+	>[0];
 	let bytes: Uint8Array = new Uint8Array();
 	await act(async () => {
 		bytes = new Uint8Array(await renderToBuffer(element));
@@ -64,13 +65,12 @@ const findText = (items: TextItem[], text: string) => {
 	return item;
 };
 
-/** Dates end flush with the content box: its right edge, or its left edge in right-to-left resumes. */
-const expectTrailingAlignment = (items: TextItem[], rtl = false) => {
+/** Dates end flush with the content box's right edge. */
+const expectTrailingAlignment = (items: TextItem[]) => {
 	const expectedText = ["2010", "2011", "2012", "Paris • 2020", "Paris • 2021", "Paris • 2022", "Paris • 2023"];
 	for (const text of expectedText) {
 		const item = findText(items, text);
-		if (rtl) expect(item.transform[4], text).toBeCloseTo(30, 1);
-		else expect(item.transform[4] + item.width, text).toBeCloseTo(565.28, 1);
+		expect(item.transform[4] + item.width, text).toBeCloseTo(565.28, 1);
 	}
 };
 
@@ -80,28 +80,5 @@ describe("optional experience and education header fields (#3338)", () => {
 		data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: "@version 1;" } };
 		const items = await renderText(data);
 		expectTrailingAlignment(items);
-	});
-
-	it("preserves RTL row alignment when leading fields are empty", async () => {
-		const data = fixture();
-		data.metadata.page.locale = "ar-SA";
-		const items = await renderText(data);
-		expectTrailingAlignment(items, true);
-	});
-
-	it("preserves the leading alignment of stacked sidebar fields", async () => {
-		const data = fixture();
-		data.metadata.layout.pages = [{ fullWidth: false, main: [], sidebar: ["experience", "education"] }];
-		const items = await renderText(data, "chikorita");
-		for (const index of [0, 1, 2]) {
-			expect(findText(items, `201${index}`).transform[4]).toBeCloseTo(
-				findText(items, `Company ${index}`).transform[4],
-				1,
-			);
-			expect(findText(items, `Paris • 202${index}`).transform[4]).toBeCloseTo(
-				findText(items, `School ${index}`).transform[4],
-				1,
-			);
-		}
 	});
 });

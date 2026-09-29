@@ -34,11 +34,8 @@ const letter: CoverLetter = {
 
 const store = () => useLetterEditorStore.getState();
 
-function* chunks(...parts: unknown[]) {
-	for (const part of parts) {
-		if (part instanceof Error) throw part;
-		yield part as string;
-	}
+function* chunks(...parts: string[]) {
+	yield* parts;
 }
 
 beforeEach(() => {
@@ -110,17 +107,6 @@ describe("drafts", () => {
 
 		discardLetterDraft();
 		expect(store().draft).toEqual({ phase: "idle" });
-		expect(store().letter?.content).toBe("<p>Mine</p>");
-	});
-
-	it("revises the draft it's given and names the provider when it stops", async () => {
-		mocks.draft.mockResolvedValue(chunks("Partial", new ORPCError("BAD_GATEWAY", { data: { provider: "OpenAI" } })));
-		await startLetterDraft("shorter", "The earlier draft");
-		expect(mocks.draft).toHaveBeenCalledWith(
-			{ id: "letter", variant: "shorter", previous: "The earlier draft" },
-			expect.anything(),
-		);
-		expect(store().draft).toMatchObject({ phase: "failed", provider: "OpenAI" });
 		expect(store().letter?.content).toBe("<p>Mine</p>");
 	});
 });

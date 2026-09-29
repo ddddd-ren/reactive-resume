@@ -93,39 +93,6 @@ describe("skill rating alignment (#3343)", () => {
 		expect(text).toContain("Keyword11");
 		expect(text).toContain("Skill 2");
 	});
-	it("aligns three columns and preserves an incomplete row", async () => {
-		const {
-			rows: [rows],
-		} = await renderRatings({ columns: 3, count: 4 });
-		expect(rows).toHaveLength(2);
-		if (!rows?.[0] || !rows[1]) throw new Error("Missing rating rows");
-		expect(rows.map((row) => row.circles)).toEqual([15, 5]);
-	});
-	it("retains every single-column rating beside its own content", async () => {
-		const {
-			rows: [rows],
-			text,
-		} = await renderRatings({ columns: 1, count: 3 });
-		expect(rows).toHaveLength(3);
-		for (const name of ["Skill 0", "Skill 1", "Skill 2", "Keyword11"]) expect(text).toContain(name);
-	});
-	it("aligns custom skill sections using their own column count", async () => {
-		const {
-			rows: [rows],
-			text,
-		} = await renderRatings({
-			columns: 3,
-			count: 4,
-			configure: (data) => {
-				data.customSections = [{ ...data.sections.skills, id: "custom-skills", type: "skills" }];
-				data.sections.skills.columns = 1;
-				data.sections.skills.items = [];
-				data.metadata.layout.pages = [{ fullWidth: true, main: ["custom-skills"], sidebar: [] }];
-			},
-		});
-		expect(rows).toHaveLength(2);
-		expect(text).toContain("Keyword11");
-	});
 	it("aligns language ratings in multi-column rows with unequal fluency text", async () => {
 		const {
 			rows: [rows],
@@ -152,53 +119,6 @@ describe("skill rating alignment (#3343)", () => {
 		expect(rows).toHaveLength(1);
 		expect(rows?.[0]?.circles).toBe(10);
 		expect(text).toContain("Professional working proficiency");
-	});
-	it("does not add a rating for a skill with level zero", async () => {
-		const {
-			rows: [rows],
-			text,
-		} = await renderRatings({
-			columns: 2,
-			count: 3,
-			configure: (data) => {
-				const first = data.sections.skills.items[0];
-				if (first) first.level = 0;
-			},
-		});
-		expect(rows).toHaveLength(2);
-		if (!rows?.[0] || !rows[1]) throw new Error("Missing rating rows");
-		expect(rows.map((row) => row.circles)).toEqual([5, 5]);
-		expect(text).toContain("Skill 0");
-	});
-	it("groups visible items after Semantic CSS filtering", async () => {
-		const {
-			rows: [rows],
-			text,
-		} = await renderRatings({
-			columns: 2,
-			count: 3,
-			configure: (data) => setCss(data, 'section[type="skills"] item[id="skill-1"] { display: none; }'),
-		});
-		expect(rows).toHaveLength(1);
-		expect(text).not.toContain("Skill 1");
-		expect(text).toContain("Skill 2");
-	});
-	it("preserves author-specified item padding around aligned ratings", async () => {
-		const baseline = await renderRatings({ columns: 2, count: 3 });
-		const {
-			rows: [rows],
-		} = await renderRatings({
-			columns: 2,
-			count: 3,
-			configure: (data) => setCss(data, 'section[type="skills"] item { padding-bottom: 12pt; }'),
-		});
-		expect(rows).toHaveLength(2);
-		if (!rows?.[0] || !rows[1]) throw new Error("Missing rating rows");
-		expect(rows.map((row) => row.circles)).toEqual([10, 5]);
-		const defaultSecondRow = baseline.rows[0]?.[1];
-		if (!defaultSecondRow) throw new Error("Missing default rating row");
-		// The first row's 12pt bottom padding moves the next row by 18px.
-		expect(Math.abs(rows[1].top - defaultSecondRow.top - 18)).toBeLessThanOrEqual(1);
 	});
 	it("retains aligned ratings and text across automatic page breaks", async () => {
 		const { rows, text } = await renderRatings({

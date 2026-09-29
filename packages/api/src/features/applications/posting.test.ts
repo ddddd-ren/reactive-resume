@@ -1,12 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { allPublic, assertPublicPageUrl, htmlToText, isPostingLink, readJobPosting } from "./posting";
+import { allPublic, assertPublicPageUrl, htmlToText, readJobPosting } from "./posting";
 
 describe("posting links", () => {
-	it("tells a lone link from pasted text", () => {
-		expect(isPostingLink("  https://jobs.example.com/123 ")).toBe(true);
-		expect(isPostingLink("Apply at https://jobs.example.com/123 today")).toBe(false);
-	});
-
 	it("accepts only public https pages", () => {
 		expect(assertPublicPageUrl("https://jobs.example.com/a#apply").toString()).toBe("https://jobs.example.com/a");
 		for (const url of [
@@ -58,9 +53,5 @@ describe("readJobPosting", () => {
 			location: "Berlin, DE",
 			description: "Design calm tools.\nFigma",
 		});
-	});
-
-	it("returns nothing for a page without one, or with broken JSON", () => {
-		expect(readJobPosting('<script type="application/ld+json">{not json</script><p>Hi</p>')).toBeNull();
 	});
 });

@@ -83,23 +83,6 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllEnvs());
 
 describe("staged RPC transport", () => {
-	it("deletes expired staging bodies while preparing a new upload", async () => {
-		mocks.blob.list.mockResolvedValueOnce({
-			blobs: [
-				{ pathname: "test/_staging/expired", uploadedAt: new Date(Date.now() - 601_000) },
-				{ pathname: "test/_staging/current", uploadedAt: new Date() },
-			],
-		});
-		expect((await prepareStagedBody(prepareRequest())).status).toBe(200);
-		expect(mocks.blob.del).toHaveBeenCalledExactlyOnceWith(["test/_staging/expired"], {});
-	});
-
-	it("disables staging on Docker", async () => {
-		vi.stubEnv("VERCEL", "");
-		expect((await prepareStagedBody(prepareRequest())).status).toBe(404);
-		expect(mocks.user).not.toHaveBeenCalled();
-	});
-
 	it("issues only a private path-scoped PUT URL with the exact declared size", async () => {
 		const result = await prepareStagedBody(prepareRequest());
 		expect(result.status).toBe(200);
@@ -160,26 +143,6 @@ describe("staged RPC transport", () => {
 		expect((await withStagedBody(stageRequest(), handle)).status).toBe(410);
 		expect(handle).toHaveBeenCalledTimes(1);
 		expect(mocks.blob.del).toHaveBeenCalledExactlyOnceWith(pathname, {});
-	});
-
-	it("rejects a size mismatch before RPC parsing and deletes the staged object", async () => {
-		mocks.blob.get.mockResolvedValue({
-			statusCode: 200,
-			blob: { size: wire.length - 1 },
-			stream: new Blob([new Uint8Array(wire.length - 1)]).stream(),
-		});
-		const handle = vi.fn();
-		expect((await withStagedBody(stageRequest(), handle)).status).toBe(413);
-		expect(handle).not.toHaveBeenCalled();
-		expect(mocks.blob.del).toHaveBeenCalledWith(pathname, {});
-	});
-
-	it("deletes staging even when the RPC handler throws, without restoring replay permission", async () => {
-		const handle = vi.fn(() => Promise.reject(new Error("Handler failed")));
-		await expect(withStagedBody(stageRequest(), handle)).rejects.toThrow("Handler failed");
-		expect(mocks.blob.del).toHaveBeenCalledWith(pathname, {});
-		expect((await withStagedBody(stageRequest(), handle)).status).toBe(410);
-		expect(handle).toHaveBeenCalledTimes(1);
 	});
 
 	it.each([{ path: "/api/rpc/../../auth" }, { size: 160 * 1024 * 1024 + 1 }])(

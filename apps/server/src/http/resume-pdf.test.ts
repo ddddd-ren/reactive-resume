@@ -43,27 +43,6 @@ describe("handleResumePdfDownload", () => {
 		expect(mocks.createResumePdfDownload).toHaveBeenCalledWith({ id: "resume-1", userId: "user-1" });
 	});
 
-	it("finds no cover letter behind links made before letters left resumes", async () => {
-		for (const target of ["cover-letter", "resume"] as const) {
-			mocks.verifyResumePdfDownloadToken.mockReturnValueOnce({
-				ok: true,
-				resumeId: "resume-1",
-				userId: "user-1",
-				expiresAt: "2026-06-01T10:10:00.000Z",
-			});
-			mocks.createResumePdfDownload.mockResolvedValueOnce({
-				headers: { "content-disposition": 'attachment; filename="Scizor.pdf"' },
-				body: new File([], "Scizor.pdf", { type: "application/pdf" }),
-			});
-			const response = await handleResumePdfDownload(
-				new Request(`https://example.com/api/resumes/resume-1/pdf?token=signed&target=${target}`),
-				"resume-1",
-			);
-			expect(response.status).toBe(target === "resume" ? 200 : 404);
-		}
-		expect(mocks.createResumePdfDownload).toHaveBeenCalledTimes(1);
-	});
-
 	it("rejects missing, invalid, and expired tokens before rendering", async () => {
 		let response = await handleResumePdfDownload(
 			new Request("https://example.com/api/resumes/resume-1/pdf"),

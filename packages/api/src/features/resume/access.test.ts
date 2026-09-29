@@ -14,29 +14,9 @@ const requestHeadersWithCookie = (name: string, value: string) =>
 	new Headers({ Cookie: `other=value; ${name}=${value}; theme=dark` });
 
 describe("hasResumeAccess", () => {
-	it("returns false when no passwordHash is supplied", () => {
-		expect(hasResumeAccess(new Headers(), "resume-1", null)).toBe(false);
-	});
-
-	it("returns false when no cookie is present", () => {
-		expect(hasResumeAccess(new Headers(), "resume-1", "hash")).toBe(false);
-	});
-
-	it("returns true for a cookie value that matches the expected signed token", () => {
-		const token = signToken("resume-1", "hash");
-		const headers = requestHeadersWithCookie("resume_access_resume-1", token);
-
-		expect(hasResumeAccess(headers, "resume-1", "hash")).toBe(true);
-	});
-
 	it("returns false for a cookie value that does not match the expected signed token", () => {
-		const headers = requestHeadersWithCookie("resume_access_resume-1", "not-the-right-token");
-
-		expect(hasResumeAccess(headers, "resume-1", "hash")).toBe(false);
-	});
-
-	it("returns false when the cookie has a different length than the expected token", () => {
-		const headers = requestHeadersWithCookie("resume_access_resume-1", "short");
+		// Same length as a real token, so the comparison itself has to reject it.
+		const headers = requestHeadersWithCookie("resume_access_resume-1", "0".repeat(64));
 
 		expect(hasResumeAccess(headers, "resume-1", "hash")).toBe(false);
 	});

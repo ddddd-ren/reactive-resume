@@ -95,7 +95,7 @@ const autofillOutput = z.object({
 	salary: z.string(),
 });
 
-export const autofillInputSchema = z.object({
+const autofillInputSchema = z.object({
 	jobDescription: z.string().trim().min(1).max(MAX_PASTED_JOB_DESCRIPTION_CHARS),
 });
 

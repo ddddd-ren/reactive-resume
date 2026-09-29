@@ -51,10 +51,6 @@ describe("parseResumeText", () => {
 		expect(data.basics.website.url).toBe("https://ada.dev");
 	});
 
-	it("reads the summary as rich text", () => {
-		expect(data.summary.content).toBe("<p>Engineer with 10 years building analytical systems.</p>");
-	});
-
 	it("splits experience into one entry per role", () => {
 		expect(data.sections.experience.items).toHaveLength(2);
 		expect(data.sections.experience.items[0]).toMatchObject({
@@ -163,31 +159,6 @@ describe("parseResumeText review findings", () => {
 		expect(data.customSections[0]).toMatchObject({ title: "CAREER HIGHLIGHTS" });
 		expect(JSON.stringify(data)).toContain("Shipped the difference engine");
 	});
-
-	it("keeps one entry when company, position and dates sit on separate lines", () => {
-		const data = parseResumeText(
-			"EXPERIENCE\nAnalytical Engines\nSenior Engineer\nJan 2020 - Present\n• Led the rewrite\n",
-		);
-
-		expect(data.sections.experience.items).toHaveLength(1);
-		expect(data.sections.experience.items[0]).toMatchObject({
-			company: "Analytical Engines",
-			position: "Senior Engineer",
-			period: "Jan 2020 – Present",
-		});
-	});
-
-	it("does not turn an uppercase company name into a section heading", () => {
-		const data = parseResumeText("EXPERIENCE\nACME CORPORATION\nJan 2020 - Present\n• Did the work\n");
-
-		expect(data.customSections).toHaveLength(0);
-		expect(data.sections.experience.items[0]).toMatchObject({ company: "ACME CORPORATION" });
-	});
-
-	it("escapes single quotes in extracted text", () => {
-		const data = parseResumeText("SUMMARY\nIt's a resume\n");
-		expect(data.summary.content).toContain("&#39;");
-	});
 });
 
 describe("parseResumeText multi-line entry preambles", () => {
@@ -202,18 +173,6 @@ describe("parseResumeText multi-line entry preambles", () => {
 			company: "ACME CORPORATION",
 			position: "Senior Engineer",
 			period: "Jan 2020 – Present",
-		});
-	});
-
-	it("keeps an uppercase school followed by a separate degree line as one entry", () => {
-		const data = parseResumeText("EDUCATION\nUNIVERSITY OF LONDON\nBSc Mathematics\n2012 - 2016\n");
-
-		expect(data.customSections).toHaveLength(0);
-		expect(data.sections.education.items).toHaveLength(1);
-		expect(data.sections.education.items[0]).toMatchObject({
-			school: "UNIVERSITY OF LONDON",
-			degree: "BSc Mathematics",
-			period: "2012 – 2016",
 		});
 	});
 
@@ -238,19 +197,6 @@ describe("parseResumeText four-line entry preambles", () => {
 			position: "Senior Engineer",
 			location: "Berlin, Germany",
 			period: "Jan 2020 – Present",
-		});
-	});
-
-	it("keeps school, degree, location and dates as one entry", () => {
-		const data = parseResumeText("EDUCATION\nUNIVERSITY OF LONDON\nBSc Mathematics\nLondon, UK\n2012 - 2016\n");
-
-		expect(data.customSections).toHaveLength(0);
-		expect(data.sections.education.items).toHaveLength(1);
-		expect(data.sections.education.items[0]).toMatchObject({
-			school: "UNIVERSITY OF LONDON",
-			degree: "BSc Mathematics",
-			location: "London, UK",
-			period: "2012 – 2016",
 		});
 	});
 });

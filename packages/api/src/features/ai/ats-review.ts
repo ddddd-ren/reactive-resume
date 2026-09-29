@@ -148,5 +148,3 @@ export function reviewResumeText(input: AtsReviewServiceInput): Promise<AtsRevie
 
 	return generateJson(model, { system: atsReviewSystemPrompt, prompt: buildUserPrompt(input) }, atsReviewOutputSchema);
 }
-
-export const __testables = { buildUserPrompt, renderFindings };

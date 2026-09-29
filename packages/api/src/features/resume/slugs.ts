@@ -11,7 +11,7 @@ export const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const REDIRECT_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000;
 
 /** `stem`, or `stem-2`, `stem-3`… whichever isn't taken. */
-export function pickFreeSlug(stem: string, taken: ReadonlySet<string>) {
+function pickFreeSlug(stem: string, taken: ReadonlySet<string>) {
 	if (!taken.has(stem)) return stem;
 	for (let suffix = 2; ; suffix++) {
 		if (!taken.has(`${stem}-${suffix}`)) return `${stem}-${suffix}`;

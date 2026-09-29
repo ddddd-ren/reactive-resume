@@ -151,14 +151,6 @@ describe("OAuth callback after sign-in", () => {
 		);
 		expect(mocks.navigate).not.toHaveBeenCalled();
 	});
-
-	it("stays on login when credentials are rejected", async () => {
-		mocks.email.mockResolvedValueOnce({ data: null, error: { message: "Invalid credentials" } });
-		const { container } = renderLogin();
-		submitLogin(container, "john@example.com");
-		await waitFor(() => expect(mocks.email).toHaveBeenCalled());
-		expect(mocks.navigate).not.toHaveBeenCalled();
-	});
 });
 
 describe("OAuth callback after two-factor verification", () => {

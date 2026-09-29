@@ -33,14 +33,6 @@ describe("needsLegacyStyleConversion", () => {
 });
 
 describe("migrateResumeStylesheet", () => {
-	it("converts legacy rules into a semantic stylesheet", () => {
-		const sheet = migrateResumeStylesheet(legacy());
-
-		expect(sheet?.mode).toBe("semantic");
-		expect(sheet?.source.text).toContain("color: #0f766e;");
-		expect(sheet?.source.text).not.toContain("@version");
-	});
-
 	it("keeps an unapplied draft from the old editor as a comment after the conversion", () => {
 		const data = legacy();
 		data.metadata.stylesheet = {

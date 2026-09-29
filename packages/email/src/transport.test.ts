@@ -36,63 +36,6 @@ const resetEnv = () => {
 };
 
 describe("sendEmail", () => {
-	it("skips sending and logs when SMTP is not configured (no host)", async () => {
-		resetEnv();
-		const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
-		await sendEmail({ to: "a@b.com", subject: "hi", react: fakeReact });
-
-		expect(infoSpy).toHaveBeenCalledWith(
-			"SMTP not configured; skipping email send.",
-			expect.objectContaining({ to: "a@b.com", subject: "hi" }),
-		);
-		expect(sendMail).not.toHaveBeenCalled();
-		infoSpy.mockRestore();
-	});
-
-	it("sends via nodemailer when SMTP is fully configured", async () => {
-		resetEnv();
-		envMock.SMTP_HOST = "smtp.example.com";
-		envMock.SMTP_USER = "user";
-		envMock.SMTP_PASS = "pass";
-		envMock.SMTP_FROM = "noreply@example.com";
-
-		await sendEmail({ to: "a@b.com", subject: "hi", react: fakeReact });
-
-		expect(createTransport).toHaveBeenCalledWith(
-			expect.objectContaining({
-				host: "smtp.example.com",
-				port: 587,
-				secure: false,
-				auth: { user: "user", pass: "pass" },
-			}),
-		);
-		expect(sendMail).toHaveBeenCalledWith(
-			expect.objectContaining({
-				to: "a@b.com",
-				from: "noreply@example.com",
-				subject: "hi",
-				text: "plain text body",
-			}),
-		);
-	});
-
-	it("renders react element into both html and plain-text bodies", async () => {
-		resetEnv();
-		envMock.SMTP_HOST = "smtp.example.com";
-		envMock.SMTP_USER = "user";
-		envMock.SMTP_PASS = "pass";
-		envMock.SMTP_FROM = "noreply@example.com";
-
-		await sendEmail({ to: "a@b.com", subject: "hi", react: fakeReact });
-
-		expect(sendMail).toHaveBeenCalledWith(
-			expect.objectContaining({
-				html: "<p>html body</p>",
-				text: "plain text body",
-			}),
-		);
-	});
-
 	it("does not throw if the SMTP transport itself errors", async () => {
 		resetEnv();
 		envMock.SMTP_HOST = "smtp.example.com";

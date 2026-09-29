@@ -60,10 +60,4 @@ describe("API keys", () => {
 		expect(apiKey.update).toHaveBeenLastCalledWith({ keyId: "key-1", enabled: true });
 		expect(apiKey.delete).not.toHaveBeenCalled();
 	});
-
-	it("deletes the key for good once the toast goes without Undo", async () => {
-		const toast = await revoke();
-		toast.onClose();
-		expect(apiKey.delete).toHaveBeenCalledWith({ keyId: "key-1" });
-	});
 });

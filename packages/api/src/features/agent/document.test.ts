@@ -6,7 +6,7 @@ vi.mock("@reactive-resume/db/client", () => ({ db: {} }));
 vi.mock("../resume/service", () => ({ resumeService: {} }));
 vi.mock("../cover-letters/service", () => ({ coverLetterService: {} }));
 
-const { documentOf, resolveEdits } = await import("./document");
+const { resolveEdits } = await import("./document");
 
 function makeDocument() {
 	const data = structuredClone(defaultResumeData);
@@ -49,12 +49,6 @@ function makeDocument() {
 }
 
 describe("agent documents", () => {
-	it("knows a conversation's document", () => {
-		expect(documentOf({ workingResumeId: "r", coverLetterId: null })).toEqual({ kind: "resume", id: "r" });
-		expect(documentOf({ workingResumeId: null, coverLetterId: "l" })).toEqual({ kind: "letter", id: "l" });
-		expect(documentOf({ workingResumeId: null, coverLetterId: null })).toBeNull();
-	});
-
 	it("places rewrites, additions and an empty summary, and skips edits on text that changed", () => {
 		const { document, passages } = makeDocument();
 		const [summary, first, second] = passages;

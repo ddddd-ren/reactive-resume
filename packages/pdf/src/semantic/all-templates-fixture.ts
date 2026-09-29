@@ -2,7 +2,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { createSampleResumeData } from "@reactive-resume/schema/resume/sample";
 
-export const comprehensiveStylesheet = {
+const comprehensiveStylesheet = {
 	languageVersion: 1,
 	text: `@version 1;
 :root { --accent: var(--resume-primary-color); }

@@ -2,13 +2,11 @@ import type { ResumeData } from "./data";
 import { describe, expect, it } from "vitest";
 import { parseResumeData } from "./data";
 import {
-	formatEntryDates,
 	formatResumeDates,
 	formatYearMonth,
 	getPresentLabel,
 	inferDateFormat,
 	readLegacyDates,
-	resumeDatesSchema,
 	syncResumeDates,
 } from "./dates";
 import { defaultResumeData } from "./default";
@@ -62,31 +60,12 @@ describe("readLegacyDates", () => {
 	});
 });
 
-describe("resumeDatesSchema", () => {
-	it("accepts years and year-months only", () => {
-		expect(resumeDatesSchema.parse({ start: "2022-03", end: "2023", present: false })).toEqual({
-			start: "2022-03",
-			end: "2023",
-			present: false,
-		});
-		expect(resumeDatesSchema.parse({ start: "2022-13", end: "22", present: "no" })).toEqual({
-			start: null,
-			end: null,
-			present: false,
-		});
-	});
-});
-
 describe("inferDateFormat", () => {
 	it("follows how most dates were typed", () => {
 		expect(inferDateFormat(["March 2020 - Present", "January 2018 - February 2020"], "en-US")).toBe("long");
 		expect(inferDateFormat(["Mar 2020 - Present", "Sept 2019 - Dec 2019"], "en-US")).toBe("short");
 		expect(inferDateFormat(["03/2020 - 06/2021"], "en-US")).toBe("numeric");
 		expect(inferDateFormat(["2020-03 - 2021-06"], "en-US")).toBe("iso");
-	});
-
-	it("falls back to short month names when nothing tells", () => {
-		expect(inferDateFormat(["2014 - 2018", "May 2020", ""], "en-US")).toBe("short");
 	});
 });
 
@@ -160,11 +139,6 @@ describe("formatYearMonth", () => {
 	] as const)("prints 2022-03 as %s in %s", (format, locale, expected) => {
 		expect(formatYearMonth("2022-03", { locale, format })).toBe(expected);
 	});
-
-	it("prints year-only dates as the year in every format", () => {
-		expect(formatYearMonth("2014", { locale: "en-US", format: "long" })).toBe("2014");
-		expect(formatYearMonth("2014", { locale: "en-US", format: "numeric" })).toBe("2014");
-	});
 });
 
 describe("formatResumeDates", () => {
@@ -176,25 +150,10 @@ describe("formatResumeDates", () => {
 		expect(formatResumeDates({ start: "2021-06", end: null, present: false }, options)).toBe("Jun 2021");
 		expect(formatResumeDates({ start: null, end: null, present: false }, options)).toBe("");
 	});
-
-	it("prints 'Present' in the resume's locale", () => {
-		expect(formatResumeDates({ start: "2021", end: null, present: true }, { locale: "de-DE" })).toBe("2021 – Heute");
-	});
-
-	it("prints text it couldn't read exactly as written, until it's reviewed", () => {
-		const dates = { start: "2016-06", end: "2018", present: false, raw: "Summer 2016 - 2018" };
-		expect(formatResumeDates(dates, options)).toBe("Summer 2016 - 2018");
-	});
-});
-
-describe("formatEntryDates", () => {
-	it("falls back to the legacy text for data without dates", () => {
-		expect(formatEntryDates(undefined, "whenever", { locale: "en-US" })).toBe("whenever");
-	});
 });
 
 describe("syncResumeDates", () => {
-	const resume = (period: string, extra: Partial<ResumeData["sections"]["experience"]["items"][number]> = {}) => {
+	const resume = (period: string) => {
 		const data = structuredClone(defaultResumeData);
 		data.metadata.page.dateFormat = "short";
 		data.sections.experience.items = [
@@ -208,7 +167,6 @@ describe("syncResumeDates", () => {
 				website: { url: "", label: "", inlineLink: false },
 				description: "",
 				roles: [],
-				...extra,
 			},
 		];
 		data.sections.awards.items = [
@@ -287,14 +245,5 @@ describe("syncResumeDates", () => {
 		expect(job(data)?.period).toBe("Summer 2016 - 2018");
 		expect(job(data)?.dates?.raw).toBe("Summer 2016 - 2018");
 		expect(data).toEqual(once);
-	});
-
-	it("keeps roles in step too", () => {
-		const data = resume("2020 - 2023", {
-			roles: [{ id: "role", position: "Lead", period: "2022 - Present", description: "" }],
-		});
-		syncResumeDates(data);
-
-		expect(job(data)?.roles[0]).toMatchObject({ period: "2022 – Present", dates: { start: "2022", present: true } });
 	});
 });

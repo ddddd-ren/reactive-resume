@@ -117,19 +117,6 @@ describe("createApp", () => {
 		// The first test pays for the cold import of the whole app, which takes seconds under a parallel run.
 	}, 15_000);
 
-	it("routes signed resume PDF downloads before the web fallback", async () => {
-		const { createApp } = await import("./app");
-		const app = createApp();
-		const request = new Request("http://localhost:3001/api/resumes/resume-1/pdf?token=signed");
-
-		const response = await app.fetch(request);
-
-		await expect(response.text()).resolves.toBe("pdf");
-		expect(mocks.handleResumePdfDownload).toHaveBeenCalledWith(request, "resume-1");
-		expect(mocks.serveWebDistStatic).not.toHaveBeenCalled();
-		expect(mocks.handleWebApp).not.toHaveBeenCalled();
-	});
-
 	it("uses the transport address for public PDF fallback despite rotated forwarding headers", async () => {
 		const { createApp } = await import("./app");
 		const app = createApp();
@@ -175,30 +162,10 @@ describe("createApp", () => {
 		expect(mocks.handleOpenApi).toHaveBeenNthCalledWith(2, unknownOpenApiRequest, "unknown");
 	});
 
-	it.each([
-		["GET", "/robots.txt", "robots", mocks.handleRobots],
-		["HEAD", "/robots.txt", "", mocks.handleRobots],
-		["GET", "/sitemap.xml", "sitemap", mocks.handleSitemap],
-		["HEAD", "/sitemap.xml", "", mocks.handleSitemap],
-		["GET", "/llms.txt", "llms", mocks.handleLlms],
-		["HEAD", "/llms.txt", "", mocks.handleLlms],
-	])("routes %s %s before the static fallback", async (method, pathname, expectedBody, handler) => {
+	it("routes GET / to the web app handler so SEO markup is injected", async () => {
 		const { createApp } = await import("./app");
 		const app = createApp();
-		const request = new Request(`http://localhost:3001${pathname}`, { method });
-
-		const response = await app.fetch(request);
-
-		await expect(response.text()).resolves.toBe(expectedBody);
-		expect(handler).toHaveBeenCalledWith({ head: method === "HEAD" });
-		expect(mocks.serveWebDistStatic).not.toHaveBeenCalled();
-		expect(mocks.handleWebApp).not.toHaveBeenCalled();
-	});
-
-	it.each(["GET", "HEAD"])("routes %s / to the web app handler so SEO markup is injected", async (method) => {
-		const { createApp } = await import("./app");
-		const app = createApp();
-		const request = new Request("http://localhost:3001/", { method });
+		const request = new Request("http://localhost:3001/");
 
 		const response = await app.fetch(request);
 

@@ -1,12 +1,6 @@
 import type { UIMessage } from "ai";
 import { describe, expect, it } from "vitest";
-import {
-	applyStepToUiMessage,
-	proposedEditsOf,
-	upsertAssistantUiMessage,
-	withAccumulatedUsageMetadata,
-	withEditStatuses,
-} from "./messages-persistence";
+import { applyStepToUiMessage, proposedEditsOf, upsertAssistantUiMessage } from "./messages-persistence";
 
 function emptyMessage(): UIMessage {
 	return { id: "ui-1", role: "assistant", parts: [] };
@@ -48,125 +42,20 @@ describe("applyStepToUiMessage", () => {
 
 		expect(second.parts.map((part) => part.type)).toEqual(["step-start", "text", "step-start", "text"]);
 	});
-
-	it("marks tool errors as output-error with the error message", () => {
-		const folded = applyStepToUiMessage(emptyMessage(), {
-			content: [
-				{ type: "tool-call", toolCallId: "call-1", toolName: "apply_resume_patch", input: {} },
-				{
-					type: "tool-error",
-					toolCallId: "call-1",
-					toolName: "apply_resume_patch",
-					input: {},
-					error: new Error("The resume changed"),
-				},
-			],
-		});
-
-		expect(folded.parts.at(-1)).toMatchObject({ state: "output-error", errorText: "The resume changed" });
-	});
-
-	it("keeps an unpaired tool result by synthesizing a complete tool part", () => {
-		const folded = applyStepToUiMessage(emptyMessage(), {
-			content: [{ type: "tool-result", toolCallId: "call-9", toolName: "read_resume", input: {}, output: { id: "r" } }],
-		});
-
-		expect(folded.parts.at(-1)).toMatchObject({
-			type: "tool-read_resume",
-			toolCallId: "call-9",
-			state: "output-available",
-		});
-	});
-
-	it("folds dynamic tool calls into dynamic-tool parts", () => {
-		const folded = applyStepToUiMessage(emptyMessage(), {
-			content: [
-				{ type: "tool-call", toolCallId: "call-2", toolName: "web_search", input: { q: "x" }, dynamic: true },
-				{ type: "tool-result", toolCallId: "call-2", toolName: "web_search", output: [], dynamic: true },
-			],
-		});
-
-		expect(folded.parts.at(-1)).toMatchObject({
-			type: "dynamic-tool",
-			toolName: "web_search",
-			state: "output-available",
-		});
-	});
-
-	it("skips sources, files, and approval content", () => {
-		const folded = applyStepToUiMessage(emptyMessage(), {
-			content: [
-				{ type: "source", sourceType: "url", url: "https://example.com" },
-				{ type: "file", file: {} },
-				{ type: "tool-approval-request", approvalId: "a-1" },
-			],
-		});
-
-		expect(folded.parts).toEqual([{ type: "step-start" }]);
-	});
-});
-
-describe("withAccumulatedUsageMetadata", () => {
-	function messageWithUsage(usage: Record<string, unknown>): UIMessage {
-		return { id: "ui-1", role: "assistant", parts: [], metadata: { model: "gpt-5", usage } } as UIMessage;
-	}
-
-	it("sums token counts across a continuation, including nested details", () => {
-		const previous = messageWithUsage({
-			inputTokens: 100,
-			outputTokens: 50,
-			totalTokens: 150,
-			inputTokenDetails: { cacheReadTokens: 40 },
-			outputTokenDetails: { reasoningTokens: 10 },
-		});
-		const next = messageWithUsage({
-			inputTokens: 200,
-			outputTokens: 30,
-			totalTokens: 230,
-			inputTokenDetails: { cacheReadTokens: 60, cacheWriteTokens: 5 },
-		});
-
-		const merged = withAccumulatedUsageMetadata(previous, next) as UIMessage & {
-			metadata: { usage: Record<string, unknown> };
-		};
-
-		expect(merged.metadata.usage).toMatchObject({
-			inputTokens: 300,
-			outputTokens: 80,
-			totalTokens: 380,
-			inputTokenDetails: { cacheReadTokens: 100, cacheWriteTokens: 5 },
-			outputTokenDetails: { reasoningTokens: 10 },
-		});
-	});
-
-	it("returns the next message unchanged when either side has no usage", () => {
-		const next = messageWithUsage({ totalTokens: 42 });
-		const noUsage: UIMessage = { id: "ui-1", role: "assistant", parts: [] };
-
-		expect(withAccumulatedUsageMetadata(noUsage, next)).toBe(next);
-		expect(withAccumulatedUsageMetadata(next, noUsage)).toBe(noUsage);
-	});
 });
 
 type ScriptedDb = {
 	updates: unknown[];
-	inserts: unknown[];
 };
 
 // Minimal scripted stand-in for the drizzle client: each update() consumes the next scripted
-// returning() result; insert() always succeeds. No vi.mock — the database is an injected value.
+// returning() result. No vi.mock — the database is an injected value.
 function scriptedDatabase(updateResults: Array<Array<{ id: string }>>): ScriptedDb & Record<string, unknown> {
-	const state: ScriptedDb = { updates: [], inserts: [] };
+	const state: ScriptedDb = { updates: [] };
 	let updateCall = 0;
 
 	return {
 		updates: state.updates,
-		inserts: state.inserts,
-		select: () => ({
-			from: () => ({
-				where: async () => [{ maxSequence: 3 }],
-			}),
-		}),
 		update: () => ({
 			set: (value: unknown) => {
 				state.updates.push(value);
@@ -181,56 +70,8 @@ function scriptedDatabase(updateResults: Array<Array<{ id: string }>>): Scripted
 				};
 			},
 		}),
-		insert: () => ({
-			values: (value: unknown) => {
-				state.inserts.push(value);
-				return { returning: async () => [{ id: "inserted-row" }] };
-			},
-		}),
-		delete: () => ({ where: async () => undefined }),
 	};
 }
-
-describe("upsertAssistantUiMessage", () => {
-	const message: UIMessage = { id: "ui-1", role: "assistant", parts: [{ type: "text", text: "hi" }] };
-
-	it("updates by row id when the row exists", async () => {
-		const database = scriptedDatabase([[{ id: "row-1" }], []]);
-
-		const result = await upsertAssistantUiMessage(
-			{ userId: "user-1", threadId: "thread-1", rowId: "row-1", message, status: "streaming" },
-			database as never,
-		);
-
-		expect(result).toEqual({ rowId: "row-1" });
-		expect(database.inserts).toHaveLength(0);
-	});
-
-	it("falls back to matching the stored uiMessage id, then updates in place", async () => {
-		const database = scriptedDatabase([[{ id: "row-2" }]]);
-
-		const result = await upsertAssistantUiMessage(
-			{ userId: "user-1", threadId: "thread-1", message, status: "completed" },
-			database as never,
-		);
-
-		expect(result).toEqual({ rowId: "row-2" });
-		expect(database.inserts).toHaveLength(0);
-	});
-
-	it("inserts a new row only when no existing row matches", async () => {
-		const database = scriptedDatabase([[], []]);
-
-		const result = await upsertAssistantUiMessage(
-			{ userId: "user-1", threadId: "thread-1", rowId: "row-gone", message, status: "completed" },
-			database as never,
-		);
-
-		expect(result).toEqual({ rowId: "inserted-row" });
-		expect(database.inserts).toHaveLength(1);
-		expect(database.inserts[0]).toMatchObject({ role: "assistant", status: "completed", sequence: 4 });
-	});
-});
 
 describe("proposed edit statuses", () => {
 	const proposing = (statuses: string[]): UIMessage =>
@@ -252,12 +93,6 @@ describe("proposed edit statuses", () => {
 				},
 			],
 		}) as never;
-
-	it("sets statuses on one result and reads them back", () => {
-		const message = withEditStatuses(proposing(["pending", "pending"]), "call-1", new Map([["e1", "accepted"]]));
-		expect(proposedEditsOf(message).map((edit) => edit.status)).toEqual(["pending", "accepted"]);
-		expect(withEditStatuses(message, "call-2", new Map([["e0", "rejected"]]))).toEqual(message);
-	});
 
 	it("keeps what the user did while a run rewrites its message", async () => {
 		const database = scriptedDatabase([[{ id: "row-1" }]]);

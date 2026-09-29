@@ -26,7 +26,7 @@ type PromptInput = {
 };
 
 /** The request, the job, the posting, the resume and, for a revision, the draft being revised. */
-export function buildLetterDraftPrompt(input: PromptInput): string {
+function buildLetterDraftPrompt(input: PromptInput): string {
 	const previous = input.variant === "draft" ? undefined : input.previous?.trim();
 	return [
 		previous ? REQUESTS[input.variant] : REQUESTS.draft,

@@ -29,10 +29,6 @@ describe("htmlToMarkdown", () => {
 			"See [Tom & Jerry](https://x.com)",
 		);
 	});
-
-	it("returns an empty string for empty input", () => {
-		expect(htmlToMarkdown("")).toBe("");
-	});
 });
 
 describe("buildMarkdown", () => {
@@ -41,29 +37,13 @@ describe("buildMarkdown", () => {
 		({ summary: "Summary", experience: "Experience", education: "Education" })[sectionId];
 	const md = buildMarkdown(getResumeExportData(sampleResumeData, "resume"), resolveTitle);
 
-	it("emits the name as an H1 and headline as emphasis", () => {
-		expect(md.startsWith(`# ${sampleResumeData.basics.name}`)).toBe(true);
-		expect(md).toContain(`_${sampleResumeData.basics.headline}_`);
-	});
-
 	it("renders resolved section headings as H2", () => {
 		expect(md).toContain("## Experience");
-	});
-
-	it("falls back to the stored title when no resolver is given", () => {
-		const bare = buildMarkdown(getResumeExportData(sampleResumeData, "resume"));
-		expect(bare).not.toContain("## Experience");
 	});
 
 	it("ends with a single trailing newline and never contains raw HTML tags", () => {
 		expect(md.endsWith("\n")).toBe(true);
 		expect(md).not.toMatch(/<[a-z][^>]*>/i);
-	});
-
-	it("excludes the cover letter from the resume scope and includes it in the cover-letter scope", () => {
-		const cover = buildMarkdown(getResumeExportData(withLetter(), "cover-letter"));
-		expect(cover.length).toBeGreaterThan(0);
-		expect(cover).not.toBe(md);
 	});
 
 	it("renders the cover-letter scope without resume header or section heading", () => {

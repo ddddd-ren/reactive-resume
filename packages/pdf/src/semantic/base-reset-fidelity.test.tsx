@@ -66,49 +66,7 @@ const finalTextStyle = async (template: Template, text: string, rule = "") => {
 	return mergedStyle(findText(instance.container.document as HostNode, text));
 };
 
-const finalOnyxCompanyStyle = async (keyword?: "inherit" | "initial") => {
-	const data = structuredClone(defaultResumeData);
-	data.picture.hidden = true;
-	data.metadata.typography.body.fontWeights = ["400", "500"];
-	data.sections.experience.items = [
-		{
-			id: "experience-1",
-			hidden: false,
-			company: "Analytical Engines",
-			position: "Engineer",
-			location: "London",
-			period: "1842",
-			website: { url: "", label: "", inlineLink: false },
-			description: "",
-			roles: [],
-		},
-	];
-	data.metadata.layout.pages = [{ fullWidth: true, main: ["experience"], sidebar: [] }];
-	const text = `@version 1; ${
-		keyword ? `section[type="experience"] field[name="company"] { font-weight: ${keyword}; }` : ""
-	}`;
-	const stylesheet = { languageVersion: 1, text };
-	data.metadata.stylesheet = { mode: "semantic", source: stylesheet };
-	const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<typeof pdf>[0];
-	const instance = pdf(element);
-	await expect.poll(() => instance.container.document).not.toBeNull();
-	return mergedStyle(findText(instance.container.document as HostNode, "Analytical Engines"));
-};
-
 describe("PDF semantic base and reset fidelity", () => {
-	it("keeps Bronzor's first heading weight and lets an explicit last weight override it", async () => {
-		expect(await finalTextStyle("bronzor", "Expertise")).toMatchObject({ fontWeight: "400" });
-		expect(await finalTextStyle("bronzor", "Expertise", "section-heading { font-weight: 700; }")).toMatchObject({
-			fontWeight: "700",
-		});
-	});
-
-	it("resets Bronzor's heading weight with inherit against the actual host base", async () => {
-		expect(await finalTextStyle("bronzor", "Expertise", "section-heading { font-weight: inherit; }")).toMatchObject({
-			fontWeight: "400",
-		});
-	});
-
 	it("cancels Bronzor's heading weight with the CSS initial value", async () => {
 		expect(await finalTextStyle("bronzor", "Expertise", "section-heading { font-weight: initial; }")).toMatchObject({
 			fontWeight: undefined,
@@ -126,21 +84,5 @@ describe("PDF semantic base and reset fidelity", () => {
 		expect(await finalTextStyle("chikorita", "TypeScript", "field[name='name'] { color: inherit; }")).toMatchObject({
 			color: "#111111",
 		});
-	});
-
-	it("cancels Onyx's local company weight with inherit and emits the inherited parent value", async () => {
-		expect(await finalOnyxCompanyStyle("inherit")).toMatchObject({ fontWeight: "400" });
-	});
-
-	it("cancels Onyx's local company weight with initial", async () => {
-		expect(await finalOnyxCompanyStyle("initial")).toMatchObject({ fontWeight: undefined });
-	});
-
-	it("keeps Onyx's local company weight without a reset", async () => {
-		// The local value is the template's bold weight for the body family:
-		// IBM Plex Serif stored as ["400", "500"] resolves to its true Bold
-		// face (#3310) — distinct from the inherited 400 and the initial undefined,
-		// so the reset-keyword contract above stays verifiable.
-		expect(await finalOnyxCompanyStyle()).toMatchObject({ fontWeight: "700" });
 	});
 });

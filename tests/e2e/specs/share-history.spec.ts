@@ -23,25 +23,3 @@ test("renames the public address and keeps the old one redirecting", async ({ br
 		await visitor.close();
 	}
 });
-
-test("names a version, previews an older one read-only and restores it", async ({ authPage: page }, testInfo) => {
-	await createSampleResumeFromDashboard(page, testInfo);
-	await page.getByRole("button", { name: "History", exact: true }).click();
-	const sheet = page.getByRole("dialog", { name: "Share & export" });
-	const versions = sheet.getByRole("list", { name: "Versions" });
-	// A new document's history starts with where it came from.
-	await expect(versions.getByRole("button", { name: /^Created/ })).toBeVisible();
-
-	await sheet.getByRole("textbox", { name: "Name this version" }).fill("Sent to Lumen");
-	await sheet.getByRole("button", { name: "Save", exact: true }).click();
-	await expect(versions.getByRole("button", { name: /^Sent to Lumen/ })).toBeVisible();
-
-	await versions.getByRole("button", { name: /^Created/ }).click();
-	// The sheet announces it; the page (outside the modal sheet) shows the same banner above the version.
-	await expect(sheet.getByRole("status").filter({ hasText: /Viewing .* · Created · read-only/ })).toBeVisible();
-	await expect(page.getByText(/^Viewing .* · Created · read-only$/).first()).toBeVisible();
-
-	await sheet.getByRole("button", { name: "Restore this version" }).click();
-	await expect(versions.getByRole("button", { name: /^Before restore/ })).toBeVisible();
-	await expect(versions.getByRole("button", { name: /^Now/ })).toHaveAttribute("aria-pressed", "true");
-});

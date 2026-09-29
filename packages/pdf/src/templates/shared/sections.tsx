@@ -213,7 +213,7 @@ const sectionHeadingTextOf = (style: Style | undefined): Style | undefined =>
 		),
 	) as Style);
 
-export const getSectionHeadingTextStyle = (...styles: StyleInput[]): Style[] => {
+const getSectionHeadingTextStyle = (...styles: StyleInput[]): Style[] => {
 	const textStyles = composeStyles(...styles).map(
 		({
 			borderBottomWidth: _borderBottomWidth,
@@ -251,14 +251,7 @@ export const getSectionHeadingTextStyle = (...styles: StyleInput[]): Style[] => 
 
 const useSectionItemsContext = () => use(SectionItemsContext);
 
-export const SemanticTextRuns = ({
-	runs,
-	separator,
-	host,
-	style,
-	nodeKey,
-	fieldOwnerNodeKey,
-}: SemanticTextRunsProps) => {
+const SemanticTextRuns = ({ runs, separator, host, style, nodeKey, fieldOwnerNodeKey }: SemanticTextRunsProps) => {
 	const contextualNodeKey = useSemanticNodeKey();
 	const fieldParentNodeKey = fieldOwnerNodeKey ?? contextualNodeKey;
 	const combinedTextOwnerNodeKey =
@@ -1201,11 +1194,7 @@ const inlineSkillsItemStyle = {
 	columnGap: 4,
 } satisfies Style;
 
-export const getSkillsItemStyle = (
-	isInline: boolean,
-	item: SkillItem,
-	metrics: ReturnType<typeof getTemplateMetrics>,
-) => {
+const getSkillsItemStyle = (isInline: boolean, item: SkillItem, metrics: ReturnType<typeof getTemplateMetrics>) => {
 	if (isInline) {
 		return composeStyles(
 			inlineSkillsItemStyle,

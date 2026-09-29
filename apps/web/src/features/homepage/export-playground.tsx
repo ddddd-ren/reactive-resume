@@ -22,7 +22,7 @@ type ExportPlaygroundProps = {
 	template: Template;
 };
 
-export function buildExportSample({ name, accent, typeface, template }: ExportPlaygroundProps, locale = i18n.locale) {
+function buildExportSample({ name, accent, typeface, template }: ExportPlaygroundProps, locale = i18n.locale) {
 	const data = structuredClone(defaultResumeData);
 	data.basics = {
 		...data.basics,

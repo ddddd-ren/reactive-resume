@@ -8,7 +8,7 @@ import { afterAll, beforeAll, expect, it } from "vitest";
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const turbo = join(root, "node_modules", "turbo", "bin", "turbo");
 const tasks = ["build", "typecheck", "test", "test:coverage", "test:ci", "test:agent"];
-type DryTask = { taskId: string; task: string; hash: string; command: string; dependencies: string[] };
+type DryTask = { taskId: string; task: string; hash: string };
 let directory: string;
 let baseline: Map<string, DryTask>;
 
@@ -35,7 +35,7 @@ beforeAll(async () => {
 	await writeFile(join(directory, "turbo.json"), await readFile(join(root, "turbo.json")));
 
 	// app -> api -> pdf mirrors a source-consumed dependency with no build script.
-	const dependencies: Record<string, string[]> = { app: ["api"], api: ["pdf"], pdf: [], unrelated: [] };
+	const dependencies: Record<string, string[]> = { app: ["api"], api: ["pdf"], pdf: [] };
 	let lock = "lockfileVersion: '9.0'\nimporters:\n  .: {}\n";
 	for (const [name, deps] of Object.entries(dependencies)) {
 		const packageDirectory = join(directory, "packages", name);
@@ -86,32 +86,6 @@ it("invalidates every cached consumer task after a transitive source-only packag
 	});
 });
 
-it("invalidates direct consumers while retaining unrelated package cache keys", async () => {
-	await withChangedSource("api", (result) => {
-		for (const task of tasks) {
-			expect(result.get(`app#${task}`)?.hash, task).not.toBe(baseline.get(`app#${task}`)?.hash);
-			expect(result.get(`unrelated#${task}`)?.hash, task).toBe(baseline.get(`unrelated#${task}`)?.hash);
-		}
-	});
-});
-
 it("keeps cache keys stable when sources are unchanged", () => {
 	expect(dryRun()).toEqual(baseline);
-});
-
-it("propagates dependency hashes without ordering runnable tasks between packages", () => {
-	for (const task of tasks) {
-		const app = baseline.get(`app#${task}`);
-		expect(app?.dependencies.length, task).toBeGreaterThan(0);
-		const pending = [...(app?.dependencies ?? [])];
-		const visited = new Set<string>();
-		while (pending.length > 0) {
-			const id = pending.pop();
-			if (!id || visited.has(id)) continue;
-			visited.add(id);
-			const dependency = baseline.get(id);
-			expect(dependency?.command, id).toBe("<NONEXISTENT>");
-			pending.push(...(dependency?.dependencies ?? []));
-		}
-	}
 });

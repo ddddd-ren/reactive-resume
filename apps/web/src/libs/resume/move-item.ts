@@ -128,7 +128,7 @@ export function getCompatibleMoveTargets(
  * @param customSectionId - The custom section ID (if applicable)
  * @returns The removed item, or null if not found
  */
-export function removeItemFromSource(
+function removeItemFromSource(
 	draft: WritableDraft<ResumeData>,
 	itemId: string,
 	type: CustomSectionType,
@@ -164,7 +164,7 @@ export function removeItemFromSource(
  * @param targetSectionId - The target section ID
  * @param type - The section type
  */
-export function addItemToSection(
+function addItemToSection(
 	draft: WritableDraft<ResumeData>,
 	item: SectionItem,
 	targetSectionId: string,
@@ -211,7 +211,7 @@ function makeCustomSection(id: string, type: CustomSectionType, title: string, i
 	};
 }
 
-export function createCustomSectionWithItem(
+function createCustomSectionWithItem(
 	draft: WritableDraft<ResumeData>,
 	item: SectionItem,
 	type: CustomSectionType,
@@ -227,7 +227,7 @@ export function createCustomSectionWithItem(
 	return newSectionId;
 }
 
-export function createPageWithSection(
+function createPageWithSection(
 	draft: WritableDraft<ResumeData>,
 	item: SectionItem,
 	type: CustomSectionType,

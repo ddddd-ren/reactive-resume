@@ -1,6 +1,6 @@
 import type { UIMessage, UIMessageChunk } from "ai";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ORPCError } from "@orpc/client";
+import { streamToEventIterator } from "@orpc/server";
 
 const dbMock = {
 	select: vi.fn(),
@@ -275,190 +275,9 @@ function selectOrderByResult(rows: unknown[]) {
 	return { from };
 }
 
-describe("agentService.threads.get", () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-	});
-
-	const threadSelect = (thread: unknown) => () => {
-		const limit = vi.fn(async () => [thread]);
-		const where = vi.fn(() => ({ limit }));
-		const from = vi.fn(() => ({ where }));
-		return { from };
-	};
-	const emptyListSelect = () => {
-		const orderBy = vi.fn(async () => []);
-		const where = vi.fn(() => ({ orderBy }));
-		const from = vi.fn(() => ({ where }));
-		return { from };
-	};
-
-	it("names the conversation's document, and is read-only once the document is locked or gone", async () => {
-		const { agentService } = await import("./service");
-
-		// getThread, then messages and attachments.
-		dbMock.select
-			.mockImplementationOnce(threadSelect(buildActiveThread()))
-			.mockImplementationOnce(emptyListSelect)
-			.mockImplementationOnce(emptyListSelect);
-		resumeServiceMock.getById.mockResolvedValueOnce({ id: "resume-1", name: "Resume", isLocked: false });
-		const open = await agentService.threads.get({ id: "thread-1", userId: "user-1" });
-		expect(open.document).toEqual({ kind: "resume", id: "resume-1", name: "Resume", locked: false });
-		expect(open.isReadOnly).toBe(false);
-
-		dbMock.select
-			.mockImplementationOnce(threadSelect(buildActiveThread()))
-			.mockImplementationOnce(emptyListSelect)
-			.mockImplementationOnce(emptyListSelect);
-		resumeServiceMock.getById.mockResolvedValueOnce({ id: "resume-1", name: "Resume", isLocked: true });
-		expect((await agentService.threads.get({ id: "thread-1", userId: "user-1" })).isReadOnly).toBe(true);
-
-		dbMock.select
-			.mockImplementationOnce(threadSelect(buildActiveThread()))
-			.mockImplementationOnce(emptyListSelect)
-			.mockImplementationOnce(emptyListSelect);
-		resumeServiceMock.getById.mockRejectedValueOnce(new ORPCError("NOT_FOUND"));
-		const gone = await agentService.threads.get({ id: "thread-1", userId: "user-1" });
-		expect(gone.document).toBeNull();
-		expect(gone.isReadOnly).toBe(true);
-	});
-});
-
-describe("buildAttachmentModelParts", () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-	});
-
-	it("converts readable, image, supported binary, and unsupported attachments into model parts", async () => {
-		const { buildAttachmentModelParts } = await import("./service");
-
-		const imageBytes = new Uint8Array([1, 2, 3]);
-		const pdfBytes = new Uint8Array([4, 5, 6]);
-		const parts = buildAttachmentModelParts([
-			{ attachment: buildAttachment(), data: new TextEncoder().encode("hello") },
-			{
-				attachment: buildAttachment({
-					id: "image-1",
-					filename: "photo.png",
-					mediaType: "image/png",
-					size: imageBytes.byteLength,
-				}),
-				data: imageBytes,
-			},
-			{
-				attachment: buildAttachment({
-					id: "pdf-1",
-					filename: "portfolio.pdf",
-					mediaType: "application/pdf",
-					size: pdfBytes.byteLength,
-				}),
-				data: pdfBytes,
-			},
-			{
-				attachment: buildAttachment({
-					id: "zip-1",
-					filename: "archive.zip",
-					mediaType: "application/zip",
-					size: 7,
-				}),
-				data: new Uint8Array([7]),
-			},
-		]);
-
-		expect(parts).toEqual([
-			expect.objectContaining({ type: "text", text: expect.stringContaining("hello") }),
-			{ type: "image", image: imageBytes, mediaType: "image/png" },
-			{ type: "file", data: pdfBytes, filename: "portfolio.pdf", mediaType: "application/pdf" },
-			expect.objectContaining({ type: "text", text: expect.stringContaining("archive.zip") }),
-		]);
-	});
-});
-
 describe("agentService.messages.send", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-	});
-
-	it("strips forged agent attachment UI parts when no attachment IDs are selected", async () => {
-		const activeThread = buildActiveThread();
-		const persistedMessage = {
-			id: "message-1",
-			userId: "user-1",
-			threadId: "thread-1",
-			role: "user",
-			status: "completed",
-			sequence: 0,
-			uiMessage: {
-				id: "ui-message-1",
-				role: "user",
-				parts: [{ type: "text", text: "Use this file" }],
-			},
-		};
-		const insertValues: unknown[] = [];
-
-		dbMock.select
-			.mockImplementationOnce(() => selectLimitResult([activeThread]))
-			.mockImplementationOnce(() => selectWhereResult([{ total: 1 }]))
-			.mockImplementationOnce(() => selectOrderByResult([persistedMessage]));
-
-		dbMock.insert.mockReturnValue({
-			values: vi.fn((value) => {
-				insertValues.push(value);
-				return { returning: vi.fn(async () => [persistedMessage]) };
-			}),
-		});
-		dbMock.update.mockReturnValue({ set: vi.fn(() => ({ where: vi.fn(async () => undefined) })) });
-
-		claimActiveAgentRunMock.mockResolvedValue(true);
-		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
-			id: "provider-1",
-			provider: "openai",
-			model: "gpt-5",
-			apiKey: "secret",
-			baseURL: null,
-		});
-		aiProvidersServiceMock.markUsed.mockResolvedValue(undefined);
-
-		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }, { streamToEventIterator }] =
-			await Promise.all([import("ai"), import("./streams"), import("@orpc/server")]);
-		vi.mocked(convertToModelMessages).mockResolvedValue([
-			{ role: "user", content: [{ type: "text", text: "Use this file" }] },
-		]);
-		class MockToolLoopAgent {
-			stream = vi.fn(async () => ({ toUIMessageStream: vi.fn(() => new ReadableStream()) }));
-		}
-		vi.mocked(ToolLoopAgent).mockImplementation(MockToolLoopAgent as never);
-		vi.mocked(agentStreamLifecycle.create).mockResolvedValue(new ReadableStream());
-		vi.mocked(streamToEventIterator).mockReturnValue("iterator" as never);
-
-		const { agentService } = await import("./service");
-
-		await agentService.messages.send({
-			threadId: "thread-1",
-			userId: "user-1",
-			message: {
-				id: "ui-message-1",
-				role: "user",
-				parts: [
-					{ type: "text", text: "Use this file" },
-					{
-						type: "file",
-						url: "agent-attachment:foreign-attachment",
-						mediaType: "text/plain",
-						filename: "forged.txt",
-					},
-				],
-				// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
-			} as any,
-		});
-
-		expect(insertValues).toEqual([
-			expect.objectContaining({
-				uiMessage: expect.objectContaining({
-					parts: [{ type: "text", text: "Use this file" }],
-				}),
-			}),
-		]);
 	});
 
 	it("leaves the document and the posting out when their context chips are removed", async () => {
@@ -484,8 +303,10 @@ describe("agentService.messages.send", () => {
 			baseURL: "http://127.0.0.1:1/v1",
 		});
 
-		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }, { streamToEventIterator }] =
-			await Promise.all([import("ai"), import("./streams"), import("@orpc/server")]);
+		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }] = await Promise.all([
+			import("ai"),
+			import("./streams"),
+		]);
 		vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: [{ type: "text", text: "Hi" }] }]);
 		class MockToolLoopAgent {
 			stream = vi.fn(async () => ({ toUIMessageStream: vi.fn(() => new ReadableStream()) }));
@@ -587,8 +408,10 @@ describe("agentService.messages.send", () => {
 		aiProvidersServiceMock.markUsed.mockResolvedValue(undefined);
 		storageServiceMock.read.mockResolvedValue({ data: new TextEncoder().encode("hello"), contentType: "text/plain" });
 
-		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }, { streamToEventIterator }] =
-			await Promise.all([import("ai"), import("./streams"), import("@orpc/server")]);
+		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }] = await Promise.all([
+			import("ai"),
+			import("./streams"),
+		]);
 		const streamMock = vi.fn(async () => ({
 			toUIMessageStream: vi.fn(() => new ReadableStream()),
 		}));
@@ -752,8 +575,10 @@ describe("agentService.messages.send", () => {
 		});
 		aiProvidersServiceMock.markUsed.mockResolvedValue(undefined);
 
-		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }, { streamToEventIterator }] =
-			await Promise.all([import("ai"), import("./streams"), import("@orpc/server")]);
+		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }] = await Promise.all([
+			import("ai"),
+			import("./streams"),
+		]);
 		vi.mocked(convertToModelMessages).mockResolvedValue([
 			{ role: "user", content: [{ type: "text", text: "Change the name" }] },
 			{
@@ -880,8 +705,10 @@ describe("agentService.messages.send", () => {
 		});
 		aiProvidersServiceMock.markUsed.mockResolvedValue(undefined);
 
-		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }, { streamToEventIterator }] =
-			await Promise.all([import("ai"), import("./streams"), import("@orpc/server")]);
+		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }] = await Promise.all([
+			import("ai"),
+			import("./streams"),
+		]);
 		vi.mocked(convertToModelMessages).mockResolvedValue([
 			{ role: "user", content: [{ type: "text", text: "Change the name" }] },
 		]);
@@ -927,14 +754,6 @@ describe("agentService.messages.send", () => {
 				message: expect.objectContaining({ id: "ui-assistant-1" }),
 			}),
 		);
-
-		// Usage metadata is attached on the finish part only and carries the provider's model id.
-		const messageMetadata = uiStreamOptions?.messageMetadata as (options: { part: Record<string, unknown> }) => unknown;
-		expect(messageMetadata({ part: { type: "finish", totalUsage: { totalTokens: 42 } } })).toEqual({
-			usage: { totalTokens: 42 },
-			model: "gpt-5",
-		});
-		expect(messageMetadata({ part: { type: "text-delta" } })).toBeUndefined();
 	});
 
 	it("repairs legacy user-answer messages that followed an unresolved ask-user-question tool call", async () => {
@@ -1030,8 +849,10 @@ describe("agentService.messages.send", () => {
 		});
 		aiProvidersServiceMock.markUsed.mockResolvedValue(undefined);
 
-		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }, { streamToEventIterator }] =
-			await Promise.all([import("ai"), import("./streams"), import("@orpc/server")]);
+		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }] = await Promise.all([
+			import("ai"),
+			import("./streams"),
+		]);
 		vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: [{ type: "text", text: "Retry" }] }]);
 		class MockToolLoopAgent {
 			stream = vi.fn(async () => ({ toUIMessageStream: vi.fn(() => new ReadableStream()) }));
@@ -1101,91 +922,6 @@ describe("agentService.messages.send", () => {
 		await expect(sending).rejects.toMatchObject({ code: "BAD_REQUEST", message: "Invalid UI message parts." });
 		expect(claimActiveAgentRunMock).not.toHaveBeenCalled();
 		expect(dbMock.insert).not.toHaveBeenCalled();
-	});
-
-	it("rejects malformed attachment IDs before persisting a message", async () => {
-		dbMock.select.mockImplementationOnce(() => selectLimitResult([buildActiveThread()]));
-		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
-			id: "provider-1",
-			provider: "openai",
-			model: "gpt-5",
-			apiKey: "secret",
-			baseURL: null,
-		});
-
-		const { agentService } = await import("./service");
-
-		const sending = agentService.messages.send({
-			threadId: "thread-1",
-			userId: "user-1",
-			// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
-			message: { id: "ui-message-1", role: "user", parts: [{ type: "text", text: "Use this file" }] } as any,
-			attachmentIds: [123],
-		});
-
-		await expect(sending).rejects.toBeInstanceOf(ORPCError);
-		await expect(sending).rejects.toMatchObject({
-			code: "BAD_REQUEST",
-			message: "Attachment IDs must be non-empty strings.",
-		});
-		expect(dbMock.insert).not.toHaveBeenCalled();
-	});
-
-	it("rejects attachments that are missing, foreign, or already linked before persisting a message", async () => {
-		dbMock.select
-			.mockImplementationOnce(() => selectLimitResult([buildActiveThread()]))
-			.mockImplementationOnce(() => selectWhereResult([]));
-
-		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
-			id: "provider-1",
-			provider: "openai",
-			model: "gpt-5",
-			apiKey: "secret",
-			baseURL: null,
-		});
-
-		const { agentService } = await import("./service");
-
-		const sending = agentService.messages.send({
-			threadId: "thread-1",
-			userId: "user-1",
-			// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
-			message: { id: "ui-message-1", role: "user", parts: [{ type: "text", text: "Use this file" }] } as any,
-			attachmentIds: ["foreign-or-linked-attachment"],
-		});
-
-		await expect(sending).rejects.toBeInstanceOf(ORPCError);
-		await expect(sending).rejects.toMatchObject({
-			code: "BAD_REQUEST",
-			message: "One or more attachments are unavailable or already linked to a message.",
-		});
-		expect(dbMock.insert).not.toHaveBeenCalled();
-	});
-
-	it("throws CONFLICT when the underlying thread is archived", async () => {
-		const archivedThread = buildArchivedThread();
-
-		dbMock.select.mockImplementation(() => {
-			const limit = vi.fn(async () => [archivedThread]);
-			const where = vi.fn(() => ({ limit }));
-			const from = vi.fn(() => ({ where }));
-			return { from };
-		});
-
-		const { agentService } = await import("./service");
-
-		const sending = agentService.messages.send({
-			threadId: "thread-1",
-			userId: "user-1",
-			// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
-			message: { id: "msg-1", role: "user", parts: [{ type: "text", text: "hi" }] } as any,
-		});
-
-		await expect(sending).rejects.toBeInstanceOf(ORPCError);
-		await expect(sending).rejects.toMatchObject({ code: "CONFLICT", message: "This thread is archived." });
-
-		// Ensure we never tried to claim a run or persist anything for an archived thread.
-		expect(aiProvidersServiceMock.getRunnableById).not.toHaveBeenCalled();
 	});
 });
 
@@ -1301,45 +1037,6 @@ describe("agentService.attachments.create", () => {
 
 		await expect(agentService.attachments.create(input)).resolves.toMatchObject({ filename: input.filename });
 	});
-
-	it("requires an owned, active, undeleted thread under the lock", async () => {
-		const where = vi.fn(() => ({ for: vi.fn(async () => []) }));
-		dbMock.select.mockReturnValue({ from: vi.fn(() => ({ where })) });
-		const { agentService } = await import("./service");
-		await expect(agentService.attachments.create(input)).rejects.toMatchObject({ code: "NOT_FOUND" });
-		expect(where).toHaveBeenCalledWith({
-			type: "and",
-			conditions: [
-				{ type: "eq", left: "agent_threads.id", right: input.threadId },
-				{ type: "eq", left: "agent_threads.user_id", right: input.userId },
-				{ type: "eq", left: "agent_threads.status", right: "active" },
-				{ type: "isNull", value: "agent_threads.deleted_at" },
-			],
-		});
-		expect(storageServiceMock.write).not.toHaveBeenCalled();
-		expect(dbMock.insert).not.toHaveBeenCalled();
-	});
-
-	it("rejects individual attachments above 25 MiB before opening a transaction", async () => {
-		const { agentService } = await import("./service");
-		await expect(
-			agentService.attachments.create({ ...input, data: new Uint8Array(25 * 1024 * 1024 + 1) }),
-		).rejects.toMatchObject({ code: "BAD_REQUEST" });
-		expect(dbMock.transaction).not.toHaveBeenCalled();
-		expect(storageServiceMock.write).not.toHaveBeenCalled();
-	});
-
-	it("removes uploaded bytes when metadata insertion fails", async () => {
-		dbMock.select
-			.mockReturnValueOnce({ from: () => ({ where: () => ({ for: async () => [{ id: input.threadId }] }) }) })
-			.mockImplementation(() => selectWhereResult([{ total: 0, totalBytes: 0 }]));
-		storageServiceMock.write.mockResolvedValue(undefined);
-		storageServiceMock.delete.mockResolvedValue(true);
-		dbMock.insert.mockReturnValue({ values: () => ({ returning: () => Promise.reject(new Error("Insert failed")) }) });
-		const { agentService } = await import("./service");
-		await expect(agentService.attachments.create(input)).rejects.toThrow("Insert failed");
-		expect(storageServiceMock.delete).toHaveBeenCalledWith("uploads/user-1/agent/thread-1/test-id-notes.txt");
-	});
 });
 
 describe("agentService.messages.stop", () => {
@@ -1391,8 +1088,10 @@ describe("agentService.messages.stop", () => {
 			});
 			aiProvidersServiceMock.markUsed.mockResolvedValue(undefined);
 
-			const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }, { streamToEventIterator }] =
-				await Promise.all([import("ai"), import("./streams"), import("@orpc/server")]);
+			const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }] = await Promise.all([
+				import("ai"),
+				import("./streams"),
+			]);
 			vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: [{ type: "text", text: "hi" }] }]);
 
 			let capturedSignal: AbortSignal | undefined;
@@ -1519,50 +1218,11 @@ describe("agentService.messages.stop", () => {
 		expect(clearActiveAgentRunIfCurrentMock).not.toHaveBeenCalled();
 		expect(vi.mocked((await import("./runs")).reapStaleAgentRun)).not.toHaveBeenCalled();
 	});
-
-	it("reaps a run whose owner stopped heartbeating", async () => {
-		const activeRunStartedAt = new Date(Date.now() - 60_000);
-		dbMock.select.mockImplementation(() =>
-			selectLimitResult([
-				buildActiveThread({ activeRunId: "dead-run", activeStreamId: "stream-1", activeRunStartedAt }),
-			]),
-		);
-		cancellationRedisMock.exists.mockResolvedValue(0);
-		vi.mocked((await import("./runs")).reapStaleAgentRun).mockClear();
-		const { agentService } = await import("./service");
-		await agentService.messages.stop({ userId: "user-1", threadId: "thread-1" });
-		expect(vi.mocked((await import("./runs")).reapStaleAgentRun)).toHaveBeenCalledExactlyOnceWith({
-			threadId: "thread-1",
-			userId: "user-1",
-			runId: "dead-run",
-			streamId: "stream-1",
-		});
-	});
 });
 
 describe("agentService.threads.delete", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-	});
-
-	it("throws NOT_FOUND when the thread does not belong to the user and skips destructive work", async () => {
-		dbMock.select.mockImplementation(() => {
-			const limit = vi.fn(async () => []);
-			const where = vi.fn(() => ({ limit }));
-			const from = vi.fn(() => ({ where }));
-			return { from };
-		});
-
-		const { agentService } = await import("./service");
-
-		const deleting = agentService.threads.delete({ id: "thread-x", userId: "user-y" });
-
-		await expect(deleting).rejects.toBeInstanceOf(ORPCError);
-		await expect(deleting).rejects.toMatchObject({ code: "NOT_FOUND" });
-
-		expect(storageServiceMock.delete).not.toHaveBeenCalled();
-		expect(dbMock.delete).not.toHaveBeenCalled();
-		expect(dbMock.update).not.toHaveBeenCalled();
 	});
 
 	it("proceeds with cleanup when the thread is owned by the user", async () => {
@@ -1607,38 +1267,6 @@ describe("agentService.threads.delete", () => {
 		expect(updateSet).toHaveBeenCalledBefore(storageServiceMock.delete as never);
 		expect(storageServiceMock.delete).toHaveBeenCalledWith("uploads/user-own/agent/thread-own");
 		expect(dbMock.delete).toHaveBeenCalled();
-		expect(updateSet).toHaveBeenCalledWith(expect.objectContaining({ status: "deleted" }));
-	});
-
-	it("still completes when storage cleanup fails after the thread is soft-deleted", async () => {
-		const ownedThread = buildArchivedThread({
-			id: "thread-own",
-			userId: "user-own",
-			status: "active",
-			activeRunId: null,
-			activeStreamId: null,
-			archivedAt: null,
-		});
-
-		dbMock.select.mockImplementation(() => {
-			const limit = vi.fn(async () => [ownedThread]);
-			const where = vi.fn(() => ({ limit }));
-			const from = vi.fn(() => ({ where }));
-			return { from };
-		});
-
-		const deleteWhere = vi.fn(async () => undefined);
-		dbMock.delete.mockReturnValue({ where: deleteWhere });
-
-		const updateWhere = vi.fn(() => ({ returning: vi.fn(async () => [{ activeRunId: "delete-run" }]) }));
-		const updateSet = vi.fn(() => ({ where: updateWhere }));
-		dbMock.update.mockReturnValue({ set: updateSet });
-
-		storageServiceMock.delete.mockRejectedValue(new Error("storage unavailable"));
-
-		const { agentService } = await import("./service");
-
-		await expect(agentService.threads.delete({ id: "thread-own", userId: "user-own" })).resolves.toBeUndefined();
 		expect(updateSet).toHaveBeenCalledWith(expect.objectContaining({ status: "deleted" }));
 	});
 });

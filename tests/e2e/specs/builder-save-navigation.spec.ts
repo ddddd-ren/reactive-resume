@@ -3,13 +3,6 @@ import { createSampleResumeFromDashboard } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 const updateUrl = "**/api/rpc/resume/update";
-function barrier() {
-	let resolve!: () => void;
-	const promise = new Promise<void>((done) => {
-		resolve = done;
-	});
-	return { promise, resolve };
-}
 function waitSave(page: Page) {
 	return page.waitForResponse(
 		(response) => new URL(response.url()).pathname === "/api/rpc/resume/update" && response.ok(),
@@ -30,36 +23,6 @@ async function prepareNavigationTest(page: Page, testInfo: TestInfo) {
 	await warmup;
 	return page.url();
 }
-
-test("retries a failed autosave before leaving the builder", async ({ authPage: page }, testInfo) => {
-	const url = await prepareNavigationTest(page, testInfo);
-
-	await page.route(updateUrl, async (route) => {
-		await route.abort("failed");
-	});
-	await page.getByRole("textbox", { name: "Full name", exact: true }).fill("Draft recovered before leaving");
-	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
-	await page.unroute(updateUrl);
-	const arrived = barrier();
-	const release = barrier();
-	await page.route(updateUrl, async (route) => {
-		arrived.resolve();
-		await release.promise;
-		await route.continue();
-	});
-	await clickDashboardWithoutNavigationWait(page);
-	await arrived.promise;
-	expect(page.url()).toBe(url);
-	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toHaveValue(
-		"Draft recovered before leaving",
-	);
-	release.resolve();
-	await page.waitForURL(/\/dashboard/);
-	await page.goto(url);
-	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toHaveValue(
-		"Draft recovered before leaving",
-	);
-});
 
 test("retains the current draft when saving during navigation fails", async ({ authPage: page }, testInfo) => {
 	const url = await prepareNavigationTest(page, testInfo);

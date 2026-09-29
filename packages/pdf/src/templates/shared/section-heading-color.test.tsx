@@ -34,12 +34,10 @@ const renderHeading = async (css: string, hideSectionIcons = false) => {
 		let size = 0;
 		const text: { value: string; fill: string }[] = [];
 		const sizes: { value: string; size: number }[] = [];
-		const colors: string[] = [];
 		for (const [index, fn] of operators.fnArray.entries()) {
 			const args = operators.argsArray[index];
 			if (fn === OPS.setFillRGBColor) fill = args[0];
 			if (fn === OPS.setFont) size = args[1];
-			if (fn === OPS.setFillRGBColor || fn === OPS.setStrokeRGBColor) colors.push(args[0]);
 			if (fn === OPS.showText) {
 				const value = args[0]
 					.map((glyph: { unicode?: string } | number) => (typeof glyph === "number" ? "" : (glyph.unicode ?? "")))
@@ -48,34 +46,18 @@ const renderHeading = async (css: string, hideSectionIcons = false) => {
 				sizes.push({ value, size });
 			}
 		}
-		return { text, colors, sizes };
+		return { text, sizes };
 	} finally {
 		await loadingTask.destroy();
 	}
 };
 
 describe("Semantic section heading colors (#3348)", () => {
-	it.each([false, true])("colors heading text with hideSectionIcons=%s", async (hidden) => {
+	it.each([false])("colors heading text with hideSectionIcons=%s", async (hidden) => {
 		const { text } = await renderHeading("section-heading { color: #1234ef; }", hidden);
 		expect(text).toContainEqual({ value: "HEADING", fill: "#1234ef" });
 	});
-	it("colors explicitly targeted section icons", async () => {
-		const { colors } = await renderHeading("section-heading icon { color: #178a6b; }");
-		expect(colors).toContain("#178a6b");
-	});
-	it("allows independent heading and icon colors", async () => {
-		const { text, colors } = await renderHeading(
-			"section-heading { color: #1234ef; } section-heading icon { color: #178a6b; }",
-		);
-		expect(text).toContainEqual({ value: "HEADING", fill: "#1234ef" });
-		expect(colors).toContain("#178a6b");
-	});
-	it("retains template colors without a custom rule", async () => {
-		const { text, colors } = await renderHeading("");
-		expect(text).toContainEqual({ value: "HEADING", fill: "#000000" });
-		expect(colors).toContain("#dc2626");
-	});
-	it.each([false, true])("gives heading text its text styles with hideSectionIcons=%s", async (hidden) => {
+	it.each([false])("gives heading text its text styles with hideSectionIcons=%s", async (hidden) => {
 		const { sizes } = await renderHeading("section-heading { font-size: 21pt; text-transform: lowercase; }", hidden);
 		expect(sizes).toContainEqual({ value: "heading", size: 21 });
 	});

@@ -52,7 +52,7 @@ const createStructuredDataScript = (id: string, data: JsonLd) => ({
 	children: serializeJsonLdForScript(data),
 });
 
-export const getRootStructuredData = (canonicalUrl: string): JsonLd[] => [
+const getRootStructuredData = (canonicalUrl: string): JsonLd[] => [
 	{
 		"@type": "WebSite",
 		name: appName,

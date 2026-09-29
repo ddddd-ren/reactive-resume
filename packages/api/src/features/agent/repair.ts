@@ -6,7 +6,7 @@ import { proposeEditsInputSchema } from "@reactive-resume/ai/tools/agent-tool-co
 // against the shared schema. Returning null falls back to the SDK's re-ask.
 
 /** Pure core, exported for tests: returns the repaired stringified input or null. */
-export function repairProposeEditsInput(rawInput: string): string | null {
+function repairProposeEditsInput(rawInput: string): string | null {
 	let parsed: unknown;
 	try {
 		parsed = JSON.parse(jsonrepair(rawInput));

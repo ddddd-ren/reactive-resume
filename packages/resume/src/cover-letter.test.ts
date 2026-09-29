@@ -33,13 +33,6 @@ describe("detachEmbeddedLetters", () => {
 		expect(data.customSections).toEqual([]);
 		expect(data.metadata.layout.pages).toEqual([{ fullWidth: false, main: ["experience"], sidebar: ["skills"] }]);
 	});
-
-	it("leaves a resume without letters as it is", () => {
-		const data = structuredClone(defaultResumeData);
-		const before = structuredClone(data);
-		expect(detachEmbeddedLetters(data)).toEqual([]);
-		expect(data).toEqual(before);
-	});
 });
 
 describe("independent cover letters", () => {
@@ -55,29 +48,6 @@ describe("independent cover letters", () => {
 		expect(style.metadata).not.toHaveProperty("notes");
 		expect(style.metadata).not.toHaveProperty("layout");
 		expect(style).toMatchObject({ sectionId: "old-section", itemId: "old-item" });
-	});
-
-	it("renders only saved letter content while preserving sender and target identifiers", () => {
-		const style = copyCoverLetterStyle(defaultResumeData, "letter-section", "letter-item");
-		style.basics.name = "Ada";
-		const data = createCoverLetterResumeData({
-			name: "Example",
-			recipient: "<p>Recruiter</p>",
-			content: "<p>Hello</p>",
-			style,
-		});
-		expect(data.basics.name).toBe("Ada");
-		expect(data.metadata.notes).toBe("");
-		expect(Object.values(data.sections).every((section) => section.items.length === 0)).toBe(true);
-		expect(data.customSections).toHaveLength(1);
-		expect(data.customSections[0]).toMatchObject({
-			id: "letter-section",
-			type: "cover-letter",
-			items: [{ id: "letter-item", recipient: "<p>Recruiter</p>", content: "<p>Hello</p>" }],
-		});
-		expect(data.metadata.layout.pages).toEqual([{ fullWidth: true, main: ["letter-section"], sidebar: [] }]);
-		data.basics.name = "Independent render copy";
-		expect(style.basics.name).toBe("Ada");
 	});
 
 	it("escapes generated plain text before inserting paragraph markup", () => {

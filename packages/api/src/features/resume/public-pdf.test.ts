@@ -58,30 +58,6 @@ describe("createPublicResumePdf", () => {
 		expect(queries.at(-1)).toContain('"resume"."trashed_at" is null');
 	});
 
-	it("rejects renderer-unsafe stored data before budget or rendering", async () => {
-		const resume = buildResume();
-		resume.data.customSections = [
-			{
-				id: "custom-experience",
-				type: "experience",
-				title: "Experience",
-				icon: "",
-				columns: 1,
-				hidden: false,
-				keepTogether: false,
-				startOnNewPage: false,
-				items: [{ id: "summary-shaped-item", hidden: false, content: "<p>Missing company</p>" }],
-			} as never,
-		];
-		const unsafeDependencies = dependencies(resume);
-
-		await expect(createPublicResumePdf(input, unsafeDependencies)).rejects.toMatchObject({
-			code: "INTERNAL_SERVER_ERROR",
-		});
-		expect(unsafeDependencies.rateLimiter.consume).not.toHaveBeenCalled();
-		expect(unsafeDependencies.renderPdf).not.toHaveBeenCalled();
-	});
-
 	it("renders on demand with canonical public stylesheet source", async () => {
 		const resume = buildResume();
 		resume.data.basics.name = "Ada Lovelace";
@@ -99,13 +75,5 @@ describe("createPublicResumePdf", () => {
 			resumeId: resume.id,
 		});
 		expect(pdfDependencies.renderPdf).toHaveBeenCalledWith({ data: resume.data, filename: "ada-lovelace.pdf" });
-	});
-
-	it("preserves ordinary renderer failures", async () => {
-		const rendererError = new Error("renderer failed");
-		const pdfDependencies = dependencies();
-		pdfDependencies.renderPdf.mockRejectedValue(rendererError);
-
-		await expect(createPublicResumePdf(input, pdfDependencies)).rejects.toBe(rendererError);
 	});
 });

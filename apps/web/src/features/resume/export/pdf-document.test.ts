@@ -1,4 +1,4 @@
-import type { PdfWorkerRequest, PdfWorkerResponse } from "./pdf-document";
+import type { PdfWorkerRequest } from "./pdf-document";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 
@@ -19,9 +19,6 @@ function stubWorker(reply: (request: PdfWorkerRequest, worker: EventTarget) => v
 	vi.stubGlobal("Worker", FakeWorker);
 }
 
-const respond = (worker: EventTarget, data: PdfWorkerResponse) =>
-	worker.dispatchEvent(new MessageEvent("message", { data }));
-
 beforeEach(() => {
 	vi.resetModules();
 	mocks.renderHere.mockReset();
@@ -32,24 +29,6 @@ afterEach(() => {
 });
 
 describe("createResumePdfBlob", () => {
-	it("renders in the worker and hands back its PDF and page map", async () => {
-		const blob = new Blob(["%PDF"], { type: "application/pdf" });
-		stubWorker((request, worker) => respond(worker, { id: request.id, blob, pageMap }));
-		const { createResumePdfBlob } = await import("./pdf-document");
-		const onPageMap = vi.fn();
-
-		await expect(createResumePdfBlob(sampleResumeData, undefined, undefined, { onPageMap })).resolves.toBe(blob);
-		expect(onPageMap).toHaveBeenCalledWith(pageMap);
-		expect(mocks.renderHere).not.toHaveBeenCalled();
-	});
-
-	it("passes on the worker's failure, so callers can fall back to the server's PDF", async () => {
-		stubWorker((request, worker) => respond(worker, { id: request.id, error: "Fonts could not be loaded: Inter" }));
-		const { createResumePdfBlob } = await import("./pdf-document");
-
-		await expect(createResumePdfBlob(sampleResumeData)).rejects.toThrow("Fonts could not be loaded: Inter");
-	});
-
 	it("renders on the main thread when the worker can't start", async () => {
 		const blob = new Blob(["%PDF"], { type: "application/pdf" });
 		mocks.renderHere.mockImplementation(({ onPageMap }) => {

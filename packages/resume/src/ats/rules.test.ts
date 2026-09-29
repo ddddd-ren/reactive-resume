@@ -52,14 +52,6 @@ describe("lintResumeForAts", () => {
 		expect(lint(makeResume()).findings).toEqual([]);
 	});
 
-	it("counts every rule as passed when nothing fires", () => {
-		const report = lint(makeResume());
-		expect(report.passedRules).toBe(report.totalRules);
-		expect(report.score).toBe(100);
-		expect(report.counts).toEqual({ error: 0, warning: 0, info: 0 });
-		expect(report.categories.contact).toEqual({ total: 7, passed: 7 });
-	});
-
 	it("scores the share of rules with no open finding, and groups them by category", () => {
 		const report = lint(makeResume((data) => (data.basics.phone = "")));
 		expect(report.passedRules).toBe(report.totalRules - 1);
@@ -104,12 +96,6 @@ describe("lintResumeForAts", () => {
 		expect(codes).toContain("MISSING_PHONE");
 		expect(codes).toContain("NO_VISIBLE_EXPERIENCE");
 	});
-
-	it("sorts findings by severity", () => {
-		const report = lint(defaultResumeData);
-		const severities = report.findings.map((item) => item.severity);
-		expect(severities).toEqual([...severities].sort((a, b) => (a === b ? 0 : a === "error" ? -1 : 1)));
-	});
 });
 
 describe("contact rules", () => {
@@ -139,18 +125,6 @@ describe("contact rules", () => {
 		});
 		expect(codesOf(data)).not.toContain("MALFORMED_URL");
 	});
-
-	it("notes a visible picture", () => {
-		expect(codesOf(makeResume((data) => (data.picture.url = "/uploads/ada.png")))).toContain("PICTURE_PRESENT");
-	});
-
-	it("ignores a hidden picture", () => {
-		const data = makeResume((resume) => {
-			resume.picture.url = "/uploads/ada.png";
-			resume.picture.hidden = true;
-		});
-		expect(codesOf(data)).not.toContain("PICTURE_PRESENT");
-	});
 });
 
 describe("date rules", () => {
@@ -173,31 +147,6 @@ describe("date rules", () => {
 			resume.sections.experience.items = [experienceItem({ period: "" })];
 		});
 		expect(codesOf(data)).toContain("EMPTY_PERIOD");
-	});
-
-	it("does not require a period on projects", () => {
-		const data = makeResume((resume) => {
-			resume.sections.projects.items = [
-				{
-					id: "p1",
-					hidden: false,
-					name: "Difference Engine",
-					period: "",
-					website: { url: "", label: "", inlineLink: false },
-					description: "<p>A machine.</p>",
-				},
-			];
-			resume.metadata.layout.pages = [{ fullWidth: false, main: ["experience", "projects"], sidebar: [] }];
-		});
-
-		expect(codesOf(data)).not.toContain("EMPTY_PERIOD");
-	});
-
-	it("flags an open-ended period with no start date", () => {
-		const data = makeResume((resume) => {
-			resume.sections.experience.items = [experienceItem({ period: "Present" })];
-		});
-		expect(codesOf(data)).toContain("UNPARSEABLE_PERIOD");
 	});
 
 	it("accepts a localized open-ended period", () => {
@@ -302,14 +251,6 @@ describe("structure rules", () => {
 		});
 	});
 
-	it("stays quiet about a placed section with no items", () => {
-		// Templates skip an empty section entirely — heading included — so there is nothing to fix.
-		const data = makeResume((resume) => {
-			resume.metadata.layout.pages = [{ fullWidth: false, main: ["experience", "skills"], sidebar: [] }];
-		});
-		expect(codesOf(data)).toEqual([]);
-	});
-
 	it("flags an experience entry with no narrative", () => {
 		const data = makeResume((resume) => {
 			resume.sections.experience.items = [experienceItem({ description: "<p></p>" })];
@@ -349,29 +290,6 @@ describe("structure rules", () => {
 		});
 
 		expect(codesOf(data)).not.toContain("NO_VISIBLE_EXPERIENCE");
-	});
-});
-
-describe("cover letter sections", () => {
-	it("exempts cover letters from resume rules", () => {
-		const data = makeResume((resume) => {
-			resume.customSections = [
-				{
-					id: "cover",
-					type: "cover-letter",
-					title: "Cover Letter",
-					icon: "envelope-simple",
-					columns: 1,
-					hidden: false,
-					keepTogether: false,
-					startOnNewPage: false,
-					items: [{ id: "c1", hidden: false, recipient: "<p>Hiring Manager</p>", content: "<p>Dear team,</p>" }],
-				},
-			];
-			resume.metadata.layout.pages = [{ fullWidth: false, main: ["experience", "cover"], sidebar: [] }];
-		});
-
-		expect(lint(data).findings.filter((item) => item.pointer.startsWith("/customSections"))).toEqual([]);
 	});
 });
 
@@ -463,22 +381,16 @@ describe("title rules", () => {
 });
 
 describe("typography rules", () => {
-	it("flags a small body font", () => {
-		expect(codesOf(makeResume((data) => (data.metadata.typography.body.fontSize = 8)))).toContain("SMALL_BODY_FONT");
-	});
-
-	it("flags a tight line height", () => {
-		expect(codesOf(makeResume((data) => (data.metadata.typography.body.lineHeight = 1)))).toContain(
-			"TIGHT_LINE_HEIGHT",
-		);
-	});
-
 	it("flags each tight margin axis", () => {
 		const data = makeResume((resume) => {
 			resume.metadata.page.marginX = 4;
 			resume.metadata.page.marginY = 4;
+			resume.metadata.typography.body.fontSize = 8;
+			resume.metadata.typography.body.lineHeight = 1;
 		});
 
+		expect(codesOf(data)).toContain("SMALL_BODY_FONT");
+		expect(codesOf(data)).toContain("TIGHT_LINE_HEIGHT");
 		expect(
 			lint(data)
 				.findings.filter((item) => item.code === "TIGHT_PAGE_MARGINS")

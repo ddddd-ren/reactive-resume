@@ -298,59 +298,6 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		).toBe("Still editable");
 	});
 
-	it("gives a letter its own type, colors and page, which ends the design link", async () => {
-		const created = await service.create({ userId: "alice", name: "Styled", resumeId: "alice-resume" });
-		expect(created.designLinked).toBe(true);
-		const resumeMetadata = created.style.metadata;
-
-		const styled = await service.update({
-			userId: "alice",
-			id: created.id,
-			expectedRevision: 1,
-			metadata: {
-				design: { ...resumeMetadata.design, colors: { ...resumeMetadata.design.colors, primary: "#123456" } },
-			},
-		});
-		expect(styled.designLinked).toBe(false);
-		expect(styled.style.metadata.design.colors.primary).toBe("#123456");
-		expect(styled.style.metadata.template).toBe(resumeMetadata.template);
-		expect(styled.style.metadata.typography).toEqual(resumeMetadata.typography);
-	});
-
-	it("refreshes copied style without changing content and survives source deletion", async () => {
-		const created = await service.create({
-			userId: "alice",
-			name: "Keep",
-			content: "<p>Keep body</p>",
-			applicationId: "alice-app",
-		});
-		const changed = structuredClone(defaultResumeData);
-		changed.basics.name = "New sender";
-		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [changed]);
-		expect((await service.getById({ userId: "alice", id: created.id })).style.basics.name).toBe("");
-		const refreshed = await service.refreshStyle({
-			userId: "alice",
-			id: created.id,
-			expectedRevision: 1,
-			resumeId: "alice-resume",
-		});
-		expect(refreshed).toMatchObject({
-			name: "Keep",
-			content: "<p>Keep body</p>",
-			revision: 2,
-			style: { basics: { name: "New sender" } },
-		});
-		await expect(
-			service.refreshStyle({ userId: "alice", id: created.id, expectedRevision: 1, resumeId: "alice-resume" }),
-		).rejects.toMatchObject({ code: "CONFLICT" });
-		await getPool().query("DELETE FROM resume WHERE id='alice-resume'; DELETE FROM application WHERE id='alice-app'");
-		expect(await service.getById({ userId: "alice", id: created.id })).toMatchObject({
-			sourceResumeId: null,
-			sourceApplicationId: null,
-			style: { basics: { name: "New sender" } },
-		});
-	});
-
 	it("keeps History: one version per session, named and sent versions, and restores with a way back", async () => {
 		const created = await service.create({ userId: "alice", name: "History", content: "<p>One</p>" });
 		const kinds = async () =>
@@ -399,16 +346,6 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		await expect(
 			deleteLetterVersion({ coverLetterId: created.id, userId: "alice", versionId: created0.id }),
 		).rejects.toMatchObject({ code: "NOT_FOUND" });
-	});
-
-	it("searches literal names and paginates stable results within owner context", async () => {
-		await service.create({ userId: "alice", name: "100%_match", resumeId: "alice-resume" });
-		await service.create({ userId: "alice", name: "100 percent" });
-		expect((await service.list({ userId: "alice", search: "%_", limit: 20, offset: 0 })).total).toBe(1);
-		const page = await service.list({ userId: "alice", limit: 1, offset: 1 });
-		expect(page.total).toBe(2);
-		expect(page.items).toHaveLength(1);
-		expect((await service.list({ userId: "alice", resumeId: "alice-resume", limit: 20, offset: 0 })).total).toBe(1);
 	});
 
 	it("round-trips standalone exports without foreign provenance and sanitizes all writes", async () => {

@@ -92,7 +92,7 @@ function declarationProperty(source: string, position: number): string | undefin
 	return property || undefined;
 }
 
-export function completionLabels(source: string, position: number, metadata: SemanticCssEditorMetadata): string[] {
+function completionLabels(source: string, position: number, metadata: SemanticCssEditorMetadata): string[] {
 	switch (completionKind(source, position)) {
 		case "directive":
 			return [...directives];
@@ -117,10 +117,7 @@ export function completionLabels(source: string, position: number, metadata: Sem
 	}
 }
 
-export function getSemanticCssHoverDocumentation(
-	label: string,
-	metadata: SemanticCssEditorMetadata,
-): string | undefined {
+function getSemanticCssHoverDocumentation(label: string, metadata: SemanticCssEditorMetadata): string | undefined {
 	const semantic = SEMANTIC_REGISTRY_V1[label as keyof typeof SEMANTIC_REGISTRY_V1];
 	if (semantic) {
 		return `Semantic element ${label}. Attributes: ${semantic.attributes.join(", ") || "none"}. Roles: ${semantic.roles.join(", ") || "none"}.`;

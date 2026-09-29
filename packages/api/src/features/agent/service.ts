@@ -263,7 +263,7 @@ function attachmentLabel(attachment: AgentAttachmentRecord) {
 	return `${attachment.filename} (${attachment.mediaType}, ${attachment.size} bytes, attachmentId: ${attachment.id})`;
 }
 
-export function buildAttachmentModelParts(input: AttachmentModelInput[]): Array<TextPart | ImagePart | FilePart> {
+function buildAttachmentModelParts(input: AttachmentModelInput[]): Array<TextPart | ImagePart | FilePart> {
 	return input.map(({ attachment, data }) => {
 		if (READABLE_ATTACHMENT_TYPES.has(attachment.mediaType)) {
 			const text = new TextDecoder().decode(data).slice(0, MAX_ATTACHMENT_TEXT_CHARS);

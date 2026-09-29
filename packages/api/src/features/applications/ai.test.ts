@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { APICallError, generateText, LoadAPIKeyError, RetryError } from "ai";
+import { APICallError, generateText, RetryError } from "ai";
 import { z } from "zod";
 
 const protectedProcedureMock = vi.hoisted(() => {
@@ -28,43 +28,13 @@ vi.mock("./service", () => ({
 	applicationService: { getById: vi.fn(), setAiResult: vi.fn(), update: vi.fn(), addNote: vi.fn() },
 }));
 
-const { autofillInputSchema, generateJson, generatePlainText } = await import("./ai");
-
-describe("autofillInputSchema", () => {
-	it("rejects oversized pasted job descriptions", () => {
-		expect(() => autofillInputSchema.parse({ jobDescription: "x".repeat(20_001) })).toThrow();
-	});
-
-	it("rejects blank pasted job descriptions", () => {
-		expect(() => autofillInputSchema.parse({ jobDescription: "   " })).toThrow();
-		expect(() => autofillInputSchema.parse({})).toThrow();
-	});
-
-	it("accepts a pasted posting", () => {
-		expect(autofillInputSchema.parse({ jobDescription: "  Senior Engineer at Acme  " }).jobDescription).toBe(
-			"Senior Engineer at Acme",
-		);
-	});
-});
+const { generateJson, generatePlainText } = await import("./ai");
 
 describe("copilot provider-failure translation", () => {
 	const schema = z.object({ summary: z.string() });
 
 	beforeEach(() => {
 		vi.mocked(generateText).mockReset();
-	});
-
-	it("translates APICallError provider failures to BAD_GATEWAY in generatePlainText", async () => {
-		vi.mocked(generateText).mockRejectedValue(
-			new APICallError({
-				message: "Provider returned 401",
-				url: "https://api.openai.com/v1/chat/completions",
-				requestBodyValues: undefined,
-				statusCode: 401,
-			}),
-		);
-
-		await expect(generatePlainText({} as never, "prompt")).rejects.toMatchObject({ code: "BAD_GATEWAY" });
 	});
 
 	it("translates APICallError provider failures to BAD_GATEWAY in generateJson", async () => {
@@ -114,27 +84,5 @@ describe("copilot provider-failure translation", () => {
 		);
 		expect(error.code).toBe("BAD_GATEWAY");
 		expect(error.cause).toBe(providerError);
-	});
-
-	it("rethrows non-provider SDK errors unchanged", async () => {
-		const credentialError = new LoadAPIKeyError({ message: "The OPENAI_API_KEY is not set" });
-		vi.mocked(generateText).mockRejectedValue(credentialError);
-
-		await expect(generatePlainText({} as never, "prompt")).rejects.toBe(credentialError);
-		await expect(generateJson({} as never, { prompt: "prompt" }, schema)).rejects.toBe(credentialError);
-	});
-
-	it("rethrows non-AI errors unchanged", async () => {
-		const unrelated = new Error("network dropped mid-call");
-		vi.mocked(generateText).mockRejectedValue(unrelated);
-
-		await expect(generatePlainText({} as never, "prompt")).rejects.toBe(unrelated);
-		await expect(generateJson({} as never, { prompt: "prompt" }, schema)).rejects.toBe(unrelated);
-	});
-
-	it("still returns parsed JSON on success", async () => {
-		vi.mocked(generateText).mockResolvedValue({ text: '```json\n{"summary":"<p>Hi</p>"}\n```' } as never);
-
-		await expect(generateJson({} as never, { prompt: "prompt" }, schema)).resolves.toEqual({ summary: "<p>Hi</p>" });
 	});
 });

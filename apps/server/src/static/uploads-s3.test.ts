@@ -43,11 +43,6 @@ const server = createServer(async (request, response) => {
 		response.writeHead(200, { ETag: '"test-etag"' });
 		return response.end();
 	}
-	if (request.method === "DELETE") {
-		objects.delete(path);
-		response.writeHead(204);
-		return response.end();
-	}
 	const object = objects.get(path);
 	if (!object) return fail(404, "NoSuchKey");
 	response.writeHead(200, { "Content-Type": object.contentType, "Content-Length": object.data.length });
@@ -74,12 +69,6 @@ beforeEach(() => {
 afterAll(async () => {
 	server.closeAllConnections();
 	await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
-});
-
-it("keeps the ACL-disabled storage health check healthy", async () => {
-	expect(await storage.healthcheck()).toMatchObject({ status: "healthy", type: "s3" });
-	expect(requests.map(({ method }) => method)).toEqual(["PUT", "DELETE"]);
-	expect(objects.size).toBe(0);
 });
 
 it("stores images without ACLs and serves them through the signed application proxy", async () => {

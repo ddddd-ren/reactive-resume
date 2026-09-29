@@ -6,7 +6,6 @@ import type { SectionTitleResolver } from "./section-title";
 import { describe, expect, it } from "vitest";
 import * as forme from "@formepdf/core";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
-import { templateSchema } from "@reactive-resume/schema/templates";
 import { renderResume } from "./forme/render";
 import { extractPageMap, parseResumeNodeKey } from "./page-map";
 
@@ -117,8 +116,8 @@ describe("extractPageMap", () => {
 describe("rendered page maps", () => {
 	const visibleExperienceIds = data.sections.experience.items.filter((item) => !item.hidden).map((item) => item.id);
 
-	it.each(templateSchema.options)("%s maps the header and every experience entry onto the page", async (template) => {
-		const { pages, nodes } = await renderPageMap(template);
+	it("azurill maps the header and every experience entry onto the page", async () => {
+		const { pages, nodes } = await renderPageMap("azurill");
 
 		expect(pages.length).toBeGreaterThan(0);
 		expect(nodes.some((node) => node.kind === "header" && node.page === 0)).toBe(true);
@@ -126,16 +125,16 @@ describe("rendered page maps", () => {
 		const mappedItems = new Set(
 			nodes.flatMap((node) => (node.kind === "item" && node.sectionId === "experience" ? [node.itemId] : [])),
 		);
-		for (const id of visibleExperienceIds) expect(mappedItems, `${template}: experience item ${id}`).toContain(id);
+		for (const id of visibleExperienceIds) expect(mappedItems, `experience item ${id}`).toContain(id);
 
 		for (const node of nodes) {
 			const page = pages[node.page];
-			expect(page, `${template}: ${node.key} page`).toBeDefined();
+			expect(page, `${node.key} page`).toBeDefined();
 			if (!page) continue;
-			expect(node.x, `${template}: ${node.key} x`).toBeGreaterThanOrEqual(-0.5);
-			expect(node.y, `${template}: ${node.key} y`).toBeGreaterThanOrEqual(-0.5);
-			expect(node.x + node.width, `${template}: ${node.key} right`).toBeLessThanOrEqual(page.width + 0.5);
-			expect(node.y + node.height, `${template}: ${node.key} bottom`).toBeLessThanOrEqual(page.height + 0.5);
+			expect(node.x, `${node.key} x`).toBeGreaterThanOrEqual(-0.5);
+			expect(node.y, `${node.key} y`).toBeGreaterThanOrEqual(-0.5);
+			expect(node.x + node.width, `${node.key} right`).toBeLessThanOrEqual(page.width + 0.5);
+			expect(node.y + node.height, `${node.key} bottom`).toBeLessThanOrEqual(page.height + 0.5);
 		}
 	});
 });

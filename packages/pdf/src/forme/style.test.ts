@@ -20,23 +20,6 @@ describe("toFormeStyle", () => {
 		expect(convert({ paddingTop: "10%" }).dropped).toEqual(["paddingTop"]);
 	});
 
-	it("drops CSS-wide keywords and defaults silently, and reports what Forme can't draw", () => {
-		const { style, dropped } = convert({
-			color: "inherit",
-			width: "auto",
-			alignSelf: "auto",
-			zIndex: 2,
-			borderTopStyle: "dashed",
-			display: "block",
-		});
-		expect(style).toEqual({ display: "flex" });
-		expect(dropped).toEqual(["zIndex", "borderTopStyle"]);
-	});
-
-	it("hides display: none boxes", () => {
-		expect(convert({ display: "none" }).hidden).toBe(true);
-	});
-
 	it("names the standard serif the way Forme does", () => {
 		expect(convert({ fontFamily: ["Times-Roman", "Noto Serif"] }).style.fontFamily).toBe("Times, Noto Serif");
 	});

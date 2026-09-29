@@ -66,5 +66,3 @@ export function improveLine(input: ImproveServiceInput): Promise<ImproveOutput> 
 		improveOutputSchema,
 	);
 }
-
-export const __testables = { buildUserPrompt };

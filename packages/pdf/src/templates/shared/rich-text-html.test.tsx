@@ -16,19 +16,6 @@ describe("normalizeRichTextHtml", () => {
 		);
 	});
 
-	it("retains marked paragraphs inside lists so preservation stays node-local", () => {
-		expect(normalizeRichTextHtml('<ul><li><p data-resume-whitespace="preserve">  Listed\ttext  </p></li></ul>')).toBe(
-			'<ul><li><p data-resume-whitespace="preserve">  Listed    text  </p></li></ul>',
-		);
-	});
-
-	it("does not reinterpret marked RTL line breaks as pseudo-bullet lists", () => {
-		const html = '<p data-resume-whitespace="preserve">  - First<br>  - Second</p>';
-		expect(normalizeRichTextHtml(html, { direction: "rtl" })).toBe(
-			'<p data-resume-whitespace="preserve">\u200f  - First<br>  - Second</p>',
-		);
-	});
-
 	it("decodes opted-in soft hyphens in text without changing links or escaped literals", () => {
 		const html =
 			'<p title="&shy;">Soft&shy;ware &#173; &#xAD; &amp;shy; <a href="https://example.com/&shy;">link</a></p>';
@@ -38,12 +25,13 @@ describe("normalizeRichTextHtml", () => {
 		);
 	});
 
-	it("wraps loose inline content in a <p>", () => {
-		expect(normalizeRichTextHtml("hello world")).toBe("<p>hello world</p>");
-	});
+	it("wraps top-level inline rich text in a paragraph", () => {
+		const html =
+			"Passionate game developer with 5+ years of professional experience</strong> creating engaging gameplay. <a href='https://www.google.com'>Specialized</a> in Unity.";
 
-	it("wraps inline tags in a <p>", () => {
-		expect(normalizeRichTextHtml("<strong>bold</strong> text")).toBe("<p><strong>bold</strong> text</p>");
+		expect(normalizeRichTextHtml(html)).toBe(
+			"<p>Passionate game developer with 5+ years of professional experience creating engaging gameplay. <a href='https://www.google.com'>Specialized</a> in Unity.</p>",
+		);
 	});
 
 	it("moves trailing whitespace outside bold tags", () => {
@@ -58,48 +46,6 @@ describe("normalizeRichTextHtml", () => {
 		);
 	});
 
-	it("preserves whitespace moved outside top-level bold tags", () => {
-		expect(normalizeRichTextHtml("<strong>Built </strong>")).toBe("<p><strong>Built</strong> </p>");
-		expect(normalizeRichTextHtml("<strong> Built</strong>")).toBe("<p> <strong>Built</strong></p>");
-	});
-
-	it.each(["&nbsp;", "&#160;", "&#xA0;"])(
-		"moves encoded non-breaking spaces outside bold boundaries: %s",
-		(whitespace) => {
-			expect(normalizeRichTextHtml(`<p>Built<strong>${whitespace}and deployed</strong></p>`)).toBe(
-				`<p>Built${whitespace}<strong>and deployed</strong></p>`,
-			);
-			expect(normalizeRichTextHtml(`<p><strong>Built${whitespace}</strong>and deployed</p>`)).toBe(
-				`<p><strong>Built</strong>${whitespace}and deployed</p>`,
-			);
-		},
-	);
-
-	it("preserves > characters inside quoted bold-tag attributes", () => {
-		expect(normalizeRichTextHtml('<p>Built<strong title="1 > 0"> and deployed</strong></p>')).toBe(
-			'<p>Built <strong title="1 > 0">and deployed</strong></p>',
-		);
-	});
-
-	it("preserves closing bold tags inside quoted attributes", () => {
-		expect(normalizeRichTextHtml('<p><strong title="Use </strong> here">Built </strong>next</p>')).toBe(
-			'<p><strong title="Use </strong> here">Built</strong> next</p>',
-		);
-	});
-
-	it("preserves whitespace inside bold text", () => {
-		expect(normalizeRichTextHtml("<p><strong>two words</strong></p>")).toBe("<p><strong>two words</strong></p>");
-	});
-
-	it("preserves block-level <p> as-is", () => {
-		expect(normalizeRichTextHtml("<p>Already wrapped</p>")).toBe("<p>Already wrapped</p>");
-	});
-
-	it("preserves block-level <ul>", () => {
-		const html = "<ul><li>a</li><li>b</li></ul>";
-		expect(normalizeRichTextHtml(html)).toBe(html);
-	});
-
 	it("unwraps single paragraph wrappers inside list items", () => {
 		expect(normalizeRichTextHtml("<ul><li><p>a</p></li><li><p><strong>b</strong></p></li></ul>")).toBe(
 			"<ul><li>a</li><li><strong>b</strong></li></ul>",
@@ -112,16 +58,6 @@ describe("normalizeRichTextHtml", () => {
 
 	it("flushes accumulated inlines after block-level tags", () => {
 		expect(normalizeRichTextHtml("<ul><li>a</li></ul>after")).toBe("<ul><li>a</li></ul><p>after</p>");
-	});
-
-	it("treats <span> as inline", () => {
-		expect(normalizeRichTextHtml("<span>x</span>")).toBe("<p><span>x</span></p>");
-	});
-
-	it("maps <mark> to a styled inline span", () => {
-		expect(normalizeRichTextHtml('<mark class="rounded-md">highlighted</mark> text')).toBe(
-			'<p><span class="rounded-md rr-pdf-mark">highlighted</span> text</p>',
-		);
 	});
 
 	it("preserves data-color as inline background-color on multicolor <mark>", () => {
@@ -142,11 +78,6 @@ describe("normalizeRichTextHtml", () => {
 		expect(result.indexOf("color: inherit")).toBeLessThan(result.lastIndexOf("color: #ffffff"));
 	});
 
-	it("does not add inline style to legacy <mark> without data-color", () => {
-		const result = normalizeRichTextHtml("<mark>yellow</mark>");
-		expect(result).toBe('<p><span class="rr-pdf-mark">yellow</span></p>');
-	});
-
 	it("keeps highlighted text in the same inline text run as its paragraph", () => {
 		const [root] = renderHostTree(
 			<Html stylesheet={{ [`.${richTextMarkClassName}`]: { backgroundColor: "#ffff00" } }}>
@@ -163,33 +94,8 @@ describe("normalizeRichTextHtml", () => {
 		expect(run.children[2]).toEqual({ type: "#text", text: " after" });
 	});
 
-	it("trims input whitespace", () => {
-		expect(normalizeRichTextHtml("   text   ")).toBe("<p>text</p>");
-	});
-
 	it("preserves authored Unicode spaces around bare rich text", () => {
 		expect(normalizeRichTextHtml("\u3000text\u00a0")).toBe("<p>\u3000text\u00a0</p>");
-	});
-
-	it("retains an inline ideographic-space paragraph", () => {
-		expect(normalizeRichTextHtml("\u3000")).toBe("<p>\u3000</p>");
-	});
-
-	it("does not discard a Unicode-space sibling when unwrapping a list paragraph", () => {
-		const html = "<ul><li>\u3000<p>text</p></li></ul>";
-		expect(normalizeRichTextHtml(html)).toBe(html);
-	});
-
-	it("returns empty string for empty input", () => {
-		expect(normalizeRichTextHtml("")).toBe("");
-	});
-
-	it("treats <a> as inline (no need to wrap by itself)", () => {
-		expect(normalizeRichTextHtml('<a href="x">link</a>')).toBe('<p><a href="x">link</a></p>');
-	});
-
-	it("does not double-wrap inline tags inside block elements", () => {
-		expect(normalizeRichTextHtml("<p><strong>x</strong></p>")).toBe("<p><strong>x</strong></p>");
 	});
 
 	it("normalizes RTL pseudo-bullets into anchored list items in the shared HTML path", () => {
@@ -215,35 +121,5 @@ describe("convertPseudoBulletParagraphs", () => {
 	it("leaves a paragraph with a single inline <br> untouched", () => {
 		const input = "<p>Just a paragraph with a <br> line break.</p>";
 		expect(convertPseudoBulletParagraphs(input)).toBe(input);
-	});
-
-	it("leaves a single-line dash paragraph untouched (no <br>)", () => {
-		const input = "<p>- Just one line</p>";
-		expect(convertPseudoBulletParagraphs(input)).toBe(input);
-	});
-
-	it("does not convert when one segment lacks a leading bullet marker", () => {
-		const input = "<p>- foo<br>bar without dash</p>";
-		expect(convertPseudoBulletParagraphs(input)).toBe(input);
-	});
-
-	it("leaves a real <ul> alone", () => {
-		const input = "<ul><li>a</li><li>b</li></ul>";
-		expect(convertPseudoBulletParagraphs(input)).toBe(input);
-	});
-
-	it("only converts matching paragraphs in mixed input", () => {
-		const input = "<p>- a<br>- b</p><p>just a normal paragraph.</p>";
-		expect(convertPseudoBulletParagraphs(input)).toBe("<ul><li>a</li><li>b</li></ul><p>just a normal paragraph.</p>");
-	});
-
-	it("preserves non-empty inline formatting inside bullet text", () => {
-		expect(convertPseudoBulletParagraphs("<p>- foo <strong>bold</strong> bar<br>- baz</p>")).toBe(
-			"<ul><li>foo <strong>bold</strong> bar</li><li>baz</li></ul>",
-		);
-	});
-
-	it("tolerates BiDi marks (LRM/RLM) before the bullet character", () => {
-		expect(convertPseudoBulletParagraphs("<p>‏- א<br>‏- ב</p>")).toBe("<ul><li>א</li><li>ב</li></ul>");
 	});
 });

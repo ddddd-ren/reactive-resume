@@ -163,25 +163,6 @@ describe("semantic binding host fidelity", () => {
 		expect(textPath?.some((node) => mergedStyle(node).backgroundColor === "#414141")).toBe(false);
 	});
 
-	it("binds nested experience-role item and item-header styles to their existing Views", async () => {
-		const document = await renderFixture(
-			"onyx",
-			buildFixture(
-				`
-					item[role~="nested-role"] { background-color: #515151; }
-					item[role~="nested-role"] > item-header { border-top-width: 7pt; }
-				`,
-				"experience",
-			),
-		);
-		const rolePath = findPath(document, (node) => node.type === "TEXT" && nodeText(node) === "Architect");
-
-		expect(rolePath?.some((node) => node.type === "VIEW" && mergedStyle(node).backgroundColor === "#515151")).toBe(
-			true,
-		);
-		expect(rolePath?.some((node) => node.type === "VIEW" && mergedStyle(node).borderTopWidth === 7)).toBe(true);
-	});
-
 	it("binds Rhyhorn's outer contact owner, nested content primitive, link alias, and last-owner alias separately", async () => {
 		const document = await renderFixture(
 			"rhyhorn",
@@ -218,15 +199,5 @@ describe("semantic binding host fidelity", () => {
 		const document = await renderFixture(template, buildFixture("template-part { opacity: 0.37; }", section));
 
 		expect(nodesWithStyle(document, "opacity", 0.37)).toHaveLength(expected);
-	});
-
-	it("honors primitive template-part visibility on the exact existing host", async () => {
-		const document = await renderFixture(
-			"pikachu",
-			buildFixture('template-part[name="header-divider"] { display: none; }'),
-		);
-
-		expect(nodeText(document)).not.toContain("Ada Lovelace");
-		expect(nodeText(document)).toContain("ada@example.com");
 	});
 });

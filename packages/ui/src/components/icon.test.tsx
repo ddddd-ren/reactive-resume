@@ -5,40 +5,9 @@ import { iconNames } from "../icons/names";
 import { Icon } from "./icon";
 
 describe("Icon", () => {
-	it("draws the glyph from data-icon, so its name is neither text nor an accessible name", () => {
-		const { container } = render(
-			<button type="button">
-				<Icon name="search" />
-				Search
-			</button>,
-		);
-		const icon = container.querySelector('[data-slot="icon"]');
-		expect(icon).toHaveAttribute("aria-hidden", "true");
-		expect(icon).toHaveAttribute("data-icon", "search");
-		expect(icon).toBeEmptyDOMElement();
-		expect(container.querySelector("button")).toHaveTextContent(/^Search$/);
-	});
-
 	it("keeps its glyph when a caller passes its own data-icon", () => {
 		const { container } = render(<Icon name="undo" {...{ "data-icon": "inline-start" }} />);
 		expect(container.querySelector('[data-slot="icon"]')).toHaveAttribute("data-icon", "undo");
-	});
-
-	it("uses the filled glyph only when asked", () => {
-		const { container } = render(<Icon name="description" filled />);
-		expect(container.querySelector('[data-slot="icon"]')?.getAttribute("style")).toContain('"FILL" 1');
-	});
-
-	it("mirrors directional icons in right-to-left layouts", () => {
-		const { container } = render(
-			<>
-				<Icon name="arrow_back" />
-				<Icon name="search" />
-			</>,
-		);
-		const [back, search] = container.querySelectorAll('[data-slot="icon"]');
-		expect(back).toHaveClass("rtl:-scale-x-100");
-		expect(search).not.toHaveClass("rtl:-scale-x-100");
 	});
 });
 

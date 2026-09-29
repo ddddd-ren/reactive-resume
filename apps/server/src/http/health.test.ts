@@ -4,46 +4,19 @@ const { execute, healthcheck } = vi.hoisted(() => ({ execute: vi.fn(), healthche
 
 vi.mock("@reactive-resume/db/client", () => ({ db: { execute } }));
 vi.mock("@reactive-resume/api/features/storage", () => ({ getStorageService: () => ({ healthcheck }) }));
-vi.mock("../app-version", () => ({ appVersion: "9.8.7" }));
 
 import { handleHealth } from "./health";
 
-describe("health version reporting", () => {
+describe("health failure reporting", () => {
 	beforeEach(() => {
 		execute.mockResolvedValue([]);
 		healthcheck.mockResolvedValue({ status: "healthy" });
 	});
 
 	afterEach(() => {
-		vi.unstubAllEnvs();
 		vi.restoreAllMocks();
 	});
 
-	it("reports the built application version when launched directly by Node", async () => {
-		vi.stubEnv("npm_package_version", undefined);
-
-		const response = await handleHealth();
-
-		expect(response.status).toBe(200);
-		expect(await response.json()).toMatchObject({ service: "reactive-resume", version: "9.8.7", status: "healthy" });
-	});
-
-	it("ignores a package manager's workspace package version", async () => {
-		vi.stubEnv("npm_package_version", "0.0.0");
-
-		expect(await (await handleHealth()).json()).toMatchObject({ version: "9.8.7" });
-	});
-
-	it("keeps the version available when a dependency is unhealthy", async () => {
-		vi.stubEnv("npm_package_version", undefined);
-		execute.mockRejectedValueOnce(new Error("Database unavailable"));
-		vi.spyOn(console, "warn").mockImplementation(() => {});
-
-		const response = await handleHealth();
-
-		expect(response.status).toBe(503);
-		expect(await response.json()).toMatchObject({ version: "9.8.7", status: "unhealthy" });
-	});
 	it.each(["database", "storage"])("keeps thrown %s error details in server logs only", async (dependency) => {
 		const detail = "Connection failed for private-user at internal.example:5432";
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});

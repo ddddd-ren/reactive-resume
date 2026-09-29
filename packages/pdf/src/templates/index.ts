@@ -16,7 +16,7 @@ import { PikachuPage } from "./pikachu/PikachuPage";
 import { RhyhornPage } from "./rhyhorn/RhyhornPage";
 import { ScizorPage } from "./scizor/ScizorPage";
 
-export const templatePages: Partial<Record<Template, TemplatePage>> = {
+const templatePages: Partial<Record<Template, TemplatePage>> = {
 	azurill: AzurillPage,
 	bronzor: BronzorPage,
 	chikorita: ChikoritaPage,
@@ -37,6 +37,3 @@ export const templatePages: Partial<Record<Template, TemplatePage>> = {
 const defaultTemplatePage = AzurillPage;
 
 export const getTemplatePage = (template: Template): TemplatePage => templatePages[template] ?? defaultTemplatePage;
-
-export type { TemplateSemanticManifest } from "../semantic/template-manifest";
-export { getTemplateSemanticBindingRegistry, getTemplateSemanticManifest } from "../semantic/template-manifest";

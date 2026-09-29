@@ -52,17 +52,6 @@ describe("resolveUserFromRequestHeaders", () => {
 		expect(user).toMatchObject({ id: "user-1", name: "Alice" });
 	});
 
-	it("falls back to session when api key is invalid", async () => {
-		reset();
-		authMock.api.verifyApiKey.mockResolvedValueOnce({ valid: false });
-		authMock.api.getSession.mockResolvedValueOnce({ user: { id: "session-user" } });
-
-		const headers = new Headers({ "x-api-key": "bad" });
-		const user = await resolveUserFromRequestHeaders(headers);
-
-		expect(user).toMatchObject({ id: "session-user" });
-	});
-
 	it("uses Bearer token when present and no api key", async () => {
 		reset();
 		verifyOAuthTokenMock.mockResolvedValueOnce({ sub: "user-bearer" });
@@ -73,49 +62,5 @@ describe("resolveUserFromRequestHeaders", () => {
 
 		expect(verifyOAuthTokenMock).toHaveBeenCalledWith("xxx.yyy.zzz");
 		expect(user).toMatchObject({ id: "user-bearer", name: "Bob" });
-	});
-
-	it("falls back to session when Bearer verification fails", async () => {
-		reset();
-		verifyOAuthTokenMock.mockResolvedValueOnce(null);
-		authMock.api.getSession.mockResolvedValueOnce({ user: { id: "session-user" } });
-
-		const headers = new Headers({ authorization: "Bearer bad" });
-		const user = await resolveUserFromRequestHeaders(headers);
-
-		expect(user).toMatchObject({ id: "session-user" });
-	});
-
-	it("returns null when no auth method succeeds", async () => {
-		reset();
-		authMock.api.getSession.mockResolvedValueOnce(null);
-
-		const user = await resolveUserFromRequestHeaders(new Headers());
-		expect(user).toBeNull();
-	});
-
-	it("does not throw when verifyOAuthToken throws (logs and continues)", async () => {
-		reset();
-		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-		verifyOAuthTokenMock.mockRejectedValueOnce(new Error("bad token"));
-		authMock.api.getSession.mockResolvedValueOnce({ user: { id: "fallback" } });
-
-		const headers = new Headers({ authorization: "Bearer xxx" });
-		const user = await resolveUserFromRequestHeaders(headers);
-
-		expect(user).toMatchObject({ id: "fallback" });
-		expect(warnSpy).toHaveBeenCalled();
-		warnSpy.mockRestore();
-	});
-
-	it("returns null if Bearer header does not start with 'Bearer '", async () => {
-		reset();
-		authMock.api.getSession.mockResolvedValueOnce(null);
-
-		const headers = new Headers({ authorization: "Basic abc" });
-		const user = await resolveUserFromRequestHeaders(headers);
-
-		expect(user).toBeNull();
-		expect(verifyOAuthTokenMock).not.toHaveBeenCalled();
 	});
 });

@@ -28,13 +28,13 @@ Run tests:
 
 ## Coverage
 
-- Email/password auth smoke.
-- Dashboard resume lifecycle: create, rename, duplicate, delete.
-- Builder section editing, autosave/navigation, and locking.
-- JSON export/import.
-- Public sharing for anonymous visitors.
-- The assistant and inline Improve, against a scripted OpenAI-compatible provider (`fixtures/ai-stub.ts`). It needs `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` so the server may call the stub on 127.0.0.1, and skips without it.
+- Email/password sign-up, sign-out and sign-in through the UI.
+- Builder section editing, with autosave across reloads and a draft kept when saving during navigation fails.
+- JSON export/import through the New dialog, including an older file whose resume still carries a cover letter.
+- Public sharing: an anonymous visitor's PDF download and statistics, a renamed address that keeps redirecting, and
+  a password-protected link.
+- OAuth consent for MCP clients: deny, allow with PKCE, and the access token's audience at `/mcp`.
+- The assistant, against a scripted OpenAI-compatible provider (`fixtures/ai-stub.ts`). It needs `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true` so the server may call the stub on 127.0.0.1, and skips without it.
 
 Visual regression, PDF/DOCX rasterization parity, thumbnail resolution, and import-fixture reproduction are
-intentionally outside the PR gate to keep it fast; the opt-in geometry, offline-font, and root-resume suites stay
-behind their environment flags.
+intentionally outside the PR gate to keep it fast.

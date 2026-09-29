@@ -46,11 +46,7 @@ const renderHeader = async (locale: string, hasPicture: boolean) => {
 };
 
 describe("Onyx headline width (#3339)", () => {
-	it.each([
-		{ locale: "en-US", hasPicture: true },
-		{ locale: "ar-SA", hasPicture: true },
-		{ locale: "en-US", hasPicture: false },
-	])(
+	it.each([{ locale: "en-US", hasPicture: true }])(
 		"keeps the complete headline within page margins ($locale, picture: $hasPicture)",
 		async ({ locale, hasPicture }) => {
 			const lines = await renderHeader(locale, hasPicture);

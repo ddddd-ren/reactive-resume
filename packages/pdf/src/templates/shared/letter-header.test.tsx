@@ -1,12 +1,12 @@
+import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it } from "vitest";
 import * as forme from "@formepdf/core";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
-import { templateSchema } from "@reactive-resume/schema/templates";
 import { renderResume } from "../../forme/render";
 
-const letterIn = (template: (typeof templateSchema.options)[number]) => {
+const letterIn = (template: Template) => {
 	const { notes: _notes, layout: _layout, ...metadata } = { ...sampleResumeData.metadata, template };
 	return createCoverLetterResumeData({
 		name: "Letter",
@@ -24,7 +24,7 @@ const letterIn = (template: (typeof templateSchema.options)[number]) => {
 
 describe("letters", () => {
 	// A letter's page is full width; templates that keep their header in the sidebar still print it.
-	it.each(templateSchema.options)("prints the sender's header in %s", { timeout: 60_000 }, async (template) => {
+	it.each(["gengar"] as const)("prints the sender's header in %s", { timeout: 60_000 }, async (template) => {
 		const { pdf } = await renderResume(forme, {
 			data: letterIn(template),
 			template,

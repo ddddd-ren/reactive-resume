@@ -3,8 +3,8 @@ import { expect } from "@playwright/test";
 import { createResumeName } from "./data";
 
 /**
- * Creates a sample resume named after the test and opens it in the editor. It goes through the API: the New
- * dialog has its own spec (documents), and every other spec just needs a resume.
+ * Creates a sample resume named after the test and opens it in the editor. It goes through the API: the JSON import
+ * spec covers the New dialog, and every other spec just needs a resume.
  */
 export async function createSampleResumeFromDashboard(page: Page, testInfo: TestInfo) {
 	const resumeName = createResumeName(testInfo);
@@ -21,32 +21,12 @@ export async function createSampleResumeFromDashboard(page: Page, testInfo: Test
 	return resumeName;
 }
 
-// Design groups, each under its own heading, and the exact-value sections inside Design → Advanced.
-const designGroups = new Set(["Template", "Type", "Color", "Page"]);
-const advancedSections = new Set(["Layout", "Typography", "Design", "Custom CSS"]);
-// Sections the Share & export sheet hosts, without headings of their own.
-const shareSections = new Set(["Sharing", "Statistics"]);
-
 export async function openSidebarSection(page: Page, title: string) {
-	if (shareSections.has(title)) {
+	// The Share & export sheet hosts Sharing, without a heading of its own.
+	if (title === "Sharing") {
 		// "Share (link is live)" once the resume is public.
 		await page.getByRole("button", { name: /^Share\b/ }).click();
 		await expect(page.getByRole("dialog", { name: "Share & export" })).toBeVisible();
-		return;
-	}
-
-	if (designGroups.has(title) || advancedSections.has(title)) {
-		await page.getByRole("tab", { name: "Design", exact: true }).click();
-		const panel = page.getByRole("tabpanel", { name: "Design" });
-		if (advancedSections.has(title)) {
-			const advanced = panel.locator("#design-advanced").getByRole("button", { name: "Advanced", exact: true });
-			if ((await advanced.getAttribute("aria-expanded")) !== "true") await advanced.click();
-		}
-		// Groups are level 2; the exact-value sections inside Advanced are level 3 (both have a "Page").
-		const level = advancedSections.has(title) ? 3 : 2;
-		const heading = panel.getByRole("heading", { name: title, exact: true, level });
-		await heading.scrollIntoViewIfNeeded();
-		await expect(heading).toBeVisible();
 		return;
 	}
 
@@ -88,13 +68,4 @@ export async function getPublicUrl(page: Page) {
 	const link = page.getByRole("dialog", { name: "Share & export" }).getByRole("link", { name: "Open public page" });
 	await expect(link).toHaveAttribute("href", /\/e2e_/);
 	return (await link.getAttribute("href")) as string;
-}
-
-/** Opens a document's card menu in Documents (right-click, the same menu as ⋯). */
-export async function openResumeCardMenu(page: Page, resumeName: string, { reload = true } = {}) {
-	if (reload) await page.goto("/dashboard");
-	const card = page.getByRole("link", { name: resumeName, exact: true });
-	await expect(card).toBeVisible();
-	await card.click({ button: "right" });
-	await expect(page.getByRole("menuitem", { name: "Open" })).toBeVisible();
 }

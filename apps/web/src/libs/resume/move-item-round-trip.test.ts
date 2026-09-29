@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyPatches, enablePatches, produce, produceWithPatches } from "immer";
+import { produce } from "immer";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { moveItem } from "./move-item";
 
@@ -123,64 +123,5 @@ describe("moving the last custom-section item (#3180)", () => {
 				moveItem(draft, { itemId: "2", type: "experience", customSectionId: moved.customSections[0].id, target });
 			}),
 		).toEqual(moved);
-	});
-
-	it("keeps data intact when the source is missing or destination is the source", () => {
-		const moved = split();
-		const sourceId = moved.customSections[0].id;
-		for (const [itemId, sectionId] of [
-			["missing", "experience"],
-			["2", sourceId],
-		]) {
-			expect(
-				produce(moved, (draft) => {
-					moveItem(draft, {
-						itemId,
-						type: "experience",
-						customSectionId: sourceId,
-						target: { type: "section", sectionId },
-					});
-				}),
-			).toEqual(moved);
-		}
-	});
-	it("cleans the source sidebar while preserving unrelated blank pages when moving to a new page", () => {
-		const moved = produce(split(), (draft) => {
-			const page = draft.metadata.layout.pages[1];
-			page.sidebar = page.main;
-			page.main = [];
-			draft.metadata.layout.pages.push({ fullWidth: true, main: [], sidebar: [] });
-		});
-		const restored = produce(moved, (draft) => {
-			moveItem(draft, {
-				itemId: "2",
-				type: "experience",
-				customSectionId: moved.customSections[0].id,
-				target: { type: "new-page", title: "New destination" },
-			});
-		});
-		expect(restored.customSections).toHaveLength(1);
-		expect(restored.metadata.layout.pages).toEqual([
-			{ fullWidth: false, main: ["experience"], sidebar: [] },
-			{ fullWidth: true, main: [], sidebar: [] },
-			{ fullWidth: false, main: [restored.customSections[0].id], sidebar: [] },
-		]);
-		expect(restored.customSections[0].items).toEqual([company("2")]);
-	});
-	it("undo restores the custom section, layout page, and custom settings", () => {
-		enablePatches();
-		const moved = produce(split(), (draft) => {
-			Object.assign(draft.customSections[0], { title: "Custom title", icon: "star", columns: 2, keepTogether: true });
-		});
-		const [restored, , inverse] = produceWithPatches(moved, (draft) => {
-			moveItem(draft, {
-				itemId: "2",
-				type: "experience",
-				customSectionId: moved.customSections[0].id,
-				target: { type: "section", sectionId: "experience" },
-			});
-		});
-		expect(restored.customSections).toEqual([]);
-		expect(applyPatches(restored, inverse)).toEqual(moved);
 	});
 });

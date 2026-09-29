@@ -19,7 +19,7 @@ const locked = (type: DocumentType) =>
 		: new ORPCError("DOCUMENT_LOCKED", { status: 400, message: "Unlock the letter first." });
 
 /** "{source} — {company}" for a copy made for a job, "{source} (copy)" without one. */
-export function suggestCopyName(sourceName: string, company?: string) {
+function suggestCopyName(sourceName: string, company?: string) {
 	const base = sourceName.split(" — ")[0]?.trim() || sourceName;
 	return (company ? `${base} — ${company}` : `${base} (copy)`).slice(0, 100);
 }

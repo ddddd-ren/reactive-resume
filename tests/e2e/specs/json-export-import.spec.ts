@@ -15,6 +15,9 @@ test("exports and imports a resume JSON backup", async ({ authPage: page }, test
 	const downloadPath = testInfo.outputPath(download.suggestedFilename());
 	await download.saveAs(downloadPath);
 	const exportedData = JSON.parse(await readFile(downloadPath, "utf-8")) as { basics: { name: string } };
+	// A name only this file carries, so a builder that opens anything but the imported resume fails.
+	exportedData.basics.name = `Imported ${Date.now()}`;
+	await writeFile(downloadPath, JSON.stringify(exportedData));
 
 	// New → Import a resume: picking the file detects the format and imports it in three steps.
 	await page.goto("/dashboard");

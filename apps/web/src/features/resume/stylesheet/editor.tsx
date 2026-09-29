@@ -104,7 +104,7 @@ const readOnlyExtensions = (readOnly: boolean): Extension => [
 	EditorView.editable.of(!readOnly),
 ];
 
-export type StylesheetCodeEditorProps = {
+type StylesheetCodeEditorProps = {
 	value: string;
 	colorTokens?: readonly SemanticCssColorToken[];
 	metadata?: SemanticCssEditorMetadata;
@@ -120,7 +120,7 @@ export type StylesheetCodeEditorProps = {
 	onRedo(): void;
 };
 
-export function StylesheetCodeEditor({
+function StylesheetCodeEditor({
 	value,
 	colorTokens = [],
 	metadata = emptyMetadata,

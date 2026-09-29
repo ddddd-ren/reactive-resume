@@ -8,7 +8,7 @@ type RuleSpan = { selector: string; from: number; to: number };
  * its closing brace. Strings and comments can't open or close a block; at-rule blocks (`@media`) aren't rules
  * themselves, but the rules inside them are.
  */
-export function ruleSpans(text: string): RuleSpan[] {
+function ruleSpans(text: string): RuleSpan[] {
 	const spans: RuleSpan[] = [];
 	const open: { prelude: string; from: number }[] = [];
 	let preludeFrom = 0;

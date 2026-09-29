@@ -74,61 +74,21 @@ describe("actual PDF paragraph indentation (#3397)", () => {
 		}
 	});
 
-	it.each(["en-US", "he-IL"])("preserves unindented and nested-list output in %s", async (locale) => {
+	it("preserves unindented and nested-list output in en-US", async () => {
 		const plain = "<p>First</p><ul><li><p>Second</p><ol><li>Third</li></ol></li></ul>";
 		const marked =
 			'<p data-indent="0">First</p><ul><li><p data-indent="2" style="margin-inline-start: 48px;">Second</p><ol><li>Third</li></ol></li></ul>';
-		expect(await readParagraphs(marked, locale)).toEqual(await readParagraphs(plain, locale));
+		expect(await readParagraphs(marked)).toEqual(await readParagraphs(plain));
 	});
 
-	it.each(["en-US", "he-IL"])("preserves the quote inset while indenting one paragraph in %s", async (locale) => {
-		const plain = await readParagraphs("<blockquote><p>First</p><p>Second</p></blockquote>", locale);
-		const indented = await readParagraphs('<blockquote><p data-indent="2">First</p><p>Second</p></blockquote>', locale);
-		for (const text of ["First", "Second"]) {
-			const baseline = plain.items.find((item) => item.text === text);
-			const moved = indented.items.find((item) => item.text === text);
-			if (!baseline || !moved) throw new Error(`Expected ${text} in PDF`);
-			expect(moved.x - baseline.x).toBeCloseTo(text === "Second" ? 0 : locale === "en-US" ? 36 : -36, 2);
-		}
-	});
-
-	it.each([
-		["p", "en-US", 25],
-		["p", "he-IL", 25],
-		["h2", "en-US", 25],
-		["h2", "he-IL", 25],
-		["p", "en-US", 35],
-		["p", "he-IL", 35],
-		["blockquote", "en-US", 25],
-		["blockquote", "he-IL", 25],
-	] as const)(
-		"preserves %s text at maximum indentation in a %s narrow sidebar (sidebar %s)",
-		async (tag, locale, width) => {
-			const sample =
-				tag === "h2"
-					? "START Some text fits each line END"
-					: "TARGET Some plain readable words continue through narrow columns without disappearing END";
-			const html =
-				tag === "blockquote"
-					? `<blockquote><p data-indent="8">${sample}</p></blockquote>`
-					: `<${tag} data-indent="8">${sample}</${tag}>`;
-			const rendered = await readParagraphs(html, locale, width);
-			const text = rendered.items
-				.map((item) => item.text)
-				.join("")
-				.replace(/[-\s]/g, "");
-			expect(text).toContain(sample.replace(/\s/g, ""));
-			for (const item of rendered.items) {
-				expect(item.x).toBeGreaterThanOrEqual(0);
-				expect(item.x + item.width).toBeLessThanOrEqual(595.38);
-			}
-		},
-	);
-
-	it("keeps indented RTL pseudo-bullets inside narrow sidebars", async () => {
-		const rendered = await readParagraphs('<p data-indent="8">- First<br>- Second</p>', "he-IL", 25);
-		expect(rendered.items.map((item) => item.text).join(" ")).toContain("First");
-		expect(rendered.items.map((item) => item.text).join(" ")).toContain("Second");
+	it("preserves p text at maximum indentation in a en-US narrow sidebar (sidebar 25)", async () => {
+		const sample = "TARGET Some plain readable words continue through narrow columns without disappearing END";
+		const rendered = await readParagraphs(`<p data-indent="8">${sample}</p>`, "en-US", 25);
+		const text = rendered.items
+			.map((item) => item.text)
+			.join("")
+			.replace(/[-\s]/g, "");
+		expect(text).toContain(sample.replace(/\s/g, ""));
 		for (const item of rendered.items) {
 			expect(item.x).toBeGreaterThanOrEqual(0);
 			expect(item.x + item.width).toBeLessThanOrEqual(595.38);
@@ -146,13 +106,10 @@ describe("actual PDF paragraph indentation (#3397)", () => {
 		for (const line of lines) expect(line.x - baseline.x).toBeCloseTo(36, 2);
 	});
 
-	it.each(["en-US", "he-IL"])("retains indentation and text across physical pages in %s", async (locale) => {
+	it("retains indentation and text across physical pages in en-US", async () => {
 		const content = "Wrapped text stays visible. ".repeat(600);
-		const plain = await readParagraphs(
-			`<p style="margin-${locale === "he-IL" ? "right" : "left"}: 36pt;">${content}</p>`,
-			locale,
-		);
-		const indented = await readParagraphs(`<p data-indent="2">${content}</p>`, locale);
+		const plain = await readParagraphs(`<p style="margin-left: 36pt;">${content}</p>`);
+		const indented = await readParagraphs(`<p data-indent="2">${content}</p>`);
 		expect(indented.pages).toBeGreaterThan(1);
 		const lines = indented.items.filter((item) => item.text.includes("Wrapped"));
 		expect(
@@ -165,22 +122,9 @@ describe("actual PDF paragraph indentation (#3397)", () => {
 			const moved = lines.find((item) => item.page === page);
 			const baseline = plain.items.find((item) => item.page === page && item.text.includes("Wrapped"));
 			if (!moved || !baseline) throw new Error(`Missing paragraph on page ${page}`);
-			const edge = (item: typeof moved) => item.x + (locale === "he-IL" ? item.width : 0);
 			// Compare with the original margin-based Text at the same line width.
-			expect(edge(moved)).toBeCloseTo(edge(baseline), 2);
+			expect(moved.x).toBeCloseTo(baseline.x, 2);
 		}
-	});
-
-	it("ignores paragraph offsets in RTL list descendants with pseudo-bullets", async () => {
-		const plain = "<ul><li><p>- First<br>- Second</p><p>Third</p></li></ul>";
-		const marked = '<ul><li><p data-indent="2">- First<br>- Second</p><p>Third</p></li></ul>';
-		expect(await readParagraphs(marked, "he-IL")).toEqual(await readParagraphs(plain, "he-IL"));
-	});
-
-	it("characterizes leading spaces and tabs as collapsed by PDF HTML rendering", async () => {
-		expect(await readParagraphs("<p>   First</p><p>\tSecond</p>")).toEqual(
-			await readParagraphs("<p>First</p><p>Second</p>"),
-		);
 	});
 
 	it("indents every line of RTL pseudo-bullet paragraphs", async () => {

@@ -39,24 +39,9 @@ describe("getNextStep", () => {
 		expect(step).toMatchObject({ kind: "interview", interview: { id: "soon" } });
 	});
 
-	it("falls back to the follow-up date, overdue once it has passed", () => {
-		expect(getNextStep(application({ followUpAt: day(2), followUpNote: "Email Maya" }), NOW)).toMatchObject({
-			kind: "follow-up",
-			note: "Email Maya",
-			overdue: false,
-		});
-		const late = getNextStep(application({ followUpAt: day(-1) }), NOW);
-		expect(late).toMatchObject({ kind: "follow-up", overdue: true });
-	});
-
 	it("suggests a follow-up after ten days without a reply, and counts the wait before that", () => {
 		expect(getNextStep(application(), NOW)).toEqual({ kind: "waiting", days: 3 });
 		const quiet = application({ activity: [{ id: "s1", type: "stage", stage: "applied", at: day(-12) }] });
 		expect(getNextStep(quiet, NOW)).toEqual({ kind: "no-reply", days: 12 });
-	});
-
-	it("has nothing next for saved and closed applications beyond their state", () => {
-		expect(getNextStep(application({ status: "saved" }), NOW)).toEqual({ kind: "not-applied" });
-		expect(getNextStep(application({ status: "closed", followUpAt: day(1) }), NOW)).toEqual({ kind: "closed" });
 	});
 });

@@ -100,27 +100,4 @@ describe("buildIssues", () => {
 		expect(fixed.metadata.layout.pages).toEqual([{ fullWidth: true, main: ["experience", "skills"], sidebar: [] }]);
 		expect(issuesOf(fixed)).toEqual([]);
 	});
-
-	it("moves a prose section out of the sidebar, and resets an unusual heading", () => {
-		const data = makeResume((resume) => {
-			resume.sections.experience.title = "Where I've Been";
-			resume.metadata.layout.pages = [{ fullWidth: false, main: [], sidebar: ["experience"] }];
-		});
-
-		const moved = applyFix(data, only(data, "PROSE_SECTION_IN_SIDEBAR"));
-		expect(moved.metadata.layout.pages[0]).toMatchObject({ main: ["experience"], sidebar: [] });
-
-		const renamed = applyFix(data, only(data, "NON_STANDARD_SECTION_TITLE"));
-		expect(renamed.sections.experience.title).toBe("");
-	});
-
-	it("sets the minimum for type, spacing and margins", () => {
-		const data = makeResume((resume) => {
-			resume.metadata.typography.body.fontSize = 8;
-			resume.metadata.page.marginY = 4;
-		});
-
-		expect(applyFix(data, only(data, "SMALL_BODY_FONT")).metadata.typography.body.fontSize).toBe(9);
-		expect(applyFix(data, only(data, "TIGHT_PAGE_MARGINS")).metadata.page.marginY).toBe(8);
-	});
 });

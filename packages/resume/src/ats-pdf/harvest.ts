@@ -77,7 +77,7 @@ export const HARVEST_DEFAULTS = {
 	operatorBudgetPerPageMs: 10_000,
 } as const;
 
-export class HarvestAbortedError extends Error {
+class HarvestAbortedError extends Error {
 	constructor() {
 		super("PDF analysis was cancelled.");
 		this.name = "HarvestAbortedError";

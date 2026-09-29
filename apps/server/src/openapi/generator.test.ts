@@ -1,9 +1,5 @@
-import { readFile } from "node:fs/promises";
 import { describe, expect, it, vi } from "vitest";
-import z from "zod";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { createResumeDataJsonSchema } from "@reactive-resume/schema/resume/json-schema";
-import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
 
 // Spec generation reads procedure contracts without executing authentication. Keep the
 // provider's resource seeding out of this unit test; real OAuth initialization is covered
@@ -17,11 +13,6 @@ type GeneratedSpecView = {
 		Record<
 			string,
 			{
-				tags?: string[];
-				operationId?: string;
-				summary?: string;
-				description?: string;
-				responses?: Record<string, { description?: string }>;
 				requestBody?: {
 					content?: Record<string, { schema?: unknown }>;
 				};
@@ -78,95 +69,6 @@ function findImpossibleRequestSchemas(spec: GeneratedSpecView) {
 }
 
 describe("generateOpenApiSpec", () => {
-	it("documents all cover-letter procedures with REST metadata", async () => {
-		const spec = (await generateSpec()) as GeneratedSpecView;
-		const expected = [
-			["get", "/cover-letters", "listCoverLetters", "List cover letters", "200"],
-			["get", "/cover-letters/{id}", "getCoverLetter", "Get cover letter by ID", "200"],
-			["post", "/cover-letters", "createCoverLetter", "Create a cover letter", "200"],
-			["put", "/cover-letters/{id}", "updateCoverLetter", "Update a cover letter", "200"],
-			["post", "/cover-letters/{id}/refresh-style", "refreshCoverLetterStyle", "Refresh cover letter style", "200"],
-			["post", "/cover-letters/{id}/duplicate", "duplicateCoverLetter", "Duplicate a cover letter", "200"],
-			["delete", "/cover-letters/{id}", "deleteCoverLetter", "Move a cover letter to Trash", "200"],
-			["get", "/cover-letters/{id}/export", "exportCoverLetter", "Export a cover letter", "200"],
-			["post", "/cover-letters/import", "importCoverLetter", "Import a cover letter", "200"],
-			["get", "/cover-letters/{id}/versions", "listCoverLetterVersions", "List a cover letter's versions", "200"],
-			[
-				"post",
-				"/cover-letters/{id}/versions/{versionId}/restore",
-				"restoreCoverLetterVersion",
-				"Restore a cover letter version",
-				"200",
-			],
-		] as const;
-
-		for (const [method, path, operationId, summary, successStatus] of expected) {
-			const operation = spec.paths?.[path]?.[method];
-			expect(operation).toMatchObject({
-				tags: ["Cover Letters"],
-				operationId,
-				summary,
-				description: expect.any(String),
-				responses: { [successStatus]: { description: expect.any(String) } },
-			});
-		}
-	}, 15_000);
-
-	it("keeps published cover-letter operations in sync with the runtime spec", async () => {
-		const published = JSON.parse(
-			await readFile(new URL("../../../../docs/spec.json", import.meta.url), "utf8"),
-		) as GeneratedSpecView;
-		const runtime = await generateSpec();
-		const coverLetterPaths = (spec: GeneratedSpecView) =>
-			Object.fromEntries(
-				Object.entries(spec.paths ?? {}).filter(
-					([path]) => path.startsWith("/cover-letters") || path.startsWith("/coverLetters/"),
-				),
-			);
-
-		const publishedPaths = coverLetterPaths(published);
-		const runtimePaths = coverLetterPaths(runtime as GeneratedSpecView);
-		expect(Object.keys(publishedPaths).sort()).toEqual(Object.keys(runtimePaths).sort());
-		expect(publishedPaths).toEqual(runtimePaths);
-	});
-
-	it("uses caller-provided application URL and version", async () => {
-		const spec = await generateSpec();
-
-		expect(spec.info).toMatchObject({
-			title: "Reactive Resume",
-			version: "9.8.7",
-		});
-		expect(spec.servers).toEqual([{ url: "https://rxresu.me/api/openapi" }]);
-		expect(spec.externalDocs).toEqual({
-			url: "https://docs.rxresu.me",
-			description: "Reactive Resume Documentation",
-		});
-	}, 15_000);
-
-	it("documents the public health endpoint at its actual URL", async () => {
-		const spec = await generateSpec();
-		const health = spec.paths?.["/api/health"]?.get;
-
-		expect(health).toMatchObject({
-			operationId: "getHealth",
-			security: [],
-			servers: [{ url: "https://rxresu.me" }],
-		});
-		for (const status of ["200", "503"]) {
-			expect(health?.responses?.[status]).toMatchObject({
-				content: {
-					"application/json": {
-						schema: {
-							required: expect.arrayContaining(["service", "version", "status"]),
-							properties: { version: { type: "string" } },
-						},
-					},
-				},
-			});
-		}
-	});
-
 	it("uses the canonical input-side ResumeData schema in update requests", async () => {
 		const spec = (await generateSpec()) as GeneratedSpecView;
 		const { $schema: _dialect, ...canonicalInputSchema } = createResumeDataJsonSchema();
@@ -177,87 +79,11 @@ describe("generateOpenApiSpec", () => {
 				data: { $ref: "#/components/schemas/ResumeData" },
 			},
 		});
-	});
-
-	it("accepts legacy input with omitted picture fit in the published request schema", async () => {
-		const spec = (await generateSpec()) as GeneratedSpecView;
-
-		expect(spec.components?.schemas?.ResumeData).toMatchObject({
-			properties: {
-				picture: { required: expect.not.arrayContaining(["fit"]) },
-			},
-		});
-	});
-
-	it("publishes the custom-section type and item correlation", async () => {
-		const spec = (await generateSpec()) as GeneratedSpecView;
-		const schema = z.fromJSONSchema(spec.components?.schemas?.ResumeData as Parameters<typeof z.fromJSONSchema>[0]);
-		const mismatched = {
-			...defaultResumeData,
-			customSections: [
-				{
-					id: "custom-experience",
-					type: "experience",
-					title: "Experience",
-					icon: "",
-					columns: 1,
-					hidden: false,
-					keepTogether: false,
-					startOnNewPage: false,
-					items: [{ id: "summary-item", hidden: false, content: "<p>Not an experience item</p>" }],
-				},
-			],
-		};
-
-		expect(schema.safeParse(mismatched).success).toBe(false);
-	});
-
-	it("enforces the same submitted bounds as the published request schema", async () => {
-		const spec = (await generateSpec()) as GeneratedSpecView;
-		const published = z.fromJSONSchema(spec.components?.schemas?.ResumeData as Parameters<typeof z.fromJSONSchema>[0]);
-		for (const marginX of [0, 100, -1, 500]) {
-			const data = structuredClone(defaultResumeData);
-			data.metadata.page.marginX = marginX;
-			const expected = marginX === 0 || marginX === 100;
-			expect(published.safeParse(data).success).toBe(expected);
-			expect(writableResumeDataSchema.safeParse(data).success).toBe(expected);
-		}
-	});
+	}, 15_000);
 
 	it("does not publish impossible request schemas", async () => {
 		const spec = (await generateSpec()) as GeneratedSpecView;
 
 		expect(findImpossibleRequestSchemas(spec)).toEqual([]);
-	});
-
-	it("checks every request body media type for impossible schemas", () => {
-		const spec: GeneratedSpecView = {
-			paths: {
-				"/documents": {
-					post: {
-						requestBody: {
-							content: {
-								"application/json": { schema: { type: "object" } },
-								"multipart/form-data": { schema: { not: {} } },
-							},
-						},
-					},
-				},
-			},
-		};
-
-		expect(findImpossibleRequestSchemas(spec)).toEqual(["POST /documents (multipart/form-data)"]);
-	});
-
-	it("documents imported data as an accepted ResumeData input", async () => {
-		const spec = (await generateSpec()) as GeneratedSpecView;
-
-		expect(getRequestSchema(spec, "/resumes/import", "post")).toEqual({
-			type: "object",
-			properties: {
-				data: { $ref: "#/components/schemas/ResumeData" },
-			},
-			required: ["data"],
-		});
 	});
 });

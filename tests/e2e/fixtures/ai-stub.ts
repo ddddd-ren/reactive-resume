@@ -3,10 +3,9 @@ import type { AddressInfo } from "node:net";
 import { createServer } from "node:http";
 
 /**
- * A scripted OpenAI-compatible provider for the assistant specs. It answers the connection test, and plays a small
+ * A scripted OpenAI-compatible provider for the assistant spec. It answers the connection test, and plays a small
  * conversation: read the document, propose an edit to its first passage, then say what changed. A message asking
- * for "a question" makes it ask one first; "slowly" streams a long reply that can be stopped. Improve gets the line
- * back with "Led" in front.
+ * for "a question" makes it ask one first; "slowly" streams a long reply that can be stopped.
  */
 
 type ChatMessage = { role: string; content?: unknown; tool_call_id?: string; tool_calls?: unknown[] };
@@ -138,17 +137,8 @@ function handle(request: IncomingMessage, response: ServerResponse) {
 			return;
 		}
 		const parsed = JSON.parse(body || "{}") as ChatRequest;
-		// The connection test asks for a single character, without streaming; Improve asks for one line as JSON.
+		// The connection test asks for a single character, without streaming.
 		if (!parsed.stream) {
-			const improving = text(parsed.messages[0]?.content).includes("You improve one line");
-			const line = text(parsed.messages.at(-1)?.content).match(/<<<LINE_START>>>\n([\s\S]*?)\n<<<LINE_END>>>/)?.[1];
-			const content = improving
-				? JSON.stringify({
-						text: `Led ${line ?? ""}`.trim(),
-						why: "Uses a verb that shows ownership.",
-						addsFacts: false,
-					})
-				: "1";
 			response.writeHead(200, { "content-type": "application/json" });
 			response.end(
 				JSON.stringify({
@@ -156,7 +146,7 @@ function handle(request: IncomingMessage, response: ServerResponse) {
 					object: "chat.completion",
 					created: 0,
 					model: "stub",
-					choices: [{ index: 0, message: { role: "assistant", content }, finish_reason: "stop" }],
+					choices: [{ index: 0, message: { role: "assistant", content: "1" }, finish_reason: "stop" }],
 					usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
 				}),
 			);

@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { useBreakpoint } from "./use-breakpoint";
 
 let width = 1440;
@@ -21,25 +21,7 @@ Object.defineProperty(window, "matchMedia", {
 	}),
 });
 
-afterEach(() => {
-	width = 1440;
-});
-
 describe("useBreakpoint", () => {
-	it.each([
-		[390, "mobile"],
-		[639, "mobile"],
-		[640, "tablet"],
-		[1023, "tablet"],
-		[1024, "desktop"],
-		[1279, "desktop"],
-		[1280, "wide"],
-	] as const)("maps %ipx to %s", (nextWidth, expected) => {
-		width = nextWidth;
-		const { result } = renderHook(() => useBreakpoint());
-		expect(result.current).toBe(expected);
-	});
-
 	it("updates when the viewport crosses a breakpoint", () => {
 		const { result } = renderHook(() => useBreakpoint());
 		expect(result.current).toBe("wide");

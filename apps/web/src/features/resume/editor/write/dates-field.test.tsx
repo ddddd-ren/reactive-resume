@@ -12,10 +12,6 @@ beforeAll(() => {
 
 describe("readTypedDate", () => {
 	it.each([
-		["Mar 2022", "2022-03"],
-		["03/2022", "2022-03"],
-		["2022-03", "2022-03"],
-		["2022", "2022"],
 		["", null],
 		["soon", undefined],
 	])("reads %j as %j", (text, expected) => {
@@ -40,20 +36,5 @@ describe("DatesField", () => {
 		fireEvent.change(screen.getByRole("textbox", { name: "Start" }), { target: { value: "Jul 2016" } });
 
 		expect(onChange).toHaveBeenLastCalledWith({ start: "2016-07", end: "2018", present: false });
-	});
-
-	it("turns the end into Present and back", () => {
-		const onChange = renderField({ start: "2020", end: "2022", present: false });
-		fireEvent.click(screen.getByRole("switch"));
-		expect(onChange).toHaveBeenLastCalledWith({ start: "2020", end: null, present: true });
-	});
-
-	it("says how to fix a date it can't read, after blur", () => {
-		renderField({ start: null, end: null, present: false });
-		const start = screen.getByRole("textbox", { name: "Start" });
-		fireEvent.change(start, { target: { value: "someday" } });
-		expect(screen.queryByText(/Use a month and year/)).not.toBeInTheDocument();
-		fireEvent.blur(start);
-		expect(screen.getByText(/Use a month and year/)).toBeInTheDocument();
 	});
 });

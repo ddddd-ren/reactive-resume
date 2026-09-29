@@ -39,7 +39,7 @@ function makePreview(apiKey: string) {
 	return `${trimmed.slice(0, 4)}...${trimmed.slice(-4)}`;
 }
 
-export function fingerprintCredential(apiKey: string, salt: string) {
+function fingerprintCredential(apiKey: string, salt: string) {
 	return createHash("sha256").update(salt).update(":").update(apiKey).digest("hex");
 }
 

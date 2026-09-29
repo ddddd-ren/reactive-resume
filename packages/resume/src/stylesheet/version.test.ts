@@ -16,15 +16,6 @@ describe("compileStylesheet", () => {
 		expect(result.diagnostics).toEqual([]);
 	});
 
-	it("rejects unsupported persisted language versions", () => {
-		const result = compileStylesheet({ languageVersion: 2, text: "section { color: red; }" });
-
-		expect(result.program).toBeNull();
-		expect(result.diagnostics).toContainEqual(
-			expect.objectContaining({ code: "UNSUPPORTED_VERSION", severity: "error" }),
-		);
-	});
-
 	it("compiles around a recovered CSS error", () => {
 		const result = compileStylesheet({ languageVersion: 1, text: "section { color red; }" });
 

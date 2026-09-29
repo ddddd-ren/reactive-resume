@@ -8,7 +8,7 @@ import type { PageOperatorSummary, RawExtraction, RawFont, RawLinkAnnotation, Ra
  * the tests exercise the same coordinate conversion production does.
  */
 
-export const A4 = { width: 595.28, height: 841.89 } as const;
+const A4 = { width: 595.28, height: 841.89 } as const;
 
 export type FixtureLine = {
 	text: string;

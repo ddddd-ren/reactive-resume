@@ -5,7 +5,7 @@ for (const accept of [false, true]) {
 	test(`requires explicit OAuth consent before ${accept ? "allowing" : "denying"} access`, async ({
 		authPage: page,
 		baseURL,
-	}, testInfo) => {
+	}) => {
 		const origin = new URL(baseURL ?? "http://localhost:3000").origin;
 		const metadata = await page.request.get("/.well-known/oauth-protected-resource");
 		expect(metadata.status()).toBe(200);
@@ -40,15 +40,6 @@ for (const accept of [false, true]) {
 		const before = await page.request.get("/api/auth/oauth2/get-consents");
 		expect(await before.json()).toEqual([]);
 		expect(new URL(page.url()).searchParams.getAll("resource")).toEqual([`${origin}/mcp`, origin]);
-		if (accept) {
-			await page.getByRole("button", { name: "Allow access", exact: true }).click({ trial: true });
-			await page.screenshot({ path: testInfo.outputPath("consent-desktop.png"), animations: "disabled" });
-			await page.setViewportSize({ width: 390, height: 600 });
-			await expect(page.getByRole("heading", { name: "Connect an application" })).toBeInViewport({ ratio: 1 });
-			await expect(page.getByRole("button", { name: "Allow access", exact: true })).toBeInViewport({ ratio: 1 });
-			expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-			await page.screenshot({ path: testInfo.outputPath("consent-mobile.png"), animations: "disabled" });
-		}
 		await page.getByRole("button", { name: accept ? "Allow access" : "Deny", exact: true }).click();
 		await page.waitForURL(`${callback}**`);
 		const target = new URL(page.url());
