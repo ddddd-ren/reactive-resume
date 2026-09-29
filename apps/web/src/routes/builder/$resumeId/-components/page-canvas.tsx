@@ -165,7 +165,7 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 
 	if (pageNumber === 1) {
 		return (
-			<figcaption className="mb-2.5 flex min-h-8 flex-wrap items-center justify-center gap-2.5 text-center font-medium text-ink-3 text-xs">
+			<figcaption className="mb-2.5 flex flex-wrap items-center justify-center gap-2.5 text-center font-medium text-ink-3 text-xs">
 				{viewing ? (
 					<CanvasStatusPill icon="history">
 						<Trans>
@@ -189,7 +189,7 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 						) : mode === "check" ? (
 							<Trans>Page 1 · {formatLabel}</Trans>
 						) : (
-							<Trans>Page 1 · {formatLabel} · click any line to edit it</Trans>
+							<Trans>Page 1</Trans>
 						)}
 						{overflow && <OverflowChip {...overflow} />}
 					</>

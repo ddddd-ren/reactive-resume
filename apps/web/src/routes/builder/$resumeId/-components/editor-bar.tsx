@@ -1,6 +1,7 @@
 import type { EditorMode } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -22,7 +23,7 @@ type EditorBarProps = {
 };
 
 /**
- * The 56px editor bar. Desktop: back, name and save state · Write/Design/Check · undo, history, assistant,
+ * The 56px editor bar. Desktop: back, name and save state · Write/Design/Check · history, assistant,
  * Share and Download PDF. The mode switch stays centered through a `1fr auto 1fr` grid.
  */
 export function EditorBar({ layout, pinnable }: EditorBarProps) {
@@ -43,12 +44,7 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 			{layout === "mobile" ? <span /> : <ModeTabs />}
 
 			<div className="flex items-center justify-end gap-1">
-				{layout === "desktop" && (
-					<>
-						<UndoButton />
-						<HistoryButton />
-					</>
-				)}
+				{layout === "desktop" && <HistoryButton />}
 				{/* Every layout opens the assistant from the ✦: a column, a drawer, or full screen on phones. */}
 				<span className={layout === "desktop" ? "me-1.5" : undefined}>
 					<AssistantButton />
@@ -102,15 +98,6 @@ function CheckBadge({ count }: { count: number }) {
 	);
 }
 
-function UndoButton() {
-	const canUndo = useResumeStore((state) => state.canUndo);
-	const undo = useResumeStore((state) => state.undo);
-
-	return (
-		<IconButton icon="undo" label={t`Undo`} shortcut="⌘Z" className="text-ink-2" disabled={!canUndo} onClick={undo} />
-	);
-}
-
 /** History lives in the Share & export sheet; the clock opens it there. */
 function HistoryButton() {
 	const setShareTab = useEditorStore((state) => state.setShareTab);
@@ -126,35 +113,39 @@ type ToolbarActionProps = {
 function ShareButton({ compact, disabled }: ToolbarActionProps) {
 	const isPublic = useCurrentBuilderResumeSelector((resume) => resume.isPublic ?? false);
 	const setShareTab = useEditorStore((state) => state.setShareTab);
-	const liveDot = isPublic ? (
-		<span aria-hidden="true" className="absolute end-1.5 top-1.5 size-[7px] rounded-full bg-accent" />
-	) : null;
-
-	if (compact) {
+	if (compact && !isPublic) {
 		return (
-			<span className="relative">
-				<IconButton
-					icon="ios_share"
-					label={t`Share`}
-					shortcut="⌘⇧S"
-					disabled={disabled}
-					onClick={() => setShareTab("link")}
-				/>
-				{liveDot}
-			</span>
+			<IconButton
+				icon="ios_share"
+				label={t`Share`}
+				shortcut="⌘⇧S"
+				className="me-2"
+				disabled={disabled}
+				onClick={() => setShareTab("link")}
+			/>
 		);
 	}
 
 	return (
-		<Button variant="secondary" className="relative gap-1.5" disabled={disabled} onClick={() => setShareTab("link")}>
-			<Icon name="ios_share" />
-			<Trans>Share</Trans>
-			{isPublic && (
-				<span className="sr-only">
-					<Trans>(link is live)</Trans>
-				</span>
+		<Button
+			variant="secondary"
+			className={compact ? "me-2 px-2" : "me-2"}
+			aria-label={isPublic ? t`Share public resume` : t`Share`}
+			disabled={disabled}
+			onClick={() => setShareTab("link")}
+		>
+			{!compact && (
+				<>
+					<Icon name="ios_share" />
+					<Trans>Share</Trans>
+				</>
 			)}
-			{liveDot}
+			{isPublic && (
+				<Badge variant="accent">
+					<Icon name="public" />
+					<Trans>Public</Trans>
+				</Badge>
+			)}
 		</Button>
 	);
 }

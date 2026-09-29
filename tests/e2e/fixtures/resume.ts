@@ -24,7 +24,7 @@ export async function createSampleResumeFromDashboard(page: Page, testInfo: Test
 export async function openSidebarSection(page: Page, title: string) {
 	// The Share & export sheet hosts Sharing, without a heading of its own.
 	if (title === "Sharing") {
-		// "Share (link is live)" once the resume is public.
+		// "Share public resume" once the resume is public.
 		await page.getByRole("button", { name: /^Share\b/ }).click();
 		await expect(page.getByRole("dialog", { name: "Share & export" })).toBeVisible();
 		return;
