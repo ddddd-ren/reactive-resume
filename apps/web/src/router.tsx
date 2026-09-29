@@ -10,12 +10,18 @@ import { routeTree } from "./routeTree.gen";
 export const getRouter = async () => {
 	const queryClient = getQueryClient();
 
-	const { theme, locale, session, flags } = await loadRootContext();
+	const { theme, locale, session, flags } = await loadRootContext(queryClient);
 
 	const router = createRouter({
 		routeTree,
 		scrollRestoration: true,
 		defaultStructuralSharing: true,
+		// Hovering a link starts its loaders; TanStack Query decides freshness, not the router's preload cache.
+		defaultPreload: "intent",
+		defaultPreloadStaleTime: 0,
+		// Past 300ms a navigation shows the loader, held long enough (300ms) for its 200ms fade-in to land.
+		defaultPendingMs: 300,
+		defaultPendingMinMs: 300,
 		defaultErrorComponent: ErrorScreen,
 		defaultPendingComponent: LoadingScreen,
 		defaultNotFoundComponent: NotFoundScreen,

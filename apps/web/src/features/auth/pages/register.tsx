@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { useToggle } from "usehooks-ts";
@@ -11,6 +12,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
+import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SocialAuth } from "../components/social-auth";
 import { getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
@@ -36,6 +38,7 @@ type Props = {
 
 export function RegisterPage({ disableEmailAuth }: Props) {
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
+	const queryClient = useQueryClient();
 	const [submitted, setSubmitted] = useState(false);
 	const [showPassword, toggleShowPassword] = useToggle(false);
 
@@ -80,6 +83,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 				}
 				if (isOAuthRedirect(continuation.data)) return;
 			}
+			await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
 			setSubmitted(true);
 			toast.close(toastId);
 		},

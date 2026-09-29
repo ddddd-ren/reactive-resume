@@ -88,7 +88,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 			],
 		};
 	},
-	beforeLoad: async () => loadRootContext(),
+	beforeLoad: ({ context }) => loadRootContext(context.queryClient),
 });
 
 function RootComponent() {

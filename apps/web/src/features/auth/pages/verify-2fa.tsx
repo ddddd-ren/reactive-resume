@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -9,6 +10,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { OTPField } from "@reactive-resume/ui/components/otp-field";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
+import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 import { getAuthRedirectOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 
@@ -26,6 +28,7 @@ type TwoFactorVerificationPageProps = {
 
 function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerificationPageProps) {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const navigate = useNavigate();
 
@@ -63,6 +66,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 
 			toast.close(toastId);
 			if (isOAuthRedirect(data)) return;
+			await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
 			await router.invalidate();
 			void navigate(getAuthRedirectOptions(callbackURL));
 		},

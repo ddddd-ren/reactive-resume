@@ -1,6 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { useToggle } from "usehooks-ts";
@@ -12,6 +12,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
 import { orpc } from "@/libs/orpc/client";
+import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SocialAuth } from "../components/social-auth";
 import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
@@ -30,6 +31,7 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 	const router = useRouter();
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 
 	const hasStartedConditionalPasskeyRef = useRef(false);
 	const [showPassword, toggleShowPassword] = useToggle(false);
@@ -85,6 +87,7 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 
 				toast.close(toastId);
 				if (isOAuthRedirect(result.data)) return;
+				await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
 				await router.invalidate();
 				void navigate(getAuthRedirectOptions(callbackURL));
 			} catch {
@@ -110,10 +113,11 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 			});
 			if (error || isOAuthRedirect(data)) return;
 
+			await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
 			await router.invalidate();
 			void navigate(getAuthRedirectOptions(callbackURL));
 		});
-	}, [providers, router, navigate, callbackURL]);
+	}, [providers, router, navigate, callbackURL, queryClient]);
 
 	return (
 		<>

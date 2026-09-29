@@ -18,12 +18,14 @@ const mocks = vi.hoisted(() => ({
 	verifyBackupCode: vi.fn(),
 	signup: vi.fn(),
 	continueOAuth: vi.fn(),
+	queryClient: { invalidateQueries: vi.fn(async () => {}) },
 }));
 
 vi.mock("@tanstack/react-query", () => ({
 	useQuery: () => ({
 		data: { google: "Google", github: "GitHub", linkedin: "LinkedIn", custom: "SSO", passkey: true },
 	}),
+	useQueryClient: () => mocks.queryClient,
 }));
 vi.mock("@tanstack/react-router", () => ({
 	useSearch: () => ({ callbackURL: mocks.callbackURL }),

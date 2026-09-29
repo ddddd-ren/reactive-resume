@@ -1,7 +1,7 @@
 import type { AuthSession } from "@reactive-resume/auth/types";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext, useRouter } from "@tanstack/react-router";
 import { useId, useRef, useState } from "react";
 import z from "zod";
@@ -20,6 +20,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
+import { sessionQueryKey } from "@/libs/root-context";
 import { SettingsSection } from "../section";
 
 const nameSchema = z.string().trim().min(1).max(64);
@@ -125,6 +126,7 @@ type ProfileSectionProps = { session: AuthSession };
 
 export function ProfileSection({ session }: ProfileSectionProps) {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const context = useRouteContext({ strict: false });
 	const smtpEnabled = context.flags?.smtpEnabled ?? false;
 	const user = session.user;
@@ -133,6 +135,7 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 	const updateUser = async (patch: Parameters<typeof authClient.updateUser>[0]) => {
 		const { error } = await authClient.updateUser(patch);
 		if (error) return getReadableErrorMessage(error, t`Couldn't save. Try again.`);
+		await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
 		await router.invalidate();
 		return null;
 	};

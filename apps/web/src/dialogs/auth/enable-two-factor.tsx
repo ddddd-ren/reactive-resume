@@ -2,6 +2,7 @@ import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useStore } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
@@ -25,6 +26,7 @@ import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
+import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
 
@@ -48,6 +50,7 @@ type TwoFactorQRCodeProps = {
 
 export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 
 	const [totpUri, setTotpUri] = useState<string | null>(null);
 	const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
@@ -136,7 +139,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 
 	const onConfirmBackup = () => {
 		toast.add({ type: "success", description: t`Two-factor authentication is now enabled.` });
-		void router.invalidate();
+		void queryClient.invalidateQueries({ queryKey: sessionQueryKey }).then(() => router.invalidate());
 		closeDialog();
 		onReset();
 	};

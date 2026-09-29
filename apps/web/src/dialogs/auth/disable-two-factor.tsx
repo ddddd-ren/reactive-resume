@@ -1,6 +1,7 @@
 import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
@@ -19,6 +20,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
+import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
 
@@ -28,6 +30,7 @@ const formSchema = z.object({
 
 export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">) {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const [showPassword, toggleShowPassword] = useToggle(false);
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 
@@ -62,7 +65,7 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 				description: t`Two-factor authentication is now disabled.`,
 				id: toastId,
 			});
-			void router.invalidate();
+			void queryClient.invalidateQueries({ queryKey: sessionQueryKey }).then(() => router.invalidate());
 			closeDialog();
 			form.reset();
 		},

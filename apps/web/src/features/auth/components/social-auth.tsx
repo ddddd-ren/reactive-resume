@@ -2,7 +2,7 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { GithubLogoIcon, GoogleLogoIcon, LinkedinLogoIcon } from "@phosphor-icons/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -11,6 +11,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { authClient } from "@/libs/auth/client";
 import { orpc } from "@/libs/orpc/client";
+import { sessionQueryKey } from "@/libs/root-context";
 import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 
 export function SocialAuth() {
@@ -50,6 +51,7 @@ type SocialAuthButtonsProps = {
 
 function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { callbackURL } = useSearch({ from: "/auth" });
 
 	const runSignIn = async (
@@ -73,6 +75,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 		}
 		toast.close(toastId);
 		if (isOAuthRedirect(data)) return;
+		await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
 		await router.invalidate();
 		if (isPasskey) void router.navigate(getAuthRedirectOptions(callbackURL));
 	};

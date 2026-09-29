@@ -119,6 +119,8 @@ export const getLocaleMessages = async (locale: string) => {
 };
 
 export const loadLocale = async (locale: string) => {
+	// Re-activating the active locale emits "change" and re-renders every translated component.
+	if (i18n.locale === locale) return;
 	const { locale: resolvedLocale, messages } = await getLocaleMessages(locale);
 	i18n.loadAndActivate({ locale: resolvedLocale, messages });
 };
