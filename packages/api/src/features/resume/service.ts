@@ -77,7 +77,6 @@ async function applyResumePatchTx(
 		userId: string;
 		operations: JsonPatchOperation[];
 		expectedUpdatedAt?: Date;
-		versionLabel?: string;
 	},
 ) {
 	const [existing] = await client
@@ -118,7 +117,7 @@ async function applyResumePatchTx(
 		});
 	}
 
-	patchedData = parseWritableResumeData(patchedData, storedData);
+	patchedData = parseWritableResumeData(patchedData);
 	// The version guard is the ms-precision JS check above, under the SELECT ... FOR UPDATE lock.
 	// Never compare expectedUpdatedAt in SQL: rows stamped by Postgres now() (defaultNow() on
 	// insert) carry microseconds, while JS Dates are ms-truncated — SQL equality then matches
@@ -154,7 +153,6 @@ async function applyResumePatchTx(
 		userId: input.userId,
 		data: resume.data,
 		kind: "ai",
-		...(input.versionLabel ? { label: input.versionLabel } : {}),
 	});
 
 	return resume;
@@ -609,9 +607,7 @@ export const resumeService = {
 					});
 				}
 
-				const normalizedData = input.data
-					? parseWritableResumeData(input.data, parseStoredResumeData(existing.data))
-					: undefined;
+				const normalizedData = input.data ? parseWritableResumeData(input.data) : undefined;
 				// A blank resume is named after its headline until someone names it by hand.
 				const followedName =
 					existing.autoName && input.name === undefined && normalizedData

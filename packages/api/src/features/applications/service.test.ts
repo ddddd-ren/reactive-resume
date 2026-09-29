@@ -178,7 +178,7 @@ describe("applicationService.update", () => {
 			[Record<string, unknown>],
 		];
 		expect(closing).toMatchObject({ status: "closed", closedReason: "withdrew" });
-		expect(reopening).toMatchObject({ status: "applied", closedReason: null, archived: false });
+		expect(reopening).toMatchObject({ status: "applied", closedReason: null });
 	});
 });
 

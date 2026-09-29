@@ -110,8 +110,7 @@ describe("ResumesCommandGroup", () => {
 	])("opens the %s list page from the root palette with Enter", async (page, keys, createLabel) => {
 		mockUseQueryData((entity) => {
 			if (entity === "resumes") return [{ id: "resume-1", name: "Evil Apricot Pike", slug: "apricot" }];
-			if (entity === "applications")
-				return [{ id: "application-1", company: "Umbrella", role: "Staff Engineer", archived: false }];
+			if (entity === "applications") return [{ id: "application-1", company: "Umbrella", role: "Staff Engineer" }];
 			if (entity === "threads")
 				return [{ id: "thread-1", title: "Cover letter rewrite", resumeName: "Product Resume" }];
 			return [];
@@ -133,8 +132,7 @@ describe("ResumesCommandGroup", () => {
 	])("keeps arrow-key navigation active on the %s list page", async (_page, keys, createLabel, itemLabel) => {
 		mockUseQueryData((entity) => {
 			if (entity === "resumes") return [{ id: "resume-1", name: "Evil Apricot Pike", slug: "apricot" }];
-			if (entity === "applications")
-				return [{ id: "application-1", company: "Umbrella", role: "Staff Engineer", archived: false }];
+			if (entity === "applications") return [{ id: "application-1", company: "Umbrella", role: "Staff Engineer" }];
 			if (entity === "threads")
 				return [{ id: "thread-1", title: "Cover letter rewrite", resumeName: "Product Resume" }];
 			return [];
@@ -201,9 +199,7 @@ describe("ResumesCommandGroup", () => {
 	it("loads applications on the applications page", () => {
 		useCommandPaletteStore.setState({ pages: ["applications"] });
 		mockUseQueryData((entity) =>
-			entity === "applications"
-				? [{ id: "application-1", company: "Umbrella", role: "Staff Engineer", archived: false }]
-				: [],
+			entity === "applications" ? [{ id: "application-1", company: "Umbrella", role: "Staff Engineer" }] : [],
 		);
 
 		renderGroup();
@@ -217,8 +213,8 @@ describe("ResumesCommandGroup", () => {
 		mockUseQueryData((entity) =>
 			entity === "applications"
 				? [
-						{ id: "application-1", company: "Umbrella", role: "Staff Engineer", archived: false },
-						{ id: "application-2", company: "Wayne Enterprises", role: "Product Engineer", archived: false },
+						{ id: "application-1", company: "Umbrella", role: "Staff Engineer" },
+						{ id: "application-2", company: "Wayne Enterprises", role: "Product Engineer" },
 					]
 				: [],
 		);
@@ -232,9 +228,7 @@ describe("ResumesCommandGroup", () => {
 	it("opens the selected application by id", () => {
 		useCommandPaletteStore.setState({ pages: ["applications"] });
 		mockUseQueryData((entity) =>
-			entity === "applications"
-				? [{ id: "application-1", company: "Umbrella", role: "Staff Engineer", archived: false }]
-				: [],
+			entity === "applications" ? [{ id: "application-1", company: "Umbrella", role: "Staff Engineer" }] : [],
 		);
 
 		renderGroup();

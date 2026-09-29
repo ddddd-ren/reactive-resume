@@ -22,20 +22,20 @@ test("exports filtered or all owned applications with an inclusive date range", 
 			String(testInfo.project.use.baseURL),
 		);
 		await otherContext.close();
-		for (const [email, company, date, archived] of [
-			[account.email, "Alpha Company", "2026-08-03T00:00:00Z", false],
-			[account.email, "Beta Archived", "2026-08-03T23:59:59Z", true],
-			[account.email, "Gamma Later", "2026-08-04T00:00:00Z", false],
-			[foreign.email, "Foreign Secret", "2026-08-03T12:00:00Z", false],
+		for (const [email, company, date, status] of [
+			[account.email, "Alpha Company", "2026-08-03T00:00:00Z", "applied"],
+			[account.email, "Beta Closed", "2026-08-03T23:59:59Z", "closed"],
+			[account.email, "Gamma Later", "2026-08-04T00:00:00Z", "applied"],
+			[foreign.email, "Foreign Secret", "2026-08-03T12:00:00Z", "applied"],
 		] as const) {
 			await pool.query(
-				`INSERT INTO application (id,user_id,company,role,status,applied_at,archived,notes,activity)
-				 SELECT $1,id,$2,'Engineer','applied',$3,$4,$5,$6 FROM "user" WHERE email=$7`,
+				`INSERT INTO application (id,user_id,company,role,status,applied_at,notes,activity)
+				 SELECT $1,id,$2,'Engineer',$4,$3,$5,$6 FROM "user" WHERE email=$7`,
 				[
 					randomUUID(),
 					company,
 					date,
-					archived,
+					status,
 					'Quoted "note"\nSecond line',
 					JSON.stringify([{ id: randomUUID(), type: "stage", stage: "applied", at: date }]),
 					email,
@@ -57,7 +57,7 @@ test("exports filtered or all owned applications with an inclusive date range", 
 		if (!path) throw new Error("CSV download was not saved");
 		let csv = await readFile(path, "utf8");
 		expect(csv).toContain('"Alpha Company"');
-		expect(csv).not.toMatch(/Beta Archived|Gamma Later|Foreign Secret/);
+		expect(csv).not.toMatch(/Beta Closed|Gamma Later|Foreign Secret/);
 		expect(csv).toContain('"Applied (2026-08-03)"');
 		expect(csv).toContain('"Quoted ""note""\nSecond line"');
 
@@ -76,7 +76,7 @@ test("exports filtered or all owned applications with an inclusive date range", 
 		if (!path) throw new Error("CSV download was not saved");
 		csv = await readFile(path, "utf8");
 		expect(csv).toContain('"Alpha Company"');
-		expect(csv).toContain('"Beta Archived"');
+		expect(csv).toContain('"Beta Closed"');
 		expect(csv).not.toMatch(/Gamma Later|Foreign Secret/);
 		await page.setViewportSize({ width: 390, height: 844 });
 		await page.reload();

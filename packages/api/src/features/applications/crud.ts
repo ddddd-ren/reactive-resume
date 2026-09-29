@@ -12,7 +12,7 @@ export const crudRouter = {
 			operationId: "listApplications",
 			summary: "List job applications",
 			description:
-				"Returns all job applications belonging to the authenticated user, most recently updated first. Archived applications are excluded unless includeArchived is set. Optionally filter by pipeline stage. Requires authentication.",
+				"Returns all job applications belonging to the authenticated user, most recently updated first. Optionally filter by pipeline stage. Requires authentication.",
 			successDescription: "A list of the user's job applications.",
 		})
 		.input(applicationDto.list.input)
@@ -22,7 +22,6 @@ export const crudRouter = {
 				userId: context.user.id,
 				...(input.status ? { status: input.status } : {}),
 				...(input.tags ? { tags: input.tags } : {}),
-				includeArchived: input.includeArchived,
 			}),
 		),
 

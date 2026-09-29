@@ -2523,7 +2523,7 @@
 			"get": {
 				"operationId": "listApplications",
 				"summary": "List job applications",
-				"description": "Returns all job applications belonging to the authenticated user, most recently updated first. Archived applications are excluded unless includeArchived is set. Optionally filter by pipeline stage. Requires authentication.",
+				"description": "Returns all job applications belonging to the authenticated user, most recently updated first. Optionally filter by pipeline stage. Requires authentication.",
 				"tags": [
 					"Applications"
 				],
@@ -2556,16 +2556,6 @@
 						},
 						"style": "deepObject",
 						"explode": true,
-						"allowEmptyValue": true,
-						"allowReserved": true
-					},
-					{
-						"name": "includeArchived",
-						"in": "query",
-						"schema": {
-							"type": "boolean",
-							"default": false
-						},
 						"allowEmptyValue": true,
 						"allowReserved": true
 					}
@@ -2642,10 +2632,6 @@
 													}
 												],
 												"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
-											},
-											"archived": {
-												"type": "boolean",
-												"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
 											},
 											"resumeId": {
 												"anyOf": [
@@ -3019,7 +3005,6 @@
 											"salary",
 											"status",
 											"closedReason",
-											"archived",
 											"resumeId",
 											"coverLetterId",
 											"sentResumeVersionId",
@@ -3410,10 +3395,6 @@
 											],
 											"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
 										},
-										"archived": {
-											"type": "boolean",
-											"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
-										},
 										"resumeId": {
 											"anyOf": [
 												{
@@ -3786,7 +3767,6 @@
 										"salary",
 										"status",
 										"closedReason",
-										"archived",
 										"resumeId",
 										"coverLetterId",
 										"sentResumeVersionId",
@@ -4068,9 +4048,6 @@
 											}
 										],
 										"description": "Why the application closed; kept when status stays closed, cleared by any other stage."
-									},
-									"archived": {
-										"type": "boolean"
 									}
 								}
 							}
@@ -4147,10 +4124,6 @@
 												}
 											],
 											"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
-										},
-										"archived": {
-											"type": "boolean",
-											"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
 										},
 										"resumeId": {
 											"anyOf": [
@@ -4524,7 +4497,6 @@
 										"salary",
 										"status",
 										"closedReason",
-										"archived",
 										"resumeId",
 										"coverLetterId",
 										"sentResumeVersionId",
@@ -5004,10 +4976,6 @@
 											],
 											"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
 										},
-										"archived": {
-											"type": "boolean",
-											"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
-										},
 										"resumeId": {
 											"anyOf": [
 												{
@@ -5380,7 +5348,6 @@
 										"salary",
 										"status",
 										"closedReason",
-										"archived",
 										"resumeId",
 										"coverLetterId",
 										"sentResumeVersionId",
@@ -5512,10 +5479,6 @@
 											],
 											"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
 										},
-										"archived": {
-											"type": "boolean",
-											"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
-										},
 										"resumeId": {
 											"anyOf": [
 												{
@@ -5888,7 +5851,6 @@
 										"salary",
 										"status",
 										"closedReason",
-										"archived",
 										"resumeId",
 										"coverLetterId",
 										"sentResumeVersionId",
@@ -6033,10 +5995,6 @@
 											],
 											"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
 										},
-										"archived": {
-											"type": "boolean",
-											"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
-										},
 										"resumeId": {
 											"anyOf": [
 												{
@@ -6409,7 +6367,6 @@
 										"salary",
 										"status",
 										"closedReason",
-										"archived",
 										"resumeId",
 										"coverLetterId",
 										"sentResumeVersionId",
@@ -6578,10 +6535,6 @@
 											],
 											"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
 										},
-										"archived": {
-											"type": "boolean",
-											"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
-										},
 										"resumeId": {
 											"anyOf": [
 												{
@@ -6954,7 +6907,6 @@
 										"salary",
 										"status",
 										"closedReason",
-										"archived",
 										"resumeId",
 										"coverLetterId",
 										"sentResumeVersionId",
@@ -7124,10 +7076,6 @@
 											],
 											"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
 										},
-										"archived": {
-											"type": "boolean",
-											"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
-										},
 										"resumeId": {
 											"anyOf": [
 												{
@@ -7500,7 +7448,6 @@
 										"salary",
 										"status",
 										"closedReason",
-										"archived",
 										"resumeId",
 										"coverLetterId",
 										"sentResumeVersionId",
@@ -7650,10 +7597,6 @@
 											],
 											"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
 										},
-										"archived": {
-											"type": "boolean",
-											"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
-										},
 										"resumeId": {
 											"anyOf": [
 												{
@@ -8026,7 +7969,6 @@
 										"salary",
 										"status",
 										"closedReason",
-										"archived",
 										"resumeId",
 										"coverLetterId",
 										"sentResumeVersionId",
@@ -8154,10 +8096,6 @@
 											],
 											"description": "Why a closed application ended: not-selected, withdrew, accepted-other or no-response."
 										},
-										"archived": {
-											"type": "boolean",
-											"description": "Deprecated: the closed stage replaced it. Kept in step for older clients."
-										},
 										"resumeId": {
 											"anyOf": [
 												{
@@ -8530,7 +8468,6 @@
 										"salary",
 										"status",
 										"closedReason",
-										"archived",
 										"resumeId",
 										"coverLetterId",
 										"sentResumeVersionId",
@@ -8612,9 +8549,6 @@
 												"type": "null"
 											}
 										]
-									},
-									"archived": {
-										"type": "boolean"
 									},
 									"addTags": {
 										"type": "array",
@@ -20307,7 +20241,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -20396,7 +20330,7 @@
 																						},
 																						"period": {
 																							"type": "string",
-																							"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																							"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																						},
 																						"dates": {
 																							"type": "object",
@@ -20552,7 +20486,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -20706,7 +20640,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -21035,7 +20969,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -21190,7 +21124,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -21345,7 +21279,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -21500,7 +21434,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -22096,7 +22030,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -22185,7 +22119,7 @@
 																							},
 																							"period": {
 																								"type": "string",
-																								"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																								"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																							},
 																							"dates": {
 																								"type": "object",
@@ -22354,7 +22288,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -22521,7 +22455,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -23006,7 +22940,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -23174,7 +23108,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -23342,7 +23276,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -23510,7 +23444,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -24674,7 +24608,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -24763,7 +24697,7 @@
 																						},
 																						"period": {
 																							"type": "string",
-																							"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																							"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																						},
 																						"dates": {
 																							"type": "object",
@@ -24919,7 +24853,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -25073,7 +25007,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -25402,7 +25336,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -25557,7 +25491,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -25712,7 +25646,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -25867,7 +25801,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -26463,7 +26397,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -26552,7 +26486,7 @@
 																							},
 																							"period": {
 																								"type": "string",
-																								"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																								"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																							},
 																							"dates": {
 																								"type": "object",
@@ -26721,7 +26655,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -26888,7 +26822,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -27373,7 +27307,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -27541,7 +27475,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -27709,7 +27643,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -27877,7 +27811,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -29176,7 +29110,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -29265,7 +29199,7 @@
 																						},
 																						"period": {
 																							"type": "string",
-																							"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																							"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																						},
 																						"dates": {
 																							"type": "object",
@@ -29421,7 +29355,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -29575,7 +29509,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -29904,7 +29838,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -30059,7 +29993,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -30214,7 +30148,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -30369,7 +30303,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -30965,7 +30899,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -31054,7 +30988,7 @@
 																							},
 																							"period": {
 																								"type": "string",
-																								"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																								"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																							},
 																							"dates": {
 																								"type": "object",
@@ -31223,7 +31157,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -31390,7 +31324,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -31875,7 +31809,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -32043,7 +31977,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -32211,7 +32145,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -32379,7 +32313,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -33649,7 +33583,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -33738,7 +33672,7 @@
 																						},
 																						"period": {
 																							"type": "string",
-																							"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																							"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																						},
 																						"dates": {
 																							"type": "object",
@@ -33894,7 +33828,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -34048,7 +33982,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -34377,7 +34311,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -34532,7 +34466,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -34687,7 +34621,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -34842,7 +34776,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -35438,7 +35372,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -35527,7 +35461,7 @@
 																							},
 																							"period": {
 																								"type": "string",
-																								"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																								"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																							},
 																							"dates": {
 																								"type": "object",
@@ -35696,7 +35630,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -35863,7 +35797,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -36348,7 +36282,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -36516,7 +36450,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -36684,7 +36618,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -36852,7 +36786,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -38023,10 +37957,6 @@
 												],
 												"description": "The user's name for a named version."
 											},
-											"label": {
-												"type": "string",
-												"description": "A short English description of the version."
-											},
 											"createdAt": {
 												"type": "string",
 												"format": "date-time",
@@ -38038,7 +37968,6 @@
 											"id",
 											"kind",
 											"name",
-											"label",
 											"createdAt"
 										]
 									}
@@ -38124,10 +38053,6 @@
 											],
 											"description": "The user's name for a named version."
 										},
-										"label": {
-											"type": "string",
-											"description": "A short English description of the version."
-										},
 										"createdAt": {
 											"type": "string",
 											"format": "date-time",
@@ -38139,7 +38064,6 @@
 										"id",
 										"kind",
 										"name",
-										"label",
 										"createdAt"
 									]
 								}
@@ -38213,10 +38137,6 @@
 												}
 											],
 											"description": "The user's name for a named version."
-										},
-										"label": {
-											"type": "string",
-											"description": "A short English description of the version."
 										},
 										"createdAt": {
 											"type": "string",
@@ -38610,7 +38530,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -38699,7 +38619,7 @@
 																						},
 																						"period": {
 																							"type": "string",
-																							"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																							"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																						},
 																						"dates": {
 																							"type": "object",
@@ -38855,7 +38775,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -39009,7 +38929,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -39338,7 +39258,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -39493,7 +39413,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -39648,7 +39568,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -39803,7 +39723,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -40399,7 +40319,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -40488,7 +40408,7 @@
 																							},
 																							"period": {
 																								"type": "string",
-																								"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																								"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																							},
 																							"dates": {
 																								"type": "object",
@@ -40657,7 +40577,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -40824,7 +40744,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -41309,7 +41229,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -41477,7 +41397,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -41645,7 +41565,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -41813,7 +41733,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -42453,7 +42373,6 @@
 										"id",
 										"kind",
 										"name",
-										"label",
 										"createdAt",
 										"data"
 									]
@@ -42548,10 +42467,6 @@
 											],
 											"description": "The user's name for a named version."
 										},
-										"label": {
-											"type": "string",
-											"description": "A short English description of the version."
-										},
 										"createdAt": {
 											"type": "string",
 											"format": "date-time",
@@ -42563,7 +42478,6 @@
 										"id",
 										"kind",
 										"name",
-										"label",
 										"createdAt"
 									]
 								}
@@ -43075,7 +42989,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -43164,7 +43078,7 @@
 																						},
 																						"period": {
 																							"type": "string",
-																							"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																							"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																						},
 																						"dates": {
 																							"type": "object",
@@ -43320,7 +43234,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -43474,7 +43388,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -43803,7 +43717,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -43958,7 +43872,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -44113,7 +44027,7 @@
 																			},
 																			"date": {
 																				"type": "string",
-																				"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -44268,7 +44182,7 @@
 																			},
 																			"period": {
 																				"type": "string",
-																				"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																				"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																			},
 																			"dates": {
 																				"type": "object",
@@ -44864,7 +44778,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -44953,7 +44867,7 @@
 																							},
 																							"period": {
 																								"type": "string",
-																								"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																								"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																							},
 																							"dates": {
 																								"type": "object",
@@ -45122,7 +45036,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -45289,7 +45203,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -45774,7 +45688,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -45942,7 +45856,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -46110,7 +46024,7 @@
 																				},
 																				"date": {
 																					"type": "string",
-																					"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -46278,7 +46192,7 @@
 																				},
 																				"period": {
 																					"type": "string",
-																					"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+																					"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 																				},
 																				"dates": {
 																					"type": "object",
@@ -47490,7 +47404,7 @@
 												},
 												"period": {
 													"type": "string",
-													"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+													"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 												},
 												"dates": {
 													"type": "object",
@@ -47590,7 +47504,7 @@
 															},
 															"period": {
 																"type": "string",
-																"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 															},
 															"dates": {
 																"type": "object",
@@ -47753,7 +47667,7 @@
 												},
 												"period": {
 													"type": "string",
-													"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+													"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 												},
 												"dates": {
 													"type": "object",
@@ -47921,7 +47835,7 @@
 												},
 												"period": {
 													"type": "string",
-													"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+													"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 												},
 												"dates": {
 													"type": "object",
@@ -48401,7 +48315,7 @@
 												},
 												"date": {
 													"type": "string",
-													"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+													"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 												},
 												"dates": {
 													"type": "object",
@@ -48570,7 +48484,7 @@
 												},
 												"date": {
 													"type": "string",
-													"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+													"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 												},
 												"dates": {
 													"type": "object",
@@ -48739,7 +48653,7 @@
 												},
 												"date": {
 													"type": "string",
-													"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+													"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 												},
 												"dates": {
 													"type": "object",
@@ -48908,7 +48822,7 @@
 												},
 												"period": {
 													"type": "string",
-													"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+													"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 												},
 												"dates": {
 													"type": "object",
@@ -49548,7 +49462,7 @@
 													},
 													"period": {
 														"type": "string",
-														"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`."
+														"description": "The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead."
 													},
 													"dates": {
 														"type": "object",
@@ -49648,7 +49562,7 @@
 																},
 																"period": {
 																	"type": "string",
-																	"description": "The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."
+																	"description": "The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead."
 																},
 																"dates": {
 																	"type": "object",
@@ -49823,7 +49737,7 @@
 													},
 													"period": {
 														"type": "string",
-														"description": "The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`."
+														"description": "The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead."
 													},
 													"dates": {
 														"type": "object",
@@ -50003,7 +49917,7 @@
 													},
 													"period": {
 														"type": "string",
-														"description": "The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`."
+														"description": "The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead."
 													},
 													"dates": {
 														"type": "object",
@@ -50521,7 +50435,7 @@
 													},
 													"date": {
 														"type": "string",
-														"description": "The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+														"description": "The date when the award was received, as text. Written from `dates` on every save; write `dates` instead."
 													},
 													"dates": {
 														"type": "object",
@@ -50702,7 +50616,7 @@
 													},
 													"date": {
 														"type": "string",
-														"description": "The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`."
+														"description": "The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead."
 													},
 													"dates": {
 														"type": "object",
@@ -50883,7 +50797,7 @@
 													},
 													"date": {
 														"type": "string",
-														"description": "The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`."
+														"description": "The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead."
 													},
 													"dates": {
 														"type": "object",
@@ -51064,7 +50978,7 @@
 													},
 													"period": {
 														"type": "string",
-														"description": "The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`."
+														"description": "The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead."
 													},
 													"dates": {
 														"type": "object",

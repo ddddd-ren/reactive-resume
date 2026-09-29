@@ -16,7 +16,7 @@ const selectChain = (rows: unknown[]) => ({
 
 const insertValues = () => {
 	const values = vi.fn((_input: Record<string, unknown>) => ({
-		returning: async () => [{ id: "v1", kind: _input.kind, name: _input.name, label: _input.label }],
+		returning: async () => [{ id: "v1", kind: _input.kind, name: _input.name }],
 	}));
 	dbMock.insert.mockReturnValue({ values });
 	return values;
@@ -40,26 +40,27 @@ beforeEach(() => {
 });
 
 describe("writeVersion", () => {
-	it("stores normalized data with its kind and an English label, then applies retention", async () => {
+	it("stores normalized data with its kind, then applies retention", async () => {
 		const values = insertValues();
 		const input = { ...data(), basics: { ...data().basics, name: "Ada" } };
 
 		await writeVersion(dbMock as never, { resumeId: "r1", userId: "u1", data: input, kind: "before-restore" });
 
 		expect(values).toHaveBeenCalledWith(
-			expect.objectContaining({ kind: "before-restore", label: "Before restore", name: null, sessionId: null }),
+			expect.objectContaining({ kind: "before-restore", name: null, sessionId: null }),
 		);
 		expect(values.mock.calls[0]?.[0]).toHaveProperty("data.basics.name", "Ada");
 		// Expired versions, then autosaves beyond the cap.
 		expect(dbMock.delete).toHaveBeenCalledTimes(2);
 	});
 
-	it("labels a named version with its name", async () => {
+	it("keeps a named version's name", async () => {
 		const values = insertValues();
 
 		await writeVersion(dbMock as never, { resumeId: "r1", userId: "u1", data: data(), kind: "named", name: "Sent" });
 
-		expect(values).toHaveBeenCalledWith(expect.objectContaining({ kind: "named", name: "Sent", label: "Sent" }));
+		expect(values).toHaveBeenCalledWith(expect.objectContaining({ kind: "named", name: "Sent" }));
+		expect(values.mock.calls[0]?.[0]).not.toHaveProperty("label");
 	});
 });
 

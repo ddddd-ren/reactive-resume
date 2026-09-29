@@ -565,9 +565,9 @@ export const useResumeStore = create<ResumeStore>()(
 				}
 
 				fn(state.resume.data as WritableDraft<ResumeData>);
-				// The server keeps dates and their legacy text in step on save; doing the same here keeps its
-				// echo identical to the draft, so an autosave never reads as an outside change.
-				syncResumeDates(state.resume.data as ResumeData, currentResume.data);
+				// The server writes the date text from the dates on save; doing the same here keeps its echo
+				// identical to the draft, so an autosave never reads as an outside change.
+				syncResumeDates(state.resume.data as ResumeData);
 				state.saveStatus = "saving";
 				state.canUndo = state.undoStack.length > 0;
 				state.canRedo = state.redoStack.length > 0;

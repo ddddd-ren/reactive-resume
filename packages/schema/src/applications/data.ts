@@ -8,12 +8,6 @@ export const applicationStatusSchema = z.enum(APPLICATION_STATUSES);
 
 export type ApplicationStatus = z.infer<typeof applicationStatusSchema>;
 
-/** A stage as clients may send it: the retired `rejected` stage still arrives from older clients and means closed. */
-export const applicationStatusInputSchema = z.preprocess(
-	(value) => (value === "rejected" ? "closed" : value),
-	applicationStatusSchema,
-);
-
 export const applicationClosedReasonSchema = z.enum(["not-selected", "withdrew", "accepted-other", "no-response"]);
 
 export type ApplicationClosedReason = z.infer<typeof applicationClosedReasonSchema>;
@@ -79,8 +73,7 @@ export type InterviewDetails = z.infer<typeof interviewDetailsSchema>;
 export const applicationTimelineEntrySchema = z.discriminatedUnion("type", [
 	timelineBaseSchema.extend({
 		type: z.literal("stage"),
-		// History written before the closed stage may still say `rejected`.
-		stage: applicationStatusInputSchema,
+		stage: applicationStatusSchema,
 	}),
 	timelineBaseSchema.extend({
 		type: z.literal("note"),

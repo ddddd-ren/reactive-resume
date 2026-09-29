@@ -19,22 +19,10 @@ const MAX_AUTOSAVES = 500;
 // History shows at most this many versions, newest first.
 const LIST_LIMIT = 100;
 
-// `label` keeps an English description for API clients and older rows; the app labels versions by kind.
-const LABELS: Record<Exclude<ResumeVersionKind, "named">, string> = {
-	created: "Created",
-	import: "Imported",
-	auto: "Manual save",
-	"before-restore": "Before restore",
-	restored: "Restored version",
-	ai: "AI edit",
-	sent: "Sent",
-};
-
 const summary = {
 	id: schema.resumeVersion.id,
 	kind: schema.resumeVersion.kind,
 	name: schema.resumeVersion.name,
-	label: schema.resumeVersion.label,
 	createdAt: schema.resumeVersion.createdAt,
 };
 
@@ -44,7 +32,6 @@ type VersionInput = {
 	data: ResumeData;
 	kind: ResumeVersionKind;
 	name?: string;
-	label?: string;
 	sessionId?: string;
 };
 
@@ -58,7 +45,6 @@ export async function writeVersion(client: DbOrTx, input: VersionInput) {
 			kind: input.kind,
 			name: input.name ?? null,
 			sessionId: input.sessionId ?? null,
-			label: input.label ?? (input.kind === "named" ? (input.name ?? "") : LABELS[input.kind]),
 		})
 		.returning(summary);
 	if (!version) throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to save the version." });
@@ -180,7 +166,7 @@ export async function getVersion(input: { resumeId: string; userId: string; vers
 export async function renameVersion(input: { resumeId: string; userId: string; versionId: string; name: string }) {
 	const [version] = await db
 		.update(schema.resumeVersion)
-		.set({ name: input.name, label: input.name })
+		.set({ name: input.name })
 		.where(and(ownedVersion(input), eq(schema.resumeVersion.kind, "named")))
 		.returning(summary);
 

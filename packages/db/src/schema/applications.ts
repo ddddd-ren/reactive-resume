@@ -34,8 +34,6 @@ export const application = pg.pgTable(
 		status: pg.text("status").$type<ApplicationStatus>().notNull().default("saved"),
 		// Why a closed application ended (not selected, withdrew, accepted another offer, no response). Insights use it.
 		closedReason: pg.text("closed_reason").$type<ApplicationClosedReason>(),
-		// Superseded by the closed stage, which absorbed it; kept while older app versions may still read it.
-		archived: pg.boolean("archived").notNull().default(false),
 		// Live link to one of the user's resumes. Kept on resume delete (set null) so the
 		// application history survives.
 		resumeId: pg.text("resume_id").references(() => resume.id, { onDelete: "set null" }),

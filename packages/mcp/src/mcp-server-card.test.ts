@@ -102,12 +102,12 @@ describe("buildMcpServerCard", () => {
 		expect(props.apiKey).toBeDefined();
 	});
 
-	it("matches the create/update application archived contract", () => {
+	it("closes applications through their stage: no archived flag", () => {
 		const create = TOOL_META[MCP_TOOL_NAME.createApplication].inputSchema;
 		const update = TOOL_META[MCP_TOOL_NAME.updateApplication].inputSchema;
 
 		expect(create.safeParse({ company: "Acme", role: "Engineer", archived: true }).success).toBe(false);
-		expect(update.safeParse({ id: "app-1", archived: true }).success).toBe(true);
+		expect(update.parse({ id: "app-1", archived: true })).not.toHaveProperty("archived");
 	});
 
 	it.each([{ content: "Updated" }, { recipient: "Dear Hiring Manager" }, { template: "onyx" }])(

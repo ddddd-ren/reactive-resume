@@ -31,7 +31,6 @@ const versionSchema = z.object({
 			"What made the version: created, import, auto (an editing session's autosave), named, before-restore, restored, ai (an AI or API edit) or sent.",
 		),
 	name: z.string().nullable().describe("The user's name for a named version."),
-	label: z.string().describe("A short English description of the version."),
 	createdAt: z.date().describe("When this state was saved."),
 });
 

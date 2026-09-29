@@ -7,7 +7,6 @@ const application: Application = {
 	company: 'Müller, "Partners"',
 	role: "Engineer",
 	status: "interview",
-	archived: false,
 	closedReason: null,
 	coverLetterId: null,
 	sentResumeVersionId: null,
@@ -75,7 +74,6 @@ describe("application CSV export", () => {
 			"Stage History": "Applied (2026-08-03) → Interview (2026-08-12)",
 			Timeline: "2026-08-03: Applied\n2026-08-08: Called recruiter\n2026-08-12: Interview",
 			Contacts: "Ada (Recruiter, Referral)",
-			Archived: "false",
 		});
 		expect(application.activity[0]?.id).toBe("interview");
 	});
@@ -138,10 +136,10 @@ describe("application CSV export", () => {
 
 describe("application export selection", () => {
 	const early = { ...application, id: "early", appliedAt: new Date("2026-08-02T23:59:59Z") };
-	const late = { ...application, id: "late", archived: true, appliedAt: new Date("2026-08-03T23:59:59Z") };
+	const late = { ...application, id: "late", status: "closed" as const, appliedAt: new Date("2026-08-03T23:59:59Z") };
 	const all = [early, application, late];
 
-	it("exports exactly current filtered rows, or all rows including archived", () => {
+	it("exports exactly current filtered rows, or all rows including closed ones", () => {
 		expect(selectApplicationsForExport(all, [application], { scope: "filtered" })).toEqual([application]);
 		expect(selectApplicationsForExport(all, [application], { scope: "all" })).toEqual(all);
 	});

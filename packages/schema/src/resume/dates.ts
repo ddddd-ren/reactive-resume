@@ -42,10 +42,6 @@ export const DEFAULT_DATE_FORMAT: DateFormat = "short";
 
 export const EMPTY_RESUME_DATES: ResumeDates = { start: null, end: null, present: false };
 
-/** Dates of the same entry are the same when their fields are; `raw` counts, since it changes what prints. */
-export const areResumeDatesEqual = (a: ResumeDates | undefined, b: ResumeDates | undefined) =>
-	a?.start === b?.start && a?.end === b?.end && a?.present === b?.present && a?.raw === b?.raw;
-
 const labels: Record<string, string> = presentLabels;
 
 /**
@@ -241,44 +237,20 @@ type PageDateOptions = { locale: string; dateFormat?: DateFormat | undefined };
 export const formatEntryDates = (dates: ResumeDates | undefined, text: string, page: PageDateOptions) =>
 	dates ? formatResumeDates(dates, { locale: page.locale, format: page.dateFormat }) : text;
 
-type Snapshot = { text: string; dates: ResumeDates | undefined };
-
-const entryKey = (entry: DatedEntry) => (entry as { id?: string }).id;
-
 /**
- * Keeps structured dates and the legacy text (`period` or `date`) in step before resume data is saved, so
- * older app versions and API clients that read the text keep working (the dual write).
- *
- * Dates are the source of truth: the text is rewritten from them in the resume's locale and date format.
- * The one exception is an edit that changed only the text since `previous` (a client that doesn't know
- * structured dates); then the text is read into new dates. Entries without dates get them from their text.
+ * Rewrites each entry's text (`period` or `date`) from its structured dates, in the resume's locale and date
+ * format. Dates are the only source: an edit to the text alone is overwritten. Entries without dates (new
+ * items from imports or older data) get them from their text first.
  *
  * Mutates `data` in place and writes only what changed, so it's safe inside an immer draft.
  */
-export function syncResumeDates(data: ResumeData, previous?: ResumeData) {
+export function syncResumeDates(data: ResumeData) {
 	const { locale, dateFormat } = data.metadata.page;
 	const options: DateFormatOptions = { locale, format: dateFormat, presentLabel: getPresentLabel(locale) };
 
-	const before = new Map<string, Snapshot>();
-	if (previous) {
-		forEachDatedEntry(previous, (entry, field) => {
-			const key = entryKey(entry);
-			if (key) before.set(key, { text: getLegacyDateText(entry, field), dates: entry.dates });
-		});
-	}
-
 	forEachDatedEntry(data, (entry, field) => {
 		const text = getLegacyDateText(entry, field);
-		const read = () => readLegacyDates(text, { locale, single: field === "date" });
-
-		if (!entry.dates) {
-			entry.dates = read();
-		} else if (text !== formatResumeDates(entry.dates, options)) {
-			const key = entryKey(entry);
-			const snapshot = key ? before.get(key) : undefined;
-			const onlyTextChanged = snapshot && snapshot.text !== text && areResumeDatesEqual(snapshot.dates, entry.dates);
-			if (onlyTextChanged) entry.dates = read();
-		}
+		entry.dates ??= readLegacyDates(text, { locale, single: field === "date" });
 
 		const formatted = formatResumeDates(entry.dates, options);
 		if (formatted === text) return;

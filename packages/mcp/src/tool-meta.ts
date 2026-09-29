@@ -312,7 +312,7 @@ export const TOOL_META = {
 			"                                            year-months ('2022' or '2022-03')",
 			"",
 			"Dates: write `dates`; the text in `period` (or `date` for awards, certifications and",
-			"publications) is rewritten from it in the resume's locale. Editing only the text still works.",
+			"publications) is rewritten from it in the resume's locale, so an edit to the text alone is lost.",
 			"Important: HTML content fields (description, summary.content) must use valid HTML.",
 			"New items must include a valid UUID as `id` and `hidden: false`.",
 			`Locked resumes cannot be patched; use \`${T.unlockResume}\` first.`,
@@ -542,7 +542,6 @@ export const TOOL_META = {
 		inputSchema: z.object({
 			status: applicationStatusSchema.optional(),
 			tags: z.array(z.string()).optional().default([]),
-			includeArchived: z.boolean().optional().default(false),
 		}),
 		annotations: READ_IDEMPOTENT,
 	},
@@ -577,7 +576,6 @@ export const TOOL_META = {
 		inputSchema: z.object({
 			id: applicationIdSchema,
 			...applicationMutableFieldsSchema,
-			archived: z.boolean().optional().describe("Deprecated: close the application instead. Kept for older clients."),
 		}),
 		annotations: WRITE_DESTRUCTIVE,
 	},
@@ -652,7 +650,6 @@ export const TOOL_META = {
 			ids: z.array(z.string()).min(1),
 			status: applicationStatusSchema.optional(),
 			closedReason: applicationClosedReasonSchema.nullable().optional(),
-			archived: z.boolean().optional().describe("Deprecated: close the applications instead."),
 			addTags: z.array(z.string()).optional(),
 		}),
 		annotations: WRITE_DESTRUCTIVE,

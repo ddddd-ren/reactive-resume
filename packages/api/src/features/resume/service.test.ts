@@ -54,7 +54,6 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		resumeId: "resume_id",
 		userId: "user_id",
 		data: "data",
-		label: "label",
 		createdAt: "created_at",
 	},
 	user: { id: "id", username: "username" },

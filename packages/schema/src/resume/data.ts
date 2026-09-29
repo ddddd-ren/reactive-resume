@@ -137,7 +137,9 @@ export const awardItemSchema = baseItemSchema.extend({
 	awarder: z.string().describe("The awarder of the award."),
 	date: z
 		.string()
-		.describe("The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`."),
+		.describe(
+			"The date when the award was received, as text. Written from `dates` on every save; write `dates` instead.",
+		),
 	dates: resumeDatesSchema.optional(),
 	website: itemWebsiteSchema.describe("The website of the award, if any."),
 	description: z.string().describe("The description of the award. This should be a HTML-formatted string."),
@@ -149,7 +151,7 @@ export const certificationItemSchema = baseItemSchema.extend({
 	date: z
 		.string()
 		.describe(
-			"The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`.",
+			"The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead.",
 		),
 	dates: resumeDatesSchema.optional(),
 	website: itemWebsiteSchema.describe("The website of the certification, if any."),
@@ -167,7 +169,7 @@ export const educationItemSchema = baseItemSchema.extend({
 	period: z
 		.string()
 		.describe(
-			"The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`.",
+			"The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead.",
 		),
 	dates: resumeDatesSchema.optional(),
 	website: itemWebsiteSchema.describe("The website of the school or institution, if any."),
@@ -179,7 +181,9 @@ const roleItemSchema = z.object({
 	position: z.string().describe("The position or job title for this role."),
 	period: z
 		.string()
-		.describe("The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`."),
+		.describe(
+			"The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead.",
+		),
 	dates: resumeDatesSchema.optional(),
 	description: z.string().describe("The description of this specific role. This should be a HTML-formatted string."),
 });
@@ -199,7 +203,7 @@ export const experienceItemSchema = baseItemSchema.extend({
 	period: z
 		.string()
 		.describe(
-			"The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`.",
+			"The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead.",
 		),
 	dates: resumeDatesSchema.optional(),
 	website: itemWebsiteSchema.describe("The website of the company or organization, if any."),
@@ -254,7 +258,7 @@ export const projectItemSchema = baseItemSchema.extend({
 	period: z
 		.string()
 		.describe(
-			"The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`.",
+			"The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead.",
 		),
 	dates: resumeDatesSchema.optional(),
 	website: itemWebsiteSchema.describe("The link to the project, if any."),
@@ -267,7 +271,7 @@ export const publicationItemSchema = baseItemSchema.extend({
 	date: z
 		.string()
 		.describe(
-			"The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`.",
+			"The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead.",
 		),
 	dates: resumeDatesSchema.optional(),
 	website: itemWebsiteSchema.describe("The link to the publication, if any."),
@@ -321,7 +325,7 @@ export const volunteerItemSchema = baseItemSchema.extend({
 	period: z
 		.string()
 		.describe(
-			"The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`.",
+			"The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead.",
 		),
 	dates: resumeDatesSchema.optional(),
 	website: itemWebsiteSchema.describe("The link to the organization or company, if any."),

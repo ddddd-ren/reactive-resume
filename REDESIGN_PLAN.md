@@ -235,7 +235,13 @@ Today `cover_letter` has name, recipient (rich-text HTML), content (HTML), `styl
 | M8 | `application.closed_reason`, `cover_letter_id`, `sent_*`, `requirements` | `rejected`/`archived` → `closed` | Reverse script |
 | M9 | `cover_letter.sender_linked`, `design_linked`, `recipient_name`, `recipient_company`, `letter_date`, `layout`; `cover_letter_version` | Existing letters → freeform, unlinked | Additive |
 
-Contract steps, not done without your approval: stop dual-writing `period`/`date`; drop `application.archived`; drop `resume_version.label`; drop `rejected` from the stage enum.
+Contract steps (approved on 29 Sep 2026, migration `20260929063245_contract_redesign_legacy_fields`, with `rollback.sql`):
+
+- **`period`/`date` are written from `dates` only.** The text stays in the data as printed output, rewritten from the dates on every save; an edit to the text alone is overwritten. Entries without dates (imports, older data) still get dates from their text.
+- **`application.archived` is dropped.** Rows still archived are closed first. The list, bulk update, MCP tools and CSV export lose the flag; CSV import still reads it from older exports as closed.
+- **`resume_version.label` is dropped.** Versions are named by `kind` and `name`.
+- **`rejected` is no longer accepted as a stage.** Remaining rows and history close first; CSV import still reads it from older exports.
+- Older app versions and API clients that relied on these stop working against this schema.
 
 ---
 

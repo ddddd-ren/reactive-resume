@@ -1,7 +1,7 @@
 import type { ApplicationStatus, Contact } from "@reactive-resume/schema/applications/data";
 import type { Application } from "./types";
 import {
-	applicationStatusInputSchema,
+	applicationStatusSchema,
 	contactSchema,
 	INTERVIEW_KINDS,
 	STAGES,
@@ -207,7 +207,8 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 	// The confirmed match, else the automatic one.
 	const fieldFor = mapping ?? autoMapHeaders(headers);
 	const recognized = [...new Set(fieldFor.filter((f): f is CsvField => !!f))];
-	const isReactiveResumeExport = ["Stage History", "Timeline", "Archived", "Created At", "Updated At"].every((header) =>
+	// Older exports also carry an Archived column.
+	const isReactiveResumeExport = ["Stage History", "Timeline", "Created At", "Updated At"].every((header) =>
 		headers.includes(header),
 	);
 
@@ -224,7 +225,9 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 			if (!value) return;
 			if (field === "tags") record.tags = parseTags(value);
 			else if (field === "status") {
-				const parsed = applicationStatusInputSchema.safeParse(value.toLowerCase());
+				// Older exports may still say `rejected`, the stage `closed` replaced.
+				const stage = value.toLowerCase();
+				const parsed = applicationStatusSchema.safeParse(stage === "rejected" ? "closed" : stage);
 				if (parsed.success) record.status = parsed.data;
 			} else if (field === "stageEnteredAt") {
 				record.stageEnteredAt = dateOnly(value);
@@ -297,7 +300,6 @@ export function exportApplicationsCsv(applications: readonly Application[]): str
 		"Closed Reason",
 		"Stage History",
 		"Timeline",
-		"Archived",
 		"Created At",
 		"Updated At",
 	];
@@ -334,7 +336,6 @@ export function exportApplicationsCsv(applications: readonly Application[]): str
 			application.closedReason ?? "",
 			stages.map((entry) => `${stageLabel(entry.stage)} (${dateOnly(entry.at)})`).join(" → "),
 			timeline.map((entry) => `${dateOnly(entry.at)}: ${timelineText(entry)}`).join("\n"),
-			String(application.archived),
 			new Date(application.createdAt).toISOString(),
 			new Date(application.updatedAt).toISOString(),
 		];

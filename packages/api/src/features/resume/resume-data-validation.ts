@@ -22,15 +22,11 @@ function parseApiResumeData(data: unknown, code: "BAD_REQUEST" | "INTERNAL_SERVE
 	}
 }
 
-/**
- * Validates data before it's saved, then keeps structured dates and their legacy text in step. `previous` is
- * the stored data being replaced, which tells an edit to the text alone (from a client that doesn't know
- * structured dates) from an edit to the dates.
- */
-export const parseWritableResumeData = (data: unknown, previous?: ResumeData) => {
+/** Validates data before it's saved, then writes each entry's date text from its structured dates. */
+export const parseWritableResumeData = (data: unknown) => {
 	const parsed = parseApiResumeData(data, "BAD_REQUEST", "Resume data does not match the canonical schema.");
 	upgradeResumeDates(parsed);
-	syncResumeDates(parsed, previous);
+	syncResumeDates(parsed);
 	return parsed;
 };
 

@@ -169,7 +169,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.experience.items[].company` | `string` | yes | — | The name of the company or organization. Empty while the entry is a draft, which isn't printed. |
 | `sections.experience.items[].position` | `string` | yes | — | The position held at the company or organization. Used when there is only a single role. If multiple roles are provided in the 'roles' field, this serves as a summary title or can be left blank. |
 | `sections.experience.items[].location` | `string` | yes | — | The location of the company or organization. |
-| `sections.experience.items[].period` | `string` | yes | — | The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`. |
+| `sections.experience.items[].period` | `string` | yes | — | The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead. |
 | `sections.experience.items[].dates` | `object` | no | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `sections.experience.items[].dates.start` | `string or null` | yes | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `sections.experience.items[].dates.start` | `string` | yes (variant 1 at sections.experience.items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -188,7 +188,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.experience.items[].roles[]` | `object` | — | — | — |
 | `sections.experience.items[].roles[].id` | `string` | yes | — | The unique identifier for the role. Usually generated as a UUID. |
 | `sections.experience.items[].roles[].position` | `string` | yes | — | The position or job title for this role. |
-| `sections.experience.items[].roles[].period` | `string` | yes | — | The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `sections.experience.items[].roles[].period` | `string` | yes | — | The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead. |
 | `sections.experience.items[].roles[].dates` | `object` | no | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `sections.experience.items[].roles[].dates.start` | `string or null` | yes | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `sections.experience.items[].roles[].dates.start` | `string` | yes (variant 1 at sections.experience.items[].roles[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -216,7 +216,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.education.items[].area` | `string` | yes | — | The area of study or specialization. |
 | `sections.education.items[].grade` | `string` | yes | — | The grade or score achieved. |
 | `sections.education.items[].location` | `string` | yes | — | The location of the school or institution. |
-| `sections.education.items[].period` | `string` | yes | — | The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `sections.education.items[].period` | `string` | yes | — | The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead. |
 | `sections.education.items[].dates` | `object` | no | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `sections.education.items[].dates.start` | `string or null` | yes | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `sections.education.items[].dates.start` | `string` | yes (variant 1 at sections.education.items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -244,7 +244,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.projects.items[].id` | `string` | yes | — | The unique identifier for the item. Usually generated as a UUID. |
 | `sections.projects.items[].hidden` | `boolean` | yes | — | Whether to hide the item from the resume. |
 | `sections.projects.items[].name` | `string` | yes | — | The name of the project. Empty while the entry is a draft, which isn't printed. |
-| `sections.projects.items[].period` | `string` | yes | — | The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `sections.projects.items[].period` | `string` | yes | — | The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead. |
 | `sections.projects.items[].dates` | `object` | no | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `sections.projects.items[].dates.start` | `string or null` | yes | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `sections.projects.items[].dates.start` | `string` | yes (variant 1 at sections.projects.items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -326,7 +326,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.awards.items[].hidden` | `boolean` | yes | — | Whether to hide the item from the resume. |
 | `sections.awards.items[].title` | `string` | yes | — | The title of the award. Empty while the entry is a draft, which isn't printed. |
 | `sections.awards.items[].awarder` | `string` | yes | — | The awarder of the award. |
-| `sections.awards.items[].date` | `string` | yes | — | The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `sections.awards.items[].date` | `string` | yes | — | The date when the award was received, as text. Written from `dates` on every save; write `dates` instead. |
 | `sections.awards.items[].dates` | `object` | no | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `sections.awards.items[].dates.start` | `string or null` | yes | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `sections.awards.items[].dates.start` | `string` | yes (variant 1 at sections.awards.items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -355,7 +355,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.certifications.items[].hidden` | `boolean` | yes | — | Whether to hide the item from the resume. |
 | `sections.certifications.items[].title` | `string` | yes | — | The title of the certification. Empty while the entry is a draft, which isn't printed. |
 | `sections.certifications.items[].issuer` | `string` | yes | — | The issuer of the certification. |
-| `sections.certifications.items[].date` | `string` | yes | — | The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `sections.certifications.items[].date` | `string` | yes | — | The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead. |
 | `sections.certifications.items[].dates` | `object` | no | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `sections.certifications.items[].dates.start` | `string or null` | yes | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `sections.certifications.items[].dates.start` | `string` | yes (variant 1 at sections.certifications.items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -384,7 +384,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.publications.items[].hidden` | `boolean` | yes | — | Whether to hide the item from the resume. |
 | `sections.publications.items[].title` | `string` | yes | — | The title of the publication. Empty while the entry is a draft, which isn't printed. |
 | `sections.publications.items[].publisher` | `string` | yes | — | The publisher of the publication. |
-| `sections.publications.items[].date` | `string` | yes | — | The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `sections.publications.items[].date` | `string` | yes | — | The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead. |
 | `sections.publications.items[].dates` | `object` | no | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `sections.publications.items[].dates.start` | `string or null` | yes | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `sections.publications.items[].dates.start` | `string` | yes (variant 1 at sections.publications.items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -413,7 +413,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.volunteer.items[].hidden` | `boolean` | yes | — | Whether to hide the item from the resume. |
 | `sections.volunteer.items[].organization` | `string` | yes | — | The name of the organization or company. Empty while the entry is a draft, which isn't printed. |
 | `sections.volunteer.items[].location` | `string` | yes | — | The location of the organization or company. |
-| `sections.volunteer.items[].period` | `string` | yes | — | The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `sections.volunteer.items[].period` | `string` | yes | — | The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead. |
 | `sections.volunteer.items[].dates` | `object` | no | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `sections.volunteer.items[].dates.start` | `string or null` | yes | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `sections.volunteer.items[].dates.start` | `string` | yes (variant 1 at sections.volunteer.items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -507,7 +507,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].company` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The name of the company or organization. Empty while the entry is a draft, which isn't printed. |
 | `customSections[].items[].position` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The position held at the company or organization. Used when there is only a single role. If multiple roles are provided in the 'roles' field, this serves as a summary title or can be left blank. |
 | `customSections[].items[].location` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The location of the company or organization. |
-| `customSections[].items[].period` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Kept in sync from `dates`; prefer writing `dates`. |
+| `customSections[].items[].period` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The overall period of time at the company, as text. When multiple roles are used, this should reflect the total tenure. Written from `dates` on every save; write `dates` instead. |
 | `customSections[].items[].dates` | `object` | no (type experience, schema experienceItemSchema at customSections[]) | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `customSections[].items[].dates.start` | `string or null` | yes (type experience, schema experienceItemSchema at customSections[]) | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `customSections[].items[].dates.start` | `string` | yes (type experience, schema experienceItemSchema at customSections[]; variant 1 at customSections[].items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -526,7 +526,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].roles[]` | `object` | — (type experience, schema experienceItemSchema at customSections[]) | — | — |
 | `customSections[].items[].roles[].id` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The unique identifier for the role. Usually generated as a UUID. |
 | `customSections[].items[].roles[].position` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The position or job title for this role. |
-| `customSections[].items[].roles[].period` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The period of time this role was held, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `customSections[].items[].roles[].period` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The period of time this role was held, as text. Written from `dates` on every save; write `dates` instead. |
 | `customSections[].items[].roles[].dates` | `object` | no (type experience, schema experienceItemSchema at customSections[]) | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `customSections[].items[].roles[].dates.start` | `string or null` | yes (type experience, schema experienceItemSchema at customSections[]) | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `customSections[].items[].roles[].dates.start` | `string` | yes (type experience, schema experienceItemSchema at customSections[]; variant 1 at customSections[].items[].roles[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -557,7 +557,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].area` | `string` | yes (type education, schema educationItemSchema at customSections[]) | — | The area of study or specialization. |
 | `customSections[].items[].grade` | `string` | yes (type education, schema educationItemSchema at customSections[]) | — | The grade or score achieved. |
 | `customSections[].items[].location` | `string` | yes (type education, schema educationItemSchema at customSections[]) | — | The location of the school or institution. |
-| `customSections[].items[].period` | `string` | yes (type education, schema educationItemSchema at customSections[]) | — | The period of time the education was obtained over, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `customSections[].items[].period` | `string` | yes (type education, schema educationItemSchema at customSections[]) | — | The period of time the education was obtained over, as text. Written from `dates` on every save; write `dates` instead. |
 | `customSections[].items[].dates` | `object` | no (type education, schema educationItemSchema at customSections[]) | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `customSections[].items[].dates.start` | `string or null` | yes (type education, schema educationItemSchema at customSections[]) | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `customSections[].items[].dates.start` | `string` | yes (type education, schema educationItemSchema at customSections[]; variant 1 at customSections[].items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -588,7 +588,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].id` | `string` | yes (type projects, schema projectItemSchema at customSections[]) | — | The unique identifier for the item. Usually generated as a UUID. |
 | `customSections[].items[].hidden` | `boolean` | yes (type projects, schema projectItemSchema at customSections[]) | — | Whether to hide the item from the resume. |
 | `customSections[].items[].name` | `string` | yes (type projects, schema projectItemSchema at customSections[]) | — | The name of the project. Empty while the entry is a draft, which isn't printed. |
-| `customSections[].items[].period` | `string` | yes (type projects, schema projectItemSchema at customSections[]) | — | The period of time the project was worked on, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `customSections[].items[].period` | `string` | yes (type projects, schema projectItemSchema at customSections[]) | — | The period of time the project was worked on, as text. Written from `dates` on every save; write `dates` instead. |
 | `customSections[].items[].dates` | `object` | no (type projects, schema projectItemSchema at customSections[]) | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `customSections[].items[].dates.start` | `string or null` | yes (type projects, schema projectItemSchema at customSections[]) | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `customSections[].items[].dates.start` | `string` | yes (type projects, schema projectItemSchema at customSections[]; variant 1 at customSections[].items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -680,7 +680,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].hidden` | `boolean` | yes (type awards, schema awardItemSchema at customSections[]) | — | Whether to hide the item from the resume. |
 | `customSections[].items[].title` | `string` | yes (type awards, schema awardItemSchema at customSections[]) | — | The title of the award. Empty while the entry is a draft, which isn't printed. |
 | `customSections[].items[].awarder` | `string` | yes (type awards, schema awardItemSchema at customSections[]) | — | The awarder of the award. |
-| `customSections[].items[].date` | `string` | yes (type awards, schema awardItemSchema at customSections[]) | — | The date when the award was received, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `customSections[].items[].date` | `string` | yes (type awards, schema awardItemSchema at customSections[]) | — | The date when the award was received, as text. Written from `dates` on every save; write `dates` instead. |
 | `customSections[].items[].dates` | `object` | no (type awards, schema awardItemSchema at customSections[]) | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `customSections[].items[].dates.start` | `string or null` | yes (type awards, schema awardItemSchema at customSections[]) | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `customSections[].items[].dates.start` | `string` | yes (type awards, schema awardItemSchema at customSections[]; variant 1 at customSections[].items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -712,7 +712,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].hidden` | `boolean` | yes (type certifications, schema certificationItemSchema at customSections[]) | — | Whether to hide the item from the resume. |
 | `customSections[].items[].title` | `string` | yes (type certifications, schema certificationItemSchema at customSections[]) | — | The title of the certification. Empty while the entry is a draft, which isn't printed. |
 | `customSections[].items[].issuer` | `string` | yes (type certifications, schema certificationItemSchema at customSections[]) | — | The issuer of the certification. |
-| `customSections[].items[].date` | `string` | yes (type certifications, schema certificationItemSchema at customSections[]) | — | The date when the certification was received, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `customSections[].items[].date` | `string` | yes (type certifications, schema certificationItemSchema at customSections[]) | — | The date when the certification was received, as text. Written from `dates` on every save; write `dates` instead. |
 | `customSections[].items[].dates` | `object` | no (type certifications, schema certificationItemSchema at customSections[]) | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `customSections[].items[].dates.start` | `string or null` | yes (type certifications, schema certificationItemSchema at customSections[]) | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `customSections[].items[].dates.start` | `string` | yes (type certifications, schema certificationItemSchema at customSections[]; variant 1 at customSections[].items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -744,7 +744,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].hidden` | `boolean` | yes (type publications, schema publicationItemSchema at customSections[]) | — | Whether to hide the item from the resume. |
 | `customSections[].items[].title` | `string` | yes (type publications, schema publicationItemSchema at customSections[]) | — | The title of the publication. Empty while the entry is a draft, which isn't printed. |
 | `customSections[].items[].publisher` | `string` | yes (type publications, schema publicationItemSchema at customSections[]) | — | The publisher of the publication. |
-| `customSections[].items[].date` | `string` | yes (type publications, schema publicationItemSchema at customSections[]) | — | The date when the publication was published, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `customSections[].items[].date` | `string` | yes (type publications, schema publicationItemSchema at customSections[]) | — | The date when the publication was published, as text. Written from `dates` on every save; write `dates` instead. |
 | `customSections[].items[].dates` | `object` | no (type publications, schema publicationItemSchema at customSections[]) | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `customSections[].items[].dates.start` | `string or null` | yes (type publications, schema publicationItemSchema at customSections[]) | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `customSections[].items[].dates.start` | `string` | yes (type publications, schema publicationItemSchema at customSections[]; variant 1 at customSections[].items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |
@@ -776,7 +776,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].hidden` | `boolean` | yes (type volunteer, schema volunteerItemSchema at customSections[]) | — | Whether to hide the item from the resume. |
 | `customSections[].items[].organization` | `string` | yes (type volunteer, schema volunteerItemSchema at customSections[]) | — | The name of the organization or company. Empty while the entry is a draft, which isn't printed. |
 | `customSections[].items[].location` | `string` | yes (type volunteer, schema volunteerItemSchema at customSections[]) | — | The location of the organization or company. |
-| `customSections[].items[].period` | `string` | yes (type volunteer, schema volunteerItemSchema at customSections[]) | — | The period of time the author was volunteered at the organization or company, as text. Kept in sync from `dates`; prefer writing `dates`. |
+| `customSections[].items[].period` | `string` | yes (type volunteer, schema volunteerItemSchema at customSections[]) | — | The period of time the author was volunteered at the organization or company, as text. Written from `dates` on every save; write `dates` instead. |
 | `customSections[].items[].dates` | `object` | no (type volunteer, schema volunteerItemSchema at customSections[]) | — | Structured dates. Write these rather than the legacy text field (`period` or `date`), which is kept in sync from them. |
 | `customSections[].items[].dates.start` | `string or null` | yes (type volunteer, schema volunteerItemSchema at customSections[]) | default: null | When it started, or the date itself for single-date entries (awards, certifications, publications). |
 | `customSections[].items[].dates.start` | `string` | yes (type volunteer, schema volunteerItemSchema at customSections[]; variant 1 at customSections[].items[].dates.start) | — | A year ("2022") or a year and month ("2022-03"). |

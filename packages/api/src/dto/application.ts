@@ -4,7 +4,6 @@ import * as schema from "@reactive-resume/db/schema";
 import {
 	aiMetadataSchema,
 	applicationClosedReasonSchema,
-	applicationStatusInputSchema,
 	applicationStatusSchema,
 	applicationTimelineEntrySchema,
 	contactSchema,
@@ -40,7 +39,6 @@ const applicationSchema = createSelectSchema(schema.application, {
 	closedReason: applicationClosedReasonSchema
 		.nullable()
 		.describe("Why a closed application ended: not-selected, withdrew, accepted-other or no-response."),
-	archived: z.boolean().describe("Deprecated: the closed stage replaced it. Kept in step for older clients."),
 	resumeId: z.string().nullable().describe("The linked Reactive Resume, if any."),
 	coverLetterId: z.string().nullable().describe("The linked saved cover letter, if any."),
 	sentResumeVersionId: z
@@ -109,7 +107,7 @@ const editableSchema = applicationSchema.pick({
 const createInputSchema = editableSchema.partial().extend({
 	company: applicationSchema.shape.company,
 	role: applicationSchema.shape.role,
-	status: applicationStatusInputSchema.optional(),
+	status: applicationStatusSchema.optional(),
 	closedReason: applicationClosedReasonSchema.nullable().optional(),
 	stageEnteredAt: timelineDateSchema.optional(),
 });
@@ -120,10 +118,9 @@ export const applicationDto = {
 			.object({
 				status: applicationStatusSchema.optional(),
 				tags: z.array(z.string()).optional(),
-				includeArchived: z.boolean().optional().default(false),
 			})
 			.optional()
-			.default({ includeArchived: false }),
+			.default({}),
 		output: z.array(applicationSchema.omit({ userId: true })),
 	},
 
@@ -146,12 +143,11 @@ export const applicationDto = {
 	update: {
 		input: editableSchema.partial().extend({
 			id: z.string(),
-			status: applicationStatusInputSchema.optional(),
+			status: applicationStatusSchema.optional(),
 			closedReason: applicationClosedReasonSchema
 				.nullable()
 				.optional()
 				.describe("Why the application closed; kept when status stays closed, cleared by any other stage."),
-			archived: z.boolean().optional(),
 		}),
 		output: applicationSchema.omit({ userId: true }),
 	},
@@ -225,13 +221,12 @@ export const applicationDto = {
 		output: z.void(),
 	},
 
-	// Table bulk actions: move stage, archive/unarchive, add tags across a selection.
+	// Table bulk actions: move stage, close, add tags across a selection.
 	bulkUpdate: {
 		input: z.object({
 			ids: z.array(z.string()).min(1).max(200, "Too many items in a single bulk operation"),
-			status: applicationStatusInputSchema.optional(),
+			status: applicationStatusSchema.optional(),
 			closedReason: applicationClosedReasonSchema.nullable().optional(),
-			archived: z.boolean().optional(),
 			addTags: z.array(z.string()).optional(),
 		}),
 		output: z.object({ updated: z.number() }),

@@ -187,11 +187,11 @@ async function recordSentResume(row: ApplicationRow): Promise<ApplicationRow> {
 	return updated ?? row;
 }
 
-/** Closing keeps (or takes) a reason; any other stage clears it, and reopens an application that was archived. */
+/** Closing keeps (or takes) a reason; any other stage clears it. */
 function stageFields(status: ApplicationStatus | undefined, closedReason: ApplicationClosedReason | null | undefined) {
 	if (status === undefined) return closedReason !== undefined ? { closedReason } : {};
 	if (status === "closed") return closedReason !== undefined ? { closedReason } : {};
-	return { closedReason: null, archived: false };
+	return { closedReason: null };
 }
 
 async function assertOwnedResumes(userId: string, resumeIds: (string | null | undefined)[]) {
@@ -270,7 +270,7 @@ const stripUserId = <T extends { userId: string; activity?: ApplicationTimelineE
 };
 
 export const applicationService = {
-	list: async (input: { userId: string; status?: ApplicationStatus; tags?: string[]; includeArchived?: boolean }) => {
+	list: async (input: { userId: string; status?: ApplicationStatus; tags?: string[] }) => {
 		const rows = await db
 			.select()
 			.from(schema.application)
@@ -283,7 +283,7 @@ export const applicationService = {
 			)
 			.orderBy(desc(schema.application.updatedAt));
 
-		return rows.filter((row) => input.includeArchived || !row.archived).map(stripUserId);
+		return rows.map(stripUserId);
 	},
 
 	getById: async (input: { id: string; userId: string }) => {
@@ -364,12 +364,11 @@ export const applicationService = {
 			userId: string;
 			status?: ApplicationStatus | undefined;
 			closedReason?: ApplicationClosedReason | null | undefined;
-			archived?: boolean | undefined;
 		},
 	) => {
 		await requireOwned(input.id, input.userId);
 
-		const { id, userId, status, closedReason, archived, ...fields } = input;
+		const { id, userId, status, closedReason, ...fields } = input;
 		await assertOwnedResume(userId, fields.resumeId);
 		await assertOwnedCoverLetter(userId, fields.coverLetterId);
 
@@ -394,7 +393,6 @@ export const applicationService = {
 				...fields,
 				...(status !== undefined ? { status } : {}),
 				...(appliedAtExpr ? { appliedAt: appliedAtExpr } : {}),
-				...(archived !== undefined ? { archived } : {}),
 				...stageFields(status, closedReason),
 				...(activityExpr ? { activity: activityExpr } : {}),
 			})
@@ -675,7 +673,6 @@ export const applicationService = {
 		ids: string[];
 		status?: ApplicationStatus | undefined;
 		closedReason?: ApplicationClosedReason | null | undefined;
-		archived?: boolean | undefined;
 		addTags?: string[] | undefined;
 	}) => {
 		const scope = and(inArray(schema.application.id, input.ids), eq(schema.application.userId, input.userId));
@@ -713,7 +710,6 @@ export const applicationService = {
 				...(input.status !== undefined ? { status: input.status } : {}),
 				...(appliedAtExpr ? { appliedAt: appliedAtExpr } : {}),
 				...(activityExpr ? { activity: activityExpr } : {}),
-				...(input.archived !== undefined ? { archived: input.archived } : {}),
 				...stageFields(input.status, input.closedReason),
 				...(tagsExpr ? { tags: tagsExpr } : {}),
 			})
@@ -742,7 +738,7 @@ export const applicationService = {
 
 	// Raw counts for Insights; funnel/sankey/tiles are derived client-side from these.
 	stats: async (input: { userId: string }) => {
-		const scope = and(eq(schema.application.userId, input.userId), eq(schema.application.archived, false));
+		const scope = eq(schema.application.userId, input.userId);
 
 		const byStage = await db
 			.select({ status: schema.application.status, count: sql<number>`count(*)::int` })

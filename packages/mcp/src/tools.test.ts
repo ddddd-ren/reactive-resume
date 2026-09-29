@@ -262,9 +262,9 @@ describe("registerTools", () => {
 		registerTools(server as never, clientMock as never, new Headers());
 
 		const tool = registered.find((item) => item.name === "list_applications")!;
-		const result = await tool.handler({ includeArchived: true, tags: ["remote"] });
+		const result = await tool.handler({ tags: ["remote"] });
 
-		expect(clientMock.applications.list).toHaveBeenCalledWith({ includeArchived: true, tags: ["remote"] });
+		expect(clientMock.applications.list).toHaveBeenCalledWith({ tags: ["remote"] });
 		expect(JSON.parse(result.content[0]!.text)).toEqual([{ id: "app-1", company: "Acme", role: "Engineer" }]);
 	});
 

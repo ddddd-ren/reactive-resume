@@ -240,12 +240,12 @@ describe("syncResumeDates", () => {
 		if (!entry) throw new Error("Missing entry.");
 		entry.dates = { start: "2019-04", end: null, present: true };
 
-		syncResumeDates(next, previous);
+		syncResumeDates(next);
 
 		expect(job(next)?.period).toBe("Apr 2019 – Present");
 	});
 
-	it("reads the text again when only the text changed, as clients unaware of dates do", () => {
+	it("overwrites an edit to the text alone: the dates are the only source", () => {
 		const previous = parseResumeData(resume("2020 - 2022"));
 		syncResumeDates(previous);
 		const next = structuredClone(previous);
@@ -253,10 +253,10 @@ describe("syncResumeDates", () => {
 		if (!entry) throw new Error("Missing entry.");
 		entry.period = "Jan 2018 - Present";
 
-		syncResumeDates(next, previous);
+		syncResumeDates(next);
 
-		expect(job(next)?.dates).toEqual({ start: "2018-01", end: null, present: true });
-		expect(job(next)?.period).toBe("Jan 2018 – Present");
+		expect(job(next)?.dates).toEqual({ start: "2020", end: "2022", present: false });
+		expect(job(next)?.period).toBe("2020 – 2022");
 	});
 
 	it("reformats every entry when the locale or format changes, without reading the text again", () => {
@@ -266,7 +266,7 @@ describe("syncResumeDates", () => {
 		next.metadata.page.locale = "ja-JP";
 		next.metadata.page.dateFormat = "long";
 
-		syncResumeDates(next, previous);
+		syncResumeDates(next);
 
 		expect(job(next)?.dates).toEqual({ start: "2022-03", end: null, present: true });
 		expect(job(next)?.period).toBe(
@@ -278,7 +278,7 @@ describe("syncResumeDates", () => {
 		const data = resume("Summer 2016 - 2018");
 		syncResumeDates(data);
 		const once = structuredClone(data);
-		syncResumeDates(data, once);
+		syncResumeDates(data);
 
 		expect(job(data)?.period).toBe("Summer 2016 - 2018");
 		expect(job(data)?.dates?.raw).toBe("Summer 2016 - 2018");
