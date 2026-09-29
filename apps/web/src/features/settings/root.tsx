@@ -15,7 +15,7 @@ import { SignOutButton } from "./account/page";
 // Phones: a section pushes in from the end and Back returns from the start (styles in index.css, after the page
 // transition). Browsers without view-transition types swap instantly, as for every other navigation.
 const supportsTransitionTypes = globalThis.CSS?.supports?.("selector(:active-view-transition-type(a))") === true;
-export const pushTransition = supportsTransitionTypes && { types: ["page", "forward"] };
+const pushTransition = supportsTransitionTypes && { types: ["page", "forward"] };
 export const popTransition = supportsTransitionTypes && { types: ["page", "back"] };
 
 type RowProps = { icon: IconName; label: ReactNode; value?: ReactNode };
