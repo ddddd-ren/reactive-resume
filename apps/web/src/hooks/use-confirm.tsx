@@ -12,6 +12,7 @@ import {
 } from "@reactive-resume/ui/components/alert-dialog";
 import { Input } from "@reactive-resume/ui/components/input";
 import { cn } from "@reactive-resume/utils/style";
+import { isImeComposing } from "@/libs/keyboard";
 
 type AskOptions = {
 	description?: string;
@@ -66,8 +67,10 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 					{state.withInput && (
 						<Input
 							value={value}
+							aria-label={state.title}
 							onChange={(event) => setValue(event.target.value)}
 							onKeyDown={(event) => {
+								if (isImeComposing(event)) return;
 								if (event.key === "Enter") answer(value);
 							}}
 						/>

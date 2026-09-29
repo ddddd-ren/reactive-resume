@@ -7,7 +7,6 @@ import { useRouter } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
 import { match } from "ts-pattern";
-import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -23,6 +22,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { OTPField } from "@reactive-resume/ui/components/otp-field";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { PasswordInput } from "@/components/input/password-input";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
@@ -56,7 +56,6 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 	const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
 	const [step, setStep] = useState<TwoFactorSetupStep>("enable");
 
-	const [showPassword, toggleShowPassword] = useToggle(false);
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 
 	const enableForm = useAppForm({
@@ -198,39 +197,19 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 									<FormLabel>
 										<Trans>Password</Trans>
 									</FormLabel>
-									<div className="flex items-center gap-x-1.5">
-										<FormControl
-											render={
-												<Input
-													min={6}
-													max={64}
-													type={showPassword ? "text" : "password"}
-													autoComplete="current-password"
-													name={field.name}
-													value={field.state.value}
-													onBlur={field.handleBlur}
-													onChange={(event) => field.handleChange(event.target.value)}
-												/>
-											}
-										/>
-
-										<Button size="icon" variant="ghost" type="button" onClick={toggleShowPassword}>
-											<span className="sr-only">
-												{showPassword
-													? t({
-															comment:
-																"Accessible label for toggle button that hides the visible password in two-factor setup",
-															message: "Hide password",
-														})
-													: t({
-															comment:
-																"Accessible label for toggle button that reveals the masked password in two-factor setup",
-															message: "Show password",
-														})}
-											</span>
-											{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
-										</Button>
-									</div>
+									<FormControl
+										render={
+											<PasswordInput
+												min={6}
+												max={64}
+												autoComplete="current-password"
+												name={field.name}
+												value={field.state.value}
+												onBlur={field.handleBlur}
+												onChange={(event) => field.handleChange(event.target.value)}
+											/>
+										}
+									/>
 									<FormMessage errors={field.state.meta.errors} />
 								</FormItem>
 							)}
@@ -281,6 +260,9 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 								<verifyForm.Field name="code">
 									{(field) => (
 										<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+											<FormLabel className="sr-only">
+												<Trans>Verification code</Trans>
+											</FormLabel>
 											<FormControl
 												render={
 													<OTPField

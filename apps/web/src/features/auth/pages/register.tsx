@@ -3,7 +3,6 @@ import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
-import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -12,6 +11,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { PasswordInput } from "@/components/input/password-input";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
 import { sessionQueryKey } from "@/libs/root-context";
@@ -42,7 +42,6 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const queryClient = useQueryClient();
 	const [submitted, setSubmitted] = useState(false);
-	const [showPassword, toggleShowPassword] = useToggle(false);
 
 	const form = useAppForm({
 		defaultValues: { name: "", username: "", email: "", password: "" },
@@ -215,41 +214,19 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 								<FormLabel>
 									<Trans comment="Label for password input on registration form">Password</Trans>
 								</FormLabel>
-								<div className="flex items-center gap-x-1.5">
-									<FormControl
-										render={
-											<Input
-												min={6}
-												max={64}
-												type={showPassword ? "text" : "password"}
-												autoComplete="section-register new-password"
-												name={field.name}
-												value={field.state.value}
-												onBlur={field.handleBlur}
-												onChange={(event) => field.handleChange(event.target.value)}
-											/>
-										}
-									/>
-
-									<Button
-										size="icon"
-										variant="ghost"
-										onClick={toggleShowPassword}
-										aria-label={
-											showPassword
-												? t({
-														comment: "Accessible label for button that hides password in registration form",
-														message: "Hide password",
-													})
-												: t({
-														comment: "Accessible label for button that reveals password in registration form",
-														message: "Show password",
-													})
-										}
-									>
-										{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
-									</Button>
-								</div>
+								<FormControl
+									render={
+										<PasswordInput
+											min={6}
+											max={64}
+											autoComplete="section-register new-password"
+											name={field.name}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(event) => field.handleChange(event.target.value)}
+										/>
+									}
+								/>
 								<FormMessage errors={field.state.meta.errors} />
 							</FormItem>
 						)}

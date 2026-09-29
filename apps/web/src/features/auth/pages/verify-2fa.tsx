@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
-import { FormControl, FormItem, FormMessage } from "@reactive-resume/ui/components/form";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { OTPField } from "@reactive-resume/ui/components/otp-field";
@@ -101,6 +101,9 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 							className="justify-self-center"
 							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
 						>
+							<FormLabel className="sr-only">
+								{backupCode ? <Trans>Backup code</Trans> : <Trans>Verification code</Trans>}
+							</FormLabel>
 							<FormControl
 								render={
 									backupCode ? (

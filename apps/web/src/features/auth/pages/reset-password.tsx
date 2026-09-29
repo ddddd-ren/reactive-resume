@@ -1,13 +1,11 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useNavigate } from "@tanstack/react-router";
-import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Icon } from "@reactive-resume/ui/components/icon";
-import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { PasswordInput } from "@/components/input/password-input";
 import { authClient } from "@/libs/auth/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -21,7 +19,6 @@ type Props = {
 
 export function ResetPasswordPage({ token }: Props) {
 	const navigate = useNavigate();
-	const [showPassword, toggleShowPassword] = useToggle(false);
 
 	const form = useAppForm({
 		defaultValues: { password: "" },
@@ -81,41 +78,19 @@ export function ResetPasswordPage({ token }: Props) {
 							<FormLabel>
 								<Trans comment="Label for new password input on reset-password form">New Password</Trans>
 							</FormLabel>
-							<div className="flex items-center gap-x-1.5">
-								<FormControl
-									render={
-										<Input
-											min={6}
-											max={64}
-											type={showPassword ? "text" : "password"}
-											autoComplete="new-password"
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
-										/>
-									}
-								/>
-
-								<Button
-									size="icon"
-									variant="ghost"
-									onClick={toggleShowPassword}
-									aria-label={
-										showPassword
-											? t({
-													comment: "Accessible label for button that hides password in reset-password form",
-													message: "Hide password",
-												})
-											: t({
-													comment: "Accessible label for button that reveals password in reset-password form",
-													message: "Show password",
-												})
-									}
-								>
-									{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
-								</Button>
-							</div>
+							<FormControl
+								render={
+									<PasswordInput
+										min={6}
+										max={64}
+										autoComplete="new-password"
+										name={field.name}
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(event) => field.handleChange(event.target.value)}
+									/>
+								}
+							/>
 							<FormMessage errors={field.state.meta.errors} />
 						</FormItem>
 					)}

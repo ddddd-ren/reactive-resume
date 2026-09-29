@@ -3,7 +3,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -15,8 +14,8 @@ import {
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { PasswordInput } from "@/components/input/password-input";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
@@ -31,7 +30,6 @@ const formSchema = z.object({
 export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">) {
 	const router = useRouter();
 	const queryClient = useQueryClient();
-	const [showPassword, toggleShowPassword] = useToggle(false);
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 
 	const form = useAppForm({
@@ -102,39 +100,19 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 							<FormLabel>
 								<Trans>Password</Trans>
 							</FormLabel>
-							<div className="flex items-center gap-x-1.5">
-								<FormControl
-									render={
-										<Input
-											min={6}
-											max={64}
-											type={showPassword ? "text" : "password"}
-											autoComplete="current-password"
-											name={field.name}
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
-										/>
-									}
-								/>
-
-								<Button size="icon" variant="ghost" type="button" onClick={toggleShowPassword}>
-									<span className="sr-only">
-										{showPassword
-											? t({
-													comment:
-														"Accessible label for toggle button that hides the visible password in two-factor disable dialog",
-													message: "Hide password",
-												})
-											: t({
-													comment:
-														"Accessible label for toggle button that reveals the masked password in two-factor disable dialog",
-													message: "Show password",
-												})}
-									</span>
-									{showPassword ? <Icon name="visibility" size={16} /> : <Icon name="visibility_off" size={16} />}
-								</Button>
-							</div>
+							<FormControl
+								render={
+									<PasswordInput
+										min={6}
+										max={64}
+										autoComplete="current-password"
+										name={field.name}
+										value={field.state.value}
+										onBlur={field.handleBlur}
+										onChange={(event) => field.handleChange(event.target.value)}
+									/>
+								}
+							/>
 							<FormMessage errors={field.state.meta.errors} />
 						</FormItem>
 					)}

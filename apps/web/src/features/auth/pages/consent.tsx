@@ -13,6 +13,21 @@ type OAuthConsentPageProps = {
 	email: string;
 };
 
+/** Resolves with an error message, or null when Better Auth's redirect plugin takes over. */
+async function requestConsent(accept: boolean, oauthQuery: string) {
+	const failure = t`Could not complete this connection. Restart the connection from your client and try again.`;
+	try {
+		// This is the only point that grants access: an explicit button press.
+		// Better Auth validates the signed request, session, and request origin.
+		const { data, error } = await authClient.oauth2.consent({ accept, oauth_query: oauthQuery });
+		if (error || !isOAuthRedirect(data)) return failure;
+		// Better Auth's redirect plugin follows a successful provider response.
+		return null;
+	} catch {
+		return failure;
+	}
+}
+
 export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 	const [pending, setPending] = useState(false);
 	const [error, setError] = useState<string>();
@@ -39,17 +54,9 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 		if (pending || !client || !validRequest) return;
 		setPending(true);
 		setError(undefined);
-		try {
-			// This is the only point that grants access: an explicit button press.
-			// Better Auth validates the signed request, session, and request origin.
-			const { data, error } = await authClient.oauth2.consent({ accept, oauth_query: oauthQuery });
-			if (error || !isOAuthRedirect(data)) {
-				setError(t`Could not complete this connection. Restart the connection from your client and try again.`);
-				setPending(false);
-			}
-			// Better Auth's redirect plugin follows a successful provider response.
-		} catch {
-			setError(t`Could not complete this connection. Restart the connection from your client and try again.`);
+		const failure = await requestConsent(accept, oauthQuery);
+		if (failure) {
+			setError(failure);
 			setPending(false);
 		}
 	}

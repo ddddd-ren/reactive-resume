@@ -48,10 +48,9 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 			onClose();
 		} catch (error) {
 			setError(error instanceof ORPCError ? error.message : t`Something went wrong. Please try again.`);
-		} finally {
-			submitting.current = false;
-			setIsPending(false);
 		}
+		submitting.current = false;
+		setIsPending(false);
 	};
 
 	return (

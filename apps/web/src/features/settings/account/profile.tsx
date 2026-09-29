@@ -19,6 +19,7 @@ import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
+import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
 import { sessionQueryKey } from "@/libs/root-context";
 import { SettingsSection } from "../section";
@@ -68,7 +69,12 @@ function SavedField({
 		const invalid = validate(next);
 		if (invalid) return setError(invalid);
 		setSaving(true);
-		const failure = await save(next);
+		let failure: string | null;
+		try {
+			failure = await save(next);
+		} catch {
+			failure = t`Couldn't save. Try again.`;
+		}
 		setSaving(false);
 		setError(failure);
 	};
@@ -84,6 +90,7 @@ function SavedField({
 		onChange: (event: React.ChangeEvent<HTMLInputElement>) => setDraft(event.target.value),
 		onBlur: () => void commit(),
 		onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
+			if (isImeComposing(event)) return;
 			if (event.key === "Enter") event.currentTarget.blur();
 			if (event.key === "Escape") {
 				setDraft(value);

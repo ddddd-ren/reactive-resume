@@ -22,6 +22,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { cn } from "@reactive-resume/utils/style";
 import { useControlledState } from "@/hooks/use-controlled-state";
+import { isImeComposing } from "@/libs/keyboard";
 import { DRAG_SETTLE } from "@/libs/motion";
 
 const RETURN_KEY = "Enter";
@@ -316,6 +317,7 @@ export function ChipInput({
 
 	const handleKeyDown = React.useCallback(
 		(e: React.KeyboardEvent<HTMLInputElement>) => {
+			if (isImeComposing(e)) return;
 			if (e.key === "Enter" || e.key === ",") {
 				e.preventDefault();
 
