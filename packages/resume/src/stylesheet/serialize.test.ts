@@ -15,7 +15,7 @@ describe("generated Semantic CSS serialization", () => {
 		});
 
 		expect(output).toBe(
-			'@version 1;\n\n/* Bad *\\/ label */\nsection[id="projects"] > section-heading {\n\tcolor: #123456;\n\tfont-size: 12pt;\n}\n',
+			'/* Bad *\\/ label */\nsection[id="projects"] > section-heading {\n\tcolor: #123456;\n\tfont-size: 12pt;\n}\n',
 		);
 	});
 

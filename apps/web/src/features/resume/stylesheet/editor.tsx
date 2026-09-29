@@ -1,5 +1,5 @@
 import type { Extension } from "@codemirror/state";
-import type { SemanticCssDiagnostic, SemanticNode } from "@reactive-resume/resume/stylesheet";
+import type { SemanticNode } from "@reactive-resume/resume/stylesheet";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
 import type { SemanticCssColorToken } from "./color-tokens";
@@ -27,7 +27,6 @@ import {
 	semanticNodeKeys,
 	shouldShowResumeHeader,
 } from "@reactive-resume/pdf/semantic-tree";
-import { isFatalStylesheetDiagnostic } from "@reactive-resume/resume/stylesheet";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
@@ -39,7 +38,6 @@ import { serializeStylesheetColor, toStylesheetPickerColor } from "./color-forma
 import { compositionAwareDocumentListener, createSemanticCssEditorExtensions } from "./editor-extensions";
 import { formatEditorDocument } from "./formatter";
 import { LegacyStylesheetBanner } from "./legacy-banner";
-import { StylesheetStatus } from "./status";
 import { StylesheetToolbar } from "./toolbar";
 import { createCompileWorkerClient } from "./worker-client";
 
@@ -103,7 +101,6 @@ const readOnlyExtensions = (readOnly: boolean): Extension => [
 
 export type StylesheetCodeEditorProps = {
 	value: string;
-	diagnostics: readonly SemanticCssDiagnostic[];
 	colorTokens?: readonly SemanticCssColorToken[];
 	metadata?: SemanticCssEditorMetadata;
 	theme: "light" | "dark";
@@ -118,7 +115,6 @@ export type StylesheetCodeEditorProps = {
 
 export function StylesheetCodeEditor({
 	value,
-	diagnostics,
 	colorTokens = [],
 	metadata = emptyMetadata,
 	theme,
@@ -133,7 +129,7 @@ export function StylesheetCodeEditor({
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const viewRef = useRef<EditorView | null>(null);
 	const compartmentsRef = useRef<EditorCompartments | null>(null);
-	const initialPropsRef = useRef({ value, diagnostics, colorTokens, metadata, theme, readOnly, label });
+	const initialPropsRef = useRef({ value, colorTokens, metadata, theme, readOnly, label });
 	const onChangeRef = useRef(onChange);
 	const onFocusChangeRef = useRef(onFocusChange);
 	const onReadyRef = useRef(onReady);
@@ -233,7 +229,6 @@ export function StylesheetCodeEditor({
 				compartments.intelligence.of(
 					createSemanticCssEditorExtensions({
 						metadata: initial.metadata,
-						diagnostics: initial.diagnostics,
 						colorTokens: initial.colorTokens,
 						onColorSelect: selectColor,
 					}),
@@ -273,13 +268,12 @@ export function StylesheetCodeEditor({
 			effects: compartments.intelligence.reconfigure(
 				createSemanticCssEditorExtensions({
 					metadata,
-					diagnostics,
 					colorTokens,
 					onColorSelect: selectColor,
 				}),
 			),
 		});
-	}, [colorTokens, diagnostics, metadata, selectColor]);
+	}, [colorTokens, metadata, selectColor]);
 
 	useEffect(() => {
 		const view = viewRef.current;
@@ -398,9 +392,7 @@ const createEditorMetadata = (data: ResumeData): SemanticCssEditorMetadata => {
 function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps) {
 	const { resolvedTheme: theme } = useTheme();
 	const [focusOpen, setFocusOpen] = useState(false);
-	const [diagnostics, setDiagnostics] = useState<readonly SemanticCssDiagnostic[]>([]);
 	const [colorTokens, setColorTokens] = useState<readonly SemanticCssColorToken[]>([]);
-	const [status, setStatus] = useState<"idle" | "compiling" | "error">("compiling");
 	const [compiler, setCompiler] = useState<ReturnType<typeof createCompileWorkerClient>>();
 	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();
@@ -425,21 +417,16 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	const stylesheet = data?.metadata.stylesheet;
 	const mode = stylesheet?.mode ?? "legacy";
 	const source = useMemo<StylesheetSource>(
-		() =>
-			stylesheet?.source ??
-			(data ? convertLegacyStyleRules(data).source : { languageVersion: 1, text: "@version 1;\n" }),
+		() => stylesheet?.source ?? (data ? convertLegacyStyleRules(data).source : { languageVersion: 1, text: "" }),
 		[data, stylesheet],
 	);
 	const metadata = useMemo(() => (data ? createEditorMetadata(data) : emptyMetadata), [data]);
-	const hasFatalErrors = status === "error" || diagnostics.some(isFatalStylesheetDiagnostic);
-	const isChecking = status === "compiling";
 	const disabled = readOnly || isLocked;
 
 	useEffect(() => {
 		if (!compiler || !data) return;
 		let cancelled = false;
 		const editGeneration = ++compileGenerationRef.current;
-		setStatus("compiling");
 		setColorTokens([]);
 		const timer = window.setTimeout(() => {
 			void compiler
@@ -459,13 +446,10 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				})
 				.then((result) => {
 					if (cancelled || result.editGeneration !== compileGenerationRef.current) return;
-					setDiagnostics(result.diagnostics);
 					setColorTokens(result.colorTokens ?? []);
-					setStatus(result.program && !result.diagnostics.some(isFatalStylesheetDiagnostic) ? "idle" : "error");
 				})
-				.catch(() => {
-					if (!cancelled && editGeneration === compileGenerationRef.current) setStatus("error");
-				});
+				// Swatches are a nicety: a stylesheet that doesn't compile just shows none.
+				.catch(() => undefined);
 		}, 180);
 
 		return () => {
@@ -476,15 +460,19 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 
 	if (!data) return null;
 
-	const setSourceText = (text: string) => {
-		if (disabled || text === source.text) return;
+	// Stylesheets saved before the version moved out of the text start with `@version 1;`: it isn't shown, and the
+	// first edit drops it (the compiler ignores it either way).
+	const text = source.text.replace(/^\s*@version\s+\d+\s*;[ \t]*\r?\n?/, "");
+
+	const setSourceText = (next: string) => {
+		if (disabled || next === text) return;
 		updateResumeData((draft) => {
-			draft.metadata.stylesheet = { mode, source: { ...source, text } };
+			draft.metadata.stylesheet = { mode, source: { ...source, text: next } };
 		});
 	};
 
 	const activate = () => {
-		if (disabled || mode === "semantic" || hasFatalErrors || isChecking) return;
+		if (disabled || mode === "semantic") return;
 		updateResumeData((draft) => {
 			draft.metadata.stylesheet = { mode: "semantic", source };
 		});
@@ -495,8 +483,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 
 	const editor = (
 		<StylesheetCodeEditor
-			value={source.text}
-			diagnostics={diagnostics}
+			value={text}
 			colorTokens={colorTokens}
 			metadata={metadata}
 			theme={theme}
@@ -512,12 +499,10 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	);
 	const editorChrome = (
 		<div className="space-y-3">
-			{mode === "legacy" && (
-				<LegacyStylesheetBanner disabled={disabled || hasFatalErrors || isChecking} onActivate={activate} />
-			)}
+			{mode === "legacy" && <LegacyStylesheetBanner disabled={disabled} onActivate={activate} />}
 
 			<StylesheetToolbar
-				source={source.text}
+				source={text}
 				canUndo={canUndo}
 				canRedo={canRedo}
 				focused={focusOpen}
@@ -551,8 +536,6 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 			</p>
 
 			<div className={focusOpen ? "h-[55svh] sm:h-[calc(100svh-14rem)]" : "h-72"}>{editor}</div>
-
-			<StylesheetStatus mode={mode} status={status} diagnostics={diagnostics} />
 		</div>
 	);
 

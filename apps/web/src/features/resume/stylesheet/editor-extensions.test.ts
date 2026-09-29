@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import type { SemanticCssDiagnostic, SemanticNode } from "@reactive-resume/resume/stylesheet";
+import type { SemanticNode } from "@reactive-resume/resume/stylesheet";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Transaction } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
@@ -12,7 +12,6 @@ import {
 	copySourceToClipboard,
 	createSemanticCssEditorExtensions,
 	getSemanticCssHoverDocumentation,
-	mapCompilerDiagnostics,
 } from "./editor-extensions";
 
 const semanticTree: SemanticNode = {
@@ -89,7 +88,7 @@ describe("Semantic CSS editor extensions", () => {
 		expect(variableLabels).toEqual(expect.arrayContaining(["--brand-accent", "--resume-primary-color"]));
 		expect(systemLabels).toEqual(expect.arrayContaining(["--resume-primary-color", "--resume-sidebar-width"]));
 		expect(systemLabels).not.toContain("--resume-font-family");
-		expect(directiveLabels).toEqual(expect.arrayContaining(["@media", "@version 1;"]));
+		expect(directiveLabels).toEqual(["@media"]);
 	});
 
 	it("offers only the current property's registered compiler vocabulary", () => {
@@ -164,7 +163,7 @@ describe("Semantic CSS editor extensions", () => {
 		);
 	});
 
-	it("maps compiler offsets and only decorates compiler-confirmed color values", () => {
+	it("only decorates compiler-confirmed color values", () => {
 		const source = "@version 1;\nsection { color: #ff0000; background-color: rgb(0 0 0); }\n";
 		const compiled = compileStylesheet({ languageVersion: 1, text: source });
 		expect(compiled.program).not.toBeNull();
@@ -178,25 +177,11 @@ describe("Semantic CSS editor extensions", () => {
 			},
 		]);
 
-		const diagnostic: SemanticCssDiagnostic = {
-			code: "INVALID_VALUE",
-			severity: "error",
-			message: "Bad value",
-			range: {
-				start: { line: 1, column: 1, offset: 2 },
-				end: { line: 1, column: 30, offset: 99 },
-			},
-		};
-		expect(mapCompilerDiagnostics(10, [diagnostic])).toEqual([
-			expect.objectContaining({ from: 2, to: 10, severity: "error", message: "Bad value" }),
-		]);
-
 		const selected = vi.fn();
 		const view = new EditorView({
 			doc: source,
 			extensions: createSemanticCssEditorExtensions({
 				metadata,
-				diagnostics: [],
 				colorTokens: tokens,
 				onColorSelect: selected,
 			}),
@@ -206,19 +191,6 @@ describe("Semantic CSS editor extensions", () => {
 		expect(swatches).toHaveLength(2);
 		swatches[0]?.click();
 		expect(selected).toHaveBeenCalledWith(tokens[0], expect.any(DOMRect));
-	});
-
-	it("keeps unsupported-gradient diagnostics visible in the editor", () => {
-		const source = "@version 1;\nheader { background-image: linear-gradient(red, blue); }\n";
-		const compiled = compileStylesheet({ languageVersion: 1, text: source });
-
-		expect(mapCompilerDiagnostics(source.length, compiled.diagnostics)).toContainEqual(
-			expect.objectContaining({
-				severity: "error",
-				message: "Gradients are not supported by Semantic CSS. Use background-color or another supported property.",
-				source: "UNSUPPORTED_PROPERTY",
-			}),
-		);
 	});
 
 	it("preserves exact clipboard text and emits one change for an IME composition", async () => {
@@ -256,7 +228,6 @@ describe("Semantic CSS editor extensions", () => {
 			doc: "section { color: red; }",
 			extensions: createSemanticCssEditorExtensions({
 				metadata,
-				diagnostics: [],
 				colorTokens: [],
 				onColorSelect: vi.fn(),
 			}),

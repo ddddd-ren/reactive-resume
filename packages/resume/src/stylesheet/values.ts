@@ -648,6 +648,7 @@ export function compileProgram(stylesheet: ParsedStylesheet, languageVersion: nu
 			}
 			if (node.type !== "Atrule" || !node.name) continue;
 			const name = identifier(node.name).toLowerCase();
+			// Stylesheets saved before the version moved out of the text start with `@version 1;`.
 			if (name === "version") continue;
 			if (name !== "media") {
 				diagnostic(

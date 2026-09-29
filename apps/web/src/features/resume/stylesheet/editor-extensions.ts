@@ -1,12 +1,10 @@
 import type { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
-import type { Diagnostic } from "@codemirror/lint";
 import type { EditorState, Extension } from "@codemirror/state";
 import type { DecorationSet, EditorView as EditorViewType, ViewUpdate } from "@codemirror/view";
-import type { SemanticCssDiagnostic, SemanticNode } from "@reactive-resume/resume/stylesheet/registry";
+import type { SemanticNode } from "@reactive-resume/resume/stylesheet/registry";
 import type { SemanticCssColorToken } from "./color-tokens";
 import type { SemanticCssEditorMetadata } from "./protocol";
 import { autocompletion } from "@codemirror/autocomplete";
-import { linter, lintGutter } from "@codemirror/lint";
 import { search, searchKeymap } from "@codemirror/search";
 import { Decoration, EditorView, hoverTooltip, keymap, ViewPlugin, WidgetType } from "@codemirror/view";
 import {
@@ -20,7 +18,7 @@ import {
 
 export type SemanticCssColorSelection = (token: SemanticCssColorToken, rect: DOMRect) => void;
 
-const directives = ["@media", "@version 1;"] as const;
+const directives = ["@media"] as const;
 
 function walk(root: SemanticNode): SemanticNode[] {
 	const nodes: SemanticNode[] = [];
@@ -138,19 +136,6 @@ export function getSemanticCssHoverDocumentation(
 	const part = label.match(/^template-part\[name="(.+)"\]$/)?.[1] ?? label;
 	if (metadata.templateParts.includes(part)) return `Current template part ${part}.`;
 	return;
-}
-
-export function mapCompilerDiagnostics(
-	docLength: number,
-	diagnostics: readonly SemanticCssDiagnostic[],
-): readonly Diagnostic[] {
-	return diagnostics.map(({ message, severity, range, code }) => ({
-		from: Math.max(0, Math.min(docLength, range.start.offset)),
-		to: Math.max(0, Math.min(docLength, Math.max(range.start.offset, range.end.offset))),
-		severity,
-		message,
-		source: code,
-	}));
 }
 
 export function compositionAwareDocumentListener(
@@ -301,7 +286,6 @@ function colorExtension(tokens: readonly SemanticCssColorToken[], onSelect: Sema
 
 export function createSemanticCssEditorExtensions(input: {
 	metadata: SemanticCssEditorMetadata;
-	diagnostics: readonly SemanticCssDiagnostic[];
 	colorTokens: readonly SemanticCssColorToken[];
 	onColorSelect: SemanticCssColorSelection;
 }): Extension {
@@ -310,8 +294,6 @@ export function createSemanticCssEditorExtensions(input: {
 		hoverExtension(input.metadata),
 		search({ top: true }),
 		keymap.of(searchKeymap),
-		lintGutter(),
-		linter((view) => mapCompilerDiagnostics(view.state.doc.length, input.diagnostics), { delay: 0 }),
 		colorExtension(input.colorTokens, input.onColorSelect),
 	];
 }
