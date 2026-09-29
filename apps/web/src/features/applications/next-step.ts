@@ -25,7 +25,7 @@ export type NextStep =
 	| { kind: "closed" };
 
 /** When the application entered its current stage (its latest entry for that stage), or when it was added. */
-export function stageSince(application: Pick<Application, "status" | "activity" | "appliedAt">): Date {
+function stageSince(application: Pick<Application, "status" | "activity" | "appliedAt">): Date {
 	const entries = application.activity
 		.filter((entry) => entry.type === "stage" && entry.stage === application.status)
 		.map((entry) => new Date(entry.at).getTime());
@@ -33,6 +33,10 @@ export function stageSince(application: Pick<Application, "status" | "activity" 
 }
 
 const daysBetween = (from: Date, to: Date) => Math.max(0, Math.floor((to.getTime() - from.getTime()) / DAY_MS));
+
+/** Whole days the application has spent in its current stage. */
+export const daysInStage = (application: Pick<Application, "status" | "activity" | "appliedAt">, now = new Date()) =>
+	daysBetween(stageSince(application), now);
 
 export function getNextStep(application: NextStepSource, now = new Date()): NextStep {
 	if (application.status === "closed") return { kind: "closed" };
@@ -51,7 +55,7 @@ export function getNextStep(application: NextStepSource, now = new Date()): Next
 
 	if (application.status === "saved") return { kind: "not-applied" };
 
-	const days = daysBetween(stageSince(application), now);
+	const days = daysInStage(application, now);
 	if (application.status === "applied" && days >= FOLLOW_UP_AFTER_DAYS) return { kind: "no-reply", days };
 	return { kind: "waiting", days };
 }

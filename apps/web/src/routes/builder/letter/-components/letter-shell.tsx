@@ -176,6 +176,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 	const labels: Record<MobileView, string> = { write: t`Write`, page: t`Page`, design: t`Design` };
 
 	useEffect(() => {
+		// biome-ignore lint/nursery/useReactCompiler: a shared store the preview renderer reads, reset on unmount
 		setPreviewPaused(view !== "page");
 		return () => setPreviewPaused(false);
 	}, [view, setPreviewPaused]);

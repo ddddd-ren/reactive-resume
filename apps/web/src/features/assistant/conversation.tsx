@@ -106,6 +106,7 @@ export function Conversation(props: ConversationProps) {
 			),
 		[messages, statuses, document],
 	);
+	// biome-ignore lint/nursery/useReactCompiler: publishes to the editor store, which the page canvas reads
 	useEffect(() => setAssistantProposals(proposals), [proposals, setAssistantProposals]);
 	useEffect(() => () => setAssistantProposals([]), [setAssistantProposals]);
 
@@ -133,6 +134,7 @@ export function Conversation(props: ConversationProps) {
 				const undone = toProposals(part, statuses, document).filter(
 					(proposal) => proposal.status === "accepted" && document.stateOf(proposal) === "pending",
 				);
+				// biome-ignore lint/nursery/useReactCompiler: an undo happens in the resume store; the new status is also saved to the thread
 				if (undone.length > 0) recordUndone(message, part, undone, "pending");
 			}
 		}

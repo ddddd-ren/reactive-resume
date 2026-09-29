@@ -244,19 +244,5 @@ const useLeafishTemplate = (): LeafishTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies LeafishStyles,
 		};
-	}, [
-		metadata,
-		r.row,
-		r.headerIdentity,
-		primary,
-		metrics.gapY,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		base,
-		metrics.page.paddingHorizontal,
-		metrics.columnGap,
-		foreground,
-		background,
-		r.columns,
-	]);
+	}, [metadata, r, primary, metrics, base, foreground, background]);
 };

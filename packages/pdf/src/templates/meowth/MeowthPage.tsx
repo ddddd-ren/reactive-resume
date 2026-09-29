@@ -229,19 +229,5 @@ const useMeowthTemplate = (): MeowthTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies MeowthStyles,
 		};
-	}, [
-		metadata,
-		r.sectionHeadingTextAlign,
-		r.row,
-		r.headerIdentity,
-		primary,
-		metrics.sectionGap,
-		metrics.gapY,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		base,
-		metrics.page.paddingHorizontal,
-		foreground,
-		background,
-	]);
+	}, [metadata, r, primary, metrics, base, foreground, background]);
 };

@@ -71,7 +71,7 @@ function AddApplicationForm({ onClose, onAdded }: { onClose: () => void; onAdded
 	const [role, setRole] = useState("");
 	const [company, setCompany] = useState("");
 	const [stage, setStage] = useState<Stage>("applied");
-	const [parsed, setParsed] = useState<Parsed | null>(null);
+	const [reading, setReading] = useState<{ text: string; result: Parsed } | null>(null);
 	const { hasUsableProvider } = useHasUsableAiProvider();
 	const invalidate = useInvalidateApplications();
 	const openDialog = useDialogStore((state) => state.openDialog);
@@ -84,9 +84,10 @@ function AddApplicationForm({ onClose, onAdded }: { onClose: () => void; onAdded
 	const link = isLink(text);
 	// A link can always be read (for the page's own job data); pasted text needs the AI provider.
 	const readable = text.length > 8 && (link || hasUsableProvider);
+	// A reading belongs to the text it was made from: editing the text drops it.
+	const parsed = readable && reading?.text === text ? reading.result : null;
 
 	useEffect(() => {
-		setParsed(null);
 		resetRead();
 		if (!readable) return;
 
@@ -95,7 +96,7 @@ function AddApplicationForm({ onClose, onAdded }: { onClose: () => void; onAdded
 				{ input: text },
 				{
 					onSuccess: (result) => {
-						setParsed(result);
+						setReading({ text, result });
 						setRole((current) => current || result.role);
 						setCompany((current) => current || result.company);
 					},

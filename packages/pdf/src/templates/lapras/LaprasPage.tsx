@@ -185,19 +185,5 @@ const useLaprasTemplate = (): LaprasTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies LaprasStyles,
 		};
-	}, [
-		picture,
-		metadata,
-		r.row,
-		r.headerIdentity,
-		r.anchorToStart,
-		primary,
-		metrics.gapY,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		base,
-		metrics.page.paddingHorizontal,
-		foreground,
-		background,
-	]);
+	}, [picture, metadata, r, primary, metrics, base, foreground, background]);
 };

@@ -251,19 +251,5 @@ const useAzurillTemplate = (): AzurillTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies AzurillStyles,
 		};
-	}, [
-		metadata,
-		r.row,
-		primary,
-		metrics.page.paddingVertical,
-		metrics.page.paddingHorizontal,
-		metrics.gapX,
-		metrics.headerGap,
-		metrics.columnGap,
-		base,
-		metrics.gapY,
-		foreground,
-		background,
-		r.columns,
-	]);
+	}, [metadata, r, primary, metrics, base, foreground, background]);
 };

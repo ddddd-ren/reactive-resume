@@ -32,7 +32,7 @@ import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
-import { stageSince } from "../next-step";
+import { daysInStage } from "../next-step";
 import { getClosedReasonLabel, getNextStage, getStageColor, getStageLabel, PIPELINE } from "../stages";
 import { useApplicationActions, useInvalidateApplications } from "../use-application-actions";
 import { Activity } from "./detail/activity";
@@ -103,7 +103,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 
 	const next = getNextStage(application.status);
 	const reached = PIPELINE.indexOf(application.status);
-	const since = Math.max(0, Math.floor((Date.now() - stageSince(application).getTime()) / 86_400_000));
+	const since = daysInStage(application);
 	const closed = application.status === "closed";
 
 	const onDelete = async () => {

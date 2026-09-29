@@ -164,18 +164,5 @@ const useOnyxTemplate = (): OnyxTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies OnyxStyles,
 		};
-	}, [
-		metadata,
-		r.row,
-		r.headerIdentity,
-		primary,
-		metrics.sectionGap,
-		metrics.gapY,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		base,
-		metrics.page.paddingHorizontal,
-		foreground,
-		background,
-	]);
+	}, [metadata, r, primary, metrics, base, foreground, background]);
 };

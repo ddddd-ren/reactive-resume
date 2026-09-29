@@ -244,19 +244,5 @@ const useGlalieTemplate = (): GlalieTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies GlalieStyles,
 		};
-	}, [
-		metadata,
-		r.row,
-		primary,
-		metrics.sectionGap,
-		metrics.gapY,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		base,
-		metrics.page.paddingHorizontal,
-		foreground,
-		background,
-		r.columns,
-		r.anchorToColumnStart,
-	]);
+	}, [metadata, r, primary, metrics, base, foreground, background]);
 };

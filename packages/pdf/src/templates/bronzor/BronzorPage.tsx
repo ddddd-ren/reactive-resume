@@ -178,19 +178,5 @@ const useBronzorTemplate = (): BronzorTemplate => {
 		});
 
 		return { colors, styles: baseStyles satisfies BronzorStyles };
-	}, [
-		metadata,
-		r.sectionHeadingTextAlign,
-		r.row,
-		primary,
-		metrics.page.paddingVertical,
-		metrics.page.paddingHorizontal,
-		metrics.headerGap,
-		metrics.columnGap,
-		metrics.gapY,
-		foreground,
-		base,
-		metrics.gapX,
-		background,
-	]);
+	}, [metadata, r, primary, metrics, foreground, base, background]);
 };

@@ -288,20 +288,5 @@ const usePikachuTemplate = (): PikachuTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies PikachuStyles,
 		};
-	}, [
-		picture,
-		metadata,
-		r.row,
-		r.headerIdentity,
-		primary,
-		metrics.page.paddingVertical,
-		metrics.page.paddingHorizontal,
-		metrics.columnGap,
-		metrics.gapY,
-		foreground,
-		base,
-		metrics.gapX,
-		background,
-		r.columns,
-	]);
+	}, [picture, metadata, r, primary, metrics, foreground, base, background]);
 };

@@ -86,12 +86,14 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!create) return;
+		// biome-ignore lint/nursery/useReactCompiler: takes the one-shot ?create flag from the address, then clears it
 		setAdding(true);
 		void navigate({ replace: true, resetScroll: false, search: (prev: Search) => ({ ...prev, create: false }) });
 	}, [create, navigate]);
 
 	useEffect(() => {
 		if (!applicationId || !applications) return;
+		// biome-ignore lint/nursery/useReactCompiler: takes the one-shot ?applicationId from the address, then clears it
 		setSelectedId(applicationId);
 		void navigate({
 			replace: true,

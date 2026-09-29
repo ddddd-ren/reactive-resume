@@ -428,6 +428,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 					name: "semantic-css-compiler",
 				}),
 		);
+		// biome-ignore lint/nursery/useReactCompiler: the worker is created here so it can be destroyed on unmount
 		setCompiler(client);
 		return () => client.destroy();
 	}, []);

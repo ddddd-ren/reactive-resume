@@ -320,19 +320,5 @@ const useGengarTemplate = (): GengarTemplate => {
 				}),
 			} satisfies GengarStyles,
 		};
-	}, [
-		metadata,
-		r.row,
-		r.headerIdentity,
-		primary,
-		metrics.sectionGap,
-		metrics.gapY,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		base,
-		metrics.page.paddingHorizontal,
-		foreground,
-		background,
-		r.columns,
-	]);
+	}, [metadata, r, primary, metrics, base, foreground, background]);
 };

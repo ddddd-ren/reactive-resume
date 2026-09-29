@@ -313,21 +313,5 @@ const useRhyhornTemplate = (): RhyhornTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies RhyhornStyles,
 		};
-	}, [
-		metadata,
-		r.sectionHeadingTextAlign,
-		r.row,
-		r.headerIdentity,
-		r.contactSeparatorClear,
-		r.contactSeparator,
-		primary,
-		metrics.sectionGap,
-		metrics.gapY,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		base,
-		metrics.page.paddingHorizontal,
-		foreground,
-		background,
-	]);
+	}, [metadata, r, primary, metrics, base, foreground, background]);
 };

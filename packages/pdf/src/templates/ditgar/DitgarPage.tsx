@@ -344,18 +344,5 @@ const useDitgarTemplate = (): DitgarTemplate => {
 				}),
 			} satisfies DitgarStyles,
 		};
-	}, [
-		metadata,
-		r.row,
-		r.headerIdentity,
-		primary,
-		metrics.gapY,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		base,
-		metrics.page.paddingHorizontal,
-		foreground,
-		background,
-		r.columns,
-	]);
+	}, [metadata, r, primary, metrics, base, foreground, background]);
 };

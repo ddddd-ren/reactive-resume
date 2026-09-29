@@ -37,7 +37,7 @@ const PAGE_WIDTH = { a4: 595.28, letter: 612, "free-form": 595.28 } as const;
 // Horizontal room the canvas keeps around the page: 40px each side, 16px on phones.
 const CANVAS_GUTTER = { wide: 80, narrow: 32 } as const;
 
-export function useCanvasWidth() {
+function useCanvasWidth() {
 	const ref = useRef<HTMLDivElement>(null);
 	const [width, setWidth] = useState(0);
 

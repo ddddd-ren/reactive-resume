@@ -215,17 +215,5 @@ const useKakunaTemplate = (): KakunaTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies KakunaStyles,
 		};
-	}, [
-		metadata,
-		r.row,
-		primary,
-		metrics.sectionGap,
-		metrics.gapY,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		base,
-		metrics.page.paddingHorizontal,
-		foreground,
-		background,
-	]);
+	}, [metadata, r, primary, metrics, base, foreground, background]);
 };

@@ -284,5 +284,5 @@ const useChikoritaTemplate = (): ChikoritaTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies ChikoritaStyles,
 		};
-	}, [metadata, r.row, r.headerIdentity, metrics.gapX, primary, foreground, base, metrics.gapY, background, r.columns]);
+	}, [metadata, r, metrics, primary, foreground, base, background]);
 };

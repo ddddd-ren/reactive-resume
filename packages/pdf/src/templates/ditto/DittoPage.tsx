@@ -295,19 +295,5 @@ const useDittoTemplate = (): DittoTemplate => {
 				},
 			} satisfies DittoStyles,
 		};
-	}, [
-		picture,
-		metadata,
-		r.row,
-		r.headerIdentity,
-		primary,
-		metrics.page.paddingVertical,
-		metrics.gapX,
-		metrics.page.paddingHorizontal,
-		foreground,
-		base,
-		metrics.gapY,
-		background,
-		r.columns,
-	]);
+	}, [picture, metadata, r, primary, metrics, foreground, base, background]);
 };

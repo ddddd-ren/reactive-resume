@@ -238,6 +238,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 	// it in view above its sheet.
 	const pageVisible = view === "page" || view === "design";
 	useEffect(() => {
+		// biome-ignore lint/nursery/useReactCompiler: a shared store the preview renderer reads, reset on unmount
 		setPreviewPaused(!pageVisible);
 		return () => setPreviewPaused(false);
 	}, [pageVisible, setPreviewPaused]);

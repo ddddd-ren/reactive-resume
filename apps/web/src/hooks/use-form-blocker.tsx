@@ -11,7 +11,7 @@ interface UseFormBlockerOptions {
 
 export function useFormBlocker(form: Pick<AnyFormApi, "store">, options?: UseFormBlockerOptions) {
 	const confirm = useConfirm();
-	const closeDialog = useDialogStore((state) => state.closeDialog);
+	const onOpenChange = useDialogStore((state) => state.onOpenChange);
 	const setOnBeforeClose = useDialogStore((state) => state.setOnBeforeClose);
 
 	const isDirty = useStore(form.store, (state) => state.isDirty);
@@ -22,32 +22,22 @@ export function useFormBlocker(form: Pick<AnyFormApi, "store">, options?: UseFor
 		shouldBlockRef.current = options?.shouldBlock;
 	}, [options?.shouldBlock]);
 
-	const shouldBlock = () => {
-		if (shouldBlockRef.current) return shouldBlockRef.current();
-		return isDirty && !isSubmitting;
-	};
-
-	const confirmClose = () => {
-		if (!shouldBlock()) return true;
-
-		return confirm(t`Are you sure you want to close this dialog?`, {
-			description: t`You have unsaved changes that will be lost.`,
-			confirmText: t`Leave`,
-			cancelText: t`Stay`,
-		});
-	};
-
-	const requestClose = async () => {
-		const confirmed = await confirmClose();
-		if (!confirmed) return;
-
-		closeDialog();
-	};
-
 	useEffect(() => {
-		setOnBeforeClose(confirmClose);
+		setOnBeforeClose(() => {
+			const shouldBlock = shouldBlockRef.current ? shouldBlockRef.current() : isDirty && !isSubmitting;
+			if (!shouldBlock) return true;
+
+			return confirm(t`Are you sure you want to close this dialog?`, {
+				description: t`You have unsaved changes that will be lost.`,
+				confirmText: t`Leave`,
+				cancelText: t`Stay`,
+			});
+		});
 		return () => setOnBeforeClose(null);
-	}, [confirmClose, setOnBeforeClose]);
+	}, [isDirty, isSubmitting, confirm, setOnBeforeClose]);
+
+	// Closing through the store asks the handler above first.
+	const requestClose = () => onOpenChange(false);
 
 	return { requestClose };
 }
