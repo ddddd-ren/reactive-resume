@@ -299,6 +299,8 @@ export function htmlToParagraphs(html: string, styleConfig?: HtmlStyleConfig): P
 
 	const parser = new DOMParser();
 	const doc = parser.parseFromString(html, "text/html");
+	// Script and style text is code, not content: drop it before any walk below prints it.
+	for (const element of doc.body.querySelectorAll("script, style")) element.remove();
 	const paragraphs: Paragraph[] = [];
 
 	for (const child of doc.body.childNodes) {

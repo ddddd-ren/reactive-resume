@@ -68,4 +68,13 @@ describe("htmlToParagraphs", () => {
 		const json = JSON.stringify(result[0]);
 		expect(json).toContain("CCFFCC");
 	});
+
+	it("leaves script and style text out of the document", () => {
+		const json = JSON.stringify(
+			htmlToParagraphs("<p>Hello<style>.x { color: red }</style></p><script>alert(1)</script>"),
+		);
+		expect(json).toContain("Hello");
+		expect(json).not.toContain("color: red");
+		expect(json).not.toContain("alert(1)");
+	});
 });

@@ -51,6 +51,10 @@ describe("toSafeDocxLink", () => {
 		expect(toSafeDocxLink("file:///etc/passwd")).toBeNull();
 	});
 
+	it("accepts tel: phone links", () => {
+		expect(toSafeDocxLink("tel:+1 555 123 4567")).toBe("tel:+1 555 123 4567");
+	});
+
 	it("rejects malformed URLs", () => {
 		expect(toSafeDocxLink("not a url at all")).toBeNull();
 	});
