@@ -20,7 +20,6 @@ import { tags } from "@lezer/highlight";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { convertLegacyStyleRules } from "@reactive-resume/pdf/semantic-legacy";
 import {
 	buildSemanticTree,
 	getTemplateSemanticManifest,
@@ -43,7 +42,6 @@ import {
 } from "./editor-extensions";
 import { formatEditorDocument } from "./formatter";
 import { matchedNodeKeys } from "./highlight";
-import { LegacyStylesheetBanner } from "./legacy-banner";
 import { listStyleTargets, styleTargetFor } from "./targets";
 import { StylesheetToolbar } from "./toolbar";
 import { createCompileWorkerClient } from "./worker-client";
@@ -430,10 +428,10 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 		return () => client.destroy();
 	}, []);
 	const stylesheet = data?.metadata.stylesheet;
-	const mode = stylesheet?.mode ?? "legacy";
 	const source = useMemo<StylesheetSource>(
-		() => stylesheet?.source ?? (data ? convertLegacyStyleRules(data).source : { languageVersion: 1, text: "" }),
-		[data, stylesheet],
+		// Resumes reach the builder with legacy rules already converted (the API does it), so there is one stylesheet.
+		() => stylesheet?.source ?? { languageVersion: 1, text: "" },
+		[stylesheet],
 	);
 	const metadata = useMemo(() => (data ? createEditorMetadata(data) : emptyMetadata), [data]);
 	const disabled = readOnly || isLocked;
@@ -503,14 +501,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	const setSourceText = (next: string) => {
 		if (disabled || next === text) return;
 		updateResumeData((draft) => {
-			draft.metadata.stylesheet = { mode, source: { ...source, text: next } };
-		});
-	};
-
-	const activate = () => {
-		if (disabled || mode === "semantic") return;
-		updateResumeData((draft) => {
-			draft.metadata.stylesheet = { mode: "semantic", source };
+			draft.metadata.stylesheet = { mode: "semantic", source: { ...source, text: next } };
 		});
 	};
 
@@ -536,8 +527,6 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	);
 	const editorChrome = (
 		<div className="space-y-3">
-			{mode === "legacy" && <LegacyStylesheetBanner disabled={disabled} onActivate={activate} />}
-
 			<StylesheetToolbar
 				source={text}
 				canUndo={canUndo}

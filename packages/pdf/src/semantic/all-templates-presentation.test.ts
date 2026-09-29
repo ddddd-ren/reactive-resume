@@ -16,7 +16,6 @@ describe("Semantic CSS all-template presentation", () => {
 			data,
 			template,
 			source: comprehensiveStylesheet,
-			mode: "semantic",
 		});
 
 		expect(runtime.diagnostics.filter(({ severity }) => severity === "error")).toEqual([]);
@@ -35,7 +34,6 @@ describe("Semantic CSS all-template presentation", () => {
 				data,
 				template,
 				source: comprehensiveStylesheet,
-				mode: "semantic",
 			});
 			const templateParts = new Set<string>();
 

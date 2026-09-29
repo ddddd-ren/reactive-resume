@@ -32,12 +32,10 @@ describe("SectionShell", () => {
 		expect(getSectionHeadingTextStyle({ paddingLeft: 6 })).toEqual([{ paddingLeft: 1 }]);
 	});
 
-	it("keeps section and heading style rules when section heading icons are hidden", () => {
-		expect(source).toContain(
-			"const resolvedSectionStyle = composeStyles(sectionStyle, sectionRuleStyle, resolved.style)",
-		);
+	it("keeps section and heading styles when section heading icons are hidden", () => {
+		expect(source).toContain("const resolvedSectionStyle = composeStyles(sectionStyle, resolved.style)");
 		expect(source).toContain("<View style={resolvedSectionStyle} {...flowProps} data-resume-node={sectionNodeKey}>");
-		expect(source).toContain("<Heading style={composeStyles(sectionHeadingStyle, sectionHeadingRuleStyle)}>");
+		expect(source).toContain("<Heading style={composeStyles(sectionHeadingStyle)}>");
 	});
 
 	it("wires the section heading container style slot into the icon row", () => {
@@ -51,7 +49,7 @@ describe("SectionShell", () => {
 		);
 
 		expect(headingContainerBlock?.groups?.body).toContain('alignItems: "flex-start"');
-		expect(source).toMatch(/getSectionHeadingTextStyle\(\s*sectionHeadingStyle,\s*sectionHeadingRuleStyle(?:,|\))/);
+		expect(source).toMatch(/getSectionHeadingTextStyle\(\s*sectionHeadingStyle(?:,|\))/);
 		expect(source).toContain("width: _width");
 		expect(source).not.toContain('width: "auto"');
 	});

@@ -45,7 +45,7 @@ async function renderList({
 		// Distinct body weight keeps marker and content separate in PDF.js text runs.
 		description: `${nested ? "<ul><li>Outer" : ""}<ol>${Array.from({ length: count }, (_, index) => `<li><strong>ITEM${column}_${String(index + 1).padStart(3, "0")}</strong></li>`).join("")}</ol>${nested ? "</li></ul>" : ""}`,
 	}));
-	expect(resolveResumeRuntime({ data, template: "rhyhorn", mode: "semantic" }).diagnostics).toEqual([]);
+	expect(resolveResumeRuntime({ data, template: "rhyhorn" }).diagnostics).toEqual([]);
 	const bytes = await act(() => renderToBuffer(<ResumeDocument data={data} template="rhyhorn" />));
 	const loading = getDocument({ data: new Uint8Array(bytes), useSystemFonts: true });
 	try {

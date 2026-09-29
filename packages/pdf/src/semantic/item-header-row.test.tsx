@@ -65,7 +65,7 @@ const buildFixture = (): ResumeData => {
 const renderTitleRowStyles = async (template: Template, stylesheet?: string) => {
 	const data = buildFixture();
 	const semanticRuntime = stylesheet
-		? resolveResumeRuntime({ data, template, mode: "semantic", source: { languageVersion: 1, text: stylesheet } })
+		? resolveResumeRuntime({ data, template, source: { languageVersion: 1, text: stylesheet } })
 		: undefined;
 	const element = createElement(ResumeDocument, { data, template, semanticRuntime }) as unknown as Parameters<
 		typeof pdf

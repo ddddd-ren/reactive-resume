@@ -19,7 +19,7 @@ const table = (paragraphs = false) =>
 		)
 		.join("")}</tbody></table>`;
 
-const fixture = (html: string, mode: "legacy" | "semantic", css = ""): ResumeData => {
+const fixture = (html: string, css = ""): ResumeData => {
 	const data = structuredClone(defaultResumeData);
 	data.basics.name = "Table probe";
 	data.picture.hidden = true;
@@ -27,7 +27,7 @@ const fixture = (html: string, mode: "legacy" | "semantic", css = ""): ResumeDat
 	data.metadata.layout.pages = [{ fullWidth: true, main: ["summary"], sidebar: [] }];
 	data.metadata.typography.body.fontFamily = "Helvetica";
 	data.metadata.typography.heading.fontFamily = "Helvetica";
-	data.metadata.stylesheet = { mode, source: { languageVersion: 1, text: `@version 1; ${css}` } };
+	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: `@version 1; ${css}` } };
 	return data;
 };
 
@@ -95,96 +95,90 @@ const tableCoordinates = (items: Awaited<ReturnType<typeof readPdf>>["items"]) =
 
 describe("imported rich-text tables", () => {
 	for (const template of ["ditgar", "onyx"] as const) {
-		for (const mode of ["legacy", "semantic"] as const) {
-			it(`${template} ${mode} preserves bare cell text and row/column positions`, async () => {
-				const { items } = await readPdf(fixture(table(), mode), template);
-				const cell = (text: string) => {
-					const cell = items.find((item) => item.text === text);
-					if (!cell) throw new Error(`Missing table cell ${text}`);
-					return cell;
-				};
-				const alpha = cell("Alpha");
-				const beta = cell("Beta");
-				const gamma = cell("Gamma");
-				const delta = cell("Delta");
-				const epsilon = cell("Epsilon");
-				const zeta = cell("Zeta");
-				expect(alpha.y).toBe(beta.y);
-				expect(alpha.y).toBe(gamma.y);
-				expect(delta.y).toBe(epsilon.y);
-				expect(delta.y).toBe(zeta.y);
-				expect(alpha.y).toBeGreaterThan(delta.y);
-				expect(alpha.x).toBe(delta.x);
-				expect(beta.x).toBe(epsilon.x);
-				expect(gamma.x).toBe(zeta.x);
-				expect(beta.x).toBeGreaterThan(alpha.x);
-				expect(gamma.x).toBeGreaterThan(beta.x);
-			});
-		}
+		it(`${template} preserves bare cell text and row/column positions`, async () => {
+			const { items } = await readPdf(fixture(table()), template);
+			const cell = (text: string) => {
+				const cell = items.find((item) => item.text === text);
+				if (!cell) throw new Error(`Missing table cell ${text}`);
+				return cell;
+			};
+			const alpha = cell("Alpha");
+			const beta = cell("Beta");
+			const gamma = cell("Gamma");
+			const delta = cell("Delta");
+			const epsilon = cell("Epsilon");
+			const zeta = cell("Zeta");
+			expect(alpha.y).toBe(beta.y);
+			expect(alpha.y).toBe(gamma.y);
+			expect(delta.y).toBe(epsilon.y);
+			expect(delta.y).toBe(zeta.y);
+			expect(alpha.y).toBeGreaterThan(delta.y);
+			expect(alpha.x).toBe(delta.x);
+			expect(beta.x).toBe(epsilon.x);
+			expect(gamma.x).toBe(zeta.x);
+			expect(beta.x).toBeGreaterThan(alpha.x);
+			expect(gamma.x).toBeGreaterThan(beta.x);
+		});
 	}
 
 	it("preserves table cells containing recognized paragraphs", async () => {
-		const { items } = await readPdf(fixture(table(true), "semantic"), "ditgar");
+		const { items } = await readPdf(fixture(table(true)), "ditgar");
 		expect(items.map((item) => item.text)).toEqual(expect.arrayContaining(["Alpha", "Beta", "Gamma", "Delta"]));
 	});
 
 	it("preserves raw text inside an unrecognized block wrapper", async () => {
-		const { items } = await readPdf(fixture("<div>Wrapper content</div>", "semantic"), "ditgar");
+		const { items } = await readPdf(fixture("<div>Wrapper content</div>"), "ditgar");
 		expect(items.map((item) => item.text)).toContain("Wrapper content");
 	});
 
 	it("still honors explicit semantic rich-text hiding", async () => {
-		const { items } = await readPdf(fixture(table(), "semantic", "rich-text { display: none; }"), "ditgar");
+		const { items } = await readPdf(fixture(table(), "rich-text { display: none; }"), "ditgar");
 		expect(items.map((item) => item.text)).toContain("Table probe");
 		expect(items.map((item) => item.text)).not.toContain("Alpha");
 	});
 
-	it.each(["legacy", "semantic"] as const)(
-		"keeps six cell coordinates, border operators, and fixed-DPI pixels through %s persistence",
-		async (mode) => {
-			const bordered = table().replaceAll("black", "#cc00cc");
-			const unrelated = fixture(bordered, mode);
-			unrelated.basics.name = "Border Probe unrelated edit";
-			const stages = [
-				{ name: "original", data: fixture(bordered, mode), expectedBeta: "Beta" },
-				{ name: "unrelated edit", data: unrelated, expectedBeta: "Beta" },
-				{ name: "table edit", data: fixture(bordered.replace("Beta", "Beta!"), mode), expectedBeta: "Beta!" },
+	it("keeps six cell coordinates, border operators, and fixed-DPI pixels through persistence", async () => {
+		const bordered = table().replaceAll("black", "#cc00cc");
+		const unrelated = fixture(bordered);
+		unrelated.basics.name = "Border Probe unrelated edit";
+		const stages = [
+			{ name: "original", data: fixture(bordered), expectedBeta: "Beta" },
+			{ name: "unrelated edit", data: unrelated, expectedBeta: "Beta" },
+			{ name: "table edit", data: fixture(bordered.replace("Beta", "Beta!")), expectedBeta: "Beta!" },
+		];
+		// The first render sets the reference: three equal columns over two rows, with the borders drawn. Neither an
+		// unrelated edit nor an edit inside a cell may move a cell or change a border.
+		let reference: { cells: Record<string, number[]>; colored: unknown } | undefined;
+		for (const stage of stages) {
+			const pdf = await readPdf(stage.data, "ditgar");
+			const cells = tableCoordinates(pdf.items);
+			const { colored } = await inspectTableBorders(pdf);
+			const cell = (text: string) => {
+				const [x, y] = cells[text] ?? [];
+				if (x === undefined || y === undefined) throw new Error(`${stage.name}: missing cell ${text}`);
+				return { x, y };
+			};
+			const [alpha, beta, gamma, delta] = ["Alpha", stage.expectedBeta, "Gamma", "Delta"].map(cell) as [
+				{ x: number; y: number },
+				{ x: number; y: number },
+				{ x: number; y: number },
+				{ x: number; y: number },
 			];
-			// The first render sets the reference: three equal columns over two rows, with the borders drawn. Neither an
-			// unrelated edit nor an edit inside a cell may move a cell or change a border.
-			let reference: { cells: Record<string, number[]>; colored: unknown } | undefined;
-			for (const stage of stages) {
-				const pdf = await readPdf(stage.data, "ditgar");
-				const cells = tableCoordinates(pdf.items);
-				const { colored } = await inspectTableBorders(pdf);
-				const cell = (text: string) => {
-					const [x, y] = cells[text] ?? [];
-					if (x === undefined || y === undefined) throw new Error(`${stage.name}: missing cell ${text}`);
-					return { x, y };
-				};
-				const [alpha, beta, gamma, delta] = ["Alpha", stage.expectedBeta, "Gamma", "Delta"].map(cell) as [
-					{ x: number; y: number },
-					{ x: number; y: number },
-					{ x: number; y: number },
-					{ x: number; y: number },
-				];
-				expect(beta.x - alpha.x, stage.name).toBeCloseTo(gamma.x - beta.x, 1);
-				expect(beta.y, stage.name).toBe(alpha.y);
-				expect(delta.x, stage.name).toBe(alpha.x);
-				expect(delta.y, stage.name).toBeLessThan(alpha.y);
-				expect((colored as { pixels: number }).pixels, stage.name).toBeGreaterThan(0);
-				const { [stage.expectedBeta]: _beta, ...rest } = cells;
-				const comparable = { cells: { ...rest, Beta: [beta.x, beta.y] }, colored };
-				if (reference) expect(comparable, stage.name).toEqual(reference);
-				else reference = comparable;
-			}
-		},
-		30_000,
-	);
+			expect(beta.x - alpha.x, stage.name).toBeCloseTo(gamma.x - beta.x, 1);
+			expect(beta.y, stage.name).toBe(alpha.y);
+			expect(delta.x, stage.name).toBe(alpha.x);
+			expect(delta.y, stage.name).toBeLessThan(alpha.y);
+			expect((colored as { pixels: number }).pixels, stage.name).toBeGreaterThan(0);
+			const { [stage.expectedBeta]: _beta, ...rest } = cells;
+			const comparable = { cells: { ...rest, Beta: [beta.x, beta.y] }, colored };
+			if (reference) expect(comparable, stage.name).toEqual(reference);
+			else reference = comparable;
+		}
+	}, 30_000);
 
-	it.each(["legacy", "semantic"] as const)("keeps borderless tables borderless in %s mode", async (mode) => {
+	it("keeps borderless tables borderless", async () => {
 		const borderless = table().replaceAll("border: 1pt solid black; ", "");
-		const pdf = await readPdf(fixture(borderless, mode), "ditgar");
+		const pdf = await readPdf(fixture(borderless), "ditgar");
 		expect((await inspectTableBorders(pdf)).geometry).toEqual({ horizontal: 0, vertical: 0 });
 	});
 });

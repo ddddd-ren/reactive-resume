@@ -612,7 +612,7 @@ describe("date layout characterization (#3155, #2841)", () => {
 		data.metadata.layout.pages = [{ fullWidth: true, main: ["skills"], sidebar: [] }];
 		for (const type of ["hidden", "circle", "square", "rectangle", "rectangle-full", "progress-bar", "icon"] as const) {
 			data.metadata.design.level = { type, icon: "star" };
-			const runtime = resolveResumeRuntime({ data, template: "chikorita", mode: "legacy" });
+			const runtime = resolveResumeRuntime({ data, template: "chikorita" });
 			const level = flatten(runtime.sourceTree).find((node) => node.kind === "level");
 			if (type === "hidden") expect(level).toBeUndefined();
 			else expect(level?.children.every((node) => node.attributes.type === type)).toBe(true);

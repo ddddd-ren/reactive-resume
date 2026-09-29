@@ -46,9 +46,7 @@ import { ITEM_HEADER_ROW_PART_KEYS } from "../../semantic/shared-parts";
 import { getSectionItemRows, getSectionItemsLayout, shouldUseSectionTimeline } from "./columns";
 import { getWebsiteDisplayText } from "./contact";
 import {
-	SectionStyleProvider,
 	TemplatePlacementProvider,
-	useSectionStyleRule,
 	useTemplateFeature,
 	useTemplateFeatureStyle,
 	useTemplatePageNodeKey,
@@ -74,7 +72,6 @@ import { RichText } from "./rich-text";
 import { createRtlStyleHelpers } from "./rtl";
 import { getInlineItemWebsiteUrl, shouldRenderSeparateItemWebsite } from "./section-links";
 import { hasSplitRowText } from "./split-row";
-import { getSectionStyleRuleContext } from "./style-rules";
 import { composeStyles, mergeStyles } from "./styles";
 
 type SectionItemsContextValue = {
@@ -321,10 +318,8 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 	const resolved = useResolvedNode(sectionNodeKey);
 	const visible = useSemanticNodeVisible(sectionNodeKey);
 	const sectionStyle = useTemplateStyle("section");
-	const sectionRuleStyle = useSectionStyleRule("section");
 	const sectionHeadingStyle = useTemplateStyle("sectionHeading");
 	const sectionHeadingContainerStyle = useTemplateStyle("sectionHeadingContainer");
-	const sectionHeadingRuleStyle = useSectionStyleRule("heading");
 	const sectionTitle = getResumeSectionTitle(data, sectionId, title);
 	const sectionHeadingEnabled = (() => {
 		if (sectionId === "summary") return data.summary.showHeading !== false;
@@ -346,7 +341,7 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 	if (keepTogether) breakProps.wrap = false;
 	if (startOnNewPage) breakProps.break = true;
 	const flowProps = { ...breakProps, ...resolvedPdfFlowProps(resolved) };
-	const resolvedSectionStyle = composeStyles(sectionStyle, sectionRuleStyle, resolved.style);
+	const resolvedSectionStyle = composeStyles(sectionStyle, resolved.style);
 	if (!visible) return null;
 
 	if (!showIcon) {
@@ -355,7 +350,7 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 			<SemanticNodeKeyProvider nodeKey={sectionNodeKey}>
 				<View style={resolvedSectionStyle} {...flowProps} data-resume-node={sectionNodeKey}>
 					{showHeading && sectionHeadingEnabled && (
-						<Heading style={composeStyles(sectionHeadingStyle, sectionHeadingRuleStyle)}>{sectionTitle}</Heading>
+						<Heading style={composeStyles(sectionHeadingStyle)}>{sectionTitle}</Heading>
 					)}
 					{children}
 				</View>
@@ -374,7 +369,6 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 							sectionHeadingStyle,
 							defaultSectionHeadingContainerStyle,
 							sectionHeadingContainerStyle,
-							sectionHeadingRuleStyle,
 							sectionHeadingResolved.style,
 						)}
 					>
@@ -386,7 +380,6 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 							bindSemanticNode={false}
 							style={getSectionHeadingTextStyle(
 								sectionHeadingStyle,
-								sectionHeadingRuleStyle,
 								sectionHeadingResolved.style?.color === undefined
 									? undefined
 									: { color: sectionHeadingResolved.style.color },
@@ -506,7 +499,6 @@ const SectionItem = ({ itemId, children, style }: SectionItemProps) => {
 	const visible = useSemanticNodeVisible(itemNodeKey);
 	const { itemStyle: sectionItemStyle, useTimeline } = useSectionItemsContext();
 	const itemStyle = useTemplateStyle("item");
-	const itemRuleStyle = useSectionStyleRule("item");
 	const timelineItemStyle = useTemplateFeatureStyle("sectionTimeline", "item");
 	const timelineMarkerStyle = useTemplateFeatureStyle("sectionTimeline", "marker");
 	const timelineDotStyle = useTemplateFeatureStyle("sectionTimeline", "dot");
@@ -518,7 +510,7 @@ const SectionItem = ({ itemId, children, style }: SectionItemProps) => {
 	if (!useTimeline) {
 		return (
 			<SemanticNodeKeyProvider nodeKey={itemNodeKey}>
-				<Div nodeKey={itemNodeKey} style={composeStyles(itemStyle, itemRuleStyle, sectionItemStyle, style)}>
+				<Div nodeKey={itemNodeKey} style={composeStyles(itemStyle, sectionItemStyle, style)}>
 					{children}
 				</Div>
 			</SemanticNodeKeyProvider>
@@ -542,7 +534,7 @@ const SectionItem = ({ itemId, children, style }: SectionItemProps) => {
 				<Div
 					nodeKey={itemNodeKey}
 					{...resolvedPdfFlowProps(timelineContentResolved)}
-					style={composeStyles(itemStyle, itemRuleStyle, timelineContentStyle, style, timelineContentResolved.style)}
+					style={composeStyles(itemStyle, timelineContentStyle, style, timelineContentResolved.style)}
 				>
 					{children}
 				</Div>
@@ -1597,9 +1589,7 @@ export const Section = ({ section, placement, showHeading = true }: SectionProps
 
 	return (
 		<TemplatePlacementProvider placement={placement}>
-			<SectionStyleProvider context={getSectionStyleRuleContext(data, section)}>
-				{render ? render() : <CustomSection sectionId={section} showHeading={showHeading} />}
-			</SectionStyleProvider>
+			{render ? render() : <CustomSection sectionId={section} showHeading={showHeading} />}
 		</TemplatePlacementProvider>
 	);
 };

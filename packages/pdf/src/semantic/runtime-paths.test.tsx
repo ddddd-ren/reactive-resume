@@ -57,11 +57,11 @@ const buildFixture = (): ResumeData => {
 	return data;
 };
 
-const buildNodeBudgetFixture = (mode: "legacy" | "semantic"): ResumeData => {
+const buildNodeBudgetFixture = (): ResumeData => {
 	const data = structuredClone(defaultResumeData);
 	const source = { languageVersion: 1, text: "@version 1;\n" };
 	data.metadata.layout.pages = [{ fullWidth: true, main: ["skills"], sidebar: [] }];
-	data.metadata.stylesheet = { mode, source };
+	data.metadata.stylesheet = { mode: "semantic", source };
 	data.sections.skills.items = Array.from({ length: 2_000 }, (_, index) => ({
 		id: `skill-${index}`,
 		hidden: false,
@@ -128,8 +128,8 @@ describe("browser/server semantic runtime identity", () => {
 		expect(browserProps).toEqual(serverProps);
 	}, 15_000);
 
-	it("keeps legacy PDF rendering unaffected by the semantic node budget", async () => {
-		const data = buildNodeBudgetFixture("legacy");
+	it("still renders a resume beyond the semantic node budget", async () => {
+		const data = buildNodeBudgetFixture();
 
 		const blob = await createResumePdfBlob({ data, template: "onyx" });
 		const file = await createResumePdfFile({ data, filename: "resume.pdf", template: "onyx" });

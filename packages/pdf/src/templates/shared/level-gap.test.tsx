@@ -11,7 +11,7 @@ import { rasterizePdf } from "../../semantic/test/rasterize-pdf";
 const pdfRasterScale = 1.5;
 const circleDiameterPt = 8;
 
-async function circlePositions(declaration = "", mode: "semantic" | "legacy" = "semantic") {
+async function circlePositions(declaration = "") {
 	const data = structuredClone(defaultResumeData);
 	data.metadata.typography.body.fontFamily = "Helvetica";
 	data.metadata.typography.heading.fontFamily = "Helvetica";
@@ -19,7 +19,7 @@ async function circlePositions(declaration = "", mode: "semantic" | "legacy" = "
 	data.metadata.design.colors.primary = "rgba(255, 0, 0, 1)";
 	data.metadata.layout.pages = [{ fullWidth: true, main: ["skills"], sidebar: [] }];
 	data.metadata.stylesheet = {
-		mode,
+		mode: "semantic",
 		source: { languageVersion: 1, text: `@version 1; section[type="skills"] level { ${declaration} }` },
 	};
 	data.sections.skills.items = [
@@ -34,7 +34,7 @@ async function circlePositions(declaration = "", mode: "semantic" | "legacy" = "
 			keywords: [],
 		},
 	];
-	const runtime = resolveResumeRuntime({ data, template: "onyx", mode });
+	const runtime = resolveResumeRuntime({ data, template: "onyx" });
 	const bytes = await act(() => renderToBuffer(<ResumeDocument data={data} template="onyx" />));
 	const [page] = await rasterizePdf(new Uint8Array(bytes));
 	if (!page) throw new Error("Missing PDF page");
@@ -67,9 +67,6 @@ async function circlePositions(declaration = "", mode: "semantic" | "legacy" = "
 }
 
 describe("semantic level gaps (#3040)", () => {
-	it("preserves default circle geometry in legacy and semantic modes", async () => {
-		expect(await circlePositions()).toEqual(await circlePositions("", "legacy"));
-	});
 	it.each([
 		["gap: 0;", 0],
 		["gap: 4pt;", 4],

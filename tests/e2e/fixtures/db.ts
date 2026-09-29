@@ -1,14 +1,5 @@
 import type { E2EAccount } from "./data";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { Pool } from "pg";
-
-const legacyParityRules = JSON.parse(
-	readFileSync(
-		resolve(process.cwd(), "packages/pdf/src/semantic/__fixtures__/legacy/custom-section-type.json"),
-		"utf8",
-	),
-) as unknown[];
 
 function getDatabaseUrl() {
 	const databaseUrl = process.env.DATABASE_URL;
@@ -28,7 +19,7 @@ export async function deleteE2EUser(account: E2EAccount) {
 }
 
 type SemanticStylesheetSeed = {
-	mode: "legacy" | "semantic";
+	mode: "semantic";
 	source: { languageVersion: number; text: string };
 };
 
@@ -38,7 +29,6 @@ async function _updateSemanticCssFixture(
 		stylesheet?: SemanticStylesheetSeed;
 		portableLayout?: "balanced" | "pagination-stress";
 		experienceItemId?: string;
-		legacyStyleRule?: boolean;
 		hidePicture?: boolean;
 		basicsName?: string;
 	},
@@ -115,11 +105,6 @@ async function _updateSemanticCssFixture(
 					sidebar: [],
 				},
 			];
-		}
-		if (update.legacyStyleRule) {
-			const metadata = data.metadata as Record<string, unknown>;
-			delete metadata.stylesheet;
-			metadata.styleRules = structuredClone(legacyParityRules);
 		}
 		if (update.hidePicture) {
 			const picture = data.picture as Record<string, unknown>;

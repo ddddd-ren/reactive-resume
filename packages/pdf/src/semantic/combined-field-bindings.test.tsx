@@ -36,7 +36,7 @@ const findTexts = (node: HostNode, text: string): HostNode[] => [
 	...(node.children ?? []).flatMap((child) => findTexts(child, text)),
 ];
 
-const fixture = (mode: "legacy" | "semantic", section: "experience" | "education", rule = ""): ResumeData => {
+const fixture = (section: "experience" | "education", rule = ""): ResumeData => {
 	const data = structuredClone(defaultResumeData);
 	data.picture.hidden = true;
 	data.basics.name = "Ada Lovelace";
@@ -69,10 +69,7 @@ const fixture = (mode: "legacy" | "semantic", section: "experience" | "education
 		},
 	];
 	data.metadata.layout.pages = [{ fullWidth: true, main: [section], sidebar: [] }];
-	if (mode === "semantic") {
-		const stylesheet = { languageVersion: 1, text: `@version 1; ${rule}` };
-		data.metadata.stylesheet = { mode, source: stylesheet };
-	}
+	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: `@version 1; ${rule}` } };
 	return data;
 };
 
@@ -81,14 +78,6 @@ const renderHost = async (template: Template, data: ResumeData): Promise<HostNod
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
 	return instance.container.document as HostNode;
-};
-
-const renderPdf = async (template: Template, data: ResumeData): Promise<Uint8Array> => {
-	const renderer = await vi.importActual<typeof import("../forme/testing")>("../forme/testing");
-	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<
-		typeof renderer.renderToBuffer
-	>[0];
-	return new Uint8Array(await renderer.renderToBuffer(element));
 };
 
 const rasterizeFirstPage = async (bytes: Uint8Array): Promise<Buffer> => {
@@ -197,8 +186,8 @@ describe("combined PDF field bindings", () => {
 			combined-text { color: #334455; font-size: 14pt; opacity: 0.6; margin-left: 3pt; }
 			field[name="degree"] { opacity: 0.4; }
 		`;
-		const onyxData = fixture("semantic", "education", semanticRule);
-		const meowthData = fixture("semantic", "education", semanticRule);
+		const onyxData = fixture("education", semanticRule);
+		const meowthData = fixture("education", semanticRule);
 		const onyxTree = buildSemanticTree({
 			data: onyxData,
 			template: "onyx",
@@ -274,9 +263,9 @@ describe("combined PDF field bindings", () => {
 			field[name="grade"] { color: #550000; }
 			field[name="period"] { color: #660000; }
 		`;
-		const experience = await renderHost("meowth", fixture("semantic", "experience", colors));
-		const inlineEducation = await renderHost("meowth", fixture("semantic", "education", colors));
-		const splitEducation = await renderHost("onyx", fixture("semantic", "education", colors));
+		const experience = await renderHost("meowth", fixture("experience", colors));
+		const inlineEducation = await renderHost("meowth", fixture("education", colors));
+		const splitEducation = await renderHost("onyx", fixture("education", colors));
 
 		expect(nodeText(experience)).toContain("Engineer (London)");
 		expectColor(experience, "Engineer", "#110000");
@@ -299,7 +288,6 @@ describe("combined PDF field bindings", () => {
 
 	it("uses the promoted single field's real semantic key", async () => {
 		const experienceData = fixture(
-			"semantic",
 			"experience",
 			'field[name="period"] { color: #660000; } field[name="location"] { color: #220000; }',
 		);
@@ -308,7 +296,6 @@ describe("combined PDF field bindings", () => {
 		experience.location = "";
 
 		const educationData = fixture(
-			"semantic",
 			"education",
 			'field[name="period"] { color: #660000; } field[name="degree"] { color: #440000; }',
 		);
@@ -325,11 +312,7 @@ describe("combined PDF field bindings", () => {
 	it("keeps non-inheritable split-field styles on their final field hosts", async () => {
 		const document = await renderHost(
 			"meowth",
-			fixture(
-				"semantic",
-				"experience",
-				'field[name="position"] { opacity: 0.6; } field[name="location"] { margin-left: 3pt; }',
-			),
+			fixture("experience", 'field[name="position"] { opacity: 0.6; } field[name="location"] { margin-left: 3pt; }'),
 		);
 		const combined = findTexts(document, "Engineer (London)");
 		const position = findTexts(document, "Engineer");
@@ -342,7 +325,7 @@ describe("combined PDF field bindings", () => {
 	});
 
 	it("publishes one existing Text binding for every split field key", () => {
-		const data = fixture("semantic", "education");
+		const data = fixture("education");
 		const tree = buildSemanticTree({
 			data,
 			template: "meowth",
@@ -360,20 +343,6 @@ describe("combined PDF field bindings", () => {
 			Array.from({ length: 5 }, () => ({ type: "primitive", primitive: "Text", source: "existing" })),
 		);
 	});
-
-	it.each([
-		["meowth", "experience"],
-		["meowth", "education"],
-		["onyx", "education"],
-	] as const)(
-		"keeps the real %s %s section raster-identical between legacy and empty semantic mode",
-		async (template, section) => {
-			const legacy = await rasterizeFirstPage(await renderPdf(template, fixture("legacy", section)));
-			const semantic = await rasterizeFirstPage(await renderPdf(template, fixture("semantic", section)));
-
-			expect(semantic.equals(legacy)).toBe(true);
-		},
-	);
 
 	it.each([
 		{

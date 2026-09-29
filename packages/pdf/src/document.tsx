@@ -10,7 +10,7 @@ import { Document } from "#react-pdf-renderer";
 import { RenderProvider } from "./context";
 import { resolvePdfFonts, resumeContentContainsCJK, resumeContentScripts } from "./hooks/use-register-fonts";
 import { SemanticRenderProvider } from "./semantic/context";
-import { resolveResumeRuntime, resolveStylesheetMode } from "./semantic/resolve";
+import { resolveResumeRuntime } from "./semantic/resolve";
 import { getTemplatePage } from "./templates";
 import { shouldShowResumeHeader } from "./templates/shared/cover-letter";
 import { getTemplatePageMinHeightStyle, getTemplatePageSize } from "./templates/shared/page-size";
@@ -63,17 +63,14 @@ export const ResumeDocument = ({
 		() => (renderOptions ? { ...resumeData, renderOptions } : resumeData),
 		[resumeData, renderOptions],
 	);
-	const stylesheetMode = resolveStylesheetMode(resumeData);
 	// The tree is built with the render options, so a letter printed with its header keeps it.
 	const runtime = useMemo(
-		() => semanticRuntime ?? resolveResumeRuntime({ data: headerResumeData, template, mode: stylesheetMode }),
-		[headerResumeData, semanticRuntime, stylesheetMode, template],
+		() => semanticRuntime ?? resolveResumeRuntime({ data: headerResumeData, template }),
+		[headerResumeData, semanticRuntime, template],
 	);
-	const semanticMode = semanticRuntime ? "semantic" : stylesheetMode;
 	return (
 		<SemanticRenderProvider
 			presentation={runtime.presentation}
-			mode={semanticMode}
 			sourceTree={runtime.sourceTree}
 			renderTree={runtime.renderTree}
 		>

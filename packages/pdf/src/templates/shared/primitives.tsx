@@ -17,7 +17,7 @@ import {
 } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { Link as PdfLink, Text as PdfText } from "../../text";
-import { useSectionStyleRule, useTemplateIconSlot, useTemplatePageNodeKey, useTemplateStyle } from "./context";
+import { useTemplateIconSlot, useTemplatePageNodeKey, useTemplateStyle } from "./context";
 import { resolveIconSize } from "./icon-size";
 import { getPictureShadow } from "./picture-shadow";
 import { safeTextStyle } from "./safe-text-style";
@@ -135,7 +135,6 @@ export const Text = ({
 	...props
 }: ComponentProps<typeof PdfText> & SemanticProps) => {
 	const textStyle = useTemplateStyle("text");
-	const textRuleStyle = useSectionStyleRule("text");
 	const resolvedNodeKey = usePrimitiveNodeKey({
 		nodeKey,
 		semanticField,
@@ -150,7 +149,7 @@ export const Text = ({
 		<PdfText
 			{...props}
 			{...resolvedPdfTextProps(resolved)}
-			style={composeStyles(textStyle, textRuleStyle, asStyleInput(style), resolved.style, safeTextStyle)}
+			style={composeStyles(textStyle, asStyleInput(style), resolved.style, safeTextStyle)}
 		/>
 	);
 };
@@ -164,7 +163,6 @@ export const Heading = ({
 	...props
 }: ComponentProps<typeof PdfText> & SemanticProps) => {
 	const headingStyle = useTemplateStyle("heading");
-	const headingRuleStyle = useSectionStyleRule("heading");
 	const resolvedNodeKey = usePrimitiveNodeKey({
 		nodeKey,
 		semanticField,
@@ -180,7 +178,7 @@ export const Heading = ({
 		<PdfText
 			{...props}
 			{...resolvedPdfTextProps(resolved)}
-			style={composeStyles(headingStyle, headingRuleStyle, asStyleInput(style), resolved.style, safeTextStyle)}
+			style={composeStyles(headingStyle, asStyleInput(style), resolved.style, safeTextStyle)}
 		/>
 	);
 };
@@ -196,7 +194,6 @@ export const Link = ({
 }: ComponentProps<typeof PdfLink> & SemanticLinkProps) => {
 	const { metadata } = useRender();
 	const linkStyle = useTemplateStyle("link");
-	const linkRuleStyle = useSectionStyleRule("link");
 	const parentKey = useSemanticNodeKey();
 	const resolvedNodeKey =
 		nodeKey ??
@@ -211,12 +208,7 @@ export const Link = ({
 			{...props}
 			{...resolvedPdfTextProps(resolved)}
 			style={composeStyles(
-				composeLinkStyles(
-					{ hideUnderline: metadata.page.hideLinkUnderline },
-					linkStyle,
-					linkRuleStyle,
-					asStyleInput(style),
-				),
+				composeLinkStyles({ hideUnderline: metadata.page.hideLinkUnderline }, linkStyle, asStyleInput(style)),
 				resolved.style,
 				safeTextStyle,
 			)}
@@ -234,7 +226,6 @@ export const Small = ({
 }: ComponentProps<typeof PdfText> & SemanticProps) => {
 	const textStyle = useTemplateStyle("text");
 	const smallStyle = useTemplateStyle("small");
-	const secondaryTextRuleStyle = useSectionStyleRule("secondaryText");
 	const resolvedNodeKey = usePrimitiveNodeKey({
 		nodeKey,
 		semanticField,
@@ -249,14 +240,7 @@ export const Small = ({
 		<PdfText
 			{...props}
 			{...resolvedPdfTextProps(resolved)}
-			style={composeStyles(
-				textStyle,
-				smallStyle,
-				secondaryTextRuleStyle,
-				asStyleInput(style),
-				resolved.style,
-				safeTextStyle,
-			)}
+			style={composeStyles(textStyle, smallStyle, asStyleInput(style), resolved.style, safeTextStyle)}
 		/>
 	);
 };
@@ -271,7 +255,6 @@ export const Bold = ({
 }: ComponentProps<typeof PdfText> & SemanticProps) => {
 	const textStyle = useTemplateStyle("text");
 	const boldStyle = useTemplateStyle("bold");
-	const textRuleStyle = useSectionStyleRule("text");
 	const resolvedNodeKey = usePrimitiveNodeKey({
 		nodeKey,
 		semanticField,
@@ -286,7 +269,7 @@ export const Bold = ({
 		<PdfText
 			{...props}
 			{...resolvedPdfTextProps(resolved)}
-			style={composeStyles(textStyle, textRuleStyle, boldStyle, asStyleInput(style), resolved.style, safeTextStyle)}
+			style={composeStyles(textStyle, boldStyle, asStyleInput(style), resolved.style, safeTextStyle)}
 		/>
 	);
 };
@@ -298,8 +281,7 @@ export const Icon = ({
 	...props
 }: ComponentProps<typeof PhosphorIcon> & { nodeKey?: string | undefined }) => {
 	const { style: iconStyle, size: templateSize, ...iconProps } = useTemplateIconSlot("icon");
-	const iconRuleStyle = useSectionStyleRule("icon");
-	const composedStyle = composeStyles(asStyleInput(iconStyle), iconRuleStyle, asStyleInput(style));
+	const composedStyle = composeStyles(asStyleInput(iconStyle), asStyleInput(style));
 	const templateIconSize =
 		typeof templateSize === "number" || typeof templateSize === "string" ? templateSize : undefined;
 	const parentKey = useSemanticNodeKey();
@@ -312,7 +294,7 @@ export const Icon = ({
 	const resolvedSize =
 		resolveIconSize({
 			size: sizeProp,
-			styles: [iconRuleStyle, asStyleInput(style), resolved.style],
+			styles: [asStyleInput(style), resolved.style],
 		}) ?? templateIconSize;
 
 	if (iconProps.display === "none" || !visible) return null;

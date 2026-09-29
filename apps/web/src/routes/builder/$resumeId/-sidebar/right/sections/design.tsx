@@ -6,7 +6,6 @@ import { useStore } from "@tanstack/react-form";
 import { AnimatePresence, m } from "motion/react";
 import { colorDesignSchema, levelDesignSchema } from "@reactive-resume/schema/resume/data";
 import { resolveLevelDisplaySizes } from "@reactive-resume/schema/resume/level-display-sizes";
-import { resolveStyleRuleFontSize } from "@reactive-resume/schema/resume/style-rules";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Separator } from "@reactive-resume/ui/components/separator";
@@ -235,12 +234,8 @@ function LevelSectionForm() {
 
 	const previewType = useStore(form.store, (s) => s.values.type);
 	const previewIcon = useStore(form.store, (s) => s.values.icon);
-	const iconFontSize = resolveStyleRuleFontSize(resume.data, { slot: "icon" });
-	const levelFontSize = resolveStyleRuleFontSize(resume.data, { slot: "level" });
 	const { decorationSize, levelIconExplicitSize } = resolveLevelDisplaySizes({
 		bodyFontSize: resume.data.metadata.typography.body.fontSize,
-		iconFontSize,
-		levelFontSize,
 	});
 
 	return (

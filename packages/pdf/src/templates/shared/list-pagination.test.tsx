@@ -35,7 +35,7 @@ async function listPages(
 			text: `@version 1; page { size: 300pt 300pt; } rich-text { margin-top: ${margin}pt; } ${css}`,
 		},
 	};
-	const runtime = resolveResumeRuntime({ data, template: "onyx", mode: "semantic" });
+	const runtime = resolveResumeRuntime({ data, template: "onyx" });
 	expect(runtime.diagnostics).toEqual([]);
 	const bytes = await act(() => renderToBuffer(<ResumeDocument data={data} template="onyx" />));
 	const task = getDocument({ data: new Uint8Array(bytes), useSystemFonts: true });

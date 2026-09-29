@@ -7,7 +7,6 @@ import { ResumeDocument } from "../../document";
 import { renderToBuffer } from "../../forme/testing";
 
 type FixtureOptions = {
-	mode: "legacy" | "semantic";
 	columns: number;
 	gapX: number;
 	rtl?: boolean;
@@ -19,7 +18,7 @@ type FixtureOptions = {
 
 type TextRun = { text: string; x: number; right: number; y: number };
 
-function fixture({ mode, columns, gapX, rtl, sidebar, longTitle, experience, css = "" }: FixtureOptions): ResumeData {
+function fixture({ columns, gapX, rtl, sidebar, longTitle, experience, css = "" }: FixtureOptions): ResumeData {
 	const data = structuredClone(defaultResumeData);
 	data.metadata.typography.body.fontFamily = "Helvetica";
 	data.metadata.typography.heading.fontFamily = "Helvetica";
@@ -30,7 +29,7 @@ function fixture({ mode, columns, gapX, rtl, sidebar, longTitle, experience, css
 	data.metadata.layout.pages = [
 		{ fullWidth: false, main: sidebar ? [] : [section], sidebar: sidebar ? [section] : [] },
 	];
-	data.metadata.stylesheet = { mode, source: { languageVersion: 1, text: `@version 1; ${css}` } };
+	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: `@version 1; ${css}` } };
 	data.sections.projects.columns = columns;
 	data.sections.experience.columns = columns;
 	for (let index = 0; index < 3; index++) {
@@ -82,29 +81,26 @@ function assertAligned(runs: TextRun[], rtl = false, expectedOffset = 0) {
 }
 
 describe("Ditgar item-header alignment (#3068)", () => {
-	for (const mode of ["legacy", "semantic"] as const) {
-		for (const columns of [1, 2]) {
-			it.each([0, 4, 12])(`aligns ${mode} Projects in ${columns} columns at gapX %i`, async (gapX) => {
-				assertAligned(await renderText({ mode, columns, gapX }));
-			});
-		}
-		it(`aligns wrapped ${mode} project titles with their descriptions and links`, async () => {
-			assertAligned(await renderText({ mode, columns: 2, gapX: 4, longTitle: true }));
-		});
-		it(`aligns the shared ${mode} Experience header`, async () => {
-			assertAligned(await renderText({ mode, columns: 2, gapX: 4, experience: true }));
-		});
-		it(`preserves ${mode} sidebar alignment`, async () => {
-			assertAligned(await renderText({ mode, columns: 1, gapX: 4, sidebar: true }));
-		});
-		it(`preserves ${mode} RTL alignment`, async () => {
-			assertAligned(await renderText({ mode, columns: 2, gapX: 4, rtl: true }), true);
+	for (const columns of [1, 2]) {
+		it.each([0, 4, 12])(`aligns Projects in ${columns} columns at gapX %i`, async (gapX) => {
+			assertAligned(await renderText({ columns, gapX }));
 		});
 	}
+	it("aligns wrapped project titles with their descriptions and links", async () => {
+		assertAligned(await renderText({ columns: 2, gapX: 4, longTitle: true }));
+	});
+	it("aligns the shared Experience header", async () => {
+		assertAligned(await renderText({ columns: 2, gapX: 4, experience: true }));
+	});
+	it("preserves sidebar alignment", async () => {
+		assertAligned(await renderText({ columns: 1, gapX: 4, sidebar: true }));
+	});
+	it("preserves RTL alignment", async () => {
+		assertAligned(await renderText({ columns: 2, gapX: 4, rtl: true }), true);
+	});
 	it("retains an authored Semantic CSS header inset", async () => {
 		assertAligned(
 			await renderText({
-				mode: "semantic",
 				columns: 2,
 				gapX: 4,
 				css: "item-header { margin-left: 7pt; padding-left: 3pt; border-left: 2pt solid #0000ff; }",

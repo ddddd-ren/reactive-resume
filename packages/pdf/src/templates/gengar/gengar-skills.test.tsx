@@ -13,7 +13,6 @@ import { rasterizePdf } from "../../semantic/test/rasterize-pdf";
 type SkillLayout = "default" | "inline";
 type Placement = "main" | "sidebar";
 type LevelDesign = "circle" | "rectangle" | "rectangle-full";
-type StylesheetMode = "legacy" | "semantic";
 
 type GengarFixtureOptions = {
 	keywordLayout?: "inline" | "list";
@@ -25,7 +24,6 @@ type GengarFixtureOptions = {
 	proficiency?: string;
 	keywords?: string[];
 	custom?: boolean;
-	mode?: StylesheetMode;
 	count?: number;
 	overflow?: boolean;
 };
@@ -45,7 +43,6 @@ const gengarFixture = ({
 	proficiency = "Experienced",
 	keywords = ["Alpha", "Beta"],
 	custom = false,
-	mode = "legacy",
 	count = 1,
 	overflow = false,
 }: GengarFixtureOptions = {}): ResumeData => {
@@ -89,8 +86,6 @@ const gengarFixture = ({
 			mode: "semantic",
 			source: { languageVersion: 1, text: "@version 1; page { size: 300pt 220pt; }" },
 		};
-	} else if (mode === "semantic") {
-		data.metadata.stylesheet = { mode, source: { languageVersion: 1, text: "@version 1;" } };
 	}
 	if (custom) data.customSections = [{ ...section, id: sectionId, type: "skills" }];
 	else data.sections.skills = section;
@@ -125,11 +120,7 @@ describe("Gengar skill rating placement (#2611)", () => {
 		{ layout: "default" as const, placement: "main" as const, columns: 2, design: "rectangle-full" as const, level: 5 },
 	])("orders name, rating, proficiency, keywords in $layout/$placement/$design", (options) => {
 		const data = gengarFixture(options);
-		const runtime = resolveResumeRuntime({
-			data,
-			template: "gengar",
-			mode: options.layout === "inline" ? "semantic" : "legacy",
-		});
+		const runtime = resolveResumeRuntime({ data, template: "gengar" });
 		const item = required(getSkillItem(runtime));
 		const level = required(item.children.find((node) => node.kind === "level"));
 		const header = required(item.children.find((node) => node.kind === "item-header"));
@@ -143,7 +134,7 @@ describe("Gengar skill rating placement (#2611)", () => {
 
 	it.each([0, 3, 5])("keeps level %s semantic decorations", (level) => {
 		const data = gengarFixture({ level });
-		const runtime = resolveResumeRuntime({ data, template: "gengar", mode: "legacy" });
+		const runtime = resolveResumeRuntime({ data, template: "gengar" });
 		const item = required(getSkillItem(runtime));
 		const rating = item.children.find((node) => node.kind === "level");
 		if (level === 0) expect(rating).toBeUndefined();
@@ -153,7 +144,7 @@ describe("Gengar skill rating placement (#2611)", () => {
 	it("hides rating without leaving a rating node or spacing", async () => {
 		const data = gengarFixture({ design: "circle", level: 5 });
 		data.metadata.design.level = { type: "hidden", icon: "star" };
-		const runtime = resolveResumeRuntime({ data, template: "gengar", mode: "semantic" });
+		const runtime = resolveResumeRuntime({ data, template: "gengar" });
 		expect(required(getSkillItem(runtime)).children.map((node) => node.kind)).toEqual([
 			"item-header",
 			"field",
@@ -169,7 +160,7 @@ describe("Gengar skill rating placement (#2611)", () => {
 
 	it("omits level-zero rating without adding rating spacing and keeps empty proficiency", async () => {
 		const data = gengarFixture({ level: 0, proficiency: "", keywords: ["Short"] });
-		const runtime = resolveResumeRuntime({ data, template: "gengar", mode: "legacy" });
+		const runtime = resolveResumeRuntime({ data, template: "gengar" });
 		const item = required(getSkillItem(runtime));
 		expect(item.children.map((node) => node.kind)).toEqual(["item-header", "field"]);
 		expect(item.children.at(-1)?.attributes.name).toBe("keywords");
@@ -177,9 +168,9 @@ describe("Gengar skill rating placement (#2611)", () => {
 		expect(result.pages.flat().map((item) => item.str)).toContain("Short");
 	});
 
-	it.each([false, true])("keeps Gengar ordering for %s stylesheet mode", async (semantic) => {
-		const data = gengarFixture({ mode: semantic ? "semantic" : "legacy", custom: semantic, columns: 1 });
-		const runtime = resolveResumeRuntime({ data, template: "gengar", mode: semantic ? "semantic" : "legacy" });
+	it.each([false, true])("keeps Gengar ordering for custom=%s Skills", async (custom) => {
+		const data = gengarFixture({ custom, columns: 1 });
+		const runtime = resolveResumeRuntime({ data, template: "gengar" });
 		const item = required(getSkillItem(runtime));
 		expect(item.children.map((node) => node.kind)).toEqual(["item-header", "level", "field", "field"]);
 		const result = await renderGengar(data);
@@ -204,7 +195,7 @@ describe("Gengar skill rating placement (#2611)", () => {
 
 	it("keeps long keywords and mixed-height ratings across overflow pages", async () => {
 		const data = gengarFixture({ count: 12, columns: 2, overflow: true, keywords: ["Long keyword"] });
-		const runtime = resolveResumeRuntime({ data, template: "gengar", mode: "semantic" });
+		const runtime = resolveResumeRuntime({ data, template: "gengar" });
 		expect(required(getSkillItem(runtime)).children.map((node) => node.kind)).toEqual([
 			"item-header",
 			"level",
@@ -224,7 +215,7 @@ describe("Gengar skill rating placement (#2611)", () => {
 
 	it("does not change Onyx semantic ordering", () => {
 		const data = gengarFixture();
-		const runtime = resolveResumeRuntime({ data, template: "onyx", mode: "legacy" });
+		const runtime = resolveResumeRuntime({ data, template: "onyx" });
 		const item = required(getSkillItem(runtime));
 		expect(item.children.map((node) => node.kind)).toEqual(["item-header", "field", "field", "level"]);
 	});

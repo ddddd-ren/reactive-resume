@@ -16,7 +16,6 @@ context.fillRect(0, 0, 100, 100);
 async function picturePixels(
 	template: "onyx" | "ditto" | "glalie",
 	borderWidth: number,
-	mode: "semantic" | "legacy" = "semantic",
 	stylesheet = "@version 1;",
 	shadowWidth = 0,
 	url = source.toDataURL("image/png"),
@@ -26,7 +25,7 @@ async function picturePixels(
 	data.basics.name = "Picture";
 	data.metadata.typography.body.fontFamily = "Helvetica";
 	data.metadata.typography.heading.fontFamily = "Helvetica";
-	data.metadata.stylesheet = { mode, source: { languageVersion: 1, text: stylesheet } };
+	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: stylesheet } };
 	data.metadata.layout.pages = [{ fullWidth: false, main: [], sidebar: [] }];
 	Object.assign(data.picture, {
 		url,
@@ -38,7 +37,7 @@ async function picturePixels(
 		shadowWidth,
 		shadowColor: "rgba(0, 0, 255, 1)",
 	});
-	let runtime = resolveResumeRuntime({ data, template, mode });
+	let runtime = resolveResumeRuntime({ data, template });
 	if (styleOverride) {
 		const entry = Object.entries(runtime.presentation).find(([key]) => key.endsWith("/picture"));
 		if (!entry) throw new Error("Missing picture presentation");
@@ -115,13 +114,12 @@ async function picturePixels(
 
 describe("picture border visibility (#3017)", () => {
 	it("keeps the shadow centered on the outer border box when borders and padding change", async () => {
-		const plain = await picturePixels("onyx", 0, "semantic", "@version 1;", 10);
-		const bordered = await picturePixels("onyx", 10, "semantic", "@version 1; picture { padding: 5pt; }", 10);
+		const plain = await picturePixels("onyx", 0, "@version 1;", 10);
+		const bordered = await picturePixels("onyx", 10, "@version 1; picture { padding: 5pt; }", 10);
 		expect(bordered.shadowBounds).toEqual(plain.shadowBounds);
 		const asymmetric = await picturePixels(
 			"onyx",
 			0,
-			"semantic",
 			"@version 1; picture { border-top: 12pt solid #ff00ff; border-right: 3pt solid #ff00ff; border-bottom: 8pt solid #ff00ff; border-left: 5pt solid #ff00ff; padding: 3pt 4pt 5pt 6pt; }",
 			10,
 		);
@@ -130,9 +128,9 @@ describe("picture border visibility (#3017)", () => {
 	it("preserves percentage dimensions, padding, rounded borders, rotation and opacity", async () => {
 		const css =
 			"@version 1; picture { width: 40%; height: 100pt; padding: 1%; border-radius: 25%; transform: rotate(15deg); }";
-		const opaque = await picturePixels("onyx", 10, "semantic", css);
-		const plain = await picturePixels("onyx", 10, "semantic", css, 0, undefined, { opacity: 0.5 });
-		const shadow = await picturePixels("onyx", 10, "semantic", css, 10, undefined, { opacity: 0.5 });
+		const opaque = await picturePixels("onyx", 10, css);
+		const plain = await picturePixels("onyx", 10, css, 0, undefined, { opacity: 0.5 });
+		const shadow = await picturePixels("onyx", 10, css, 10, undefined, { opacity: 0.5 });
 		expect(opaque.borderPixels).toBeGreaterThan(1000);
 		expect(plain.imagePixels).toBeGreaterThan(1000);
 		expect(shadow).toEqual(plain); // Unresolved percentage dimensions omit the shadow.
@@ -141,15 +139,15 @@ describe("picture border visibility (#3017)", () => {
 	});
 	// Forme 0.25 takes percentages only for box sizes, so percentage padding is left out; this passes once it isn't.
 	it.fails.each([0, 10])("keeps percentage picture padding outside the border inset (%s)", async (shadowWidth) => {
-		const plain = await picturePixels("onyx", 10, "semantic", "@version 1;", shadowWidth);
-		const padded = await picturePixels("onyx", 10, "semantic", "@version 1; picture { padding: 1%; }", shadowWidth);
+		const plain = await picturePixels("onyx", 10, "@version 1;", shadowWidth);
+		const padded = await picturePixels("onyx", 10, "@version 1; picture { padding: 1%; }", shadowWidth);
 		expect(padded.borderPixels).toBe(plain.borderPixels);
 		expect(padded.imagePixels).toBeLessThan(plain.imagePixels);
 	});
 	it.each([0, 10])("preserves border and authored padding with shadow width %s", async (shadowWidth) => {
-		const plain = await picturePixels("onyx", 10, "semantic", "@version 1;", shadowWidth);
-		const zero = await picturePixels("onyx", 10, "semantic", "@version 1; picture { padding: 0; }", shadowWidth);
-		const padded = await picturePixels("onyx", 10, "semantic", "@version 1; picture { padding: 5pt; }", shadowWidth);
+		const plain = await picturePixels("onyx", 10, "@version 1;", shadowWidth);
+		const zero = await picturePixels("onyx", 10, "@version 1; picture { padding: 0; }", shadowWidth);
+		const padded = await picturePixels("onyx", 10, "@version 1; picture { padding: 5pt; }", shadowWidth);
 		expect(zero).toEqual(plain);
 		expect(padded.borderPixels).toBe(plain.borderPixels);
 		expect(padded.imagePixels).toBeLessThan(plain.imagePixels);
@@ -167,23 +165,14 @@ describe("picture border visibility (#3017)", () => {
 	});
 	it("honors semantic border width overrides", async () => {
 		const metadataBorder = await picturePixels("onyx", 10);
-		const overridden = await picturePixels(
-			"onyx",
-			0,
-			"semantic",
-			"@version 1; picture { border: 10pt solid #ff00ff; }",
-		);
+		const overridden = await picturePixels("onyx", 0, "@version 1; picture { border: 10pt solid #ff00ff; }");
 		expect(overridden).toEqual(metadataBorder);
-	});
-	it("keeps legacy picture borders visible", async () => {
-		const bordered = await picturePixels("onyx", 10, "legacy");
-		expect(bordered.borderPixels).toBeGreaterThan(1000);
 	});
 	it.each(["onyx", "ditto", "glalie"] as const)(
 		"draws a soft centered shadow without moving the photo (%s)",
 		async (template) => {
 			const plain = await picturePixels(template, 0);
-			const shadow = await picturePixels(template, 0, "semantic", "@version 1;", 10);
+			const shadow = await picturePixels(template, 0, "@version 1;", 10);
 			expect(plain.shadowPixels).toBe(0);
 			expect(shadow.shadowPixels).toBeGreaterThan(100);
 			expect(shadow.bounds).toEqual(plain.bounds);
@@ -194,7 +183,6 @@ describe("picture border visibility (#3017)", () => {
 		const shadow = await picturePixels(
 			"onyx",
 			0,
-			"semantic",
 			"@version 1; picture { -resume-shadow-width: 10pt; -resume-shadow-color: rgba(0, 0, 255, 0.5); border-radius: 50pt; }",
 		);
 		expect(shadow.shadowPixels).toBeGreaterThan(100);
@@ -206,25 +194,25 @@ describe("picture border visibility (#3017)", () => {
 		context.fillStyle = "#00aa00";
 		context.fillRect(0, 0, 100, 100);
 		context.clearRect(30, 30, 40, 40);
-		const shadow = await picturePixels("onyx", 0, "semantic", "@version 1;", 10, transparent.toDataURL("image/png"));
+		const shadow = await picturePixels("onyx", 0, "@version 1;", 10, transparent.toDataURL("image/png"));
 		expect(shadow.shadowPixels).toBeGreaterThan(100);
 		expect(shadow.center).toEqual([255, 255, 255]);
 	});
 	it("preserves rotated photo geometry and opacity", async () => {
 		const css = "@version 1; picture { transform: rotate(25deg); }";
-		const plain = await picturePixels("onyx", 0, "semantic", css, 0, undefined, { opacity: 0.5 });
-		const shadow = await picturePixels("onyx", 0, "semantic", css, 10, undefined, { opacity: 0.5 });
+		const plain = await picturePixels("onyx", 0, css, 0, undefined, { opacity: 0.5 });
+		const shadow = await picturePixels("onyx", 0, css, 10, undefined, { opacity: 0.5 });
 		expect(shadow.shadowPixels).toBeGreaterThan(100);
 		expect(shadow.bounds).toEqual(plain.bounds);
 		expect(shadow.center).toEqual(plain.center);
 	});
 	it("keeps the outer shadow visible when the picture clips its contents", async () => {
-		const shadow = await picturePixels("onyx", 0, "semantic", "@version 1;", 10, undefined, { overflow: "hidden" });
+		const shadow = await picturePixels("onyx", 0, "@version 1;", 10, undefined, { overflow: "hidden" });
 		expect(shadow.shadowPixels).toBeGreaterThan(100);
 	});
 	it("matches percentage and absolute picture corner radii", async () => {
-		const absolute = await picturePixels("onyx", 0, "semantic", "@version 1; picture { border-radius: 50pt; }", 10);
-		const percent = await picturePixels("onyx", 0, "semantic", "@version 1; picture { border-radius: 50%; }", 10);
+		const absolute = await picturePixels("onyx", 0, "@version 1; picture { border-radius: 50pt; }", 10);
+		const percent = await picturePixels("onyx", 0, "@version 1; picture { border-radius: 50%; }", 10);
 		expect(percent).toEqual(absolute);
 	});
 });

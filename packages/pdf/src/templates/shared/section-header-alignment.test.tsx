@@ -75,15 +75,12 @@ const expectTrailingAlignment = (items: TextItem[], rtl = false) => {
 };
 
 describe("optional experience and education header fields (#3338)", () => {
-	it.each(["legacy", "semantic"] as const)(
-		"keeps dates at the trailing edge with empty leading fields in %s mode",
-		async (mode) => {
-			const data = fixture();
-			data.metadata.stylesheet = { mode, source: { languageVersion: 1, text: "@version 1;" } };
-			const items = await renderText(data);
-			expectTrailingAlignment(items);
-		},
-	);
+	it("keeps dates at the trailing edge with empty leading fields", async () => {
+		const data = fixture();
+		data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: "@version 1;" } };
+		const items = await renderText(data);
+		expectTrailingAlignment(items);
+	});
 
 	it("preserves RTL row alignment when leading fields are empty", async () => {
 		const data = fixture();

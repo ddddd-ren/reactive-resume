@@ -6,7 +6,7 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../document";
 import { pdf } from "../forme/testing";
 import { semanticNodeKeys } from "./node-keys";
-import { resolveResumePresentation, resolveStylesheetMode } from "./resolve";
+import { resolveResumePresentation } from "./resolve";
 
 const source = (text: string) => ({ languageVersion: 1, text });
 
@@ -100,7 +100,6 @@ const resolveIssueFixture = (text: string) => {
 		data,
 		template: "onyx",
 		source: source(text),
-		mode: "semantic",
 	});
 };
 
@@ -148,7 +147,6 @@ describe("semantic issue fixtures", () => {
 				data,
 				template: "onyx",
 				source: source(`@version 1;${text}`),
-				mode: "semantic",
 			});
 
 		expect(resolve("contact-item { color: red; } link { color: blue; }")[contact]?.style?.color).toBe("blue");
@@ -183,26 +181,6 @@ describe("semantic issue fixtures", () => {
 
 		expect(presentation[skillName]?.style?.fontWeight).toBe("400");
 		expect(presentation[company]?.style?.fontWeight).not.toBe("400");
-	});
-
-	it("never applies legacy and semantic custom styles together", () => {
-		const semanticData = buildIssueFixture();
-		semanticData.metadata.stylesheet = {
-			mode: "semantic",
-			source: source("@version 1;"),
-		};
-		const legacyData = buildIssueFixture();
-
-		expect(resolveStylesheetMode(semanticData)).toBe("semantic");
-		expect(resolveStylesheetMode(legacyData)).toBe("legacy");
-		expect(
-			resolveResumePresentation({
-				data: legacyData,
-				template: "onyx",
-				source: source("@version 1; name { color: red; }"),
-				mode: "legacy",
-			}),
-		).toEqual({});
 	});
 
 	it("applies issue-regression styles to the final existing PDF primitives", async () => {

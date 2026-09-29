@@ -70,7 +70,7 @@ describe("semantic pagination cancellation", () => {
 		["revert", true, false],
 	] as const)("maps %s over builder pagination to explicit break=%s and wrap=%s", (value, breakBefore, wrap) => {
 		const data = buildFixture(value);
-		const presentation = resolveResumePresentation({ data, template: "onyx", mode: "semantic" });
+		const presentation = resolveResumePresentation({ data, template: "onyx" });
 		const sectionKey = semanticNodeKeys.section(semanticNodeKeys.region(semanticNodeKeys.page(1), "main"), "summary");
 
 		expect(presentation[sectionKey]).toMatchObject({ break: breakBefore, wrap });

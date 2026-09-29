@@ -14,7 +14,7 @@ import {
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { getRichTextSemanticNodeKey } from "../../semantic/rich-text-keys";
 import { Html, Link as PdfLink, Text as PdfText } from "../../text";
-import { useSectionStyleRule, useTemplateStyle } from "./context";
+import { useTemplateStyle } from "./context";
 import {
 	normalizeRichTextHtml,
 	projectNormalizedRichTextHtml,
@@ -93,19 +93,7 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 	const richListItemRowStyle = useTemplateStyle("richListItemRow");
 	const richListItemMarkerStyle = useTemplateStyle("richListItemMarker");
 	const richListItemContentStyle = useTemplateStyle("richListItemContent");
-	const richParagraphRuleStyle = useSectionStyleRule("richParagraph");
-	const richListRuleStyle = useSectionStyleRule("richList");
-	const richListItemRowRuleStyle = useSectionStyleRule("richListItemRow");
-	const richListItemContentRuleStyle = useSectionStyleRule("richListItemContent");
-	const richLinkRuleStyle = useSectionStyleRule("richLink");
-	const richBoldRuleStyle = useSectionStyleRule("richBold");
-	const richMarkRuleStyle = useSectionStyleRule("richMark");
-	const bodyLineHeight = resolveRichTextBodyLineHeight(
-		richParagraphStyle,
-		richParagraphRuleStyle,
-		richListItemContentStyle,
-		richListItemContentRuleStyle,
-	);
+	const bodyLineHeight = resolveRichTextBodyLineHeight(richParagraphStyle, richListItemContentStyle);
 	const proseSpacing = createRichTextProseSpacing(bodyLineHeight);
 
 	const normalizedHtml = normalizeRichTextHtml(children, {
@@ -317,7 +305,6 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 							{...resolvedPdfTextProps(contentResolved)}
 							style={composeStyles(
 								richListItemContentStyle,
-								richListItemContentRuleStyle,
 								contentItemStyles,
 								contentResolved.style,
 								safeTextStyle,
@@ -333,7 +320,6 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 							{...resolvedPdfFlowProps(contentResolved)}
 							style={composeStyles(
 								richListItemContentStyle,
-								richListItemContentRuleStyle,
 								contentItemStyles,
 								contentResolved.style,
 								richListItemContentStackStyle,
@@ -365,7 +351,6 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 							{...resolvedPdfFlowProps(itemResolved)}
 							style={composeStyles(
 								richListItemRowStyle,
-								richListItemRowRuleStyle,
 								itemStyles,
 								getRichTextEdgeTrimStyle(element),
 								itemResolved.style,
@@ -385,11 +370,6 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 				hideLinkUnderline: metadata.page.hideLinkUnderline,
 				linkStyle,
 				richParagraphStyle,
-				richParagraphRuleStyle,
-				richListRuleStyle,
-				richBoldRuleStyle,
-				richLinkRuleStyle,
-				richMarkRuleStyle,
 				proseSpacing,
 			})}
 		>

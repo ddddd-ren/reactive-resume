@@ -58,16 +58,6 @@ vi.mock("./worker-client", () => ({
 	}),
 }));
 
-const fatalError: SemanticCssDiagnostic = {
-	code: "VERSION_MISMATCH",
-	severity: "error",
-	message: "Version mismatch",
-	range: {
-		start: { line: 2, column: 3, offset: 17 },
-		end: { line: 2, column: 9, offset: 23 },
-	},
-};
-
 const guideName = /read the applying custom styles guide.*opens in new tab/i;
 
 const expectGuideLink = (root: HTMLElement) => {
@@ -294,7 +284,6 @@ describe("StylesheetEditorShell", () => {
 			</I18nProvider>,
 		);
 
-		expect(screen.queryByRole("button", { name: /activate semantic css/i })).not.toBeInTheDocument();
 		expect(screen.queryByRole("button", { name: /save|apply/i })).not.toBeInTheDocument();
 	});
 
@@ -321,7 +310,7 @@ describe("StylesheetEditorShell", () => {
 		expect(builder.data.metadata.stylesheet.source.text).toBe("name { color: blue; }\n");
 	});
 
-	it("switches a converted legacy draft through the ordinary resume update", async () => {
+	it("writes a first edit to a resume without a stylesheet as Semantic CSS", () => {
 		render(
 			<I18nProvider i18n={i18n}>
 				<TooltipProvider>
@@ -329,33 +318,15 @@ describe("StylesheetEditorShell", () => {
 				</TooltipProvider>
 			</I18nProvider>,
 		);
+		const view = EditorView.findFromDOM(screen.getByRole("textbox", { name: "Semantic CSS stylesheet" }));
+		if (!view) throw new Error("Missing editor view");
 
-		const activate = await screen.findByRole("button", { name: "Activate Semantic CSS" });
-		await waitFor(() => expect(activate).toBeEnabled());
-		fireEvent.click(activate);
+		act(() => view.dispatch({ changes: { from: 0, insert: "name { color: blue; }\n" } }));
 
 		expect(builder.data?.metadata.stylesheet).toEqual({
 			mode: "semantic",
-			source: { languageVersion: 1, text: "" },
+			source: { languageVersion: 1, text: "name { color: blue; }\n" },
 		});
-	});
-
-	it("does not block legacy activation on compiler errors", async () => {
-		compileWorker.diagnostics = [fatalError];
-
-		render(
-			<I18nProvider i18n={i18n}>
-				<TooltipProvider>
-					<StylesheetEditorShell />
-				</TooltipProvider>
-			</I18nProvider>,
-		);
-
-		const activate = await screen.findByRole("button", { name: "Activate Semantic CSS" });
-		expect(activate).toBeEnabled();
-		fireEvent.click(activate);
-
-		expect(builder.data?.metadata.stylesheet?.mode).toBe("semantic");
 	});
 
 	it("makes editor mutation controls read-only while the resume is locked", () => {
@@ -375,7 +346,6 @@ describe("StylesheetEditorShell", () => {
 			"contenteditable",
 			"false",
 		);
-		expect(screen.getByRole("button", { name: "Activate Semantic CSS" })).toBeDisabled();
 		expect(screen.getByRole("button", { name: "Undo stylesheet edit" })).toBeDisabled();
 		expect(screen.getByRole("button", { name: "Redo stylesheet edit" })).toBeDisabled();
 		expect(screen.getByRole("button", { name: "Format stylesheet" })).toBeDisabled();
@@ -397,7 +367,6 @@ describe("StylesheetEditorShell", () => {
 
 		const sheet = await screen.findByRole("dialog");
 		expect(within(sheet).getByRole("heading", { name: "Semantic CSS stylesheet" })).toBeInTheDocument();
-		expect(within(sheet).getByRole("button", { name: "Activate Semantic CSS" })).toBeInTheDocument();
 		expect(within(sheet).getByRole("toolbar", { name: "Stylesheet editor" })).toBeInTheDocument();
 		expectGuideLink(sheet);
 		expect(document.querySelectorAll(".cm-editor")).toHaveLength(1);

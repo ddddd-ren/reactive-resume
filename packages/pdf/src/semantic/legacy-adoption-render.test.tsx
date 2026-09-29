@@ -159,94 +159,60 @@ const render = async (data: ResumeData, template: Template): Promise<Uint8Array>
 	return new Uint8Array(await renderToBuffer(document));
 };
 
-const semanticData = (data: ResumeData): ResumeData => {
+// What the API stores on read/write: the legacy rules converted into the resume's Semantic CSS stylesheet.
+const adopt = (data: ResumeData): ResumeData => {
 	const conversion = convertLegacyStyleRules(data);
-	const semantic = structuredClone(data);
-	semantic.metadata.styleRules = [...conversion.sanitizedRules];
-	semantic.metadata.stylesheet = { mode: "semantic", source: conversion.source };
-	return semantic;
+	const adopted = structuredClone(data);
+	adopted.metadata.styleRules = [...conversion.sanitizedRules];
+	adopted.metadata.stylesheet = { mode: "semantic", source: conversion.source };
+	return adopted;
 };
 
-type RasterComparison = {
-	pixelDiffRatio: number;
-	mismatches: readonly string[];
-};
-
-const comparePdfRasters = async (legacy: Uint8Array, semantic: Uint8Array): Promise<RasterComparison> => {
-	const legacyPages = await rasterizePdf(legacy);
-	const semanticPages = await rasterizePdf(semantic);
+const comparePdfRasters = async (before: Uint8Array, after: Uint8Array): Promise<string[]> => {
+	const beforePages = await rasterizePdf(before);
+	const afterPages = await rasterizePdf(after);
 	const mismatches: string[] = [];
-	if (legacyPages.length !== semanticPages.length) {
-		mismatches.push(`page count: legacy=${legacyPages.length} semantic=${semanticPages.length}`);
+	if (beforePages.length !== afterPages.length) {
+		mismatches.push(`page count: ${beforePages.length} -> ${afterPages.length}`);
 	}
-
-	let changed = 0;
-	let pixels = 0;
-	for (const [index, legacyPage] of legacyPages.entries()) {
-		const semanticPage = semanticPages[index];
-		if (!semanticPage) continue;
-		if (semanticPage.width !== legacyPage.width || semanticPage.height !== legacyPage.height) {
-			mismatches.push(
-				`page ${index + 1} dimensions: legacy=${legacyPage.width}x${legacyPage.height} semantic=${semanticPage.width}x${semanticPage.height}`,
-			);
+	for (const [index, beforePage] of beforePages.entries()) {
+		const afterPage = afterPages[index];
+		if (!afterPage) continue;
+		if (afterPage.width !== beforePage.width || afterPage.height !== beforePage.height) {
+			mismatches.push(`page ${index + 1} dimensions changed`);
 			continue;
 		}
-		const changedOnPage = pixelmatch(
-			legacyPage.data,
-			semanticPage.data,
-			undefined,
-			legacyPage.width,
-			legacyPage.height,
-			{ threshold: 0 },
-		);
-		if (changedOnPage > 0) {
-			mismatches.push(`page ${index + 1} pixels: changed=${changedOnPage}/${legacyPage.width * legacyPage.height}`);
-		}
-		changed += changedOnPage;
-		pixels += legacyPage.width * legacyPage.height;
+		const changed = pixelmatch(beforePage.data, afterPage.data, undefined, beforePage.width, beforePage.height, {
+			threshold: 0,
+		});
+		if (changed > 0) mismatches.push(`page ${index + 1} pixels: changed=${changed}`);
 	}
-	return { pixelDiffRatio: pixels === 0 ? (mismatches.length > 0 ? 1 : 0) : changed / pixels, mismatches };
+	return mismatches;
 };
 
-describe("legacy activation raster parity", () => {
-	it.each(fixtureNames)(
-		"has zero real-PDF pixel drift for %s",
-		async (fixture) => {
-			const legacy = buildFixture(readRules(fixture));
-			const semantic = semanticData(legacy);
+// Rules with no visible effect on this fixture: disabled, or restating the award title's existing weight.
+const noOpFixtures = new Set<string>(["award-unbold", "disabled-rules"]);
 
-			expect(await comparePdfRasters(await render(legacy, "onyx"), await render(semantic, "onyx"))).toEqual({
-				pixelDiffRatio: 0,
-				mismatches: [],
-			});
+// Unconverted rules no longer render, so the fixture itself is the unstyled baseline.
+const drift = async (data: ResumeData, template: Template) =>
+	comparePdfRasters(await render(data, template), await render(adopt(data), template));
+
+describe("adopted legacy rules in the rendered PDF", () => {
+	it.each(fixtureNames)(
+		"renders the converted %s stylesheet",
+		async (fixture) => {
+			const mismatches = await drift(buildFixture(readRules(fixture)), "onyx");
+
+			if (noOpFixtures.has(fixture)) expect(mismatches).toEqual([]);
+			else expect(mismatches).not.toEqual([]);
 		},
 		30_000,
 	);
 
 	it.each(templates)(
-		"smoke-renders %s without activation pixel drift",
+		"renders the converted smoke stylesheet on %s",
 		async (template) => {
-			const legacy = buildFixture(readRules("all-templates-smoke"));
-			const semantic = semanticData(legacy);
-
-			expect(await comparePdfRasters(await render(legacy, template), await render(semantic, template))).toEqual({
-				pixelDiffRatio: 0,
-				mismatches: [],
-			});
-		},
-		30_000,
-	);
-
-	it.each(["onyx", "meowth"] as const)(
-		"has zero combined-separator and box-style pixel drift on %s",
-		async (template) => {
-			const legacy = buildFixture(readRules("combined-text-host"));
-			const semantic = semanticData(legacy);
-
-			expect(await comparePdfRasters(await render(legacy, template), await render(semantic, template))).toEqual({
-				pixelDiffRatio: 0,
-				mismatches: [],
-			});
+			expect(await drift(buildFixture(readRules("all-templates-smoke")), template)).not.toEqual([]);
 		},
 		30_000,
 	);

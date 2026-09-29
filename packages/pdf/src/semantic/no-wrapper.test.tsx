@@ -23,7 +23,7 @@ const semanticSource = (text = "@version 1;\n") => ({
 	text,
 });
 
-const buildFixture = (mode: "legacy" | "semantic"): ResumeData => {
+const buildFixture = (withStylesheet: boolean): ResumeData => {
 	const data = structuredClone(sampleResumeData);
 	data.picture.hidden = true;
 	data.basics.name = "Ada Lovelace";
@@ -49,9 +49,9 @@ const buildFixture = (mode: "legacy" | "semantic"): ResumeData => {
 			sidebar: ["skills", "languages"],
 		},
 	];
-	if (mode === "semantic") {
+	if (withStylesheet) {
 		data.metadata.stylesheet = {
-			mode,
+			mode: "semantic",
 			source: semanticSource(),
 		};
 	}
@@ -74,9 +74,9 @@ const textValues = (node: HostNode): string[] => [
 	...(node.children ?? []).flatMap((child) => textValues(child)),
 ];
 
-describe("semantic PDF bindings do not add layout wrappers", () => {
+describe("resumes without a stylesheet render like an empty stylesheet", () => {
 	it("uses a split-page fixture with chrome, ordinary sections, rich lists, and levels", () => {
-		const data = buildFixture("legacy");
+		const data = buildFixture(false);
 
 		expect(data.metadata.layout.pages[0]).toMatchObject({
 			fullWidth: false,
@@ -93,11 +93,11 @@ describe("semantic PDF bindings do not add layout wrappers", () => {
 	it.each(templateSchema.options)(
 		"%s preserves primitive type, count, and order for an empty stylesheet",
 		async (template) => {
-			const legacy = await renderHostTree(buildFixture("legacy"), template);
-			const semantic = await renderHostTree(buildFixture("semantic"), template);
+			const missing = await renderHostTree(buildFixture(false), template);
+			const empty = await renderHostTree(buildFixture(true), template);
 
-			expect(textValues(semantic)).toEqual(textValues(legacy));
-			expect(primitiveTypes(semantic)).toEqual(primitiveTypes(legacy));
+			expect(textValues(empty)).toEqual(textValues(missing));
+			expect(primitiveTypes(empty)).toEqual(primitiveTypes(missing));
 		},
 	);
 });

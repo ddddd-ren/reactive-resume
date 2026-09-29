@@ -15,7 +15,7 @@ type HostNode = {
 const emptyStylesheet = { languageVersion: 1, text: "@version 1;" };
 
 const buildFixture = (
-	mode: "missing" | "legacy" | "semantic",
+	mode: "missing" | "semantic",
 	hideLinkUnderline: boolean,
 	text = emptyStylesheet.text,
 ): ResumeData => {
@@ -58,8 +58,6 @@ describe("PDF link decoration fidelity", () => {
 	it.each([
 		["missing", false, "underline"],
 		["missing", true, "none"],
-		["legacy", false, "underline"],
-		["legacy", true, "none"],
 		["semantic", false, "underline"],
 		["semantic", true, "none"],
 	] as const)("%s stylesheet with hideLinkUnderline=%s resolves to %s", async (mode, hidden, expected) => {

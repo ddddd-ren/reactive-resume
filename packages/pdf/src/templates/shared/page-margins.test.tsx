@@ -13,14 +13,13 @@ const renderOverflow = async (
 	template: Template,
 	placement: "main" | "sidebar",
 	locale = "en-US",
-	mode: "semantic" | "legacy" = "semantic",
 	explicitPage?: { fullWidth: boolean },
 	stylesheet = "@version 1;",
 	fullWidth = false,
 ) => {
 	const data = structuredClone(defaultResumeData);
 	data.basics.name = "Margin Audit";
-	data.metadata.stylesheet = { mode, source: { languageVersion: 1, text: stylesheet } };
+	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: stylesheet } };
 	data.metadata.typography.body.fontFamily = "Helvetica";
 	data.metadata.typography.heading.fontFamily = "Helvetica";
 	data.metadata.page.marginY = 48;
@@ -90,7 +89,6 @@ describe("physical page margins (#3337, #3175)", () => {
 			"glalie",
 			"main",
 			"en-US",
-			"semantic",
 			undefined,
 			`@version 1; template-part[name="sidebar-background"] { background-color: ${color}; }`,
 		);
@@ -102,7 +100,7 @@ describe("physical page margins (#3337, #3175)", () => {
 		expect(backgroundAt(overflow, 3, overflow.height - 4)).toEqual(inside);
 	});
 	it("preserves the existing Glalie sidebar background on full-width overflow", async () => {
-		const { rasters } = await renderOverflow("glalie", "main", "en-US", "semantic", undefined, "@version 1;", true);
+		const { rasters } = await renderOverflow("glalie", "main", "en-US", undefined, "@version 1;", true);
 		const overflow = rasters[1];
 		if (!overflow) throw new Error("Missing overflow raster");
 		expect(backgroundAt(overflow, 3, 100)).toEqual([242, 177, 177]);
@@ -174,20 +172,11 @@ describe("physical page margins (#3337, #3175)", () => {
 				expect(line.transform[5]).toBeGreaterThanOrEqual(47);
 			}
 	});
-	it.each(templates)("keeps legacy overflow within margins (%s)", async (template) => {
-		const { pages } = await renderOverflow(template, "sidebar", "en-US", "legacy");
-		expect(pages.length).toBeGreaterThan(1);
-		for (const page of pages)
-			for (const line of page.lines) {
-				expect(page.height - line.transform[5] - line.height).toBeGreaterThanOrEqual(45.8);
-				expect(line.transform[5]).toBeGreaterThanOrEqual(47);
-			}
-	});
 	for (const fullWidth of [false, true]) {
 		it.each(templates)(
 			`starts explicit headerless pages at the margin (fullWidth: ${fullWidth}, %s)`,
 			async (template) => {
-				const { pages } = await renderOverflow(template, "main", "en-US", "semantic", { fullWidth });
+				const { pages } = await renderOverflow(template, "main", "en-US", { fullWidth });
 				expect(pages).toHaveLength(2);
 				const page = pages[1];
 				if (!page) throw new Error("Missing explicit second page");

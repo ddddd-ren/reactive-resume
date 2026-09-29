@@ -7,7 +7,7 @@ describe("@reactive-resume/pdf/semantic", () => {
 		const data = structuredClone(sampleResumeData);
 		data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 2, text: "@version 2;" } };
 
-		const inspection = resolveResumeRuntime({ data, template: data.metadata.template, mode: "semantic" });
+		const inspection = resolveResumeRuntime({ data, template: data.metadata.template });
 
 		expect(inspection.diagnostics).toContainEqual(
 			expect.objectContaining({ code: "UNSUPPORTED_VERSION", severity: "error" }),
@@ -23,7 +23,7 @@ describe("@reactive-resume/pdf/semantic", () => {
 			source: { languageVersion: 1, text: `@version 1;\n${selectors} { color: red; }` },
 		};
 
-		const inspection = resolveResumeRuntime({ data, template: data.metadata.template, mode: "semantic" });
+		const inspection = resolveResumeRuntime({ data, template: data.metadata.template });
 
 		expect(inspection.diagnostics).toContainEqual(
 			expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }),
@@ -42,7 +42,7 @@ describe("@reactive-resume/pdf/semantic", () => {
 			},
 		};
 
-		const inspection = resolveResumeRuntime({ data, template: data.metadata.template, mode: "semantic" });
+		const inspection = resolveResumeRuntime({ data, template: data.metadata.template });
 
 		expect(inspection.presentation["page-1/region-header/header/name"]?.style?.color).toBe("#123456");
 		expect(inspection.diagnostics).toContainEqual(

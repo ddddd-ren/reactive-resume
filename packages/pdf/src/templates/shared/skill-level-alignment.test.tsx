@@ -11,7 +11,6 @@ import { rasterizePdf } from "../../semantic/test/rasterize-pdf";
 type FixtureOptions = {
 	columns: number;
 	count: number;
-	mode?: "semantic" | "legacy";
 	configure?: (data: ResumeData) => void;
 };
 
@@ -19,14 +18,14 @@ function setCss(data: ResumeData, css: string) {
 	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: `@version 1; ${css}` } };
 }
 
-async function renderRatings({ columns, count, mode = "semantic", configure }: FixtureOptions) {
+async function renderRatings({ columns, count, configure }: FixtureOptions) {
 	const data = structuredClone(defaultResumeData);
 	data.metadata.typography.body.fontFamily = "Helvetica";
 	data.metadata.typography.heading.fontFamily = "Helvetica";
 	data.metadata.page.hideIcons = true;
 	data.metadata.design.colors.primary = "rgba(255, 0, 0, 1)";
 	data.metadata.layout.pages = [{ fullWidth: true, main: ["skills"], sidebar: [] }];
-	data.metadata.stylesheet = { mode, source: { languageVersion: 1, text: "@version 1;" } };
+	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: "@version 1;" } };
 	data.sections.skills.columns = columns;
 	data.sections.skills.items = Array.from({ length: count }, (_, index) => ({
 		id: `skill-${index}`,
@@ -39,7 +38,7 @@ async function renderRatings({ columns, count, mode = "semantic", configure }: F
 		keywords: index === 1 ? Array.from({ length: 12 }, (_, word) => `Keyword${word}`) : ["Short"],
 	}));
 	configure?.(data);
-	expect(resolveResumeRuntime({ data, template: "onyx", mode }).diagnostics).toEqual([]);
+	expect(resolveResumeRuntime({ data, template: "onyx" }).diagnostics).toEqual([]);
 	const bytes = await act(() => renderToBuffer(<ResumeDocument data={data} template="onyx" />));
 	const pages = await rasterizePdf(new Uint8Array(bytes));
 	const loading = getDocument({ data: new Uint8Array(bytes) });
@@ -82,21 +81,18 @@ async function renderRatings({ columns, count, mode = "semantic", configure }: F
 }
 
 describe("skill rating alignment (#3343)", () => {
-	it.each(["semantic", "legacy"] as const)(
-		"aligns mixed-height skills and preserves an incomplete row in %s mode",
-		async (mode) => {
-			const {
-				rows: [rows],
-				text,
-			} = await renderRatings({ columns: 2, count: 3, mode });
-			expect(rows).toHaveLength(2);
-			if (!rows?.[0] || !rows[1]) throw new Error("Missing rating rows");
-			// Ten circles share the first row; the remaining skill has five.
-			expect(rows.map((row) => row.circles)).toEqual([10, 5]);
-			expect(text).toContain("Keyword11");
-			expect(text).toContain("Skill 2");
-		},
-	);
+	it("aligns mixed-height skills and preserves an incomplete row", async () => {
+		const {
+			rows: [rows],
+			text,
+		} = await renderRatings({ columns: 2, count: 3 });
+		expect(rows).toHaveLength(2);
+		if (!rows?.[0] || !rows[1]) throw new Error("Missing rating rows");
+		// Ten circles share the first row; the remaining skill has five.
+		expect(rows.map((row) => row.circles)).toEqual([10, 5]);
+		expect(text).toContain("Keyword11");
+		expect(text).toContain("Skill 2");
+	});
 	it("aligns three columns and preserves an incomplete row", async () => {
 		const {
 			rows: [rows],

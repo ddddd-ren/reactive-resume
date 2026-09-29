@@ -110,7 +110,7 @@ describe("skill keyword presentation", () => {
 				text: '@version 1; section[type="skills"] field[name="keywords"] { font-size: 18pt; } section[type="skills"] item[id="css-hidden"] { display: none; }',
 			},
 		};
-		const runtime = resolveResumeRuntime({ data, template: "leafish", mode: "semantic" });
+		const runtime = resolveResumeRuntime({ data, template: "leafish" });
 		expect(runtime.diagnostics).toEqual([]);
 		const { text, pages } = await renderKeywords(data);
 		expect(text).toContain("Engineering");

@@ -58,7 +58,6 @@ const renderHeaderBoxes = async (template: Template): Promise<string[]> => {
 	const semanticRuntime = resolveResumeRuntime({
 		data,
 		template,
-		mode: "semantic",
 		source: { languageVersion: 1, text: STYLESHEET },
 	});
 	const element = createElement(ResumeDocument, { data, template, semanticRuntime }) as unknown as Parameters<
