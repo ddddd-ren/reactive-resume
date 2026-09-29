@@ -2,6 +2,7 @@ import type { AuthSession } from "@reactive-resume/auth/types";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import {
 	DropdownMenu,
@@ -30,6 +31,7 @@ type Props = {
 
 export function UserDropdownMenu({ children }: Props) {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { i18n } = useLingui();
 	const { theme, setTheme } = useTheme();
 	const { data: session } = authClient.useSession();
@@ -46,6 +48,7 @@ export function UserDropdownMenu({ children }: Props) {
 			fetchOptions: {
 				onSuccess: () => {
 					toast.close(toastId);
+					queryClient.clear();
 					void router.invalidate();
 				},
 				onError: ({ error }) => {
