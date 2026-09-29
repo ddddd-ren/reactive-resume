@@ -138,6 +138,15 @@ export function AtsChecker({ signedIn, importPending }: AtsCheckerProps) {
 	);
 }
 
+async function fetchSample() {
+	try {
+		const res = await fetch(SAMPLE.url);
+		return res.ok ? await res.blob() : null;
+	} catch {
+		return null;
+	}
+}
+
 type IdleProps = {
 	error?: string | undefined;
 	posting: string;
@@ -150,9 +159,13 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 	const input = useRef<HTMLInputElement>(null);
 	const [dragging, setDragging] = useState(false);
 
+	const [sampleError, setSampleError] = useState<string>();
+
 	const sample = async () => {
-		const blob = await (await fetch(SAMPLE.url)).blob();
-		onFile(new File([blob], SAMPLE.name, { type: "application/pdf" }));
+		setSampleError(undefined);
+		const blob = await fetchSample();
+		if (blob) onFile(new File([blob], SAMPLE.name, { type: "application/pdf" }));
+		else setSampleError(t`Couldn't load the sample file. Try again.`);
 	};
 
 	return (
@@ -217,9 +230,9 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 				/>
 			</div>
 
-			{error && (
+			{(error ?? sampleError) && (
 				<p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-danger-text text-sm">
-					{error}
+					{error ?? sampleError}
 				</p>
 			)}
 
@@ -278,7 +291,7 @@ const verdict = (score: number) =>
 type Row = { key: string; title: string; count: string; tone: "danger" | "warn" | "accent"; body: React.ReactNode };
 
 /** One row per category with something to fix, worst first, plus the posting's terms when one was pasted. */
-export function issueRows(report: PdfAtsReport): Row[] {
+function issueRows(report: PdfAtsReport): Row[] {
 	const byCategory = new Map<PdfCategory, PdfAtsReport["findings"]>();
 	for (const finding of report.findings)
 		byCategory.set(finding.category, [...(byCategory.get(finding.category) ?? []), finding]);

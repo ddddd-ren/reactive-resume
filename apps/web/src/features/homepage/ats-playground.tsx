@@ -6,6 +6,21 @@ import { useEffect, useId, useRef, useState } from "react";
 const focusRing = "focus-visible:outline-2 focus-visible:outline-(--home-accent) focus-visible:outline-offset-4";
 const message = "max-w-[300px] text-[14px] leading-[1.8]";
 
+/** The extracted text of the chosen file, or of the bundled sample; null when the read was cancelled midway. */
+async function readPdf(selected: File | null, signal: AbortSignal) {
+	let source = selected;
+	if (!source) {
+		const response = await fetch("/templates/pdf/rhyhorn.pdf", { signal });
+		if (!response.ok) throw new Error("Sample PDF unavailable");
+		source = new File([await response.blob()], "rhyhorn.pdf", { type: "application/pdf" });
+	}
+	if (signal.aborted) return null;
+	const { runAtsCheck } = await import("@/features/ats-checker/run-ats-check");
+	if (signal.aborted) return null;
+	const result = await runAtsCheck(source, { signal });
+	return signal.aborted ? null : result.fullText;
+}
+
 export default function AtsPlayground() {
 	const inputId = useId();
 	const controllerRef = useRef<AbortController | null>(null);
@@ -38,18 +53,9 @@ export default function AtsPlayground() {
 		}
 		setPhase("reading");
 		try {
-			let source = selected;
-			if (!source) {
-				const response = await fetch("/templates/pdf/rhyhorn.pdf", { signal: controller.signal });
-				if (!response.ok) throw new Error("Sample PDF unavailable");
-				source = new File([await response.blob()], "rhyhorn.pdf", { type: "application/pdf" });
-			}
-			if (controller.signal.aborted) return;
-			const { runAtsCheck } = await import("@/features/ats-checker/run-ats-check");
-			if (controller.signal.aborted) return;
-			const result = await runAtsCheck(source, { signal: controller.signal });
-			if (controller.signal.aborted) return;
-			setText(result.fullText);
+			const fullText = await readPdf(selected, controller.signal);
+			if (fullText === null) return;
+			setText(fullText);
 			setPhase("done");
 		} catch (caught) {
 			if (controller.signal.aborted) return;

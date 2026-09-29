@@ -164,14 +164,14 @@ export default function ExportPlayground({ name, accent, typeface, template }: E
 	]);
 
 	const download = async () => {
+		const action = actions.get(format);
 		setBusy(true);
 		try {
-			await actions.get(format)?.();
+			if (action) await action();
 		} catch {
 			toast.add({ type: "error", description: t`Could not prepare the sample. Please try again.` });
-		} finally {
-			setBusy(false);
 		}
+		setBusy(false);
 	};
 
 	return (

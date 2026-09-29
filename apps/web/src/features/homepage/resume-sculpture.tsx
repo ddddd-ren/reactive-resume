@@ -1,7 +1,7 @@
 import type { CSSProperties, PointerEvent } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { m, useMotionTemplate, useReducedMotion, useSpring } from "motion/react";
+import { m, useReducedMotion, useSpring } from "motion/react";
 import { useId, useRef, useState } from "react";
 import { cn } from "@reactive-resume/utils/style";
 import "./resume-sculpture.css";
@@ -60,7 +60,6 @@ export function ResumeSculpture({
 	const reducedMotion = useReducedMotion();
 	const rotateX = useSpring(10, { stiffness: 180, damping: 26 });
 	const rotateY = useSpring(-19, { stiffness: 180, damping: 26 });
-	const transform = useMotionTemplate`rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(-7deg)`;
 
 	function startDrag(event: PointerEvent<HTMLDivElement>) {
 		if (event.pointerType === "touch" || event.button !== 0 || dragOrigin.current || reducedMotion) return;
@@ -114,7 +113,7 @@ export function ResumeSculpture({
 						className="sculpture-rig group/rig transform-3d absolute inset-0"
 						data-spread={spread}
 						data-instant={keyboardAction}
-						style={{ transform }}
+						style={{ rotateX, rotateY, rotateZ: -7 }}
 					>
 						{templates.map((paperTemplate, index) => {
 							const position = (index - templates.indexOf(template) + templates.length) % templates.length;

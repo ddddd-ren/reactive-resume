@@ -173,7 +173,6 @@ describe("ResumesCommandGroup", () => {
 		renderGroup();
 
 		expect(mocks.resumeQueryOptions).toHaveBeenCalledWith({
-			enabled: true,
 			input: { sort: "lastUpdatedAt", tags: [] },
 		});
 		expect(screen.getByText("Evil Apricot Pike")).toBeInTheDocument();
