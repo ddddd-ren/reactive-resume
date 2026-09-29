@@ -29,21 +29,4 @@ describe("getQueryClient", () => {
 		// json/meta envelope is included
 		expect(hashA).toContain('"json"');
 	});
-
-	it("round-trips data through dehydrate/hydrate via oRPC serializer", () => {
-		const client = getQueryClient();
-		const serializeData = client.getDefaultOptions().dehydrate?.serializeData;
-		const deserializeData = client.getDefaultOptions().hydrate?.deserializeData;
-
-		expect(serializeData).toBeTypeOf("function");
-		expect(deserializeData).toBeTypeOf("function");
-
-		const original = { id: "x", count: 3, when: new Date("2024-01-01T00:00:00Z") };
-		const serialized = serializeData?.(original);
-		const restored = deserializeData?.(serialized) as typeof original;
-
-		expect(restored.id).toBe(original.id);
-		expect(restored.count).toBe(original.count);
-		expect(restored.when.getTime()).toBe(original.when.getTime());
-	});
 });

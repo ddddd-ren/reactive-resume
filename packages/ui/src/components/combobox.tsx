@@ -7,7 +7,7 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from "@reactive-resume/ui/components/input-group";
-import { menuLabelClassName, menuSeparatorClassName } from "@reactive-resume/ui/components/menu-styles";
+import { menuSeparatorClassName } from "@reactive-resume/ui/components/menu-styles";
 import { cn } from "@reactive-resume/utils/style";
 
 const ComboboxRoot = ComboboxPrimitive.Root;
@@ -145,20 +145,6 @@ function ComboboxItem({ className, children, ...props }: ComboboxPrimitive.Item.
 	);
 }
 
-function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
-	return <ComboboxPrimitive.Group data-slot="combobox-group" className={cn(className)} {...props} />;
-}
-
-function ComboboxLabel({ className, ...props }: ComboboxPrimitive.GroupLabel.Props) {
-	return (
-		<ComboboxPrimitive.GroupLabel data-slot="combobox-label" className={cn(menuLabelClassName, className)} {...props} />
-	);
-}
-
-function ComboboxCollection({ ...props }: ComboboxPrimitive.Collection.Props) {
-	return <ComboboxPrimitive.Collection data-slot="combobox-collection" {...props} />;
-}
-
 function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
 	return (
 		<ComboboxPrimitive.Empty
@@ -212,13 +198,10 @@ export {
 	ComboboxChips,
 	ComboboxChipsInput,
 	ComboboxClear,
-	ComboboxCollection,
 	ComboboxContent,
 	ComboboxEmpty,
-	ComboboxGroup,
 	ComboboxInput,
 	ComboboxItem,
-	ComboboxLabel,
 	ComboboxList,
 	ComboboxRoot,
 	ComboboxSeparator,

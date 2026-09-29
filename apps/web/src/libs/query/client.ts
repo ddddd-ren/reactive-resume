@@ -14,17 +14,6 @@ export const getQueryClient = () => {
 					return JSON.stringify({ json, meta });
 				},
 			},
-			dehydrate: {
-				serializeData(data) {
-					const [json, meta] = serializer.serialize(data);
-					return { json, meta };
-				},
-			},
-			hydrate: {
-				deserializeData(data) {
-					return serializer.deserialize(data.json, data.meta);
-				},
-			},
 		},
 		mutationCache: new MutationCache({
 			onSettled: (_1, _2, _3, _4, _5, context) => {

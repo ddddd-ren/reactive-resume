@@ -1,3 +1,4 @@
+import type { AnyFormApi } from "@tanstack/react-form";
 import { t } from "@lingui/core/macro";
 import { useStore } from "@tanstack/react-form";
 import { useCallback, useEffect, useRef } from "react";
@@ -8,29 +9,7 @@ interface UseFormBlockerOptions {
 	shouldBlock?: () => boolean;
 }
 
-type BlockableFormStore = {
-	get: () => {
-		isDirty: boolean;
-		isSubmitting: boolean;
-	};
-	subscribe: {
-		(observer: {
-			next?: (value: { isDirty: boolean; isSubmitting: boolean }) => void;
-			error?: (error: unknown) => void;
-			complete?: () => void;
-		}): { unsubscribe: () => void };
-		(
-			next: (value: { isDirty: boolean; isSubmitting: boolean }) => void,
-			error?: (error: unknown) => void,
-			complete?: () => void,
-		): { unsubscribe: () => void };
-	};
-};
-
-export function useFormBlocker<TStore extends BlockableFormStore>(
-	form: { store: TStore },
-	options?: UseFormBlockerOptions,
-) {
+export function useFormBlocker(form: Pick<AnyFormApi, "store">, options?: UseFormBlockerOptions) {
 	const confirm = useConfirm();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const setOnBeforeClose = useDialogStore((state) => state.setOnBeforeClose);

@@ -3,13 +3,10 @@ import { describe, expect, it } from "vitest";
 import {
 	ComboboxChips,
 	ComboboxChipsInput,
-	ComboboxCollection,
 	ComboboxContent,
 	ComboboxEmpty,
-	ComboboxGroup,
 	ComboboxInput,
 	ComboboxItem,
-	ComboboxLabel,
 	ComboboxList,
 	ComboboxRoot,
 	ComboboxSeparator,
@@ -74,28 +71,10 @@ describe("ComboboxItem", () => {
 	});
 });
 
-describe("ComboboxList / ComboboxGroup / ComboboxLabel", () => {
+describe("ComboboxList", () => {
 	it("ComboboxList renders with data-slot='combobox-list'", () => {
 		renderCombobox({ open: true });
 		expect(document.querySelector("[data-slot=combobox-list]")).toBeInTheDocument();
-	});
-
-	it("ComboboxGroup and ComboboxLabel render with their slots", () => {
-		render(
-			<ComboboxRoot items={items} open>
-				<ComboboxInput />
-				<ComboboxContent>
-					<ComboboxList>
-						<ComboboxGroup items={items}>
-							<ComboboxLabel>Fruits</ComboboxLabel>
-							<ComboboxItem value="Apple">Apple</ComboboxItem>
-						</ComboboxGroup>
-					</ComboboxList>
-				</ComboboxContent>
-			</ComboboxRoot>,
-		);
-		expect(document.querySelector("[data-slot=combobox-group]")).toBeInTheDocument();
-		expect(document.querySelector("[data-slot=combobox-label]")).toBeInTheDocument();
 	});
 });
 
@@ -126,29 +105,6 @@ describe("ComboboxSeparator and ComboboxEmpty", () => {
 			</ComboboxRoot>,
 		);
 		expect(document.querySelector("[data-slot=combobox-empty]")).toBeInTheDocument();
-	});
-});
-
-describe("ComboboxCollection", () => {
-	it("renders without throwing", () => {
-		expect(() =>
-			render(
-				<ComboboxRoot items={items} open>
-					<ComboboxInput />
-					<ComboboxContent>
-						<ComboboxList>
-							<ComboboxCollection>
-								{(item) => (
-									<ComboboxItem key={item} value={item}>
-										{item}
-									</ComboboxItem>
-								)}
-							</ComboboxCollection>
-						</ComboboxList>
-					</ComboboxContent>
-				</ComboboxRoot>,
-			),
-		).not.toThrow();
 	});
 });
 

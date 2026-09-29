@@ -2,7 +2,6 @@
 
 import type { ComboboxOption } from "./combobox";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { beforeAll, describe, expect, it } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -45,26 +44,6 @@ describe("Combobox", () => {
 		wrap(<Combobox multiple options={[...options]} defaultValue={["alpha", "gamma"]} />);
 		expect(screen.getAllByText(/Alpha/).length).toBeGreaterThan(0);
 		expect(screen.getAllByText(/Gamma/).length).toBeGreaterThan(0);
-	});
-
-	it("renders grouped options with group labels", async () => {
-		const user = userEvent.setup();
-		const groupedOptions: ComboboxOption[] = [
-			{ value: "alpha", label: "Alpha", group: "Primary" },
-			{ value: "beta", label: "Beta", group: { value: "secondary", label: "Secondary" } },
-			{ value: "gamma", label: "Gamma", group: { value: "secondary", label: "Secondary" } },
-		];
-
-		wrap(<Combobox options={groupedOptions} placeholder="Pick something" />);
-
-		await user.click(screen.getByRole("combobox"));
-
-		expect(screen.getByText("Primary")).toBeInTheDocument();
-		expect(screen.getByText("Secondary")).toBeInTheDocument();
-		expect(screen.getByText("Alpha")).toBeInTheDocument();
-		expect(screen.getByText("Beta")).toBeInTheDocument();
-		expect(screen.getByText("Gamma")).toBeInTheDocument();
-		expect(document.querySelectorAll("[data-slot=combobox-group]")).toHaveLength(2);
 	});
 
 	it("renders nothing extra when given an empty options array (no crash)", () => {
