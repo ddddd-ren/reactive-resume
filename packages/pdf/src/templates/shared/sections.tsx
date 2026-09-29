@@ -614,11 +614,13 @@ const stackedSidebarSplitRowStyle = {
 	alignItems: "flex-start",
 } satisfies Style;
 
-const awardTitleDateRowStyle = {
-	flexDirection: "row",
-	alignItems: "flex-start",
-	justifyContent: "space-between",
-} satisfies Style;
+// The date stays beside the title in every template, even where `splitRow` stacks; right to left, it's mirrored.
+const awardTitleDateRowStyle = (rtl: boolean) =>
+	({
+		flexDirection: rtl ? "row-reverse" : "row",
+		alignItems: "flex-start",
+		justifyContent: "space-between",
+	}) satisfies Style;
 
 const useSectionSplitRowStyle = () => {
 	const placement = useTemplatePlacement();
@@ -1312,7 +1314,7 @@ const AwardsSection = ({ sectionId = "awards", sectionData }: ItemSectionProps<A
 				{items.map((item) => (
 					<SectionItem key={item.id} itemId={item.id}>
 						<SectionItemHeader>
-							<ItemHeaderRow style={composeStyles(splitRowStyle, awardTitleDateRowStyle)}>
+							<ItemHeaderRow style={composeStyles(splitRowStyle, awardTitleDateRowStyle(data.rtl))}>
 								<ItemTitle field="title" website={item.website} bold={false}>
 									{item.title}
 								</ItemTitle>
