@@ -1,5 +1,5 @@
 import type { MultiComboboxProps, SingleComboboxProps } from "@/components/ui/combobox";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { fontList, getFont, getFontDisplayName, getFontSearchKeywords, sortFontWeights } from "@reactive-resume/fonts";
 import { cn } from "@reactive-resume/utils/style";
 import { Combobox } from "@/components/ui/combobox";
@@ -54,18 +54,12 @@ export function FontWeightCombobox({
 		}));
 	}, [fontFamily]);
 
-	const sortedValue = useMemo(() => (value ? sortFontWeights(value) : value), [value]);
-	const sortedDefaultValue = useMemo(
-		() => (defaultValue ? sortFontWeights(defaultValue) : defaultValue),
-		[defaultValue],
-	);
+	const sortedValue = value ? sortFontWeights(value) : value;
+	const sortedDefaultValue = defaultValue ? sortFontWeights(defaultValue) : defaultValue;
 
-	const handleValueChange = useCallback(
-		(nextValue: string[] | null) => {
-			onValueChange?.(nextValue ? sortFontWeights(nextValue) : nextValue);
-		},
-		[onValueChange],
-	);
+	const handleValueChange = (nextValue: string[] | null) => {
+		onValueChange?.(nextValue ? sortFontWeights(nextValue) : nextValue);
+	};
 
 	return (
 		<Combobox

@@ -22,5 +22,5 @@ export function useCheck(): CheckResult | null {
 /** Open issues, for the badge on the Check tab. Ignored ones don't count. */
 export function useOpenIssueCount(): number {
 	const data = useDeferredValue(useResumeData());
-	return useMemo(() => (data ? lintResumeForAts(data).findings.length : 0), [data]);
+	return data ? lintResumeForAts(data).findings.length : 0;
 }

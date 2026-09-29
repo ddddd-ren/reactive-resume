@@ -2,7 +2,7 @@ import type { CsvField } from "../csv";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Label } from "@reactive-resume/ui/components/label";
@@ -59,13 +59,12 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	const [overrides, setOverrides] = useState<Record<number, CsvField | null>>({});
 	const fileRef = useRef<HTMLInputElement>(null);
 
-	const table = useMemo(() => (text.trim() ? parseCsv(text) : null), [text]);
+	const table = text.trim() ? parseCsv(text) : null;
 	const headers = table?.[0] ?? [];
-	const mapping = useMemo(
-		() => autoMapHeaders(headers).map((field, index) => (index in overrides ? (overrides[index] ?? null) : field)),
-		[headers, overrides],
+	const mapping = autoMapHeaders(headers).map((field, index) =>
+		index in overrides ? (overrides[index] ?? null) : field,
 	);
-	const result = useMemo(() => (table ? mapCsvToApplications(table, mapping) : null), [table, mapping]);
+	const result = table ? mapCsvToApplications(table, mapping) : null;
 
 	// The import endpoint takes 500 at a time; the rest is reported rather than refused.
 	const importable = result ? result.rows.slice(0, MAX_IMPORT) : [];

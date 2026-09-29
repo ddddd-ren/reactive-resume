@@ -3,7 +3,7 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
@@ -65,25 +65,18 @@ export function PageCanvas() {
 	// Check → Writing's and the assistant's proposed edits show on the page, the old text struck through and the new
 	// highlighted.
 	const markEdits = mode === "check" && checkTab === "writing" && pageView === "page" && proposals.length > 0;
-	const marked = useMemo(
-		() => [...(markEdits ? proposals : []), ...assistantProposals],
-		[markEdits, proposals, assistantProposals],
-	);
+	const marked = [...(markEdits ? proposals : []), ...assistantProposals];
 	const pendingOnPage = data ? pendingProposals(data, assistantProposals).length : 0;
 	const parser = mode === "check" && pageView === "parser" && !viewing;
 
 	// Design: a hovered or focused template is drawn on the page until it's applied or the pointer leaves.
-	const previewData = useMemo(
-		() =>
-			viewing
-				? viewing.data
-				: data && previewTemplate
-					? { ...data, metadata: { ...data.metadata, template: previewTemplate } }
-					: data && marked.length > 0
-						? markProposals(data, marked)
-						: undefined,
-		[data, previewTemplate, viewing, marked],
-	);
+	const previewData = viewing
+		? viewing.data
+		: data && previewTemplate
+			? { ...data, metadata: { ...data.metadata, template: previewTemplate } }
+			: data && marked.length > 0
+				? markProposals(data, marked)
+				: undefined;
 	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, rendered) : null;
 	// Desktop: the page moves 120px aside so it stays visible beside the Share & export sheet.
 	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");

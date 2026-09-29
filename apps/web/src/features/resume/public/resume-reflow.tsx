@@ -1,6 +1,5 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { IconName } from "@reactive-resume/ui/components/icon";
-import { useMemo } from "react";
 import { getResumeSectionTitle } from "@reactive-resume/pdf/section-title";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { contrastOnWhite } from "@reactive-resume/utils/color";
@@ -108,7 +107,7 @@ type ResumeReflowProps = { data: ResumeData };
  * font. Contact details are tap targets. The PDF stays the exact page.
  */
 export function ResumeReflow({ data }: ResumeReflowProps) {
-	const order = useMemo(() => reflowOrder(data), [data]);
+	const order = reflowOrder(data);
 	const { basics } = data;
 	// The template's colour, darkened where it would be too faint to read on white.
 	const primary = data.metadata.design.colors.primary;

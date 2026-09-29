@@ -4,7 +4,6 @@ import type { CSSProperties } from "react";
 import type { CheckIssue } from "./issues";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useMemo } from "react";
 import { getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -95,10 +94,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	const breakpoint = useBreakpoint();
 	const page = pageMap?.pages[pageIndex];
 
-	const highlighted = useMemo(
-		() => (check && highlightTerm && tab === "match" ? targetsMentioning(check.data, highlightTerm) : []),
-		[check, highlightTerm, tab],
-	);
+	const highlighted = check && highlightTerm && tab === "match" ? targetsMentioning(check.data, highlightTerm) : [];
 
 	if (!check || !pageMap || !page || page.width <= 0 || page.height <= 0) return null;
 

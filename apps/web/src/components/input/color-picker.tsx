@@ -3,7 +3,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { hsvaToRgbaString, rgbaStringToHsva } from "@uiw/color-convert";
 import ReactColorColorful from "@uiw/react-color-colorful";
-import { useMemo } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { cn } from "@reactive-resume/utils/style";
@@ -53,7 +52,7 @@ export function ColorPicker({
 		onChange,
 	});
 
-	const color = useMemo(() => rgbaStringToHsva(currentValue), [currentValue]);
+	const color = rgbaStringToHsva(currentValue);
 
 	function onColorChange(color: ColorResult) {
 		const rgbaString = hsvaToRgbaString(color.hsva);

@@ -4,7 +4,7 @@ import type { Application } from "../types";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -44,11 +44,11 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 	});
 	const [dialog, setDialog] = useState<DialogState>({ open: false });
 
-	const interviews = useMemo(() => collectInterviews(applications), [applications]);
-	const byDay = useMemo(() => groupByDay(interviews), [interviews]);
-	const upcoming = useMemo(() => upcomingInterviews(interviews), [interviews]);
-	const upcomingByDay = useMemo(() => [...groupByDay(upcoming).values()], [upcoming]);
-	const days = useMemo(() => monthGrid(month), [month]);
+	const interviews = collectInterviews(applications);
+	const byDay = groupByDay(interviews);
+	const upcoming = upcomingInterviews(interviews);
+	const upcomingByDay = [...groupByDay(upcoming).values()];
+	const days = monthGrid(month);
 
 	const today = new Date();
 	const todayKey = dayKey(today);

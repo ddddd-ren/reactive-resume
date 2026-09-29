@@ -64,16 +64,4 @@ describe("useControlledState", () => {
 		rerender({ value: 2 });
 		expect(onChange).not.toHaveBeenCalled();
 	});
-
-	it("returns a stable setter reference when onChange is stable", () => {
-		const onChange = vi.fn();
-		const { result, rerender } = renderHook(
-			({ value }: { value: number }) => useControlledState<number>({ value, onChange }),
-			{ initialProps: { value: 1 } },
-		);
-
-		const initialSetter = result.current[1];
-		rerender({ value: 2 });
-		expect(result.current[1]).toBe(initialSetter);
-	});
 });

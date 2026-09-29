@@ -3,7 +3,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, stripSearchParams, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -92,10 +92,7 @@ function RouteComponent() {
 	}, [applicationId, applications, navigate]);
 
 	const text = query.trim().toLowerCase();
-	const filtered = useMemo(
-		() => (applications ?? []).filter((application) => matches(application, text)),
-		[applications, text],
-	);
+	const filtered = (applications ?? []).filter((application) => matches(application, text));
 	const selected = applications?.find((application) => application.id === selectedId) ?? null;
 	// The board needs room to drag: phones get the list instead.
 	const shown: View = phone && (view === "board" || view === "calendar") ? "list" : view;

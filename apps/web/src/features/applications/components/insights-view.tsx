@@ -3,7 +3,7 @@ import type { Application } from "../types";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -23,26 +23,16 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 
 	// A resume is tailored for an application when it was made for it (Copy for a job).
-	const madeFor = useMemo(
-		() =>
-			new Map(
-				(documents ?? []).flatMap((document) => (document.application ? [[document.id, document.application.id]] : [])),
-			),
-		[documents],
+	const madeFor = new Map(
+		(documents ?? []).flatMap((document) => (document.application ? [[document.id, document.application.id]] : [])),
 	);
-	const outcomes = useMemo(
-		() =>
-			computeOutcomes(applications, (application) =>
-				Boolean(application.resumeId && madeFor.get(application.resumeId) === (application as Application).id),
-			),
-		[applications, madeFor],
+	const outcomes = computeOutcomes(applications, (application) =>
+		Boolean(application.resumeId && madeFor.get(application.resumeId) === (application as Application).id),
 	);
 
 	// Weekly application velocity — derived from the already-loaded list, closed ones excluded.
-	const timeline = useMemo(
-		() =>
-			computeTimeline(applications.filter((app) => app.status !== "closed").map((app) => new Date(appliedDate(app)))),
-		[applications],
+	const timeline = computeTimeline(
+		applications.filter((app) => app.status !== "closed").map((app) => new Date(appliedDate(app))),
 	);
 	const maxWeek = Math.max(1, ...timeline.map((bucket) => bucket.count));
 

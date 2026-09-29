@@ -1,7 +1,7 @@
 import type { AnyFormApi } from "@tanstack/react-form";
 import { t } from "@lingui/core/macro";
 import { useStore } from "@tanstack/react-form";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useDialogStore } from "@/dialogs/store";
 import { useConfirm } from "@/hooks/use-confirm";
 
@@ -22,12 +22,12 @@ export function useFormBlocker(form: Pick<AnyFormApi, "store">, options?: UseFor
 		shouldBlockRef.current = options?.shouldBlock;
 	}, [options?.shouldBlock]);
 
-	const shouldBlock = useCallback(() => {
+	const shouldBlock = () => {
 		if (shouldBlockRef.current) return shouldBlockRef.current();
 		return isDirty && !isSubmitting;
-	}, [isDirty, isSubmitting]);
+	};
 
-	const confirmClose = useCallback(() => {
+	const confirmClose = () => {
 		if (!shouldBlock()) return true;
 
 		return confirm(t`Are you sure you want to close this dialog?`, {
@@ -35,14 +35,14 @@ export function useFormBlocker(form: Pick<AnyFormApi, "store">, options?: UseFor
 			confirmText: t`Leave`,
 			cancelText: t`Stay`,
 		});
-	}, [shouldBlock, confirm]);
+	};
 
-	const requestClose = useCallback(async () => {
+	const requestClose = async () => {
 		const confirmed = await confirmClose();
 		if (!confirmed) return;
 
 		closeDialog();
-	}, [confirmClose, closeDialog]);
+	};
 
 	useEffect(() => {
 		setOnBeforeClose(confirmClose);

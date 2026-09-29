@@ -5,7 +5,7 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { collectPassages } from "@reactive-resume/resume/proposals";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
@@ -45,17 +45,13 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 	const setProposals = useEditorStore((state) => state.setProposals);
 
 	const provider = usableProviders.find((entry) => entry.id === providerOverride) ?? usableProviders[0];
-	const passages = useMemo(
-		() =>
-			collectPassages(data, {
-				summary: getSectionName(data, "summary"),
-				sectionTitle: (sectionId) => getSectionName(data, sectionId),
-				entryTitle: (type, entry) => describeEntry(type as never, entry as never).title,
-				bullet: (n) => t`bullet ${n}`,
-				paragraph: (n) => t`paragraph ${n}`,
-			}).slice(0, MAX_PASSAGES),
-		[data],
-	);
+	const passages = collectPassages(data, {
+		summary: getSectionName(data, "summary"),
+		sectionTitle: (sectionId) => getSectionName(data, sectionId),
+		entryTitle: (type, entry) => describeEntry(type as never, entry as never).title,
+		bullet: (n) => t`bullet ${n}`,
+		paragraph: (n) => t`paragraph ${n}`,
+	}).slice(0, MAX_PASSAGES);
 
 	const { mutate, isPending, error, reset } = useMutation({
 		...orpc.ai.atsReview.mutationOptions(),

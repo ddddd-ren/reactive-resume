@@ -2,7 +2,6 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useMemo } from "react";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -31,7 +30,7 @@ export function WritePanel() {
 	const locale = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.locale);
 	// The selector hook reads `undefined` as "no resume yet", so optional values need a fallback.
 	const dateFormat = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.dateFormat ?? null);
-	const page = useMemo(() => ({ locale, dateFormat: dateFormat ?? undefined }), [locale, dateFormat]);
+	const page = { locale, dateFormat: dateFormat ?? undefined };
 	const added = useEditorStore((state) => state.addedSections);
 	const isEmpty = useCurrentBuilderResumeSelector((resume) => getOutlineRows(resume.data, new Set(added)).length === 0);
 	const openDialog = useDialogStore((state) => state.openDialog);
@@ -77,7 +76,7 @@ function ImportedNote() {
 	const { imported } = useSearch({ strict: false }) as { imported?: string };
 	const navigate = useNavigate();
 	const data = useCurrentBuilderResumeSelector((resume) => resume.data);
-	const { sections, entries, toCheck } = useMemo(() => summarizeContent(data), [data]);
+	const { sections, entries, toCheck } = summarizeContent(data);
 	if (!imported) return null;
 
 	const dismiss = () =>

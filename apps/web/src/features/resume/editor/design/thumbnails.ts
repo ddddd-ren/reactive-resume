@@ -1,7 +1,7 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { createPdfFirstPageImageUrl, releaseThumbnailUrls } from "@/features/resume/preview/pdf-thumbnail";
 
@@ -41,7 +41,7 @@ function fingerprint(data: ResumeData) {
  */
 export function useTemplateThumbnail(template: Template, data: ResumeData, enabled: boolean) {
 	const queryClient = useQueryClient();
-	const hash = useMemo(() => fingerprint(data), [data]);
+	const hash = fingerprint(data);
 
 	useEffect(() => {
 		releaseThumbnailUrls(queryClient, QUERY_KEY);

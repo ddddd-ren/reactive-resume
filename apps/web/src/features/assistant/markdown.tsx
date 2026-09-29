@@ -1,9 +1,8 @@
-import { memo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 /** The assistant's reply as Markdown. Memoized on the text, so finished replies stop re-rendering while one streams. */
-export const AssistantMarkdown = memo(function AssistantMarkdown({ text }: { text: string }) {
+export const AssistantMarkdown = function AssistantMarkdown({ text }: { text: string }) {
 	return (
 		<ReactMarkdown
 			skipHtml
@@ -41,4 +40,4 @@ export const AssistantMarkdown = memo(function AssistantMarkdown({ text }: { tex
 			{text}
 		</ReactMarkdown>
 	);
-});
+};

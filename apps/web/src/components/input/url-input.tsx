@@ -1,7 +1,6 @@
 import type { Website } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useCallback } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import {
@@ -35,22 +34,16 @@ type Props<TValue extends Website = Website> = Omit<React.ComponentProps<"input"
 
 export function URLInput<TValue extends Website>({ value, onChange, hideLabelButton, ...props }: Props<TValue>) {
 	const prefix = value.url.match(HTTP_PREFIX)?.[0] ?? DEFAULT_PREFIX;
-	const handleUrlChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			onChange({
-				...value,
-				url: ensurePrefix(e.target.value, prefix),
-			});
-		},
-		[onChange, value, prefix],
-	);
+	const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		onChange({
+			...value,
+			url: ensurePrefix(e.target.value, prefix),
+		});
+	};
 
-	const handleLabelChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			onChange({ ...value, label: e.target.value });
-		},
-		[onChange, value],
-	);
+	const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		onChange({ ...value, label: e.target.value });
+	};
 
 	const urlValue = stripPrefix(value.url);
 
