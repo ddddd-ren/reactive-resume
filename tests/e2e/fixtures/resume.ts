@@ -76,7 +76,10 @@ export async function openDownloadDialog(page: Page) {
 export async function makeResumePublic(page: Page) {
 	await openSidebarSection(page, "Sharing");
 	const sheet = page.getByRole("dialog", { name: "Share & export" });
-	await sheet.getByRole("switch", { name: "Public link" }).click();
+	const publicLink = sheet.getByRole("switch", { name: "Public link" });
+	// On phones the sheet rises from below the screen: wait until it has arrived before pressing.
+	await expect(publicLink).toBeInViewport();
+	await publicLink.click();
 	return getPublicUrl(page);
 }
 
