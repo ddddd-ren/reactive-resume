@@ -42,7 +42,8 @@ function selectorLabels(metadata: SemanticCssEditorMetadata): string[] {
 		...new Set([
 			...SEMANTIC_NODE_KINDS,
 			"*",
-			...nodes.flatMap((node) => (node.id ? [`#${escapeCssIdentifier(node.id)}`] : [])),
+			// Readable IDs only (section types): entries' UUIDs escape to `#\30 19b…`; they're offered by name instead.
+			...nodes.flatMap((node) => (node.id && escapeCssIdentifier(node.id) === node.id ? [`#${node.id}`] : [])),
 			...attributes.map((attribute) => `[${escapeCssIdentifier(attribute)}]`),
 			...nodes.flatMap((node) =>
 				Object.entries(node.attributes).map(
@@ -171,6 +172,9 @@ function completionSource(metadata: SemanticCssEditorMetadata): CompletionSource
 			label,
 			type: label.startsWith("@") ? "keyword" : label.startsWith("#") || label.includes("[") ? "text" : "property",
 		}));
+		if (completionKind(source, context.pos) === "selector")
+			for (const target of metadata.targets ?? [])
+				options.push({ label: target.label, apply: target.selector, detail: target.selector, type: "class", boost: 1 });
 		return { from: word?.from ?? context.pos, options, validFor: /[-_@#a-zA-Z0-9]*/ };
 	};
 }
@@ -296,6 +300,31 @@ export function createSemanticCssEditorExtensions(input: {
 		keymap.of(searchKeymap),
 		colorExtension(input.colorTokens, input.onColorSelect),
 	];
+}
+
+/**
+ * Something picked on the page: move the cursor into its rule, adding one (under a comment naming it) when the
+ * stylesheet has none yet, and focus the editor.
+ */
+export function revealStyleRule(view: EditorViewType, target: { selector: string; label: string }): void {
+	const text = view.state.doc.toString();
+	const existing = text.indexOf(`${target.selector} {`);
+	if (existing >= 0) {
+		const open = text.indexOf("{", existing) + 1;
+		const indent = text.slice(open).match(/^\n\t*/)?.[0].length ?? 0;
+		view.dispatch({ selection: { anchor: open + indent }, scrollIntoView: true });
+	} else {
+		const gap = text.trim().length === 0 ? "" : text.endsWith("\n\n") ? "" : text.endsWith("\n") ? "\n" : "\n\n";
+		const block = `${gap}/* ${target.label.replaceAll("*/", "*\\/")} */\n${target.selector} {\n\t\n}\n`;
+		const start = text.trim().length === 0 ? 0 : text.length;
+		view.dispatch({
+			changes: { from: start, to: text.length, insert: block },
+			// Inside the empty rule, after its tab.
+			selection: { anchor: start + block.length - "\n}\n".length },
+			scrollIntoView: true,
+		});
+	}
+	view.focus();
 }
 
 export async function copySourceToClipboard(source: string): Promise<void> {

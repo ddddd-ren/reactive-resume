@@ -34,10 +34,17 @@ import { ColorPicker } from "@/components/input/color-picker";
 import { useIsResumeLocked, useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useTheme } from "@/features/theme/provider";
 import { useClosingValue } from "@/hooks/use-closing-value";
+import { useEditorStore } from "../editor/store";
 import { serializeStylesheetColor, toStylesheetPickerColor } from "./color-format";
-import { compositionAwareDocumentListener, createSemanticCssEditorExtensions } from "./editor-extensions";
+import {
+	compositionAwareDocumentListener,
+	createSemanticCssEditorExtensions,
+	revealStyleRule,
+} from "./editor-extensions";
 import { formatEditorDocument } from "./formatter";
+import { matchedNodeKeys } from "./highlight";
 import { LegacyStylesheetBanner } from "./legacy-banner";
+import { listStyleTargets, styleTargetFor } from "./targets";
 import { StylesheetToolbar } from "./toolbar";
 import { createCompileWorkerClient } from "./worker-client";
 
@@ -108,6 +115,8 @@ export type StylesheetCodeEditorProps = {
 	label?: string;
 	onChange(value: string): void;
 	onFocusChange?(focused: boolean): void;
+	/** Where the cursor is while the editor has focus; null once it loses focus. */
+	onCursorChange?(offset: number | null): void;
 	onReady?(view: EditorView | null): void;
 	onUndo(): void;
 	onRedo(): void;
@@ -122,6 +131,7 @@ export function StylesheetCodeEditor({
 	label = "Semantic CSS stylesheet",
 	onChange,
 	onFocusChange,
+	onCursorChange,
 	onReady,
 	onUndo,
 	onRedo,
@@ -132,6 +142,7 @@ export function StylesheetCodeEditor({
 	const initialPropsRef = useRef({ value, colorTokens, metadata, theme, readOnly, label });
 	const onChangeRef = useRef(onChange);
 	const onFocusChangeRef = useRef(onFocusChange);
+	const onCursorChangeRef = useRef(onCursorChange);
 	const onReadyRef = useRef(onReady);
 	const onUndoRef = useRef(onUndo);
 	const onRedoRef = useRef(onRedo);
@@ -150,6 +161,7 @@ export function StylesheetCodeEditor({
 
 	onChangeRef.current = onChange;
 	onFocusChangeRef.current = onFocusChange;
+	onCursorChangeRef.current = onCursorChange;
 	onReadyRef.current = onReady;
 	onUndoRef.current = onUndo;
 	onRedoRef.current = onRedo;
@@ -216,6 +228,8 @@ export function StylesheetCodeEditor({
 					(update) => update.transactions.some((transaction) => transaction.annotation(externalReplacement)),
 				),
 				EditorView.updateListener.of((update) => {
+					if (update.selectionSet || update.docChanged || update.focusChanged)
+						onCursorChangeRef.current?.(update.view.hasFocus ? update.state.selection.main.head : null);
 					if (
 						update.transactions.some(
 							(transaction) => transaction.docChanged && !transaction.annotation(colorPickerEdit),
@@ -386,6 +400,7 @@ const createEditorMetadata = (data: ResumeData): SemanticCssEditorMetadata => {
 	return {
 		semanticTree,
 		templateParts: getTemplateSemanticManifest(data.metadata.template).parts.map(({ name }) => name),
+		targets: listStyleTargets(data, semanticTree),
 	};
 };
 
@@ -422,6 +437,27 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	);
 	const metadata = useMemo(() => (data ? createEditorMetadata(data) : emptyMetadata), [data]);
 	const disabled = readOnly || isLocked;
+
+	// Picking something on the page (Design) aims the stylesheet at it: its rule, added if there isn't one.
+	useEffect(() => {
+		if (disabled || !data) return;
+		return useEditorStore.subscribe((state, previous) => {
+			const view = editorViewRef.current;
+			if (!view || !state.selection || state.selection === previous.selection) return;
+			revealStyleRule(view, styleTargetFor(data, state.selection));
+		});
+	}, [data, disabled]);
+
+	// The rule under the cursor is outlined on the page, and nothing is once the editor loses focus or closes.
+	useEffect(() => () => useEditorStore.getState().setStyleHighlight([]), []);
+	const highlightRuleAt = (offset: number | null) => {
+		const view = editorViewRef.current;
+		const keys =
+			offset === null || !view ? [] : matchedNodeKeys(view.state.doc.toString(), offset, metadata.semanticTree);
+		const { styleHighlight, setStyleHighlight } = useEditorStore.getState();
+		if (keys.length !== styleHighlight.length || keys.some((key, index) => key !== styleHighlight[index]))
+			setStyleHighlight(keys);
+	};
 
 	useEffect(() => {
 		if (!compiler || !data) return;
@@ -490,6 +526,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 			readOnly={disabled}
 			label={t`Semantic CSS stylesheet`}
 			onChange={setSourceText}
+			onCursorChange={highlightRuleAt}
 			onReady={(view) => {
 				editorViewRef.current = view;
 			}}
@@ -515,6 +552,13 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				}}
 				onFocusToggle={toggleFocus}
 			/>
+
+			<p className="flex items-center gap-1.5 text-ink-3 text-xs">
+				<Icon name="ink_highlighter" size={16} aria-hidden="true" className="shrink-0" />
+				<span>
+					<Trans>Click anything on the page to style it. The rule you're in is outlined on the page.</Trans>
+				</span>
+			</p>
 
 			<p className="flex items-center gap-1.5 text-ink-3 text-xs">
 				<Icon name="menu_book" size={16} aria-hidden="true" className="shrink-0" />

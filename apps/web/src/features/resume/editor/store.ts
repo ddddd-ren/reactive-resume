@@ -70,6 +70,8 @@ type EditorStore = {
 	basicsOpen: boolean;
 	/** Design: a template shown on the page while its thumbnail is hovered or focused, not yet applied. */
 	previewTemplate: Template | null;
+	/** Custom Styles: the page nodes matched by the rule the cursor is in, outlined on the page. */
+	styleHighlight: readonly string[];
 	/**
 	 * The render on screen: physical pages, the page map and the PDF (which Check's parser view reads). `version`
 	 * counts renders, so Fit can wait for one.
@@ -112,6 +114,7 @@ type EditorStore = {
 	setFocusEntry: (entryId: string | null) => void;
 	setBasicsOpen: (open: boolean) => void;
 	setPreviewTemplate: (template: Template | null) => void;
+	setStyleHighlight: (keys: readonly string[]) => void;
 	setRendered: (render: { pageCount: number; pageMap: PageMap | undefined; file: Blob }) => void;
 	setMobileView: (view: MobileView) => void;
 	setCheckTab: (tab: CheckTab) => void;
@@ -157,6 +160,7 @@ const initialState = {
 	focusEntryId: null,
 	basicsOpen: true,
 	previewTemplate: null,
+	styleHighlight: [],
 	rendered: { pageCount: 0, pageMap: undefined, file: undefined, version: 0 },
 	mobileView: null,
 	checkTab: "issues",
@@ -198,6 +202,7 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 	setFocusEntry: (focusEntryId) => set({ focusEntryId }),
 	setBasicsOpen: (basicsOpen) => set({ basicsOpen }),
 	setPreviewTemplate: (previewTemplate) => set({ previewTemplate }),
+	setStyleHighlight: (styleHighlight) => set({ styleHighlight }),
 	setRendered: (render) => set((state) => ({ rendered: { ...render, version: state.rendered.version + 1 } })),
 	setMobileView: (mobileView) => set({ mobileView }),
 	setCheckTab: (checkTab) => set({ checkTab }),

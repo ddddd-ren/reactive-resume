@@ -12,6 +12,7 @@ import {
 	copySourceToClipboard,
 	createSemanticCssEditorExtensions,
 	getSemanticCssHoverDocumentation,
+	revealStyleRule,
 } from "./editor-extensions";
 
 const semanticTree: SemanticNode = {
@@ -136,12 +137,10 @@ describe("Semantic CSS editor extensions", () => {
 
 		const labels = completionLabels("", 0, unsafeMetadata);
 
+		// IDs that need escaping aren't offered as `#…` at all: entries are offered by name instead.
+		expect(labels.filter((label) => label.startsWith("#1") || label.startsWith("#\\"))).toEqual([]);
 		expect(labels).toEqual(
-			expect.arrayContaining([
-				"#\\31 23\\ current\\#item",
-				'[name="company\\"lead\\a "]',
-				'template-part[name="timeline\\"marker\\a "]',
-			]),
+			expect.arrayContaining(['[name="company\\"lead\\a "]', 'template-part[name="timeline\\"marker\\a "]']),
 		);
 		expect(labels).not.toContain("#123 current#item");
 		expect(labels).not.toContain('[name="company"lead\n"]');
@@ -237,5 +236,23 @@ describe("Semantic CSS editor extensions", () => {
 
 		expect(view.dom.querySelector("[name=search]")).not.toBeNull();
 		expect(view.dom.querySelector("[name=replace]")).not.toBeNull();
+	});
+
+	it("adds a rule for a picked element once, then moves the cursor into it", () => {
+		const view = new EditorView({ doc: "header { color: red; }" });
+		views.push(view);
+		const target = { selector: 'section[id="experience"] item[id="a"]', label: "Experience › Lead */ dev" };
+
+		revealStyleRule(view, target);
+		expect(view.state.doc.toString()).toBe(
+			'header { color: red; }\n\n/* Experience › Lead *\\/ dev */\nsection[id="experience"] item[id="a"] {\n\t\n}\n',
+		);
+		const inside = view.state.selection.main.head;
+		expect(view.state.doc.sliceString(inside - 1, inside + 2)).toBe("\t\n}");
+
+		view.dispatch({ selection: { anchor: 0 } });
+		revealStyleRule(view, target);
+		expect(view.state.doc.toString().match(/item\[id="a"\]/g)).toHaveLength(1);
+		expect(view.state.selection.main.head).toBe(inside);
 	});
 });

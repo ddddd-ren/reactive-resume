@@ -7,10 +7,13 @@ import type {
 } from "@reactive-resume/resume/stylesheet";
 import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
 import type { SemanticCssColorToken } from "./color-tokens";
+import type { StyleTarget } from "./targets";
 
 export type SemanticCssEditorMetadata = {
 	semanticTree: SemanticNode;
 	templateParts: readonly string[];
+	/** Sections and entries by name, so autocomplete finds "Senior Developer" and inserts its selector. */
+	targets?: readonly StyleTarget[];
 };
 
 export type CompileWorkerInput = {

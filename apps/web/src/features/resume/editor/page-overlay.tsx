@@ -31,6 +31,7 @@ const readSelection = (element: HTMLElement): EditorSelection | null => {
  */
 export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) {
 	const selection = useEditorStore((state) => state.selection);
+	const styleHighlight = useEditorStore((state) => state.styleHighlight);
 	const page = pageMap?.pages[pageIndex];
 	if (!pageMap || !page || page.width <= 0 || page.height <= 0) return null;
 
@@ -39,6 +40,17 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 	// (the summary, for example) are blocks of their own.
 	const sectionsWithItems = new Set(nodes.flatMap((node) => (node.kind === "item" ? [node.sectionId] : [])));
 	const blocks = nodes.filter((node) => node.kind !== "section" || !sectionsWithItems.has(node.sectionId));
+
+	// Custom Styles: each node the rule under the cursor matches, outlined as the closest block the page map knows
+	// (a field inside an entry lights up its entry).
+	const highlighted = new Set(
+		styleHighlight.flatMap((key) => {
+			const owner = nodes
+				.filter((node) => key === node.key || key.startsWith(`${node.key}/`))
+				.sort((left, right) => right.key.length - left.key.length)[0];
+			return owner ? [owner] : [];
+		}),
+	);
 
 	const handleClick = (event: MouseEvent<HTMLDivElement>) => {
 		const target = (event.target as HTMLElement).closest<HTMLElement>("[data-kind]");
@@ -77,6 +89,19 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 					</div>
 				);
 			})}
+			{[...highlighted].map((node) => (
+				<div
+					key={`style:${node.key}:${node.y}`}
+					data-slot="style-highlight"
+					className="pointer-events-none absolute rounded-[4px] bg-[oklch(0.5_0.1_150/0.08)] starting:opacity-0 outline-dashed outline-[1.5px] outline-accent transition-opacity duration-quick ease-enter"
+					style={{
+						left: `calc(${(node.x / page.width) * 100}% - 4px)`,
+						top: `calc(${(node.y / page.height) * 100}% - 3px)`,
+						width: `calc(${(node.width / page.width) * 100}% + 8px)`,
+						height: `calc(${(node.height / page.height) * 100}% + 6px)`,
+					}}
+				/>
+			))}
 		</div>
 	);
 }

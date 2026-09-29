@@ -53,6 +53,35 @@ section[type="experience"] > section-heading {
   </Step>
 </Steps>
 
+## Style one element
+
+The quickest way to style a single section or entry is to pick it on the page:
+
+1. Open **Design → Advanced → Custom Styles**.
+2. Click the section or entry on the page. The editor adds a rule for it, named in a comment, and puts the cursor
+   inside:
+
+   ```css
+   /* Experience › Senior Game Developer */
+   section[id="experience"] item[id="019bef5a-93e4-7746-ad39-3a132360f823"] {
+   	color: #0f766e;
+   }
+   ```
+
+3. Type the declarations you want. Clicking an element that already has a rule moves the cursor into it.
+
+While the cursor is inside a rule, everything that rule styles is outlined on the page. You can also type part of an
+entry's name (for example `Senior`) in a selector and pick it from the suggestions.
+
+To style an entry by position instead, use `:nth-of-type`, which counts entries only:
+
+```css
+/* The first experience entry */
+section[type="experience"] item:nth-of-type(1) {
+	margin-bottom: 12pt;
+}
+```
+
 ## Target the right part of your resume
 
 Semantic CSS selectors describe resume content rather than a template's internal HTML. Selector and attribute names are
