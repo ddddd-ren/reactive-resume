@@ -187,9 +187,16 @@
 	}
 }
 
-/* A character of typed text: it appears once --typed passes its position --f in the string. */
+/*
+ * A character of typed text: it appears once --typed passes its position --f in the string. The glyph is generated
+ * content, so the page's text (what crawlers and copy-paste read) holds the sentence once, not once per layer.
+ */
 @utility typed {
 	opacity: clamp(0, calc((var(--typed) - var(--f)) * var(--typed-rate, 90)), 1);
+
+	&::before {
+		content: attr(data-char);
+	}
 }
 
 /* A character of Write's suggested line: highlighted and underlined until the suggestion is accepted (--cl). */
@@ -271,4 +278,101 @@
 		oklch(0.22 0.01 95) 12px 13px,
 		transparent 13px 17px
 	);
+}
+
+/*
+ * 09 Questions. Each is a <details>: opening one draws a pencil circle round its number and finishes the underline that
+ * hovering starts, turns the plus into a cross, and unfolds the answer like a folded note swinging down from its crease.
+ */
+@utility faq-item {
+	interpolate-size: allow-keywords;
+
+	&::details-content {
+		block-size: 0;
+		overflow-y: clip;
+		transition:
+			block-size 0.45s var(--ease),
+			content-visibility 0.45s allow-discrete;
+	}
+	&[open]::details-content {
+		block-size: auto;
+	}
+
+	/*
+	 * Pencil strokes: paths with pathLength="1", drawn by their dash offset. The gap is longer than the path and the
+	 * resting offset past its start, so an undrawn stroke leaves no round-capped dot at either end.
+	 */
+	& [data-stroke] {
+		fill: none;
+		stroke: currentColor;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-dasharray: 1 2;
+		stroke-dashoffset: 1.05;
+		transition: stroke-dashoffset 0.5s var(--ease);
+	}
+	@media (hover: hover) {
+		& summary:hover [data-stroke="underline"] {
+			stroke-dashoffset: 0.62;
+		}
+	}
+	&[open] [data-stroke] {
+		stroke-dashoffset: 0;
+	}
+	&[open] [data-stroke="circle"] {
+		transition-duration: 0.7s;
+		transition-delay: 0.1s;
+	}
+
+	& [data-plus] {
+		transition: rotate 0.35s var(--ease);
+	}
+	&[open] [data-plus] {
+		rotate: 135deg;
+	}
+
+	& [data-note] {
+		transform-origin: 50% 0;
+		transform: perspective(900px) rotateX(-80deg) rotate(var(--tilt));
+		opacity: 0;
+		transition:
+			transform 0.55s var(--ease),
+			opacity 0.3s var(--ease);
+	}
+	&[open] [data-note] {
+		transform: perspective(900px) rotateX(0deg) rotate(var(--tilt));
+		opacity: 1;
+
+		@starting-style {
+			transform: perspective(900px) rotateX(-80deg) rotate(var(--tilt));
+			opacity: 0;
+		}
+	}
+	/* The crease's shadow, fading as the note flattens. */
+	& [data-note]::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		pointer-events: none;
+		background: linear-gradient(to bottom, oklch(0.2 0.01 95 / 0.16), transparent 60%);
+		transition: opacity 0.6s var(--ease) 0.1s;
+	}
+	&[open] [data-note]::after {
+		opacity: 0;
+
+		@starting-style {
+			opacity: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&::details-content,
+		& [data-stroke],
+		& [data-plus],
+		& [data-note],
+		& [data-note]::after {
+			transition: none;
+		}
+	}
 }

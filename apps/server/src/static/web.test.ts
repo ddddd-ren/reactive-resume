@@ -59,7 +59,7 @@ describe("web app fallback classification", () => {
 
 		expect(html).toContain('<link rel="canonical" href="https://rxresu.me/">');
 		expect(html).toContain('<meta property="og:url" content="https://rxresu.me/">');
-		expect(html).toContain('id="reactive-resume-structured-data"');
+		expect(html).toContain('<script type="application/ld+json">');
 		expect(html).not.toContain("utm_source");
 
 		const dashboardResponse = await handleWebApp(new Request("https://example.com/dashboard"));
@@ -68,7 +68,7 @@ describe("web app fallback classification", () => {
 
 	it("serves the homepage prerendered in the requested or saved locale, with hreflang alternates", async () => {
 		vi.mocked(fs.readFile).mockImplementation((path) => {
-			const locale = String(path).match(/dist-prerender\/(.+)\.html$/)?.[1];
+			const locale = String(path).match(/dist-prerender\/home\/(.+)\.html$/)?.[1];
 			return Promise.resolve(`<html><head></head><body><div id="app">${locale ?? "shell"}</div></body></html>`);
 		});
 
@@ -100,6 +100,23 @@ describe("web app fallback classification", () => {
 			expect(response.status).toBe(200);
 			expect(response.headers.get("Content-Type")).toBe("text/html; charset=UTF-8");
 			expect(response.headers.get("X-Robots-Tag")).toBeNull();
+		});
+
+		it("serves the prerendered page in the requested locale, with its own title on the social cards", async () => {
+			vi.mocked(fs.readFile).mockImplementation((path) => {
+				const match = String(path).match(/dist-prerender\/ats-checker\/(.+)\.html$/);
+				if (!match) return Promise.resolve(shell);
+				return Promise.resolve(
+					`<html><head><title>ATS-Prüfung &amp; mehr</title><meta name="description" content="Lesbar?"></head><body><div id="app">${match[1]}</div></body></html>`,
+				);
+			});
+
+			const html = await (await handleWebApp(new Request("https://example.com/ats-checker?locale=de-DE"))).text();
+
+			expect(html).toContain('<div id="app">de-DE</div>');
+			expect(html).toContain('<link rel="canonical" href="https://rxresu.me/ats-checker?locale=de-DE">');
+			expect(html).toContain('<meta property="og:title" content="ATS-Prüfung &amp; mehr">');
+			expect(html).toContain('<meta property="og:locale" content="de_DE">');
 		});
 	});
 

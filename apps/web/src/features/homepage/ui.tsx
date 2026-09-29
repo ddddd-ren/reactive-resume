@@ -60,6 +60,7 @@ const doodleSizes = {
 	globe: [301, 374],
 	jar: [264, 347],
 	magnifier: [403, 390],
+	note: [400, 380],
 	paperclip: [335, 299],
 	pencil: [363, 378],
 	plane: [369, 344],
@@ -113,8 +114,8 @@ type TypedTextProps = {
 };
 
 /**
- * Text that types in as `progress` rises. The characters are decorative: the whole string is exposed once as
- * visually hidden text, so screen readers and search engines read it as a sentence.
+ * Text that types in as `progress` rises. The characters are decorative, drawn as generated content: the whole string
+ * is in the page once, as visually hidden text, so screen readers and search engines read it as a sentence.
  */
 export function TypedText({ text, progress, className, charClassName, charStyle, rate }: TypedTextProps) {
 	const characters = useGraphemes(text);
@@ -127,11 +128,10 @@ export function TypedText({ text, progress, className, charClassName, charStyle,
 				{characters.map((character, index) => (
 					<span
 						key={index}
+						data-char={character}
 						className={cn("typed", charClassName)}
 						style={{ "--f": (index / characters.length).toFixed(4), ...charStyle?.(index) } as CSSProperties}
-					>
-						{character}
-					</span>
+					/>
 				))}
 			</span>
 		</span>

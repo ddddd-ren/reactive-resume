@@ -24,30 +24,34 @@ const escapeHtml = (value: string) =>
 	value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
 /**
- * Writes dist-prerender/<locale>.html: the built index.html with the homepage rendered into #app, in that locale's
- * language, direction, title and description. The server sends it for "/" (apps/server/src/static/web.ts).
+ * Writes dist-prerender/<page>/<locale>.html: the built index.html with the page rendered into #app, in that locale's
+ * language, direction, title and description. The server sends them for "/" and "/ats-checker"
+ * (apps/server/src/static/web.ts).
  */
-async function prerenderHomepage() {
+async function prerenderPages() {
 	type PrerenderModule = typeof import("./src/features/homepage/prerender");
-	const { locales, renderHomepage }: PrerenderModule = await import(
+	const { locales, prerenderedPages, renderPage }: PrerenderModule = await import(
 		pathToFileURL(`${prerenderBundleDir}/prerender.js`).href
 	);
 	const shell = await readFile(`${webRoot}dist/index.html`, "utf8");
 
 	await rm(prerenderOutDir, { recursive: true, force: true });
-	await mkdir(prerenderOutDir, { recursive: true });
 
-	for (const locale of locales) {
-		const page = await renderHomepage(locale);
-		const html = shell
-			.replace(/<html lang="[^"]*">/, () => `<html lang="${locale}" dir="${page.dir}">`)
-			.replace(/<title>[^<]*<\/title>/, () => `<title>${escapeHtml(page.title)}</title>`)
-			.replace(
-				/<meta name="description"[^>]*>/,
-				() => `<meta name="description" content="${escapeHtml(page.description)}">`,
-			)
-			.replace('<div id="app"></div>', () => `<div id="app">${page.html}</div>`);
-		await writeFile(`${prerenderOutDir}/${locale}.html`, html);
+	for (const name of prerenderedPages) {
+		await mkdir(`${prerenderOutDir}/${name}`, { recursive: true });
+
+		for (const locale of locales) {
+			const page = await renderPage(name, locale);
+			const html = shell
+				.replace(/<html lang="[^"]*">/, () => `<html lang="${locale}" dir="${page.dir}">`)
+				.replace(/<title>[^<]*<\/title>/, () => `<title>${escapeHtml(page.title)}</title>`)
+				.replace(
+					/<meta name="description"[^>]*>/,
+					() => `<meta name="description" content="${escapeHtml(page.description)}">`,
+				)
+				.replace('<div id="app"></div>', () => `<div id="app">${page.html}</div>`);
+			await writeFile(`${prerenderOutDir}/${name}/${locale}.html`, html);
+		}
 	}
 }
 
@@ -75,12 +79,12 @@ export default defineConfig({
 		__APP_VERSION__: appVersion,
 	},
 
-	// `vite build` builds the app, then the homepage's server entry, then prerenders the homepage with it.
+	// `vite build` builds the app, then the marketing pages' server entry, then prerenders the pages with it.
 	builder: {
 		buildApp: async (builder) => {
 			await builder.build(builder.environments.client);
 			await builder.build(builder.environments.ssr);
-			await prerenderHomepage();
+			await prerenderPages();
 		},
 	},
 

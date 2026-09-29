@@ -128,7 +128,11 @@ export function Share() {
 				</div>
 
 				<div className="absolute inset-x-(--gutter) top-1/2 flex -translate-y-1/2 flex-col items-center gap-[26px] text-center">
-					<span className={cn(labelClass, "text-(--night-label) tracking-[.1em] opacity-[clamp(0,var(--tu)*20,1)]")}>
+					{/* The heading reads "Your resume, live at rxresu.me/…"; this label is its visible first half. */}
+					<span
+						aria-hidden="true"
+						className={cn(labelClass, "text-(--night-label) tracking-[.1em] opacity-[clamp(0,var(--tu)*20,1)]")}
+					>
 						{t`Your resume, live at`}
 					</span>
 					<h2
@@ -139,6 +143,7 @@ export function Share() {
 							isPrivate && "opacity-40",
 						)}
 					>
+						<span className="sr-only">{t`Your resume, live at`} </span>
 						<Icon
 							name={visibilityIcons[visibility] ?? "public"}
 							className="me-[.2em] text-(--night-accent) opacity-[clamp(0,var(--tu)*20,1)]"

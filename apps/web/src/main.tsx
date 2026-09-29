@@ -11,17 +11,9 @@ followReducedMotion();
 
 const router = await getRouter();
 
-// Server metadata describes the initial URL. The SPA router owns these tags after
-// startup, including navigation into root mode from another marketing/public page.
-const serverSeoSelectors = [
-	"[data-root-resume-shell]",
-	'head link[rel="canonical"]',
-	'head link[rel="alternate"][hreflang]',
-	'head script[type="application/ld+json"]',
-	'head meta[property^="og:"]',
-	'head meta[name^="twitter:"]',
-];
-document.querySelectorAll(serverSeoSelectors.join(",")).forEach((element) => {
+// The router owns the title, description and robots tags from here on (see libs/seo.ts), so the copies in the served
+// HTML go; everything else the server wrote into <head> (canonical, hreflang, social cards, structured data) stays.
+document.head.querySelectorAll('title, meta[name="description"], meta[name="robots"]').forEach((element) => {
 	element.remove();
 });
 

@@ -134,10 +134,9 @@ export function Check() {
 					</span>
 					<span
 						aria-hidden="true"
-						className="absolute start-0 top-0 block font-light font-martian text-accent-text tracking-[-.05em] [clip-path:inset(-20%_0_calc((1-var(--sv))*120%)_0)]"
-					>
-						{check}.
-					</span>
+						data-text={`${check}.`}
+						className="absolute start-0 top-0 block font-light font-martian text-accent-text tracking-[-.05em] [clip-path:inset(-20%_0_calc((1-var(--sv))*120%)_0)] before:content-[attr(data-text)]"
+					/>
 					<span
 						aria-hidden="true"
 						className="absolute inset-x-0 top-[calc(var(--sv)*120%-20%)] h-0.5 bg-accent opacity-[calc(clamp(0,var(--sv)*30,1)*clamp(0,(1-var(--sv))*30,1))] shadow-[0_0_18px_2px_oklch(0.6_0.12_150/.5)]"

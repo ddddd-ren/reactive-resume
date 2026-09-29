@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { LandingBackground } from "./background";
 import { Check } from "./check";
 import { Design } from "./design";
+import { Faq } from "./faq";
 import { LandingFooter } from "./footer";
 import { LandingHeader, ThemeCord } from "./header";
 import { Hero } from "./hero";
@@ -15,8 +16,8 @@ import { Write } from "./write";
 /**
  * The public landing page: one scroll-driven story, "Everything you've done, on one page." A single resume page is
  * assembled, written, restyled, checked, tailored and sent as the visitor scrolls, followed by community proof,
- * languages, support, a closing call to action and the footer. The server prerenders it (prerender.tsx), so every
- * word is in the first response.
+ * languages, support, common questions, a closing call to action and the footer. The server prerenders it
+ * (prerender.tsx), so every word is in the first response.
  */
 export function Homepage() {
 	const root = useRef<HTMLDivElement>(null);
@@ -43,6 +44,7 @@ export function Homepage() {
 				<Numbers />
 				<Languages />
 				<Support />
+				<Faq />
 				<Closing />
 			</main>
 			<LandingFooter />

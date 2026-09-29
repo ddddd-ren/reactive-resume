@@ -331,7 +331,7 @@ export function Support() {
 	);
 }
 
-/** 09 Closing call to action. */
+/** 10 Closing call to action. */
 export function Closing() {
 	return (
 		<section

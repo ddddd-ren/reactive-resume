@@ -13,7 +13,8 @@ export const SCENE = {
 	numbers: 6,
 	languages: 7,
 	support: 8,
-	footer: 9,
+	faq: 9,
+	footer: 10,
 } as const;
 
 /**

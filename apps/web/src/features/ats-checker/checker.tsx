@@ -5,7 +5,7 @@ import type { AtsCheckResult } from "./run-ats-check";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useId, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -13,15 +13,19 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { cn } from "@reactive-resume/utils/style";
-import { ImportError, readResumeFile } from "@/features/resume/import/read-file";
-import { PdfViewer } from "@/features/resume/public/pdf-viewer";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS, POP_CLASS, stagger } from "@/libs/motion";
 import { client } from "@/libs/orpc/client";
 import { PdfPasswordRequiredError, PdfTooLargeError, PdfUnreadableError } from "./extract-client";
-import { getPdfCategoryLabel, getPdfFindingMessage } from "./messages";
+import { getPdfCategoryDescription, getPdfCategoryLabel, getPdfFindingMessage } from "./messages";
 import { savePendingImport, takePendingImport } from "./pending-import";
 import { runAtsCheck } from "./run-ats-check";
+
+// PDF.js and the importers load only once there is a file, so the page's first screen stays light and prerenderable.
+const PdfViewer = lazy(() =>
+	import("@/features/resume/public/pdf-viewer").then((module) => ({ default: module.PdfViewer })),
+);
+const loadReadFile = () => import("@/features/resume/import/read-file");
 
 const MAX_POSTING = 20_000;
 const SAMPLE = { url: "/templates/pdf/onyx.pdf", name: "Sample resume.pdf" };
@@ -78,16 +82,18 @@ export function AtsChecker({ signedIn, importPending }: AtsCheckerProps) {
 
 	const importAndOpen = async (file: File) => {
 		setState({ name: "importing" });
+		let readFile: Awaited<ReturnType<typeof loadReadFile>> | undefined;
 		try {
+			readFile = await loadReadFile();
 			// Read in the browser, the same way the check did, so every issue lines up in Check.
-			const data = await readResumeFile(file, "pdf", { aiAvailable: false });
+			const data = await readFile.readResumeFile(file, "pdf", { aiAvailable: false });
 			const resumeId = await client.resume.import({ data });
 			await navigate({ to: "/builder/$resumeId", params: { resumeId }, search: { mode: "check" } });
 		} catch (error) {
 			setState({
 				name: "idle",
 				error:
-					error instanceof ImportError
+					readFile && error instanceof readFile.ImportError
 						? error.message
 						: getOrpcErrorMessage(error, { fallback: t`Couldn't import the file. Try again from Documents.` }),
 			});
@@ -251,9 +257,34 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 					onChange={(event) => onPosting(event.target.value)}
 				/>
 			</div>
+
+			<section aria-labelledby={`${id}-checks`} className="mt-8 grid gap-4 border-line border-t pt-8">
+				<div className="grid gap-1.5">
+					<h2 id={`${id}-checks`} className="font-display font-medium text-[22px] leading-7">
+						<Trans>What it checks</Trans>
+					</h2>
+					<p className="text-ink-2 text-sm leading-[21px]">
+						<Trans>
+							Applicant tracking systems turn your PDF into plain text before anyone reads it. The checker does the
+							same, with the PDF.js library in your browser, then scores how much of your resume survives: 0 to 100,
+							from how reliably the text comes out, not from your chances of getting the job.
+						</Trans>
+					</p>
+				</div>
+				<dl className="grid gap-x-6 gap-y-3.5 sm:grid-cols-2">
+					{checkedCategories.map((category) => (
+						<div key={category} className="grid gap-0.5">
+							<dt className="font-semibold text-sm">{getPdfCategoryLabel(category)}</dt>
+							<dd className="text-[13px] text-ink-2 leading-[19px]">{getPdfCategoryDescription(category)}</dd>
+						</div>
+					))}
+				</dl>
+			</section>
 		</div>
 	);
 }
+
+const checkedCategories: PdfCategory[] = ["parseability", "layout", "sections", "contact", "dates", "content"];
 
 function Progress({ file, step }: { file: File; step: number }) {
 	const steps = [t`Opening the file`, t`Reading the text`, t`Checking layout and content`];
@@ -469,7 +500,9 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 							lens !== "page" && "h-0 overflow-hidden opacity-0 shadow-none",
 						)}
 					>
-						<PdfViewer file={file} className="block w-full" />
+						<Suspense fallback={<Spinner className="mx-auto my-24 size-5" />}>
+							<PdfViewer file={file} className="block w-full" />
+						</Suspense>
 					</div>
 					<pre
 						hidden={lens !== "text"}

@@ -4,14 +4,7 @@ import { getResumeSocialMeta } from "@reactive-resume/resume/social-meta";
 import { NotFoundScreen } from "@/components/layout/not-found-screen";
 import { Homepage } from "@/features/homepage/page";
 import { orpc } from "@/libs/orpc/client";
-import {
-	createHomepageLinks,
-	createNoindexFollowMeta,
-	createResumeSocialMeta,
-	createRootStructuredDataScript,
-	getCanonicalRootUrl,
-	getHomepageMeta,
-} from "@/libs/seo";
+import { createNoindexFollowMeta, getHomepageMeta } from "@/libs/seo";
 
 const PublicResumePage = lazyRouteComponent(() => import("@/features/resume/public/public-resume"), "PublicResumePage");
 
@@ -26,39 +19,24 @@ export const Route = createFileRoute("/_home/")({
 			throw redirect({ to: "/auth/resume-password", search: { redirect: `/${username}/${slug}`, returnTo: "/" } });
 		}
 	},
-	head: ({ loaderData, match }) => {
+	head: ({ loaderData }) => {
 		const root = loaderData?.root;
 		if (root && root.status !== "disabled") {
-			const { canonicalUrl } = root;
 			if (root.status === "unavailable") {
-				return {
-					meta: [{ title: "Reactive Resume" }, createNoindexFollowMeta()],
-					links: [{ rel: "canonical", href: canonicalUrl }],
-				};
+				return { meta: [{ title: "Reactive Resume" }, createNoindexFollowMeta()] };
 			}
 			const social = getResumeSocialMeta(root.resume.data, root.resume.name || "Resume");
 			return {
 				meta: [
 					{ title: `${social.name} - Reactive Resume` },
+					{ name: "description", content: social.description },
 					createNoindexFollowMeta(),
-					...createResumeSocialMeta({
-						canonicalUrl,
-						title: social.title,
-						description: social.description,
-						imageUrl: `${canonicalUrl}opengraph/banner.jpg`,
-					}),
 				],
-				links: [{ rel: "canonical", href: canonicalUrl }],
 			};
 		}
-		const appUrl = window.location.origin;
 		const { title, description } = getHomepageMeta();
 
-		return {
-			meta: [{ title }, { name: "description", content: description }],
-			links: createHomepageLinks(appUrl, (match.search as { locale?: unknown }).locale),
-			scripts: [createRootStructuredDataScript(getCanonicalRootUrl(appUrl))],
-		};
+		return { meta: [{ title }, { name: "description", content: description }] };
 	},
 });
 

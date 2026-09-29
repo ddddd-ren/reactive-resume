@@ -142,28 +142,24 @@ export function Design() {
 					</span>
 					<span
 						aria-hidden="true"
-						className="absolute inset-0 text-center font-medium font-ui text-[.9em] text-[oklch(0.5_0.11_250)] leading-[1.1] tracking-[-.04em] opacity-[calc(var(--w1)*(1-var(--w2)))] dark:text-[oklch(0.74_0.11_250)]"
-					>
-						{design}.
-					</span>
+						data-text={`${design}.`}
+						className="absolute inset-0 text-center font-medium font-ui text-[.9em] text-[oklch(0.5_0.11_250)] leading-[1.1] tracking-[-.04em] opacity-[calc(var(--w1)*(1-var(--w2)))] before:content-[attr(data-text)] dark:text-[oklch(0.74_0.11_250)]"
+					/>
 					<span
 						aria-hidden="true"
-						className="absolute inset-0 text-center font-display text-[oklch(0.56_0.13_40)] italic leading-none tracking-[-.03em] opacity-[calc(var(--w2)*(1-var(--w3)))] dark:text-[oklch(0.74_0.12_40)]"
-					>
-						{design}.
-					</span>
+						data-text={`${design}.`}
+						className="absolute inset-0 text-center font-display text-[oklch(0.56_0.13_40)] italic leading-none tracking-[-.03em] opacity-[calc(var(--w2)*(1-var(--w3)))] before:content-[attr(data-text)] dark:text-[oklch(0.74_0.12_40)]"
+					/>
 					<span
 						aria-hidden="true"
-						className="absolute inset-0 text-center font-light font-martian text-[.66em] uppercase leading-[1.5] tracking-[-.02em] opacity-[calc(var(--w3)*(1-var(--w4)))]"
-					>
-						{design}_
-					</span>
+						data-text={`${design}_`}
+						className="absolute inset-0 text-center font-light font-martian text-[.66em] uppercase leading-[1.5] tracking-[-.02em] opacity-[calc(var(--w3)*(1-var(--w4)))] before:content-[attr(data-text)]"
+					/>
 					<span
 						aria-hidden="true"
-						className="absolute inset-0 text-center font-anybody font-light font-stretch-[90%] uppercase leading-none tracking-[-.03em] opacity-(--w4)"
-					>
-						{design}.
-					</span>
+						data-text={`${design}.`}
+						className="absolute inset-0 text-center font-anybody font-light font-stretch-[90%] uppercase leading-none tracking-[-.03em] opacity-(--w4) before:content-[attr(data-text)]"
+					/>
 				</h2>
 
 				<div

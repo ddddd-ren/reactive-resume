@@ -27,6 +27,7 @@ import { CommandPalette } from "@/features/command-palette";
 import { ThemeProvider } from "@/features/theme/provider";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 import { loadRootContext } from "@/libs/root-context";
+import { getHomepageMeta } from "@/libs/seo";
 
 type RouterContext = {
 	theme: Theme;
@@ -37,56 +38,15 @@ type RouterContext = {
 	flags: FeatureFlags;
 };
 
-const appName = "Reactive Resume";
-const tagline = "A free and open-source resume builder";
-const title = `${appName} — ${tagline}`;
-// Keep under ~120 characters so Google's mobile SERP snippet is not truncated at 3 lines.
-const description =
-	"Free, open-source resume builder. Create, update, and share your resume, with no ads and no paywall.";
 const iconContextValue: IconProps = { size: 16, weight: "regular" };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
 	component: RootComponent,
+	// index.html carries the tags that never change (charset, viewport, icons, manifest); the server adds each page's
+	// canonical link, social cards and structured data. The router only keeps the title and description current.
 	head: () => {
-		const appUrl = window.location.origin;
-
-		return {
-			links: [
-				// Icons
-				{ rel: "icon", href: "/favicon.ico", type: "image/x-icon", sizes: "128x128" },
-				{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml", sizes: "256x256 any" },
-				{ rel: "apple-touch-icon", href: "/apple-touch-icon-180x180.png", type: "image/png", sizes: "180x180 any" },
-				// Manifest
-				{ rel: "manifest", href: "/manifest.webmanifest", crossOrigin: "use-credentials" },
-			],
-			meta: [
-				{ title },
-				{ charSet: "UTF-8" },
-				{ name: "description", content: description },
-				{ name: "viewport", content: "width=device-width, initial-scale=1" },
-				// Meta Tags
-				{ name: "theme-color", content: "#F8F7F3", media: "(prefers-color-scheme: light)" },
-				{ name: "theme-color", content: "#100F0C", media: "(prefers-color-scheme: dark)" },
-				{ name: "application-name", content: "Reactive Resume" },
-				{ name: "mobile-web-app-capable", content: "yes" },
-				{ name: "apple-mobile-web-app-capable", content: "yes" },
-				{ name: "apple-mobile-web-app-title", content: "Reactive Resume" },
-				{ name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-				// Twitter Tags — X only reads these as `name`, not `property`
-				{ name: "twitter:image", content: `${appUrl}/opengraph/banner.jpg` },
-				{ name: "twitter:card", content: "summary_large_image" },
-				{ name: "twitter:url", content: appUrl },
-				{ name: "twitter:title", content: title },
-				{ name: "twitter:description", content: description },
-				// OpenGraph Tags
-				{ property: "og:type", content: "website" },
-				{ property: "og:image", content: `${appUrl}/opengraph/banner.jpg` },
-				{ property: "og:site_name", content: appName },
-				{ property: "og:title", content: title },
-				{ property: "og:description", content: description },
-				{ property: "og:url", content: appUrl },
-			],
-		};
+		const { title, description } = getHomepageMeta();
+		return { meta: [{ title }, { name: "description", content: description }] };
 	},
 	beforeLoad: ({ context }) => loadRootContext(context.queryClient),
 });

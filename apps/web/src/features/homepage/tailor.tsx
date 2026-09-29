@@ -63,11 +63,9 @@ export function Tailor() {
 					</span>
 					<span
 						aria-hidden="true"
-						className="absolute start-0 top-0 block font-anybody font-light tracking-[-.03em] [clip-path:inset(50%_-5%_-10%_-5%)] [transform:translateX(calc(var(--dir)*(1-var(--sw))*3vw))]"
-					>
-						{tailor}
-						<span className="text-accent">.</span>
-					</span>
+						data-text={tailor}
+						className="absolute start-0 top-0 block font-anybody font-light tracking-[-.03em] [clip-path:inset(50%_-5%_-10%_-5%)] [transform:translateX(calc(var(--dir)*(1-var(--sw))*3vw))] before:content-[attr(data-text)] after:text-accent after:content-['.']"
+					/>
 					<span
 						aria-hidden="true"
 						className="absolute -inset-x-[1%] top-[calc(50%-1px)] h-0.5 bg-[repeating-linear-gradient(90deg,var(--accent)_0_10px,transparent_10px_17px)] [clip-path:inset(0_calc((1-var(--sw))*100%)_0_0)] rtl:[clip-path:inset(0_0_0_calc((1-var(--sw))*100%))]"
