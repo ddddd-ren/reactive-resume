@@ -544,11 +544,15 @@ const SectionItem = ({ itemId, children, style }: SectionItemProps) => {
 					partKeys={["timeline-marker"]}
 					style={composeStyles(timelineMarkerStyle)}
 				>
-					<SemanticTemplatePartView
-						ownerNodeKey={itemNodeKey}
-						partKeys={["timeline-marker", "timeline-dot"]}
-						style={composeStyles(timelineDotStyle)}
-					/>
+					{/* When the item breaks across pages, Forme 0.25 stretches the marker's last box down to the page's end:
+					    this plain box takes the stretch, so the dot keeps its size. */}
+					<View style={{ alignSelf: "stretch", alignItems: "center" }}>
+						<SemanticTemplatePartView
+							ownerNodeKey={itemNodeKey}
+							partKeys={["timeline-marker", "timeline-dot"]}
+							style={composeStyles(timelineDotStyle)}
+						/>
+					</View>
 				</SemanticTemplatePartView>
 				<Div
 					nodeKey={itemNodeKey}
