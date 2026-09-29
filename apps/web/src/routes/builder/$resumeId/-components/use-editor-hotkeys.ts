@@ -43,7 +43,7 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	useHotkey("Mod+Shift+E", () => {
 		if (isOnline()) setShareTab("download");
 	});
-	useHotkey("Mod+J", () => setAssistantOpen(!useEditorStore.getState().assistantOpen));
+	useHotkey("Mod+J", () => setAssistantOpen(!useEditorStore.getState().assistantOpen, true));
 	useHotkey("Escape", () => select(null), { preventDefault: false, stopPropagation: false });
 
 	useHotkey("Mod+S", () => {

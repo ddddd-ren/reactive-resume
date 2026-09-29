@@ -1,6 +1,9 @@
 // @vitest-environment happy-dom
 
+import type { PDFDocumentProxy } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { act, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createElement } from "react";
 
 const pdfjsMock = vi.hoisted(() => {
 	const page = {
@@ -56,6 +59,7 @@ describe("PDF.js browser entrypoints", () => {
 	});
 
 	afterEach(() => {
+		vi.useRealTimers();
 		vi.restoreAllMocks();
 	});
 
@@ -75,6 +79,44 @@ describe("PDF.js browser entrypoints", () => {
 		},
 		pdfCanvasModuleTimeoutMs,
 	);
+
+	it("draws a page at once, and a new scale for it only once that scale has held for 150ms", async () => {
+		vi.useFakeTimers();
+		const drawImage = vi.fn();
+		vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
+			drawImage,
+		} as unknown as CanvasRenderingContext2D);
+		const { PdfCanvasPage } = await pdfCanvasModule;
+		const page = (pageScale: number) =>
+			createElement(PdfCanvasPage, {
+				document: pdfjsMock.pdfDocument as unknown as PDFDocumentProxy,
+				onLoadSuccess: () => {},
+				pageNumber: 1,
+				pageScale,
+				showPageNumbers: false,
+				totalPages: 1,
+			});
+
+		const view = render(page(1));
+		await act(() => vi.advanceTimersByTimeAsync(0));
+		expect(pdfjsMock.page.render).toHaveBeenCalledTimes(1);
+		expect(drawImage).toHaveBeenCalledTimes(1);
+
+		// The column animating: a new scale every frame, and nothing is drawn until it holds.
+		view.rerender(page(0.8));
+		await act(() => vi.advanceTimersByTimeAsync(16));
+		view.rerender(page(0.9));
+		await act(() => vi.advanceTimersByTimeAsync(149));
+		expect(pdfjsMock.page.render).toHaveBeenCalledTimes(1);
+
+		await act(() => vi.advanceTimersByTimeAsync(1));
+		expect(pdfjsMock.page.render).toHaveBeenCalledTimes(2);
+		expect(pdfjsMock.page.render).toHaveBeenLastCalledWith(
+			expect.objectContaining({ viewport: expect.objectContaining({ width: 90 }) }),
+		);
+		expect(drawImage).toHaveBeenCalledTimes(2);
+		view.unmount();
+	});
 
 	it("creates thumbnails with the legacy PDF.js runtime", async () => {
 		vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({} as CanvasRenderingContext2D);

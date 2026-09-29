@@ -10,7 +10,14 @@ import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { AssistantOverlay, assistantPlaceFor, columnsWithAssistant, LetterAssistant } from "@/features/assistant/dock";
+import {
+	AssistantColumn,
+	AssistantOverlay,
+	assistantGridTransition,
+	assistantPlaceFor,
+	columnsWithAssistant,
+	LetterAssistant,
+} from "@/features/assistant/dock";
 import { useLetterEditorStore } from "@/features/letters/store";
 import {
 	useLetterMode,
@@ -39,6 +46,7 @@ export function LetterShell() {
 	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
 	const resetEditor = useEditorStore((state) => state.reset);
 	const assistantOpen = useEditorStore((state) => state.assistantOpen);
+	const assistantInstant = useEditorStore((state) => state.assistantInstant);
 	const assistantPlace = assistantPlaceFor(breakpoint);
 	const assistantColumn = assistantPlace === "column" && !pinned;
 	const assistantReplaces = assistantPlace === "replace" && assistantOpen;
@@ -64,7 +72,7 @@ export function LetterShell() {
 
 				{(layout === "desktop" || pinned) && (
 					<div
-						className="grid min-h-0 transition-[grid-template-columns] duration-emphasized ease-enter"
+						className={cn("grid min-h-0", assistantGridTransition(assistantOpen, assistantInstant))}
 						style={{
 							gridTemplateColumns: assistantColumn
 								? columnsWithAssistant(assistantOpen)
@@ -90,16 +98,16 @@ export function LetterShell() {
 							<LetterPage />
 						</main>
 						{assistantColumn && (
-							<div inert={!assistantOpen} className="min-h-0 min-w-0 overflow-hidden border-line border-s">
-								{assistantOpen && <LetterAssistant />}
-							</div>
+							<AssistantColumn>
+								<LetterAssistant />
+							</AssistantColumn>
 						)}
 					</div>
 				)}
 				{layout === "tablet" && !pinned && <TabletBody mode={mode} />}
 				{layout === "mobile" && <MobileBody mode={mode} onModeChange={setMode} />}
 
-				{assistantOpen && (assistantPlace === "drawer" || assistantPlace === "screen") && (
+				{(assistantPlace === "drawer" || assistantPlace === "screen") && (
 					<AssistantOverlay place={assistantPlace}>
 						<LetterAssistant />
 					</AssistantOverlay>
@@ -224,7 +232,7 @@ function LetterHotkeys({ onModeChange }: { onModeChange: (mode: LetterMode) => v
 	useHotkey("2", () => onModeChange("design"));
 	useHotkey("Mod+P", () => void download.run());
 	useHotkey("Mod+Shift+E", () => setShareTab("download"));
-	useHotkey("Mod+J", () => useEditorStore.getState().setAssistantOpen(!useEditorStore.getState().assistantOpen));
+	useHotkey("Mod+J", () => useEditorStore.getState().setAssistantOpen(!useEditorStore.getState().assistantOpen, true));
 	useHotkey("Mod+S", () => {
 		void useLetterEditorStore.getState().flush();
 		toast.add({ type: "info", description: t`Your changes are saved automatically.`, id: "auto-save" });

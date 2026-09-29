@@ -1,7 +1,10 @@
 import type { Breakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import type { Variants } from "motion/react";
 import type { ReactNode } from "react";
-import { cn } from "@reactive-resume/utils/style";
+import { useDirection } from "@base-ui/react/direction-provider";
+import { AnimatePresence, m } from "motion/react";
 import { useEditorStore } from "@/features/resume/editor/store";
+import { D2, D3, EASE, EXIT } from "@/libs/motion";
 import { AssistantPanel } from "./assistant-panel";
 import { useLetterAssistantDocument, useResumeAssistantDocument } from "./document";
 
@@ -24,21 +27,103 @@ export const assistantPlaceFor = (breakpoint: Breakpoint): AssistantPlace =>
 export const columnsWithAssistant = (open: boolean) =>
 	open ? "300px minmax(0,1fr) 400px" : "var(--editor-panel) minmax(0,1fr) 0px";
 
-type AssistantOverlayProps = { place: "drawer" | "screen"; children: ReactNode };
+/** The editor grid's transition: the assistant's column opens over 320ms and closes in 70% of that; ⌘J is instant. */
+export const assistantGridTransition = (open: boolean, instant: boolean) =>
+	instant
+		? "transition-none"
+		: open
+			? "transition-[grid-template-columns] duration-emphasized ease-enter"
+			: "transition-[grid-template-columns] duration-[calc(var(--d3)*0.7)] ease-enter";
 
-/** Tablets: a 400px drawer from the right, under the bar. Phones: the whole screen. */
-export function AssistantOverlay({ place, children }: AssistantOverlayProps) {
+/** The column's content fades in once the column has started to open and out as it closes; ⌘J skips both. */
+const columnContent: Variants = {
+	hidden: (instant: boolean) => ({
+		opacity: 0,
+		transition: instant ? { duration: 0 } : { duration: D2 * EXIT, ease: EASE },
+	}),
+	shown: (instant: boolean) => ({
+		opacity: 1,
+		transition: instant ? { duration: 0 } : { duration: D2, delay: 0.08, ease: EASE },
+	}),
+};
+
+type AssistantColumnProps = { children: ReactNode };
+
+/**
+ * ≥1280: the assistant's column. Its content keeps the open column's width (400px less the 1px border), so it
+ * travels in with the column's edge instead of re-wrapping every frame, and it stays mounted until it has faded
+ * out.
+ */
+export function AssistantColumn({ children }: AssistantColumnProps) {
+	const open = useEditorStore((state) => state.assistantOpen);
+	const instant = useEditorStore((state) => state.assistantInstant);
+
 	return (
-		<div
-			className={cn(
-				"fixed z-40 flex flex-col bg-surface",
-				place === "drawer"
-					? "end-0 top-(--editor-bar) bottom-0 w-[400px] max-w-full border-line border-s shadow-e3"
-					: "inset-0 pb-[env(safe-area-inset-bottom)]",
-			)}
-		>
-			{children}
+		<div inert={!open} className="min-h-0 min-w-0 overflow-hidden border-line border-s bg-surface">
+			<AnimatePresence initial={false} custom={instant}>
+				{open && (
+					<m.div
+						key="assistant"
+						custom={instant}
+						variants={columnContent}
+						initial="hidden"
+						animate="shown"
+						exit="hidden"
+						className="h-full w-[399px]"
+					>
+						{children}
+					</m.div>
+				)}
+			</AnimatePresence>
 		</div>
+	);
+}
+
+type AssistantOverlayProps = { place: "drawer" | "screen"; children: ReactNode };
+type OverlayCustom = { instant: boolean; hidden: string; shown: string };
+
+/** Enters from off-screen over 320ms and leaves the same way in 70% of that; ⌘J (`instant`) skips both. */
+const overlayMotion: Variants = {
+	hidden: ({ instant, hidden }: OverlayCustom) => ({
+		transform: hidden,
+		transition: instant ? { duration: 0 } : { duration: D3 * EXIT, ease: EASE },
+	}),
+	shown: ({ instant, shown }: OverlayCustom) => ({
+		transform: shown,
+		transition: instant ? { duration: 0 } : { duration: D3, ease: EASE },
+	}),
+};
+
+/** Tablets: a 400px drawer that slides in from the end edge, under the bar. Phones: the whole screen, rising. */
+export function AssistantOverlay({ place, children }: AssistantOverlayProps) {
+	const open = useEditorStore((state) => state.assistantOpen);
+	const instant = useEditorStore((state) => state.assistantInstant);
+	const rtl = useDirection() === "rtl";
+	const custom: OverlayCustom =
+		place === "drawer"
+			? { instant, hidden: rtl ? "translateX(-100%)" : "translateX(100%)", shown: "translateX(0%)" }
+			: { instant, hidden: "translateY(100%)", shown: "translateY(0%)" };
+
+	return (
+		<AnimatePresence initial={false} custom={custom}>
+			{open && (
+				<m.div
+					key={place}
+					custom={custom}
+					variants={overlayMotion}
+					initial="hidden"
+					animate="shown"
+					exit="hidden"
+					className={
+						place === "drawer"
+							? "fixed end-0 top-(--editor-bar) bottom-0 z-40 flex w-[400px] max-w-full flex-col border-line border-s bg-surface shadow-e3"
+							: "fixed inset-0 z-40 flex flex-col bg-surface pb-[env(safe-area-inset-bottom)]"
+					}
+				>
+					{children}
+				</m.div>
+			)}
+		</AnimatePresence>
 	);
 }
 

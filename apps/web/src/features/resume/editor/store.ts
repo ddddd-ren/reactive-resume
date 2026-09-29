@@ -50,6 +50,8 @@ type EditorStore = {
 	/** History: the version shown on the page, read-only, instead of the current resume. */
 	historyVersionId: string | null;
 	assistantOpen: boolean;
+	/** ⌘J toggled the assistant: its column, drawer or screen switches without a transition. */
+	assistantInstant: boolean;
 	/** The assistant's conversation: a thread id, "new" for a fresh one, or null for the document's latest. */
 	assistantThread: string | null;
 	/** A message to send once the assistant is ready, from ⌘K Ask or Prepare for next step. */
@@ -100,7 +102,7 @@ type EditorStore = {
 	/** Opens the sheet on a tab, or closes it (which also returns the page to now). */
 	setShareTab: (tab: ShareTab | null) => void;
 	setHistoryVersion: (versionId: string | null) => void;
-	setAssistantOpen: (open: boolean) => void;
+	setAssistantOpen: (open: boolean, instant?: boolean) => void;
 	setAssistantThread: (thread: string | null) => void;
 	setAssistantPrompt: (prompt: string | null) => void;
 	setAssistantProposals: (proposals: readonly Proposal[]) => void;
@@ -145,6 +147,7 @@ const initialState = {
 	shareTab: null,
 	historyVersionId: null,
 	assistantOpen: false,
+	assistantInstant: false,
 	assistantThread: null,
 	assistantPrompt: null,
 	assistantProposals: [],
@@ -175,7 +178,7 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 	setDrawerPinned: (drawerPinned) => set({ drawerPinned }),
 	setShareTab: (shareTab) => set(shareTab ? { shareTab } : { shareTab, historyVersionId: null }),
 	setHistoryVersion: (historyVersionId) => set({ historyVersionId }),
-	setAssistantOpen: (assistantOpen) => set({ assistantOpen }),
+	setAssistantOpen: (assistantOpen, instant = false) => set({ assistantOpen, assistantInstant: instant }),
 	setAssistantThread: (assistantThread) => set({ assistantThread }),
 	setAssistantPrompt: (assistantPrompt) => set({ assistantPrompt }),
 	setAssistantProposals: (assistantProposals) => set({ assistantProposals }),

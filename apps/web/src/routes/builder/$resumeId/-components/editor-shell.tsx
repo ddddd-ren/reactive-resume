@@ -8,7 +8,14 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { AssistantOverlay, assistantPlaceFor, columnsWithAssistant, ResumeAssistant } from "@/features/assistant/dock";
+import {
+	AssistantColumn,
+	AssistantOverlay,
+	assistantGridTransition,
+	assistantPlaceFor,
+	columnsWithAssistant,
+	ResumeAssistant,
+} from "@/features/assistant/dock";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { IssueStepper } from "@/features/resume/editor/check/page-layer";
@@ -35,7 +42,6 @@ export function EditorShell() {
 	const pinnable = layout === "tablet" && landscape;
 	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
 	const resetEditor = useEditorStore((state) => state.reset);
-	const assistantOpen = useEditorStore((state) => state.assistantOpen);
 	const assistantPlace = assistantPlaceFor(breakpoint);
 
 	// Selection, zoom and open sheets belong to one document.
@@ -65,7 +71,7 @@ export function EditorShell() {
 				{layout === "tablet" && !pinned && <TabletBody mode={mode} />}
 				{layout === "mobile" && <MobileBody mode={mode} onModeChange={setMode} />}
 
-				{assistantOpen && (assistantPlace === "drawer" || assistantPlace === "screen") && (
+				{(assistantPlace === "drawer" || assistantPlace === "screen") && (
 					<AssistantOverlay place={assistantPlace}>
 						<ResumeAssistant />
 					</AssistantOverlay>
@@ -135,11 +141,12 @@ type DesktopBodyProps = {
 /** The panel beside the page: 400px on desktop, 380px when pinned on a tablet; the assistant joins at ≥1280. */
 function DesktopBody({ mode, assistant, narrow }: DesktopBodyProps) {
 	const assistantOpen = useEditorStore((state) => state.assistantOpen);
+	const assistantInstant = useEditorStore((state) => state.assistantInstant);
 	const replaced = assistant === "replace" && assistantOpen;
 
 	return (
 		<div
-			className="grid min-h-0 transition-[grid-template-columns] duration-emphasized ease-enter"
+			className={cn("grid min-h-0", assistantGridTransition(assistantOpen, assistantInstant))}
 			style={{
 				gridTemplateColumns:
 					assistant === "column"
@@ -168,9 +175,9 @@ function DesktopBody({ mode, assistant, narrow }: DesktopBodyProps) {
 				<Outlet />
 			</main>
 			{assistant === "column" && (
-				<div inert={!assistantOpen} className="min-h-0 min-w-0 overflow-hidden border-line border-s">
-					{assistantOpen && <ResumeAssistant />}
-				</div>
+				<AssistantColumn>
+					<ResumeAssistant />
+				</AssistantColumn>
 			)}
 		</div>
 	);

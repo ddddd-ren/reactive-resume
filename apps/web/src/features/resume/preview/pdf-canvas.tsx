@@ -37,6 +37,10 @@ const isRenderingCancelledError = (error: unknown) =>
 	error instanceof RenderingCancelledException ||
 	(typeof error === "object" && error !== null && "name" in error && error.name === "RenderingCancelledException");
 
+// A new scale for a page already on the canvas (the assistant's column opening, zoom, a window resize) is drawn
+// once it has held this long; meanwhile the canvas stretches its last bitmap to the page's new size.
+const RESCALE_SETTLE_MS = 150;
+
 export function PdfCanvasDocument({ children, file, onLoadSuccess }: PdfCanvasDocumentProps) {
 	const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
 	const onLoadSuccessRef = useRef(onLoadSuccess);
@@ -101,6 +105,8 @@ export function PdfCanvasPage({
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const onLoadSuccessRef = useRef(onLoadSuccess);
 	const onRenderSuccessRef = useRef(onRenderSuccess);
+	// The document and page whose bitmap the canvas holds.
+	const drawnRef = useRef<{ document: PDFDocumentProxy; pageNumber: number } | null>(null);
 	const scaledPageSize = getScaledPreviewPageSize(pageSize, pageScale);
 
 	useEffect(() => {
@@ -132,25 +138,25 @@ export function PdfCanvasPage({
 				const width = baseViewport.width * pageScale;
 				const height = baseViewport.height * pageScale;
 				const renderScale = getPreviewCanvasScale(width, height);
+				// Drawn off-screen and copied over in one step, so the page never shows a blank frame between renders.
+				const buffer = globalThis.document.createElement("canvas");
+				const bufferContext = buffer.getContext("2d");
 				const canvasContext = canvas.getContext("2d");
 
-				if (!canvasContext) return;
+				if (!bufferContext || !canvasContext) return;
 
-				canvas.style.cssText = `width: ${width}px; height: ${height}px;`;
-				canvas.width = Math.floor(width * renderScale);
-				canvas.height = Math.floor(height * renderScale);
+				buffer.width = Math.floor(width * renderScale);
+				buffer.height = Math.floor(height * renderScale);
 
 				// PDF.js positions glyphs in physical coordinates, even inside an RTL resume page.
-				canvasContext.direction = "ltr";
-				canvasContext.setTransform(1, 0, 0, 1, 0, 0);
-				canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+				bufferContext.direction = "ltr";
 
 				const viewport = page.getViewport({ scale: pageScale });
 				const transform = [renderScale, 0, 0, renderScale, 0, 0];
 
 				renderTask = page.render({
-					canvas,
-					canvasContext,
+					canvas: buffer,
+					canvasContext: bufferContext,
 					viewport,
 					transform,
 					annotationMode: AnnotationMode.DISABLE,
@@ -160,24 +166,35 @@ export function PdfCanvasPage({
 				await renderTask.promise;
 				renderTask = undefined;
 
-				if (!isCancelled) onRenderSuccessRef.current?.();
+				if (isCancelled) return;
+
+				canvas.width = buffer.width;
+				canvas.height = buffer.height;
+				canvasContext.drawImage(buffer, 0, 0);
+				drawnRef.current = { document, pageNumber };
+				onRenderSuccessRef.current?.();
 			} finally {
 				page.cleanup();
 			}
 		};
 
-		void renderPage().catch((error: unknown) => {
-			if (isRenderingCancelledError(error)) return;
+		const drawn = drawnRef.current;
+		const rescaling = drawn?.document === document && drawn.pageNumber === pageNumber;
+		const timeoutId = window.setTimeout(
+			() => {
+				void renderPage().catch((error: unknown) => {
+					if (isRenderingCancelledError(error)) return;
 
-			console.error(`Failed to render PDF page ${pageNumber}`, error);
-		});
+					console.error(`Failed to render PDF page ${pageNumber}`, error);
+				});
+			},
+			rescaling ? RESCALE_SETTLE_MS : 0,
+		);
 
 		return () => {
 			isCancelled = true;
-
-			if (renderTask) {
-				renderTask.cancel();
-			}
+			window.clearTimeout(timeoutId);
+			renderTask?.cancel();
 		};
 	}, [document, pageNumber, pageScale]);
 
@@ -191,7 +208,7 @@ export function PdfCanvasPage({
 				) : null)}
 
 			<div style={scaledPageSize} className={cn("relative aspect-page overflow-hidden rounded-md", className)}>
-				<canvas ref={canvasRef} aria-label={`Resume page ${pageNumber} of ${totalPages}`} />
+				<canvas ref={canvasRef} aria-label={`Resume page ${pageNumber} of ${totalPages}`} className="block size-full" />
 				{overlay}
 			</div>
 		</figure>
