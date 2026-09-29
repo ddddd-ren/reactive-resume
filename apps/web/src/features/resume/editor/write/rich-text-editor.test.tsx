@@ -4,7 +4,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PromptDialogProvider } from "@/hooks/use-prompt";
+import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 import { RichTextEditor } from "./rich-text-editor";
 
 const media = vi.hoisted(() => ({ mobile: false }));
@@ -30,9 +30,9 @@ const renderEditor = () =>
 	render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={new QueryClient()}>
-				<PromptDialogProvider>
+				<ConfirmDialogProvider>
 					<RichTextEditor label="Description" value="<p>Shipped the redesign.</p>" onChange={() => {}} />
-				</PromptDialogProvider>
+				</ConfirmDialogProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);

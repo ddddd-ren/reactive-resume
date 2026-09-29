@@ -27,7 +27,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { IconPicker } from "@/components/input/icon-picker";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { usePrompt } from "@/hooks/use-prompt";
+import { usePrompt } from "@/hooks/use-confirm";
 import { getSectionTitle } from "@/libs/resume/section";
 import { pendingProposals } from "../proposals/proposals";
 import { useEditorStore } from "../store";

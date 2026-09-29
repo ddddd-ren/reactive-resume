@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { useResumeStore } from "@/features/resume/builder/draft";
-import { PromptDialogProvider } from "@/hooks/use-prompt";
+import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 import { useEditorStore } from "../store";
 import { WritePanel } from "./write-panel";
 
@@ -66,9 +66,9 @@ function renderPanel(edit?: (data: ResumeData) => void) {
 	render(
 		<QueryClientProvider client={new QueryClient()}>
 			<I18nProvider i18n={i18n}>
-				<PromptDialogProvider>
+				<ConfirmDialogProvider>
 					<WritePanel />
-				</PromptDialogProvider>
+				</ConfirmDialogProvider>
 			</I18nProvider>
 		</QueryClientProvider>,
 	);

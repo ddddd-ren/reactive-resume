@@ -7,7 +7,7 @@ import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "@/dialogs/store";
-import { usePrompt } from "@/hooks/use-prompt";
+import { usePrompt } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { SettingsRow, SettingsSection } from "../section";

@@ -26,7 +26,6 @@ import { DialogManager } from "@/dialogs/manager";
 import { CommandPalette } from "@/features/command-palette";
 import { ThemeProvider } from "@/features/theme/provider";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";
-import { PromptDialogProvider } from "@/hooks/use-prompt";
 import { loadRootContext } from "@/libs/root-context";
 
 type RouterContext = {
@@ -119,31 +118,29 @@ function RootComponent() {
 										<DirectionProvider direction={dir}>
 											<TooltipProvider>
 												<ConfirmDialogProvider>
-													<PromptDialogProvider>
-														<Outlet />
+													<Outlet />
 
-														{!isBuilder && <DonationToast />}
-														<DialogManager />
-														<CommandPalette />
-														<Toaster />
+													{!isBuilder && <DonationToast />}
+													<DialogManager />
+													<CommandPalette />
+													<Toaster />
 
-														{import.meta.env.DEV && <BreakpointIndicator />}
-														{import.meta.env.DEV && (
-															<TanStackDevtools
-																config={{ position: "bottom-left" }}
-																plugins={[
-																	{
-																		name: "TanStack Query",
-																		render: <ReactQueryDevtoolsPanel />,
-																	},
-																	{
-																		name: "TanStack Router",
-																		render: <TanStackRouterDevtoolsPanel />,
-																	},
-																]}
-															/>
-														)}
-													</PromptDialogProvider>
+													{import.meta.env.DEV && <BreakpointIndicator />}
+													{import.meta.env.DEV && (
+														<TanStackDevtools
+															config={{ position: "bottom-left" }}
+															plugins={[
+																{
+																	name: "TanStack Query",
+																	render: <ReactQueryDevtoolsPanel />,
+																},
+																{
+																	name: "TanStack Router",
+																	render: <TanStackRouterDevtoolsPanel />,
+																},
+															]}
+														/>
+													)}
 												</ConfirmDialogProvider>
 											</TooltipProvider>
 										</DirectionProvider>

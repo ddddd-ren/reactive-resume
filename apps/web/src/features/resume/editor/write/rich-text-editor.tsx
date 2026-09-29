@@ -14,7 +14,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { hasUnsupportedTableMarkup, richTextExtensions } from "@/components/input/rich-text-extensions";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { usePrompt } from "@/hooks/use-prompt";
+import { usePrompt } from "@/hooks/use-confirm";
 import { ImprovePanel, lineAtCaret } from "./improve";
 
 type ToolbarAction = {

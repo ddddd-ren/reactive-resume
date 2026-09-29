@@ -6,7 +6,7 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { ORPCError } from "@orpc/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PromptDialogProvider } from "@/hooks/use-prompt";
+import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 import { LinkTab } from "./link-tab";
 
 const mocks = vi.hoisted(() => ({
@@ -43,7 +43,10 @@ vi.mock("@/libs/orpc/client", () => ({
 		},
 	},
 }));
-vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
+vi.mock("@/hooks/use-confirm", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@/hooks/use-confirm")>()),
+	useConfirm: () => vi.fn(),
+}));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn(), close: vi.fn() } }));
 vi.mock("usehooks-ts", async (importOriginal) => ({
 	...(await importOriginal<typeof import("usehooks-ts")>()),
@@ -65,9 +68,9 @@ function renderTab() {
 	render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
-				<PromptDialogProvider>
+				<ConfirmDialogProvider>
 					<LinkTab />
-				</PromptDialogProvider>
+				</ConfirmDialogProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);

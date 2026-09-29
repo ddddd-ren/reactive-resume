@@ -3,7 +3,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
 import { i18n } from "@lingui/core";
-import { PromptDialogProvider, usePrompt } from "./use-prompt";
+import { ConfirmDialogProvider, usePrompt } from "./use-confirm";
 
 type HookWrapperProps = {
 	children: React.ReactNode;
@@ -13,7 +13,7 @@ beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 });
 
-const wrapper = ({ children }: HookWrapperProps) => <PromptDialogProvider>{children}</PromptDialogProvider>;
+const wrapper = ({ children }: HookWrapperProps) => <ConfirmDialogProvider>{children}</ConfirmDialogProvider>;
 
 const clickButton = (re: RegExp) => {
 	const buttons = Array.from(document.body.querySelectorAll<HTMLButtonElement>("button"));
@@ -21,8 +21,8 @@ const clickButton = (re: RegExp) => {
 };
 
 describe("usePrompt", () => {
-	it("throws when used outside PromptDialogProvider", () => {
-		expect(() => renderHook(() => usePrompt())).toThrow(/usePrompt must be used within a <PromptDialogProvider \/>/);
+	it("throws when used outside ConfirmDialogProvider", () => {
+		expect(() => renderHook(() => usePrompt())).toThrow(/must be used within a <ConfirmDialogProvider \/>/);
 	});
 
 	it("returns a function when wrapped in provider", () => {
