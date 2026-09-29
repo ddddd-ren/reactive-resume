@@ -3,6 +3,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { popTransition } from "@/features/settings/root";
 
 type Page = {
 	to: "/dashboard/settings/account" | "/dashboard/settings/preferences" | "/dashboard/settings/ai";
@@ -76,6 +77,7 @@ function RouteComponent() {
 				{!isRoot && (
 					<Link
 						to="/dashboard/settings"
+						viewTransition={popTransition}
 						className="mb-4 inline-flex h-9 items-center gap-1 text-ink-2 text-sm sm:hidden"
 					>
 						<Icon name="chevron_left" size={20} />

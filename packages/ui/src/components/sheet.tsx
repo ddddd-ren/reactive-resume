@@ -1,5 +1,5 @@
 import type * as React from "react";
-import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
+import { Drawer as SheetPrimitive } from "@base-ui/react/drawer";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
@@ -41,8 +41,9 @@ type SheetContentProps = SheetPrimitive.Popup.Props & {
 };
 
 /**
- * A task beside the page. Side sheets slide in from their edge over 320ms; the bottom variant is the
- * mobile form (18px top radius and a grabber).
+ * A task beside the page. Side sheets slide in from their edge over 320ms; the bottom variant is the mobile
+ * form (18px top radius and a grabber) and follows a downward swipe: a flick or a drag past half its height
+ * dismisses it, anything less settles back.
  */
 function SheetContent({
 	className,
@@ -52,37 +53,52 @@ function SheetContent({
 	closeLabel = "Close",
 	...props
 }: SheetContentProps) {
+	const popup = (
+		<SheetPrimitive.Popup
+			data-slot="sheet-content"
+			data-side={side}
+			className={cn(
+				"fixed z-50 flex flex-col gap-4 bg-raised text-ink text-sm shadow-e3 outline-none transition-[translate] duration-emphasized ease-enter data-ending-style:duration-[calc(var(--d3)*0.7)]",
+				"data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-full data-[side=left]:sm:max-w-[440px]",
+				"data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-full data-[side=right]:sm:max-w-[440px]",
+				"rtl:data-[side=left]:data-ending-style:translate-x-full rtl:data-[side=left]:data-starting-style:translate-x-full rtl:data-[side=right]:data-ending-style:-translate-x-full rtl:data-[side=right]:data-starting-style:-translate-x-full",
+				"data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full data-[side=top]:inset-x-0 data-[side=top]:top-0",
+				"data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[calc(100svh-2rem)] data-[side=bottom]:rounded-t-3xl data-[side=bottom]:pt-3",
+				// Swipe: Base UI moves the popup inline while dragging; on release it rests at the swipe offset and
+				// transitions back to 0, or leaves on the drawer curve, faster for a harder flick.
+				"data-swipe-dismiss:data-ending-style:duration-[calc(var(--d3)*0.7*var(--drawer-swipe-strength,1))] data-swipe-dismiss:data-ending-style:ease-drawer data-[side=bottom]:pointer-events-auto data-swiping:select-none data-[side=bottom]:transition-[translate,transform] data-[side=bottom]:[transform:translateY(var(--drawer-swipe-movement-y,0px))]",
+				className,
+			)}
+			{...props}
+		>
+			{side === "bottom" && (
+				<span aria-hidden="true" className="mx-auto block h-[5px] w-9 shrink-0 rounded-full bg-line-2" />
+			)}
+			{children}
+			{showCloseButton && (
+				<SheetPrimitive.Close
+					data-slot="sheet-close"
+					aria-label={closeLabel}
+					render={<Button variant="ghost" className="absolute inset-e-3 top-3 text-ink-2" size="icon" />}
+				>
+					<Icon name="close" />
+				</SheetPrimitive.Close>
+			)}
+		</SheetPrimitive.Popup>
+	);
+
 	return (
 		<SheetPortal>
 			<SheetOverlay />
-			<SheetPrimitive.Popup
-				data-slot="sheet-content"
-				data-side={side}
-				className={cn(
-					"fixed z-50 flex flex-col gap-4 bg-raised text-ink text-sm shadow-e3 outline-none transition-[translate] duration-emphasized ease-enter data-ending-style:duration-[calc(var(--d3)*0.7)]",
-					"data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-full data-[side=left]:sm:max-w-[440px]",
-					"data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-full data-[side=right]:sm:max-w-[440px]",
-					"rtl:data-[side=left]:data-ending-style:translate-x-full rtl:data-[side=left]:data-starting-style:translate-x-full rtl:data-[side=right]:data-ending-style:-translate-x-full rtl:data-[side=right]:data-starting-style:-translate-x-full",
-					"data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full data-[side=top]:inset-x-0 data-[side=top]:top-0",
-					"data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[calc(100svh-2rem)] data-[side=bottom]:rounded-t-3xl data-[side=bottom]:pt-3",
-					className,
-				)}
-				{...props}
-			>
-				{side === "bottom" && (
-					<span aria-hidden="true" className="mx-auto block h-[5px] w-9 shrink-0 rounded-full bg-line-2" />
-				)}
-				{children}
-				{showCloseButton && (
-					<SheetPrimitive.Close
-						data-slot="sheet-close"
-						aria-label={closeLabel}
-						render={<Button variant="ghost" className="absolute inset-e-3 top-3 text-ink-2" size="icon" />}
-					>
-						<Icon name="close" />
-					</SheetPrimitive.Close>
-				)}
-			</SheetPrimitive.Popup>
+			{side === "bottom" ? (
+				// The viewport tracks the swipe. It covers the screen without taking clicks, which fall through to the
+				// backdrop, while the popup's pointer events still bubble to it.
+				<SheetPrimitive.Viewport data-slot="sheet-viewport" className="pointer-events-none fixed inset-0 z-50">
+					{popup}
+				</SheetPrimitive.Viewport>
+			) : (
+				popup
+			)}
 		</SheetPortal>
 	);
 }

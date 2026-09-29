@@ -238,7 +238,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 
 	return (
 		<div className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto]">
-			<div className="relative min-h-0">
+			<div className="relative min-h-0 overflow-hidden">
 				<main id="main-content" className={cn("h-full", !pageVisible && "invisible")}>
 					<Outlet />
 				</main>
@@ -303,7 +303,7 @@ function SelectionBar({ onEdit }: { onEdit: () => void }) {
 	if (!selection) return null;
 
 	return (
-		<div className="absolute bottom-[76px] left-1/2 z-10 flex -translate-x-1/2 items-center rounded-xl bg-ink p-1 text-bg shadow-e3">
+		<div className="absolute bottom-[76px] left-1/2 z-10 flex -translate-x-1/2 starting:translate-y-2 items-center rounded-xl bg-ink p-1 text-bg starting:opacity-0 shadow-e3 transition-[opacity,translate] duration-standard ease-enter">
 			<button
 				type="button"
 				className="flex h-10 items-center gap-1.5 rounded-lg px-3 font-semibold text-[15px]"

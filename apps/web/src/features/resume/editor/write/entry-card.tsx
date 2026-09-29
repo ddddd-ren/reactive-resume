@@ -2,11 +2,13 @@ import type { MessageDescriptor } from "@lingui/core";
 import type { KeyboardEvent, ReactNode } from "react";
 import type { PageSettings } from "./entries";
 import type { Entry, WriteSection } from "./model";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { msg, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
+import { AnimatePresence, m } from "motion/react";
 import { useEffect, useMemo } from "react";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
@@ -26,7 +28,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { DRAG_SETTLE } from "@/libs/motion";
+import { D3, DRAG_SETTLE, EASE, EXIT } from "@/libs/motion";
 import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "@/libs/resume/move-item";
 import { useEditorStore } from "../store";
 import { EntryFields } from "./entries";
@@ -177,17 +179,20 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 				</Collapsible>
 			)}
 
-			{open && isPhone && (
-				<PhoneEntryScreen
-					section={section}
-					title={title}
-					locked={locked}
-					onDelete={() => deleteEntry(section, entryId)}
-					onBack={() => select(null)}
-				>
-					{fields}
-				</PhoneEntryScreen>
-			)}
+			<AnimatePresence>
+				{open && isPhone && (
+					<PhoneEntryScreen
+						key="entry"
+						section={section}
+						title={title}
+						locked={locked}
+						onDelete={() => deleteEntry(section, entryId)}
+						onBack={() => select(null)}
+					>
+						{fields}
+					</PhoneEntryScreen>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }
@@ -204,12 +209,17 @@ type PhoneEntryScreenProps = {
 /** Phones: an open entry pushes in full screen, with a back label naming its section and 44px fields. */
 function PhoneEntryScreen({ section, title, locked, onBack, onDelete, children }: PhoneEntryScreenProps) {
 	const sectionTitle = useSectionTitle(section);
+	// Off-screen at the end edge: the screen pushes in from there and goes back there.
+	const offscreen = useDirection() === "rtl" ? "translateX(-100%)" : "translateX(100%)";
 
 	return (
-		<div
+		<m.div
 			role="dialog"
 			aria-label={title || t`Untitled`}
 			className="fixed inset-0 z-40 flex flex-col bg-surface pb-[env(safe-area-inset-bottom)]"
+			initial={{ transform: offscreen }}
+			animate={{ transform: "translateX(0%)", transition: { duration: D3, ease: EASE } }}
+			exit={{ transform: offscreen, transition: { duration: D3 * EXIT, ease: EASE } }}
 		>
 			<div className="flex h-14 shrink-0 items-center gap-1 border-line border-b px-1.5">
 				<button
@@ -231,7 +241,7 @@ function PhoneEntryScreen({ section, title, locked, onBack, onDelete, children }
 			>
 				{children}
 			</fieldset>
-		</div>
+		</m.div>
 	);
 }
 

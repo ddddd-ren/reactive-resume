@@ -102,7 +102,8 @@ type SheetTab = "template" | "type" | "color" | "page";
 
 /**
  * Phones: Design is a sheet over the lower half of the page, so every change shows above it. The handle
- * raises it to full height. Tabs replace the group nav; Advanced sits under Page.
+ * raises it to full height. It keeps its full height and moves by `translate` (half out of view when lowered),
+ * and rises into view when Design opens. Tabs replace the group nav; Advanced sits under Page.
  */
 export function DesignSheet() {
 	const locked = useIsResumeLocked();
@@ -113,8 +114,8 @@ export function DesignSheet() {
 		<section
 			aria-label={t`Design`}
 			className={cn(
-				"absolute inset-x-0 bottom-0 z-20 flex flex-col rounded-t-2xl border-line border-t bg-surface shadow-e3 transition-[height] duration-emphasized ease-enter",
-				expanded ? "h-[calc(100%-1rem)]" : "h-1/2",
+				"absolute inset-x-0 bottom-0 z-20 flex h-[calc(100%-1rem)] starting:translate-y-full flex-col rounded-t-2xl border-line border-t bg-surface shadow-e3 transition-[translate] duration-emphasized ease-enter [container-type:size]",
+				!expanded && "translate-y-[calc(50%-0.5rem)]",
 			)}
 		>
 			<button
@@ -149,6 +150,8 @@ export function DesignSheet() {
 							<AdvancedGroup />
 						</div>
 					)}
+					{/* Lowered, the sheet's lower half is out of view: this keeps the end of the list scrollable into sight. */}
+					{!expanded && <div aria-hidden="true" className="h-[calc(50cqh-0.5rem)]" />}
 				</fieldset>
 			</Tabs>
 		</section>
