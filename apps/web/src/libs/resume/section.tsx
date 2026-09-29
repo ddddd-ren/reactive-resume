@@ -2,7 +2,7 @@ import type { SectionType } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { match } from "ts-pattern";
 
-export type LeftSidebarSection = "picture" | "basics" | "summary" | SectionType | "custom";
+type LeftSidebarSection = "picture" | "basics" | "summary" | SectionType | "custom";
 
 // CustomSectionType values that are not in SectionType (used in custom sections only)
 type CustomOnlyType = "cover-letter";
