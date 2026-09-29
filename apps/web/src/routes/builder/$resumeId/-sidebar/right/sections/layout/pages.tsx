@@ -14,6 +14,7 @@ import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } 
 import { CSS } from "@dnd-kit/utilities";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useReducedMotion } from "motion/react";
 import { useCallback, useId, useState } from "react";
 import { match } from "ts-pattern";
 import { templateLayouts } from "@reactive-resume/schema/templates";
@@ -33,7 +34,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { EASE } from "@/libs/motion";
+import { DRAG_SETTLE } from "@/libs/motion";
 import { resolveLayoutSectionTitle } from "./title";
 import { filterVisibleLayoutSectionIds } from "./visibility";
 
@@ -86,6 +87,7 @@ const createDroppableId = (pageIndex: number, columnId: ColumnId): string => {
 
 export function LayoutPages() {
 	const [activeId, setActiveId] = useState<string | null>(null);
+	const reduceMotion = useReducedMotion();
 
 	const resume = useCurrentResume();
 	const template = resume.data.metadata.template;
@@ -263,7 +265,7 @@ export function LayoutPages() {
 				</Button>
 			</div>
 
-			<DragOverlay dropAnimation={{ duration: 150, easing: `cubic-bezier(${EASE})` }}>
+			<DragOverlay dropAnimation={reduceMotion ? null : DRAG_SETTLE}>
 				{activeId ? <LayoutItemContent id={activeId} isOverlay /> : null}
 			</DragOverlay>
 		</DndContext>
@@ -407,7 +409,10 @@ type SortableLayoutItemProps = {
 };
 
 function SortableLayoutItem({ id, pageIndex, columnId }: SortableLayoutItemProps) {
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+		id,
+		transition: DRAG_SETTLE,
+	});
 
 	const style: CSSProperties = { transform: CSS.Transform.toString(transform), transition };
 

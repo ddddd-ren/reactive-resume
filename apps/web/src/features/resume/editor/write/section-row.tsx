@@ -28,6 +28,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { IconPicker } from "@/components/input/icon-picker";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { usePrompt } from "@/hooks/use-confirm";
+import { DRAG_SETTLE } from "@/libs/motion";
 import { getSectionTitle } from "@/libs/resume/section";
 import { pendingProposals } from "../proposals/proposals";
 import { useEditorStore } from "../store";
@@ -64,7 +65,7 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 	const open = useEditorStore((state) => state.openSections.includes(section.id));
 	const setOpen = useEditorStore((state) => state.setSectionOpen);
 	const updateResumeData = useUpdateResumeData();
-	const sortable = useSortable({ id: section.id, disabled: locked });
+	const sortable = useSortable({ id: section.id, disabled: locked, transition: DRAG_SETTLE });
 
 	const toggleHidden = () =>
 		updateResumeData(
@@ -87,7 +88,10 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 			id={`sidebar-${section.id}`}
 			data-section-id={section.id}
 			style={{ transform: CSS.Translate.toString(sortable.transform), transition: sortable.transition }}
-			className={cn("relative scroll-mt-[60px] rounded-lg", sortable.isDragging && "z-10 opacity-40")}
+			className={cn(
+				"relative scroll-mt-[60px] rounded-lg transition-shadow duration-quick ease-enter",
+				sortable.isDragging && "z-10 bg-raised shadow-e2",
+			)}
 		>
 			<div className="group/row flex h-11 items-center gap-0.5 rounded-lg pe-1 hover:bg-hover">
 				<button

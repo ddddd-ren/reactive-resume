@@ -12,6 +12,7 @@ import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useS
 import { CSS } from "@dnd-kit/utilities";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useReducedMotion } from "motion/react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { Badge } from "@reactive-resume/ui/components/badge";
@@ -21,6 +22,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { cn } from "@reactive-resume/utils/style";
 import { useControlledState } from "@/hooks/use-controlled-state";
+import { DRAG_SETTLE } from "@/libs/motion";
 
 const RETURN_KEY = "Enter";
 const COMMA_KEY = ",";
@@ -55,15 +57,21 @@ type ChipDragOverlayProps = {
 };
 
 function ChipDragOverlay({ activeChip }: ChipDragOverlayProps) {
+	const reduceMotion = useReducedMotion();
 	const overlay = (
-		<DragOverlay dropAnimation={null}>{activeChip ? <ChipDragPreview chip={activeChip} /> : null}</DragOverlay>
+		<DragOverlay dropAnimation={reduceMotion ? null : DRAG_SETTLE}>
+			{activeChip ? <ChipDragPreview chip={activeChip} /> : null}
+		</DragOverlay>
 	);
 
 	return createPortal(overlay, document.body);
 }
 
 function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProps) {
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+		id,
+		transition: DRAG_SETTLE,
+	});
 
 	const style = {
 		transition,

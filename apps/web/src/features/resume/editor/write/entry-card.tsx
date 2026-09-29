@@ -25,6 +25,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { DRAG_SETTLE } from "@/libs/motion";
 import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "@/libs/resume/move-item";
 import { useEditorStore } from "../store";
 import { EntryFields } from "./entries";
@@ -65,7 +66,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 	const open = useEditorStore((state) => state.selection?.kind === "item" && state.selection.itemId === entryId);
 	const autoFocus = useEditorStore((state) => state.focusEntryId === entryId);
 	const select = useEditorStore((state) => state.select);
-	const sortable = useSortable({ id: entryId, disabled: locked });
+	const sortable = useSortable({ id: entryId, disabled: locked, transition: DRAG_SETTLE });
 	const isPhone = useBreakpoint() === "mobile";
 
 	// The first field took focus as it mounted; later openings shouldn't steal focus again.
@@ -101,9 +102,9 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 			data-entry-id={entryId}
 			style={{ transform: CSS.Translate.toString(sortable.transform), transition: sortable.transition }}
 			className={cn(
-				"group/entry relative scroll-mt-[60px] rounded-[10px] border border-line bg-surface transition-[border-color,box-shadow] duration-quick",
+				"group/entry relative scroll-mt-[60px] rounded-[10px] border border-line bg-surface transition-[border-color,box-shadow] duration-quick ease-enter",
 				open && "border-accent shadow-e1",
-				sortable.isDragging && "z-10 opacity-40",
+				sortable.isDragging && "z-10 bg-raised shadow-e2",
 			)}
 		>
 			<div className="flex items-center gap-0.5 pe-1">
