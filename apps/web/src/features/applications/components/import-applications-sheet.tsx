@@ -122,7 +122,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 					</SheetDescription>
 				</SheetHeader>
 
-				<div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4">
+				<div className="-mt-1 flex flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-4">
 					<div className="flex items-center gap-2">
 						<Button size="sm" variant="secondary" onClick={() => fileRef.current?.click()}>
 							<Icon name="upload_file" size={16} />

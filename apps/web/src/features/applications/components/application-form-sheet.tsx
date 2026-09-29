@@ -288,7 +288,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 					</SheetDescription>
 				</SheetHeader>
 
-				<div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4 [&>*]:shrink-0">
+				<div className="-mt-1 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-4 [&>*]:shrink-0">
 					{/* Hidden entirely when AI is off. */}
 					{aiEnabled && (
 						<JobDescriptionAutofill

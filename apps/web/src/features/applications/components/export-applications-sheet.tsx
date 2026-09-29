@@ -54,7 +54,7 @@ export function ExportApplicationsSheet({ open, onOpenChange, applications, filt
 						onOpenChange(false);
 					}}
 				>
-					<div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4">
+					<div className="-mt-1 flex flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-4">
 						<div className="space-y-1.5">
 							<Label htmlFor={`${id}-scope`}>
 								<Trans>Applications to export</Trans>
