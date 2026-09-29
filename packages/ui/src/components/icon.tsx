@@ -29,6 +29,8 @@ function Icon({ name, filled = false, size = 20, className, style, ...props }: I
 		<span
 			aria-hidden="true"
 			translate="no"
+			{...props}
+			// After the props: `data-icon` is the glyph, so a stray one never blanks it.
 			data-slot="icon"
 			data-icon={name}
 			className={cn("material-symbol", DIRECTIONAL_ICONS.has(name) && "rtl:-scale-x-100", className)}
@@ -37,7 +39,6 @@ function Icon({ name, filled = false, size = 20, className, style, ...props }: I
 				fontVariationSettings: `"FILL" ${filled ? 1 : 0}, "wght" 300, "GRAD" 0, "opsz" ${size >= 24 ? 24 : 20}`,
 				...style,
 			}}
-			{...props}
 		/>
 	);
 }

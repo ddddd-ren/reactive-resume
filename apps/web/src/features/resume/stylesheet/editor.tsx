@@ -6,7 +6,7 @@ import type { SemanticCssColorToken } from "./color-tokens";
 import type { SemanticCssEditorMetadata } from "./protocol";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 import { css } from "@codemirror/lang-css";
-import { defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
+import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { Annotation, Compartment, EditorState, Prec, Transaction } from "@codemirror/state";
 import {
 	drawSelection,
@@ -16,6 +16,7 @@ import {
 	keymap,
 	lineNumbers,
 } from "@codemirror/view";
+import { tags } from "@lezer/highlight";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -54,6 +55,18 @@ type EditorCompartments = {
 	intelligence: Compartment;
 };
 
+/** CSS in the app's own inks, so it reads the same in light and dark. */
+const highlightStyle = HighlightStyle.define([
+	{ tag: [tags.comment, tags.meta], color: "var(--ink-3)", fontStyle: "italic" },
+	{ tag: [tags.tagName, tags.className, tags.labelName], color: "var(--accent-text)" },
+	{ tag: [tags.propertyName, tags.attributeName], color: "var(--info-text)" },
+	{ tag: [tags.string, tags.number, tags.unit, tags.color, tags.atom], color: "var(--warn-text)" },
+	{ tag: [tags.keyword, tags.modifier, tags.definitionKeyword, tags.controlKeyword], color: "var(--danger-text)" },
+	{ tag: [tags.variableName, tags.function(tags.variableName)], color: "var(--ink)", fontWeight: "500" },
+	{ tag: [tags.punctuation, tags.operator, tags.bracket], color: "var(--ink-2)" },
+	{ tag: tags.invalid, color: "var(--danger-text)", textDecoration: "underline wavy" },
+]);
+
 const editorTheme = (dark: boolean): Extension =>
 	EditorView.theme(
 		{
@@ -65,7 +78,7 @@ const editorTheme = (dark: boolean): Extension =>
 			},
 			".cm-scroller": {
 				overflow: "auto",
-				fontFamily: '"JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+				fontFamily: "var(--font-mono)",
 				lineHeight: "1.5",
 			},
 			".cm-content": { minHeight: "100%", padding: "0.75rem 0" },
@@ -162,7 +175,7 @@ export function StylesheetCodeEditor({
 				drawSelection(),
 				highlightActiveLine(),
 				css(),
-				syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+				syntaxHighlighting(highlightStyle),
 				EditorView.editorAttributes.of({ dir: "ltr" }),
 				EditorView.contentAttributes.of({ "aria-label": initial.label, dir: "ltr", spellcheck: "false" }),
 				Prec.high(

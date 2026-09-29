@@ -52,23 +52,19 @@ export function StylesheetToolbar({
 	return (
 		<div className="flex flex-wrap items-center gap-1" role="toolbar" aria-label={t`Stylesheet editor`}>
 			<ToolbarButton label={t`Undo stylesheet edit`} disabled={disabled || !canUndo} onClick={onUndo}>
-				<Icon name="undo" size={16} data-icon="inline-start" />
+				<Icon name="undo" size={16} />
 			</ToolbarButton>
 			<ToolbarButton label={t`Redo stylesheet edit`} disabled={disabled || !canRedo} onClick={onRedo}>
-				<Icon name="redo" size={16} data-icon="inline-start" />
+				<Icon name="redo" size={16} />
 			</ToolbarButton>
 			<ToolbarButton label={t`Copy stylesheet`} onClick={() => void copySourceToClipboard(source)}>
-				<Icon name="content_copy" size={16} data-icon="inline-start" />
+				<Icon name="content_copy" size={16} />
 			</ToolbarButton>
 			<ToolbarButton label={t`Format stylesheet`} disabled={disabled} onClick={onFormat}>
-				<Icon name="auto_fix_high" size={16} data-icon="inline-start" />
+				<Icon name="auto_fix_high" size={16} />
 			</ToolbarButton>
 			<ToolbarButton label={focused ? t`Exit focus mode` : t`Open focus mode`} onClick={onFocusToggle}>
-				{focused ? (
-					<Icon name="close_fullscreen" size={16} data-icon="inline-start" />
-				) : (
-					<Icon name="open_in_full" size={16} data-icon="inline-start" />
-				)}
+				{focused ? <Icon name="close_fullscreen" size={16} /> : <Icon name="open_in_full" size={16} />}
 			</ToolbarButton>
 		</div>
 	);

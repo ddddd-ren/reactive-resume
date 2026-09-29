@@ -23,19 +23,19 @@ export function StylesheetStatus({ mode, status, diagnostics }: StylesheetStatus
 		<div className="space-y-2" aria-live="polite">
 			{hasFatalErrors ? (
 				<Badge variant="danger">
-					<Icon name="error" size={16} data-icon="inline-start" />
+					<Icon name="error" size={16} />
 					<Trans>Fatal error</Trans>
 				</Badge>
 			) : isPending ? (
 				<Badge variant="outline">{mode === "legacy" ? <Trans>Checking draft</Trans> : <Trans>Checking</Trans>}</Badge>
 			) : hasRecoverableErrors ? (
 				<Badge variant="warn">
-					<Icon name="error" size={16} data-icon="inline-start" />
+					<Icon name="error" size={16} />
 					{mode === "legacy" ? <Trans>Ready to activate with errors</Trans> : <Trans>Valid with errors</Trans>}
 				</Badge>
 			) : warnings.length > 0 ? (
 				<Badge variant="warn">
-					<Icon name="warning" size={16} data-icon="inline-start" />
+					<Icon name="warning" size={16} />
 					{mode === "legacy" ? <Trans>Ready to activate with warnings</Trans> : <Trans>Valid with warnings</Trans>}
 				</Badge>
 			) : (

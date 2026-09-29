@@ -19,6 +19,11 @@ describe("Icon", () => {
 		expect(container.querySelector("button")).toHaveTextContent(/^Search$/);
 	});
 
+	it("keeps its glyph when a caller passes its own data-icon", () => {
+		const { container } = render(<Icon name="undo" {...{ "data-icon": "inline-start" }} />);
+		expect(container.querySelector('[data-slot="icon"]')).toHaveAttribute("data-icon", "undo");
+	});
+
 	it("uses the filled glyph only when asked", () => {
 		const { container } = render(<Icon name="description" filled />);
 		expect(container.querySelector('[data-slot="icon"]')?.getAttribute("style")).toContain('"FILL" 1');

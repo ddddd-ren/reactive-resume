@@ -21,7 +21,7 @@ export function LegacyStylesheetBanner({ disabled, onActivate }: LegacyStyleshee
 				</p>
 				<Button type="button" size="sm" disabled={disabled} onClick={onActivate}>
 					<Trans>Activate Semantic CSS</Trans>
-					<Icon name="arrow_forward" size={16} data-icon="inline-end" />
+					<Icon name="arrow_forward" size={16} />
 				</Button>
 			</AlertDescription>
 		</Alert>
