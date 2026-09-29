@@ -44,12 +44,33 @@ function Group({ id, title, children }: { id: string; title: ReactNode; children
 }
 
 /**
+ * Brings `id` into view. Advanced is collapsed until asked for: jumping into it opens it, then aims again once it
+ * has grown (before that its contents aren't mounted and the panel may be too short to bring them to the top).
+ * `focus` then moves focus to the target's first control.
+ */
+function jumpTo(id: string, advanced: { open: boolean; setOpen: (open: boolean) => void }, focus = false) {
+	const aim = () => {
+		const target = document.getElementById(id) ?? document.getElementById("design-advanced");
+		target?.scrollIntoView({ behavior: getScrollBehavior() });
+		if (focus) target?.querySelector<HTMLElement>("input, button, textarea")?.focus({ preventScroll: true });
+	};
+	if (id.startsWith("design-advanced") && !advanced.open) {
+		advanced.setOpen(true);
+		window.setTimeout(aim, D2 * 1000);
+	}
+	aim();
+}
+
+const TYPOGRAPHY_ID = "design-advanced-typography";
+
+/**
  * Design: a sticky nav (Template · Type · Color · Page · Advanced) over groups divided by rules. Presets cover
  * the common choices; Advanced keeps every exact value, custom CSS and the reset.
  */
 export function DesignPanel() {
 	const locked = useIsResumeLocked();
 	const [advancedOpen, setAdvancedOpen] = useState(false);
+	const advanced = { open: advancedOpen, setOpen: setAdvancedOpen };
 
 	return (
 		<div>
@@ -61,17 +82,7 @@ export function DesignPanel() {
 					<button
 						key={group.id}
 						type="button"
-						onClick={() => {
-							const target = document.getElementById(`design-${group.id}`);
-							const scroll = () => target?.scrollIntoView({ behavior: getScrollBehavior() });
-							// Advanced is collapsed until asked for: jumping to it opens it, then aims again once it has grown
-							// (before that the panel may be too short to bring it to the top).
-							if (group.id === "advanced" && !advancedOpen) {
-								setAdvancedOpen(true);
-								window.setTimeout(scroll, D2 * 1000);
-							}
-							scroll();
-						}}
+						onClick={() => jumpTo(`design-${group.id}`, advanced)}
 						className="h-8 shrink-0 rounded-full px-3 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink"
 					>
 						{group.label()}
@@ -84,7 +95,7 @@ export function DesignPanel() {
 					<TemplateGroup />
 				</Group>
 				<Group id="type" title={<Trans>Type</Trans>}>
-					<TypeGroup />
+					<TypeGroup onCustomFonts={() => jumpTo(TYPOGRAPHY_ID, advanced, true)} />
 				</Group>
 				<Group id="color" title={<Trans>Color</Trans>}>
 					<ColorGroup />
@@ -109,6 +120,7 @@ export function DesignSheet() {
 	const locked = useIsResumeLocked();
 	const [tab, setTab] = useState<SheetTab>("template");
 	const [expanded, setExpanded] = useState(false);
+	const [advancedOpen, setAdvancedOpen] = useState(false);
 
 	return (
 		<section
@@ -140,14 +152,22 @@ export function DesignSheet() {
 				<fieldset disabled={locked} className="m-0 min-h-0 min-w-0 flex-1 overflow-y-auto border-0 p-4">
 					<OfflineBanner className="mb-4" />
 					{tab === "template" && <TemplateGroup layout="strip" />}
-					{tab === "type" && <TypeGroup />}
+					{tab === "type" && (
+						<TypeGroup
+							onCustomFonts={() => {
+								// Advanced lives under Page, so from here it isn't mounted yet: switching mounts it, then it opens.
+								setTab("page");
+								jumpTo(TYPOGRAPHY_ID, { open: false, setOpen: setAdvancedOpen }, true);
+							}}
+						/>
+					)}
 					{tab === "color" && <ColorGroup />}
 					{tab === "page" && (
 						<div className="-mx-4 divide-y divide-line">
 							<div className="px-4 pb-5">
 								<PageGroup />
 							</div>
-							<AdvancedGroup />
+							<AdvancedGroup open={advancedOpen} onOpenChange={setAdvancedOpen} />
 						</div>
 					)}
 					{/* Lowered, the sheet's lower half is out of view: this keeps the end of the list scrollable into sight. */}
@@ -175,8 +195,8 @@ const EXACT_SECTIONS = [
 ] as const;
 
 /** Every exact value, the date format, custom CSS and Reset to template defaults, collapsed until asked for. */
-// The phone sheet leaves it uncontrolled; the desktop panel controls it so its nav can open it.
-type AdvancedGroupProps = { open?: boolean; onOpenChange?: (open: boolean) => void };
+// Controlled so the nav and Type's Custom row can open it.
+type AdvancedGroupProps = { open: boolean; onOpenChange: (open: boolean) => void };
 
 function AdvancedGroup({ open, onOpenChange }: AdvancedGroupProps) {
 	const data = useResumeData();
@@ -246,8 +266,13 @@ function AdvancedGroup({ open, onOpenChange }: AdvancedGroupProps) {
 					</div>
 
 					{EXACT_SECTIONS.map(([type, Section]) => (
-						<section key={type} aria-labelledby={`design-advanced-${type}`} className="grid gap-3">
-							<h3 id={`design-advanced-${type}`} className="font-semibold text-[13px] text-ink-2">
+						<section
+							key={type}
+							id={`design-advanced-${type}`}
+							aria-labelledby={`design-advanced-${type}-title`}
+							className="grid scroll-mt-14 gap-3"
+						>
+							<h3 id={`design-advanced-${type}-title`} className="font-semibold text-[13px] text-ink-2">
 								{getSectionTitle(type)}
 							</h3>
 							<Section />

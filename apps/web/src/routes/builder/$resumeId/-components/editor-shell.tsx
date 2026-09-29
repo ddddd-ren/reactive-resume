@@ -244,7 +244,8 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 
 	return (
 		<div className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto]">
-			<div className="relative min-h-0 overflow-hidden">
+			{/* Clip, not hidden: the lowered Design sheet overflows it, and scrolling into the sheet mustn't scroll it. */}
+			<div className="relative min-h-0 overflow-clip">
 				<main id="main-content" className={cn("h-full", !pageVisible && "invisible")}>
 					<Outlet />
 				</main>

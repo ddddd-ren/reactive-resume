@@ -62,8 +62,15 @@ function useDesign(): DesignSource {
 	};
 }
 
-/** Type: five font pairings, the text size (9–12.5 pt) and density. */
-export function TypeGroup() {
+const familiesLabel = (heading: string, body: string) => (heading === body ? heading : `${heading} + ${body}`);
+
+type TypeGroupProps = {
+	/** Brings the exact typography editor into view. Without it, the Custom row isn't offered. */
+	onCustomFonts?: () => void;
+};
+
+/** Type: five font pairings (or any font, in Advanced), the text size (9–12.5 pt) and density. */
+export function TypeGroup({ onCustomFonts }: TypeGroupProps) {
 	const { metadata, write } = useDesign();
 	const sizeLabelId = useId();
 	if (!metadata) return null;
@@ -71,29 +78,46 @@ export function TypeGroup() {
 	const pairing = matchFontPairing(metadata);
 	const density = matchDensity(metadata);
 	const size = metadata.typography.body.fontSize;
+	const { heading, body } = metadata.typography;
 
 	return (
 		<div className="grid gap-4">
-			<RadioGroup
-				aria-label={t`Font pairing`}
-				value={pairing ?? null}
-				onValueChange={(value) => write("pairing", (draft) => applyFontPairing(draft, value as FontPairingId), true)}
-				className="grid gap-1"
-			>
-				{FONT_PAIRINGS.map((option) => (
-					<Radio.Root
-						key={option.id}
-						value={option.id}
-						className="flex h-12 cursor-pointer items-center gap-3 rounded-lg border border-line px-3 text-start transition-colors duration-quick hover:bg-hover data-checked:border-accent data-checked:bg-accent-soft data-checked:hover:bg-accent-soft"
+			<div className="grid gap-1">
+				<RadioGroup
+					aria-label={t`Font pairing`}
+					value={pairing ?? null}
+					onValueChange={(value) => write("pairing", (draft) => applyFontPairing(draft, value as FontPairingId), true)}
+					className="grid gap-1"
+				>
+					{FONT_PAIRINGS.map((option) => (
+						<Radio.Root
+							key={option.id}
+							value={option.id}
+							className="flex h-12 cursor-pointer items-center gap-3 rounded-lg border border-line px-3 text-start transition-colors duration-quick hover:bg-hover data-checked:border-accent data-checked:bg-accent-soft data-checked:hover:bg-accent-soft"
+						>
+							<span className="font-medium text-sm">{option.label}</span>
+							<span className="truncate text-ink-3 text-xs">{familiesLabel(option.heading, option.body)}</span>
+							{pairing === option.id && <Icon name="check" size={18} className="ms-auto text-accent-text" />}
+						</Radio.Root>
+					))}
+				</RadioGroup>
+
+				{onCustomFonts && (
+					<button
+						type="button"
+						onClick={onCustomFonts}
+						className="flex h-12 cursor-pointer items-center gap-3 rounded-lg border border-line border-dashed px-3 text-start transition-colors duration-quick hover:bg-hover"
 					>
-						<span className="font-medium text-sm">{option.label}</span>
-						<span className="truncate text-ink-3 text-xs">
-							{option.heading === option.body ? option.heading : `${option.heading} + ${option.body}`}
+						<span className="font-medium text-sm">
+							<Trans>Custom</Trans>
 						</span>
-						{pairing === option.id && <Icon name="check" size={18} className="ms-auto text-accent-text" />}
-					</Radio.Root>
-				))}
-			</RadioGroup>
+						<span className="truncate text-ink-3 text-xs">
+							{pairing ? <Trans>Any font, in Advanced</Trans> : familiesLabel(heading.fontFamily, body.fontFamily)}
+						</span>
+						<Icon name="arrow_downward" size={18} className="ms-auto text-ink-3" />
+					</button>
+				)}
+			</div>
 
 			<div className="grid gap-2">
 				<div className="flex items-center justify-between text-[13px]">

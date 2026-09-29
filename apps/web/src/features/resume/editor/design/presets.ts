@@ -6,13 +6,16 @@ type Data = ResumeData | WritableDraft<ResumeData>;
 /** The design a resume and a letter share. */
 type Metadata = Pick<Data["metadata"], "typography" | "design" | "page">;
 
-/** Five font pairings. Families that aren't a pairing leave the control with no selection. */
+/**
+ * Five traditional resume faces, set in Regular and Bold. Families that aren't a pairing leave the control with no
+ * selection; any other font is chosen in Advanced.
+ */
 export const FONT_PAIRINGS = [
-	{ id: "editorial", label: "Editorial", heading: "Newsreader", body: "Hanken Grotesk", headingWeight: "500" },
-	{ id: "plex", label: "Plex", heading: "IBM Plex Serif", body: "IBM Plex Sans", headingWeight: "500" },
-	{ id: "classic", label: "Classic", heading: "Lora", body: "Source Sans 3", headingWeight: "500" },
-	{ id: "modern", label: "Modern", heading: "Karla", body: "Karla", headingWeight: "700" },
-	{ id: "franklin", label: "Franklin", heading: "Libre Franklin", body: "Libre Franklin", headingWeight: "600" },
+	{ id: "classic", label: "Classic", heading: "EB Garamond", body: "EB Garamond", headingWeight: "600" },
+	{ id: "traditional", label: "Traditional", heading: "Tinos", body: "Tinos", headingWeight: "700" },
+	{ id: "balanced", label: "Balanced", heading: "Source Serif 4", body: "Source Sans 3", headingWeight: "600" },
+	{ id: "professional", label: "Professional", heading: "Carlito", body: "Carlito", headingWeight: "700" },
+	{ id: "clean", label: "Clean", heading: "Lato", body: "Lato", headingWeight: "700" },
 ] as const;
 
 export type FontPairingId = (typeof FONT_PAIRINGS)[number]["id"];
@@ -31,7 +34,7 @@ export function applyFontPairing(metadata: WritableDraft<Metadata>, id: FontPair
 	metadata.typography.heading.fontFamily = pairing.heading;
 	metadata.typography.heading.fontWeights = [pairing.headingWeight];
 	metadata.typography.body.fontFamily = pairing.body;
-	metadata.typography.body.fontWeights = ["400", "600"];
+	metadata.typography.body.fontWeights = ["400", "700"];
 }
 
 /**
