@@ -98,7 +98,7 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 
 	const normalizedHtml = normalizeRichTextHtml(children, {
 		direction: rtl ? "rtl" : "ltr",
-		softHyphens: metadata.typography.hyphenation === true && /^de(?:-|$)/i.test(metadata.page.locale),
+		softHyphens: metadata.typography.hyphenation === true,
 	});
 	const html = richTextNodeKey
 		? projectNormalizedRichTextHtml(normalizedHtml, richTextNodeKey, renderedChildKeysFor)

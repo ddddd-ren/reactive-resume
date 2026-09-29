@@ -598,9 +598,7 @@ export const typographySchema = z.object({
 	hyphenation: z
 		.boolean()
 		.optional()
-		.describe(
-			"Enable automatic PDF hyphenation using the resume language. Currently supports German. Defaults to false.",
-		),
+		.describe("Enable automatic PDF hyphenation using the resume language. Defaults to false."),
 });
 
 const styleSlotSchema = z.enum([
