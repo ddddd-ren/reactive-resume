@@ -174,6 +174,21 @@ describe("web app fallback classification", () => {
 			expect(html).toContain('content="Ends with &quot; and &amp; ampersand"');
 		});
 
+		it("keeps replacement patterns in resume text literal", async () => {
+			vi.mocked(fs.readFile).mockResolvedValue(shell);
+			mocks.getPublicResumeSocialMeta.mockResolvedValue({
+				name: "Jane $& $' Doe",
+				title: "Jane Doe",
+				description: "Costs $$ and $` nothing",
+				template: "azurill",
+			});
+
+			const html = await (await handleWebApp(new Request("https://example.com/jane/resume"))).text();
+
+			expect(html).toContain("<title>Jane $&amp; $&#39; Doe - Reactive Resume</title>");
+			expect(html).toContain('<meta name="description" content="Costs $$ and $` nothing">');
+		});
+
 		it("serves the plain shell when the resume is not publicly shareable", async () => {
 			vi.mocked(fs.readFile).mockResolvedValue(shell);
 

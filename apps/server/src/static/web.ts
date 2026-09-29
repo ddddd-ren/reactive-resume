@@ -315,11 +315,17 @@ export async function handleWebApp(request: Request) {
 			.replace(/<title>[^<]*<\/title>/, "<title>Reactive Resume</title>")
 			.replace(/<meta\s+name="description"[^>]*>/, '<meta name="description" content="">');
 		const markup = `<link rel="canonical" href="${escapeAttribute(canonicalUrl)}" data-root-resume-shell><meta name="robots" content="noindex, follow" data-root-resume-shell>`;
-		return new Response(shell.replace("</head>", `${markup}</head>`), { headers });
+		return new Response(
+			shell.replace("</head>", () => `${markup}</head>`),
+			{ headers },
+		);
 	}
 
 	if (pathname === "/") {
-		return new Response(html.replace("</head>", `${createRootSeoMarkup(canonicalUrl)}</head>`), { headers });
+		return new Response(
+			html.replace("</head>", () => `${createRootSeoMarkup(canonicalUrl)}</head>`),
+			{ headers },
+		);
 	}
 
 	if (pathname === "/ats-checker") {
@@ -328,19 +334,28 @@ export async function handleWebApp(request: Request) {
 			.replace(/<title>[^<]*<\/title>/, `<title>${ATS_CHECKER_TITLE}</title>`)
 			.replace(/<meta\s+name="description"[^>]*>/, `<meta name="description" content="${ATS_CHECKER_DESCRIPTION}">`);
 
-		return new Response(withTitle.replace("</head>", `${createAtsCheckerSeoMarkup(origin)}</head>`), { headers });
+		return new Response(
+			withTitle.replace("</head>", () => `${createAtsCheckerSeoMarkup(origin)}</head>`),
+			{ headers },
+		);
 	}
 
 	if (isPublicResumePath(pathname)) {
 		const resumeSeo = await createPublicResumeSeoMarkup(pathname, new URL(env.APP_URL).origin);
 		if (resumeSeo) {
 			// The shell's generic title/description are replaced so shares and previews show the resume,
-			// not the marketing copy baked into index.html.
+			// not the marketing copy baked into index.html. Function replacers keep `$&`, `$'` etc. in user text literal.
 			const withTitle = html
-				.replace(/<title>[^<]*<\/title>/, `<title>${resumeSeo.pageTitle}</title>`)
-				.replace(/<meta\s+name="description"[^>]*>/, `<meta name="description" content="${resumeSeo.description}">`);
+				.replace(/<title>[^<]*<\/title>/, () => `<title>${resumeSeo.pageTitle}</title>`)
+				.replace(
+					/<meta\s+name="description"[^>]*>/,
+					() => `<meta name="description" content="${resumeSeo.description}">`,
+				);
 
-			return new Response(withTitle.replace("</head>", `${resumeSeo.markup}</head>`), { headers });
+			return new Response(
+				withTitle.replace("</head>", () => `${resumeSeo.markup}</head>`),
+				{ headers },
+			);
 		}
 	}
 
