@@ -6,11 +6,7 @@ import { pdfExportRateLimit } from "../../middleware/rate-limit";
 import { parseStoredResumeData } from "./resume-data-validation";
 import { resumeService } from "./service";
 
-export {
-	createResumePdfDownloadUrl,
-	MAX_PDF_DOWNLOAD_URL_TTL_SECONDS,
-	verifyResumePdfDownloadToken,
-} from "./pdf-download-url";
+export { createResumePdfDownloadUrl, verifyResumePdfDownloadToken } from "./pdf-download-url";
 
 type CreateResumePdfDownloadInput = {
 	id: string;

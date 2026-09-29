@@ -13,7 +13,6 @@ vi.mock("@reactive-resume/api/context", () => ({
 }));
 
 vi.mock("@reactive-resume/api/features/resume/export", () => ({
-	MAX_PDF_DOWNLOAD_URL_TTL_SECONDS: 600,
 	createResumePdfDownloadUrl: mocks.createResumePdfDownloadUrl,
 }));
 

@@ -259,7 +259,7 @@ export const serveWebDistStatic = serveStatic({
 });
 
 function getFallbackResponseHeaders(pathname: string) {
-	if (pathname === "/" && env.ROOT_RESUME_ID?.trim()) {
+	if (pathname === "/" && env.ROOT_RESUME_ID) {
 		return {
 			"Content-Type": "text/html; charset=UTF-8",
 			"X-Robots-Tag": "noindex, follow",
@@ -308,7 +308,7 @@ export async function handleWebApp(request: Request) {
 	const html = await fs.readFile(indexHtmlPath, "utf-8");
 	const canonicalUrl = new URL("/", env.APP_URL).toString();
 
-	if (pathname === "/" && env.ROOT_RESUME_ID?.trim()) {
+	if (pathname === "/" && env.ROOT_RESUME_ID) {
 		// Root configuration never discloses a target in the HTML shell. The public API
 		// gates data and browser metadata; shell requests must not count extra views.
 		const shell = html

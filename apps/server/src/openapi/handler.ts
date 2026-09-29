@@ -25,7 +25,7 @@ const openAPIHandler = new OpenAPIHandler(openAPIRouter, {
 	],
 });
 
-export async function handleOpenApi(request: Request, trustedClient = "unknown") {
+export async function handleOpenApi(request: Request, trustedClient: string) {
 	if (request.method === "GET" && (request.url.endsWith("/spec.json") || request.url.endsWith("/spec"))) {
 		return Response.json(await generateOpenApiSpec({ appUrl: env.APP_URL, version: appVersion }));
 	}

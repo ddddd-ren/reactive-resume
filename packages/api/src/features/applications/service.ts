@@ -528,16 +528,11 @@ export const applicationService = {
 		const patch = Object.fromEntries(Object.entries(details).filter(([, value]) => value !== undefined));
 
 		return db.transaction(async (tx) => {
-			await tx.execute(sql`
-				select 1 from ${schema.application}
-				where ${schema.application.id} = ${id} and ${schema.application.userId} = ${userId}
-				for update
-			`);
-
 			const [existing] = await tx
 				.select()
 				.from(schema.application)
-				.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)));
+				.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
+				.for("update");
 			if (!existing) throw new ORPCError("NOT_FOUND");
 
 			const target = existing.activity.find((entry) => entry.id === entryId);
@@ -569,16 +564,11 @@ export const applicationService = {
 		text?: string | undefined;
 	}) => {
 		return db.transaction(async (tx) => {
-			await tx.execute(sql`
-				select 1 from ${schema.application}
-				where ${schema.application.id} = ${input.id} and ${schema.application.userId} = ${input.userId}
-				for update
-			`);
-
 			const [existing] = await tx
 				.select()
 				.from(schema.application)
-				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)));
+				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.for("update");
 			if (!existing) throw new ORPCError("NOT_FOUND");
 
 			const activity = existing.activity.map((entry) => {
@@ -621,16 +611,11 @@ export const applicationService = {
 
 	deleteTimelineEntry: (input: { id: string; userId: string; entryId: string }) => {
 		return db.transaction(async (tx) => {
-			await tx.execute(sql`
-				select 1 from ${schema.application}
-				where ${schema.application.id} = ${input.id} and ${schema.application.userId} = ${input.userId}
-				for update
-			`);
-
 			const [existing] = await tx
 				.select()
 				.from(schema.application)
-				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)));
+				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
+				.for("update");
 			if (!existing) throw new ORPCError("NOT_FOUND");
 
 			const entry = existing.activity.find((item) => item.id === input.entryId);

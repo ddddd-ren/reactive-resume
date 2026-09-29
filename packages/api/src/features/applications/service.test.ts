@@ -6,7 +6,6 @@ const dbMock = vi.hoisted(() => ({
 	insert: vi.fn(),
 	update: vi.fn(),
 	delete: vi.fn(),
-	execute: vi.fn(),
 	transaction: vi.fn(),
 }));
 const resumeGetByIdMock = vi.hoisted(() => vi.fn());
@@ -62,9 +61,10 @@ const existing = {
 	coverLetterUrl: "/api/uploads/user-1/pictures/cover.pdf",
 };
 
+// Awaitable directly, or after `.for("update")` for the reads that lock their row.
 const createSelectChain = (rows: unknown[]) => ({
 	from: () => ({
-		where: () => Promise.resolve(rows),
+		where: () => Object.assign(Promise.resolve(rows), { for: () => Promise.resolve(rows) }),
 	}),
 });
 
@@ -80,7 +80,6 @@ beforeEach(() => {
 	dbMock.insert.mockReset();
 	dbMock.update.mockReset();
 	dbMock.delete.mockReset();
-	dbMock.execute.mockReset();
 	dbMock.transaction.mockReset();
 	dbMock.transaction.mockImplementation((callback) => callback(dbMock));
 	resumeGetByIdMock.mockReset();
@@ -287,7 +286,6 @@ describe("applicationService timeline entries", () => {
 			at: new Date("2026-07-10T15:45:00.000Z"),
 		});
 		expect(dbMock.transaction).toHaveBeenCalled();
-		expect(dbMock.execute).toHaveBeenCalled();
 	});
 
 	it("normalizes JSONB date strings when editing timeline dates", async () => {
@@ -396,7 +394,6 @@ describe("applicationService timeline entries", () => {
 			).deleteTimelineEntry({ id: "app-1", userId: "user-1", entryId: "stage-2" }),
 		).rejects.toMatchObject({ code: "BAD_REQUEST" });
 		expect(dbMock.transaction).toHaveBeenCalled();
-		expect(dbMock.execute).toHaveBeenCalled();
 	});
 
 	it("deletes older stage entries", async () => {
