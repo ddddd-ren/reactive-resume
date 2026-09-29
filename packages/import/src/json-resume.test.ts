@@ -91,7 +91,7 @@ describe("parseJSONResume", () => {
 		expect(item.company).toBe("Acme Corp");
 		expect(item.position).toBe("Senior Engineer");
 		expect(item.location).toBe("Berlin");
-		expect(item.period.length).toBeGreaterThan(0);
+		expect(item.dates?.start).toBeTruthy();
 		expect(item.description).toContain("Shipped X");
 	});
 

@@ -58,33 +58,13 @@ const NO_BORDERS = {
 	right: { style: BorderStyle.NONE, size: 0 },
 } as const;
 
-// --- Template layout config ---
-
-interface TemplateConfig {
-	/** Which side the sidebar appears on */
-	sidebarSide: "left" | "right" | "none";
-	/** Sidebar background: "solid" = full primary color, "tint" = 20% opacity, "none" = no background */
-	sidebarBackground: "solid" | "tint" | "none";
-	/** Where the header is rendered */
-	headerPosition: "full-width" | "main-only" | "sidebar-only";
-}
-
-export const TEMPLATE_CONFIGS: Record<Template, TemplateConfig> = {
-	azurill: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
-	bronzor: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	chikorita: { sidebarSide: "right", sidebarBackground: "solid", headerPosition: "main-only" },
-	ditgar: { sidebarSide: "left", sidebarBackground: "tint", headerPosition: "sidebar-only" },
-	ditto: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
-	gengar: { sidebarSide: "left", sidebarBackground: "tint", headerPosition: "sidebar-only" },
-	glalie: { sidebarSide: "left", sidebarBackground: "tint", headerPosition: "sidebar-only" },
-	kakuna: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	lapras: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	leafish: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	meowth: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
-	onyx: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	pikachu: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "main-only" },
-	rhyhorn: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	scizor: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
+// Sidebar and header placement come from `templateLayouts`, as in the PDF; only the sidebar's background is DOCX's
+// own: "solid" fills it with the primary colour (text inverts), "tint" with 20% of it.
+const SIDEBAR_BACKGROUND: Partial<Record<Template, "solid" | "tint">> = {
+	chikorita: "solid",
+	ditgar: "tint",
+	gengar: "tint",
+	glalie: "tint",
 };
 
 type PagePlan = { kind: "single"; sections: string[] } | { kind: "split" };
@@ -296,7 +276,7 @@ function buildTwoColumnTable(
 	sidebarParagraphs: Paragraph[],
 	sidebarWidthPct: number,
 	gapXTwips: number,
-	sidebarSide: "left" | "right" | "none",
+	sidebarSide: "left" | "right",
 	sidebarShadingHex?: string,
 ): Table {
 	const mainWidthPct = 100 - sidebarWidthPct;
@@ -311,11 +291,8 @@ function buildTwoColumnTable(
 
 	const margins: { right?: number; left?: number } = {};
 
-	if (sidebarSide === "left") {
-		margins.right = gapXTwips;
-	} else if (sidebarSide === "right") {
-		margins.left = gapXTwips;
-	}
+	if (sidebarSide === "left") margins.right = gapXTwips;
+	else margins.left = gapXTwips;
 
 	const sidebarCell = new TableCell({
 		width: { size: sidebarWidthPct, type: WidthType.PERCENTAGE },
@@ -376,20 +353,13 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 
 	const sidebarWidth = data.metadata.layout.sidebarWidth;
 
-	// Template-aware layout config
-	const templateConfig = TEMPLATE_CONFIGS[data.metadata.template];
-
-	// Compute sidebar background shading hex
-	let sidebarShadingHex: string | undefined;
-	if (templateConfig.sidebarBackground === "solid") {
-		sidebarShadingHex = colorHex;
-	} else if (templateConfig.sidebarBackground === "tint") {
-		sidebarShadingHex = blendWithWhite(colorHex, 0.2);
-	}
-
-	// Determine sidebar text colors — inverted when sidebar has a solid background
-	const sidebarTextColorHex = templateConfig.sidebarBackground === "solid" ? bgColorHex : textColorHex;
-	const sidebarHeadingColorHex = templateConfig.sidebarBackground === "solid" ? bgColorHex : colorHex;
+	const layout = templateLayouts[data.metadata.template];
+	const background = SIDEBAR_BACKGROUND[data.metadata.template];
+	const sidebarShadingHex =
+		background === "solid" ? colorHex : background === "tint" ? blendWithWhite(colorHex, 0.2) : undefined;
+	// Text on a solid sidebar inverts.
+	const sidebarTextColorHex = background === "solid" ? bgColorHex : textColorHex;
+	const sidebarHeadingColorHex = background === "solid" ? bgColorHex : colorHex;
 
 	// Configure heading typography for section renderers
 	const headingFont = data.metadata.typography.heading.fontFamily || "Calibri";
@@ -409,7 +379,7 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 	const showHeader = shouldShowResumeHeader(data);
 
 	// Header placement depends on template
-	if (templateConfig.headerPosition === "full-width" && showHeader) {
+	if (layout.headerPlacement === "full-width" && showHeader) {
 		setRenderConfig(mainConfig);
 		documentChildren.push(...buildHeader(data, colorHex, textColorHex));
 	}
@@ -428,7 +398,7 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 			setRenderConfig(mainConfig);
 
 			const mainParagraphs: Paragraph[] = [];
-			if (templateConfig.headerPosition === "main-only" && showHeader) {
+			if (layout.headerPlacement === "main-only" && showHeader) {
 				mainParagraphs.push(...buildHeader(data, colorHex, textColorHex));
 			}
 			for (const sectionId of layoutPage.main) {
@@ -439,7 +409,7 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 			setRenderConfig({ ...mainConfig, textColorHex: sidebarTextColorHex, primaryColorHex: sidebarHeadingColorHex });
 
 			const sidebarParagraphs: Paragraph[] = [];
-			if (templateConfig.headerPosition === "sidebar-only" && showHeader) {
+			if (layout.headerPlacement === "sidebar-only" && showHeader) {
 				sidebarParagraphs.push(...buildHeader(data, sidebarHeadingColorHex, sidebarTextColorHex));
 			}
 			for (const sectionId of layoutPage.sidebar) {
@@ -454,7 +424,7 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 						sidebarWidth,
 						gapXTwips,
 						// The side chosen in Design, else the template's own.
-						data.metadata.layout.sidebarSide ?? templateConfig.sidebarSide,
+						data.metadata.layout.sidebarSide ?? layout.sidebarSide ?? "left",
 						sidebarShadingHex,
 					),
 				);

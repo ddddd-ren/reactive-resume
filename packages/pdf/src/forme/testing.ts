@@ -51,8 +51,5 @@ export function pdf(element: ReactElement) {
 	const [root] = renderHostTree(element);
 	return {
 		container: { document: root ? toRenderedNode(root) : null },
-		toBuffer: () => renderToBuffer(element),
-		toBlob: async () =>
-			new Blob([(await renderToBuffer(element)) as Uint8Array<ArrayBuffer>], { type: "application/pdf" }),
 	};
 }

@@ -180,11 +180,7 @@ const flowStyle = (props: Record<string, unknown>, style: FormeStyle): FormeStyl
 	return next;
 };
 
-const imageSource = (src: unknown): string | undefined => {
-	if (typeof src === "string") return src;
-	if (src && typeof src === "object" && "uri" in src && typeof src.uri === "string") return src.uri;
-	return undefined;
-};
+const imageSource = (src: unknown): string | undefined => (typeof src === "string" ? src : undefined);
 
 const number = (value: unknown, context: Context): number | undefined => {
 	const points = toPoints(value, context);
@@ -418,7 +414,6 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 				{
 					key,
 					style: bordered.style,
-					...(typeof props.bookmark === "string" ? { bookmark: props.bookmark } : {}),
 				},
 				...bordered.children,
 			);

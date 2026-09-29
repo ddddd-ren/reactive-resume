@@ -21,9 +21,6 @@ type FlowProps = {
 	fixed?: boolean | undefined;
 	/** react-pdf only; Forme has no equivalent, so it's accepted and ignored. */
 	minPresenceAhead?: number | undefined;
-	debug?: boolean | undefined;
-	id?: string | undefined;
-	bookmark?: string | undefined;
 	children?: ReactNode;
 } & DataAttributes;
 
@@ -37,11 +34,9 @@ export type TextProps = FlowProps & {
 export type LinkProps = TextProps & { src: string };
 
 export type ImageProps = {
-	src: string | { uri: string } | undefined;
+	src: string | undefined;
 	style?: StyleProp | undefined;
 	fixed?: boolean | undefined;
-	debug?: boolean | undefined;
-	cache?: boolean | undefined;
 } & DataAttributes;
 
 export type SvgProps = {
@@ -68,12 +63,9 @@ export type DocumentProps = {
 	author?: string | undefined;
 	subject?: string | undefined;
 	creator?: string | undefined;
-	producer?: string | undefined;
 	language?: string | undefined;
 	/** "auto" hyphenates words by the document language; "manual" breaks only at soft hyphens. */
 	hyphenation?: "auto" | "manual" | undefined;
-	creationDate?: Date | undefined;
-	pageMode?: string | undefined;
 	children?: ReactNode;
 };
 

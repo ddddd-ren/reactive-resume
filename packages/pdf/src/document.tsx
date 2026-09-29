@@ -44,7 +44,6 @@ export const ResumeDocument = ({
 	semanticRuntime,
 }: ResumeDocumentProps) => {
 	const TemplatePageComponent = getTemplatePage(template);
-	const creationDate = useMemo(() => new Date(), []);
 	const hasCjkContent = useMemo(() => resumeContentContainsCJK(data), [data]);
 	const scripts = useMemo(() => resumeContentScripts(data), [data]);
 	const typography = useMemo(
@@ -85,9 +84,6 @@ export const ResumeDocument = ({
 				renderOptions={renderOptions}
 			>
 				<Document
-					pageMode="useNone"
-					creationDate={creationDate}
-					producer="Reactive Resume"
 					title={resumeData.basics.name}
 					author={resumeData.basics.name}
 					creator={resumeData.basics.name}

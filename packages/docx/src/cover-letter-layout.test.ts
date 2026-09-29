@@ -7,8 +7,8 @@ const builderSource = readFileSync(fileURLToPath(new URL("./builder.ts", import.
 describe("cover letter DOCX layout", () => {
 	it("gates resume headers for cover-letter-only documents", () => {
 		expect(builderSource).toContain("shouldShowResumeHeader(data)");
-		expect(builderSource).toContain('templateConfig.headerPosition === "full-width" && showHeader');
-		expect(builderSource).toContain('templateConfig.headerPosition === "main-only" && showHeader');
-		expect(builderSource).toContain('templateConfig.headerPosition === "sidebar-only" && showHeader');
+		expect(builderSource).toContain('layout.headerPlacement === "full-width" && showHeader');
+		expect(builderSource).toContain('layout.headerPlacement === "main-only" && showHeader');
+		expect(builderSource).toContain('layout.headerPlacement === "sidebar-only" && showHeader');
 	});
 });

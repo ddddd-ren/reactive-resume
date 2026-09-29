@@ -59,8 +59,7 @@ export function imageSources(tree: HostNode[]): string[] {
 		if ("text" in node) return;
 		if (node.type === HOST.image) {
 			const { src } = node.props;
-			const url = typeof src === "string" ? src : (src as { uri?: unknown } | undefined)?.uri;
-			if (typeof url === "string" && url.length > 0) sources.add(url);
+			if (typeof src === "string" && src.length > 0) sources.add(src);
 		}
 		node.children.forEach(visit);
 	};
