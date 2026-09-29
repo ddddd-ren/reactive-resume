@@ -2,7 +2,8 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
 
 type Data = ResumeData | WritableDraft<ResumeData>;
-type Metadata = Data["metadata"];
+/** The design a resume and a letter share. */
+type Metadata = Pick<Data["metadata"], "typography" | "design" | "page">;
 
 /** Five font pairings. Families that aren't a pairing leave the control with no selection. */
 export const FONT_PAIRINGS = [

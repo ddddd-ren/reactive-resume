@@ -4,10 +4,30 @@ import { create } from "zustand/react";
 import { generateId } from "@reactive-resume/utils/string";
 import { client, streamClient } from "@/libs/orpc/client";
 
-/** What's typed in the letter editor: saved once typing pauses. */
+type LetterMetadata = CoverLetter["style"]["metadata"];
+
+/**
+ * What's typed in the letter editor: saved once typing pauses. `metadata` is the letter's own type, colors and page;
+ * setting it ends the design link.
+ */
 export type LetterEdits = Partial<
 	Pick<CoverLetter, "name" | "recipient" | "content" | "recipientName" | "recipientCompany" | "letterDate">
->;
+> & { metadata?: Partial<Pick<LetterMetadata, "typography" | "design" | "page">> };
+
+const mergeEdits = (edits: LetterEdits, next: LetterEdits): LetterEdits =>
+	edits.metadata && next.metadata
+		? { ...edits, ...next, metadata: { ...edits.metadata, ...next.metadata } }
+		: { ...edits, ...next };
+
+const applyEdits = (letter: CoverLetter, { metadata, ...fields }: LetterEdits): CoverLetter =>
+	metadata
+		? {
+				...letter,
+				...fields,
+				designLinked: false,
+				style: { ...letter.style, metadata: { ...letter.style.metadata, ...metadata } },
+			}
+		: { ...letter, ...fields };
 
 /** `conflict`: the letter changed somewhere else, so saving stops until it's reloaded. */
 type LetterSaveStatus = "saved" | "saving" | "error" | "conflict";
@@ -64,8 +84,8 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		set((state) =>
 			state.letter
 				? {
-						letter: { ...state.letter, ...edits },
-						pending: { ...state.pending, ...edits },
+						letter: applyEdits(state.letter, edits),
+						pending: mergeEdits(state.pending, edits),
 						status: state.status === "conflict" ? "conflict" : "saving",
 					}
 				: state,
@@ -93,12 +113,12 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 				// What was typed stays as typed (the server trims and cleans what it stores), and so does anything typed
 				// since.
 				set((state) => ({
-					letter: { ...saved, ...pending, ...state.pending },
+					letter: applyEdits(saved, mergeEdits(pending, state.pending)),
 					status: hasEdits(state.pending) ? "saving" : "saved",
 				}));
 			} catch (error) {
 				const conflict = error instanceof ORPCError && error.code === "CONFLICT";
-				set((state) => ({ pending: { ...pending, ...state.pending }, status: conflict ? "conflict" : "error" }));
+				set((state) => ({ pending: mergeEdits(pending, state.pending), status: conflict ? "conflict" : "error" }));
 			} finally {
 				inflight = null;
 			}
@@ -114,7 +134,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		const { letter } = get();
 		if (!letter) throw new Error("No letter is open.");
 		const next = await action(letter);
-		set((state) => ({ letter: { ...next, ...state.pending } }));
+		set((state) => ({ letter: applyEdits(next, state.pending) }));
 		return next;
 	},
 

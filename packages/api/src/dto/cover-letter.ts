@@ -75,6 +75,11 @@ export const coverLetterDto = {
 	update: {
 		input: revisionSchema.extend(editableSchema.partial().shape).extend({
 			template: templateSchema.optional().describe("Sets the letter's own template, which unlinks its design."),
+			metadata: coverLetterStyleSchema.shape.metadata
+				.pick({ typography: true, design: true, page: true })
+				.partial()
+				.optional()
+				.describe("Sets the letter's own type, colors and page settings, which unlinks its design."),
 			recipientName: recipientFieldsSchema.shape.recipientName.unwrap().optional(),
 			recipientCompany: recipientFieldsSchema.shape.recipientCompany.unwrap().optional(),
 			letterDate: recipientFieldsSchema.shape.letterDate.unwrap().optional(),

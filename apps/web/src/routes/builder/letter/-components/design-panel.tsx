@@ -1,9 +1,11 @@
 import type { Template } from "@reactive-resume/schema/templates";
+import type { DesignSource } from "@/features/resume/editor/design/style-groups";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { produce } from "immer";
+import { useEffect, useMemo } from "react";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -12,6 +14,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
 import { useLetterEditorStore } from "@/features/letters/store";
+import { ColorGroup, DesignSourceProvider, PageGroup, TypeGroup } from "@/features/resume/editor/design/style-groups";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
@@ -32,14 +35,32 @@ const updateDesign = (changes: { designLinked?: boolean; template?: Template }) 
 		}),
 	);
 
+/** The letter's own type, colors and page, edited like the resume's and saved with what's typed. */
+function useLetterDesignSource() {
+	const metadata = useLetterEditorStore((state) => state.letter?.style.metadata);
+	return useMemo<DesignSource>(
+		() => ({
+			metadata,
+			write: (_key, mutate) => {
+				const { letter, edit } = useLetterEditorStore.getState();
+				if (!letter || letter.isLocked) return;
+				const { typography, design, page } = produce(letter.style.metadata, mutate);
+				edit({ metadata: { typography, design, page } });
+			},
+		}),
+		[metadata],
+	);
+}
+
 /**
  * Design for letters: by default a letter matches its resume's design, changed on the resume. Turned off, the
- * letter keeps a design of its own, starting with its template: hovering one previews it on the page, a click
- * applies it.
+ * letter keeps a design of its own: its template (hovering one previews it on the page, a click applies it), then
+ * its type, color and page.
  */
 export function LetterDesignPanel() {
 	const letter = useLetterEditorStore((state) => state.letter);
 	const setPreview = useEditorStore((state) => state.setPreviewTemplate);
+	const designSource = useLetterDesignSource();
 	const { data: resumes } = useQuery(orpc.resume.list.queryOptions({ input: {} }));
 	// Leaving Design never leaves a preview on the page.
 	useEffect(() => () => setPreview(null), [setPreview]);
@@ -155,6 +176,29 @@ export function LetterDesignPanel() {
 						})}
 					</fieldset>
 				</section>
+			)}
+
+			{!letter.designLinked && (
+				<DesignSourceProvider value={designSource}>
+					<section aria-labelledby="letter-design-type" className="grid gap-3 px-4 py-5">
+						<h2 id="letter-design-type" className="font-semibold text-[15px]">
+							<Trans>Type</Trans>
+						</h2>
+						<TypeGroup />
+					</section>
+					<section aria-labelledby="letter-design-color" className="grid gap-3 px-4 py-5">
+						<h2 id="letter-design-color" className="font-semibold text-[15px]">
+							<Trans>Color</Trans>
+						</h2>
+						<ColorGroup />
+					</section>
+					<section aria-labelledby="letter-design-page" className="grid gap-3 px-4 py-5">
+						<h2 id="letter-design-page" className="font-semibold text-[15px]">
+							<Trans>Page</Trans>
+						</h2>
+						<PageGroup />
+					</section>
+				</DesignSourceProvider>
 			)}
 		</div>
 	);

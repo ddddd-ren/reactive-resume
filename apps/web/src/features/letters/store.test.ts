@@ -62,6 +62,32 @@ describe("saving", () => {
 		expect(store().status).toBe("saved");
 	});
 
+	it("shows the letter's own design at once, ends the design link, and saves the design with what's typed", async () => {
+		const { design, typography } = letter.style.metadata;
+		mocks.update.mockImplementation(async () => ({ ...letter, designLinked: false, revision: 2 }));
+		store().edit({ metadata: { design: { ...design, colors: { ...design.colors, primary: "rgba(1, 2, 3, 1)" } } } });
+		store().edit({ metadata: { typography: { ...typography, body: { ...typography.body, fontSize: 12 } } } });
+		store().edit({ content: "<p>Typed</p>" });
+
+		expect(store().letter).toMatchObject({
+			designLinked: false,
+			content: "<p>Typed</p>",
+			style: {
+				metadata: { design: { colors: { primary: "rgba(1, 2, 3, 1)" } }, typography: { body: { fontSize: 12 } } },
+			},
+		});
+		expect(store().letter).not.toHaveProperty("metadata");
+
+		await store().flush();
+		expect(mocks.update).toHaveBeenCalledTimes(1);
+		expect(mocks.update.mock.calls[0]?.[0]).toMatchObject({
+			content: "<p>Typed</p>",
+			metadata: { design: { colors: { primary: "rgba(1, 2, 3, 1)" } }, typography: { body: { fontSize: 12 } } },
+		});
+		// The server's copy comes back with the old design; what was set stays on top of it.
+		expect(store().letter?.style.metadata.typography.body.fontSize).toBe(12);
+	});
+
 	it("stops saving after a conflict and keeps the edits", async () => {
 		mocks.update.mockRejectedValue(new ORPCError("CONFLICT"));
 		store().edit({ content: "<p>Changed</p>" });

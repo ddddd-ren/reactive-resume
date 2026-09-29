@@ -6,7 +6,7 @@ import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useId, useState } from "react";
+import { createContext, useContext, useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -35,26 +35,39 @@ import {
 	TEXT_SIZE,
 } from "./presets";
 
-type Metadata = ResumeData["metadata"];
+type Metadata = Pick<ResumeData["metadata"], "typography" | "design" | "page">;
 
 /** Edits the design; `key` names the control, so dragging a slider is one undo step. */
-function useDesignWriter() {
+type DesignWriter = (key: string, mutate: (metadata: WritableDraft<Metadata>) => void, discrete?: boolean) => void;
+
+export type DesignSource = { metadata: Metadata | undefined; write: DesignWriter };
+
+const DesignSourceContext = createContext<DesignSource | null>(null);
+
+/** Points the Type, Color and Page groups at another design than the open resume's (a letter's own). */
+export const DesignSourceProvider = DesignSourceContext.Provider;
+
+function useDesign(): DesignSource {
+	const source = useContext(DesignSourceContext);
+	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();
-	return (key: string, mutate: (metadata: WritableDraft<Metadata>) => void, discrete = false) =>
-		updateResumeData(
-			(draft) => mutate(draft.metadata),
-			discrete ? { newStep: true } : { coalesceKey: `design.${key}` },
-		);
+	if (source) return source;
+	return {
+		metadata: data?.metadata,
+		write: (key, mutate, discrete = false) =>
+			updateResumeData(
+				(draft) => mutate(draft.metadata),
+				discrete ? { newStep: true } : { coalesceKey: `design.${key}` },
+			),
+	};
 }
 
 /** Type: five font pairings, the text size (9–12.5 pt) and density. */
 export function TypeGroup() {
-	const data = useResumeData();
-	const write = useDesignWriter();
+	const { metadata, write } = useDesign();
 	const sizeLabelId = useId();
-	if (!data) return null;
+	if (!metadata) return null;
 
-	const { metadata } = data;
 	const pairing = matchFontPairing(metadata);
 	const density = matchDensity(metadata);
 	const size = metadata.typography.body.fontSize;
@@ -131,11 +144,10 @@ export function TypeGroup() {
 
 /** Color: eight accents or a custom hex, with its contrast on white and a darker shade when it's too light. */
 export function ColorGroup() {
-	const data = useResumeData();
-	const write = useDesignWriter();
-	const current = data ? (rgbaToHex(data.metadata.design.colors.primary) ?? "#000000") : "#000000";
+	const { metadata, write } = useDesign();
+	const current = metadata ? (rgbaToHex(metadata.design.colors.primary) ?? "#000000") : "#000000";
 	const [typed, setTyped] = useState<string | null>(null);
-	if (!data) return null;
+	if (!metadata) return null;
 
 	const hex = typed ?? current;
 	const valid = isValidHex(hex);
@@ -225,13 +237,12 @@ export function ColorGroup() {
 
 /** Page: paper, language (section titles and date words), margins, icons and link underlines. */
 export function PageGroup() {
-	const data = useResumeData();
-	const write = useDesignWriter();
+	const { metadata, write } = useDesign();
 	const languageId = useId();
-	if (!data) return null;
+	if (!metadata) return null;
 
-	const { page } = data.metadata;
-	const margins = matchMargins(data.metadata);
+	const { page } = metadata;
+	const margins = matchMargins(metadata);
 
 	return (
 		<div className="grid gap-4">

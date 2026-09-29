@@ -278,6 +278,25 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		).toBe("Still editable");
 	});
 
+	it("gives a letter its own type, colors and page, which ends the design link", async () => {
+		const created = await service.create({ userId: "alice", name: "Styled", resumeId: "alice-resume" });
+		expect(created.designLinked).toBe(true);
+		const resumeMetadata = created.style.metadata;
+
+		const styled = await service.update({
+			userId: "alice",
+			id: created.id,
+			expectedRevision: 1,
+			metadata: {
+				design: { ...resumeMetadata.design, colors: { ...resumeMetadata.design.colors, primary: "#123456" } },
+			},
+		});
+		expect(styled.designLinked).toBe(false);
+		expect(styled.style.metadata.design.colors.primary).toBe("#123456");
+		expect(styled.style.metadata.template).toBe(resumeMetadata.template);
+		expect(styled.style.metadata.typography).toEqual(resumeMetadata.typography);
+	});
+
 	it("refreshes copied style without changing content and survives source deletion", async () => {
 		const created = await service.create({
 			userId: "alice",

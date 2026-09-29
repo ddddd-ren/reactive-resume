@@ -270,9 +270,10 @@ export const coverLetterService = {
 			throw new ORPCError("BAD_REQUEST", { message: "Choose a resume to link the letter to first." });
 		}
 
-		// Links follow the letter's resume and end when it's cleared; choosing a template ends the design link.
+		// Links follow the letter's resume and end when it's cleared; choosing a template or design ends the design link.
+		const ownDesign = Boolean(input.template || input.metadata);
 		const senderLinked = Boolean(sourceResumeId) && (input.senderLinked ?? stored.senderLinked);
-		const designLinked = Boolean(sourceResumeId) && !input.template && (input.designLinked ?? stored.designLinked);
+		const designLinked = Boolean(sourceResumeId) && !ownDesign && (input.designLinked ?? stored.designLinked);
 
 		// Unlinking keeps the details and design exactly as they read at that moment.
 		if ((stored.senderLinked && !senderLinked) || (stored.designLinked && !designLinked)) {
@@ -284,6 +285,11 @@ export const coverLetterService = {
 		if (input.template) {
 			const style = changes.style ?? stored.style;
 			changes.style = { ...style, metadata: { ...style.metadata, template: input.template } };
+		}
+		if (input.metadata) {
+			const style = changes.style ?? stored.style;
+			const set = Object.fromEntries(Object.entries(input.metadata).filter(([, value]) => value !== undefined));
+			changes.style = { ...style, metadata: { ...style.metadata, ...(set as Partial<typeof style.metadata>) } };
 		}
 		if (input.name !== undefined) changes.name = coverLetterContentSchema.shape.name.parse(input.name);
 		if (input.recipient !== undefined)
