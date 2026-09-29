@@ -29,7 +29,6 @@ describe("getNetworkIcon", () => {
 
 	it("matches Twitter and X variants", () => {
 		expect(getNetworkIcon("twitter")).toBe("twitter-logo");
-		// "x" alone matches, including in unrelated words
 		expect(getNetworkIcon("x")).toBe("twitter-logo");
 		expect(getNetworkIcon("x.com")).toBe("twitter-logo");
 	});
@@ -77,13 +76,11 @@ describe("getNetworkIcon", () => {
 		expect(getNetworkIcon("codepen")).toBe("code");
 	});
 
-	it("matches when keyword is substring of input", () => {
+	it("matches a network named inside a longer label", () => {
 		expect(getNetworkIcon("My GitHub Profile")).toBe("github-logo");
 	});
 
-	it("returns first matching icon (priority order)", () => {
-		// "github" comes before "x" in the map, so github wins
-		// (and this is also how it should behave for ambiguous strings)
-		expect(getNetworkIcon("xgithub")).toBe("github-logo");
+	it.each(["Xing", "Dropbox", "Stack Exchange", "Mixcloud", "Fox"])("does not give %s the X logo", (network) => {
+		expect(getNetworkIcon(network)).not.toBe("twitter-logo");
 	});
 });
