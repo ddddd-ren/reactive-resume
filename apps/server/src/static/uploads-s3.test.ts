@@ -109,3 +109,12 @@ it("stores private attachments without ACLs while keeping them outside the publi
 	expect(direct.status).toBe(403);
 	expect((await storage.read(key))?.data).toEqual(data);
 });
+
+it.each(["text/html", "image/svg+xml"])("downloads stored %s uploads instead of rendering them", async (type) => {
+	const key = "uploads/user-1/pictures/upload.bin";
+	await storage.write({ key, data: new TextEncoder().encode("<script>alert(1)</script>"), contentType: type });
+	const response = await handleUpload(new Request(`${envMock.APP_URL}/api/${key}`));
+	expect(response.status).toBe(200);
+	expect(response.headers.get("Content-Type")).toBe("application/octet-stream");
+	expect(response.headers.get("Content-Disposition")).toBe('attachment; filename="upload.bin"');
+});
