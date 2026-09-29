@@ -1,4 +1,9 @@
-import type { PDFDocumentLoadingTask, PDFDocumentProxy, RenderTask } from "pdfjs-dist/legacy/build/pdf.mjs";
+import type {
+	PDFDocumentLoadingTask,
+	PDFDocumentProxy,
+	PDFPageProxy,
+	RenderTask,
+} from "pdfjs-dist/legacy/build/pdf.mjs";
 import type { ReactNode } from "react";
 import type { PreviewPageSize } from "./preview.shared.utils";
 import {
@@ -118,64 +123,64 @@ export function PdfCanvasPage({
 		let isCancelled = false;
 		let renderTask: RenderTask | undefined;
 
+		const drawPage = async (page: PDFPageProxy, canvas: HTMLCanvasElement) => {
+			if (isCancelled) {
+				page.cleanup();
+				return;
+			}
+
+			const baseViewport = page.getViewport({ scale: 1 });
+			const pageSize = { height: baseViewport.height, width: baseViewport.width };
+
+			onLoadSuccessRef.current(pageNumber, pageSize);
+
+			const width = baseViewport.width * pageScale;
+			const height = baseViewport.height * pageScale;
+			const renderScale = getPreviewCanvasScale(width, height);
+			// Drawn off-screen and copied over in one step, so the page never shows a blank frame between renders.
+			const buffer = globalThis.document.createElement("canvas");
+			const bufferContext = buffer.getContext("2d");
+			const canvasContext = canvas.getContext("2d");
+
+			if (!bufferContext || !canvasContext) return;
+
+			buffer.width = Math.floor(width * renderScale);
+			buffer.height = Math.floor(height * renderScale);
+
+			// PDF.js positions glyphs in physical coordinates, even inside an RTL resume page.
+			bufferContext.direction = "ltr";
+
+			const viewport = page.getViewport({ scale: pageScale });
+			const transform = [renderScale, 0, 0, renderScale, 0, 0];
+
+			renderTask = page.render({
+				canvas: buffer,
+				canvasContext: bufferContext,
+				viewport,
+				transform,
+				annotationMode: AnnotationMode.DISABLE,
+				background: "white",
+			});
+
+			await renderTask.promise;
+			renderTask = undefined;
+
+			if (isCancelled) return;
+
+			canvas.width = buffer.width;
+			canvas.height = buffer.height;
+			canvasContext.drawImage(buffer, 0, 0);
+			drawnRef.current = { document, pageNumber };
+			onRenderSuccessRef.current?.();
+		};
+
 		const renderPage = async () => {
 			const canvas = canvasRef.current;
 			if (!canvas) return;
 
 			const page = await document.getPage(pageNumber);
 
-			try {
-				if (isCancelled) {
-					page.cleanup();
-					return;
-				}
-
-				const baseViewport = page.getViewport({ scale: 1 });
-				const pageSize = { height: baseViewport.height, width: baseViewport.width };
-
-				onLoadSuccessRef.current(pageNumber, pageSize);
-
-				const width = baseViewport.width * pageScale;
-				const height = baseViewport.height * pageScale;
-				const renderScale = getPreviewCanvasScale(width, height);
-				// Drawn off-screen and copied over in one step, so the page never shows a blank frame between renders.
-				const buffer = globalThis.document.createElement("canvas");
-				const bufferContext = buffer.getContext("2d");
-				const canvasContext = canvas.getContext("2d");
-
-				if (!bufferContext || !canvasContext) return;
-
-				buffer.width = Math.floor(width * renderScale);
-				buffer.height = Math.floor(height * renderScale);
-
-				// PDF.js positions glyphs in physical coordinates, even inside an RTL resume page.
-				bufferContext.direction = "ltr";
-
-				const viewport = page.getViewport({ scale: pageScale });
-				const transform = [renderScale, 0, 0, renderScale, 0, 0];
-
-				renderTask = page.render({
-					canvas: buffer,
-					canvasContext: bufferContext,
-					viewport,
-					transform,
-					annotationMode: AnnotationMode.DISABLE,
-					background: "white",
-				});
-
-				await renderTask.promise;
-				renderTask = undefined;
-
-				if (isCancelled) return;
-
-				canvas.width = buffer.width;
-				canvas.height = buffer.height;
-				canvasContext.drawImage(buffer, 0, 0);
-				drawnRef.current = { document, pageNumber };
-				onRenderSuccessRef.current?.();
-			} finally {
-				page.cleanup();
-			}
+			await drawPage(page, canvas).finally(() => page.cleanup());
 		};
 
 		const drawn = drawnRef.current;

@@ -18,7 +18,6 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	const redo = useResumeStore((state) => state.redo);
 	const resume = useCurrentResume();
 	const { onDownloadPDF } = useResumeExport(resume);
-	const { select, setShareTab, setAssistantOpen } = useEditorStore.getState();
 	const isOnline = () => useResumeStore.getState().saveStatus !== "offline";
 
 	useHotkey("1", () => switchModeInstantly(() => setMode("write")));
@@ -39,13 +38,16 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 		if (isOnline()) void onDownloadPDF();
 	});
 	useHotkey("Mod+Shift+S", () => {
-		if (isOnline()) setShareTab("link");
+		if (isOnline()) useEditorStore.getState().setShareTab("link");
 	});
 	useHotkey("Mod+Shift+E", () => {
-		if (isOnline()) setShareTab("download");
+		if (isOnline()) useEditorStore.getState().setShareTab("download");
 	});
-	useHotkey("Mod+J", () => setAssistantOpen(!useEditorStore.getState().assistantOpen, true));
-	useHotkey("Escape", () => select(null), { preventDefault: false, stopPropagation: false });
+	useHotkey("Mod+J", () => {
+		const { assistantOpen, setAssistantOpen } = useEditorStore.getState();
+		setAssistantOpen(!assistantOpen, true);
+	});
+	useHotkey("Escape", () => useEditorStore.getState().select(null), { preventDefault: false, stopPropagation: false });
 
 	useHotkey("Mod+S", () => {
 		toast.add({ type: "info", description: t`Your changes are saved automatically.`, id: "auto-save" });

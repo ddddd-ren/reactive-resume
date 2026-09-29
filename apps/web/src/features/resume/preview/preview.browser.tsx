@@ -137,29 +137,27 @@ export function ResumePreviewClient({
 		const requestId = ++requestIdRef.current;
 		const delay = !hasPreviewRef.current ? 0 : isEditableElementFocused() ? TYPING_DEBOUNCE_MS : UPDATE_DEBOUNCE_MS;
 
+		const stale = () => cancelled || requestId !== requestIdRef.current;
+		const renderOptions = includeCoverLetterHeader ? { includeCoverLetterHeader } : undefined;
+
 		const generatePdfPreview = async () => {
 			try {
-				if (cancelled || requestId !== requestIdRef.current) return;
+				if (stale()) return;
 				let pageMap: PageMap | undefined;
-				const blob = await createResumePdfBlob(
-					resumeData,
-					undefined,
-					includeCoverLetterHeader ? { includeCoverLetterHeader } : undefined,
-					{
-						onPageMap: (map) => {
-							pageMap = map;
-						},
+				const blob = await createResumePdfBlob(resumeData, undefined, renderOptions, {
+					onPageMap: (map) => {
+						pageMap = map;
 					},
-				);
+				});
 
-				if (!cancelled && requestId === requestIdRef.current) {
+				if (!stale()) {
 					const nextPdf = createPreviewPdf(blob, pdfIdRef.current++, resumeData.metadata.template, pageMap);
 
 					hasPreviewRef.current = true;
 					setPreviewLayers((current) => addPreviewLayer(current, nextPdf));
 				}
 			} catch {
-				if (cancelled || requestId !== requestIdRef.current) return;
+				if (stale()) return;
 				toast.add({
 					type: "error",
 					description: t`The resume preview could not be updated. The last valid preview is still shown.`,

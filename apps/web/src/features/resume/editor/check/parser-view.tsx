@@ -19,8 +19,10 @@ async function parseRenderedPdf(): Promise<Parsed> {
 	if (!file) throw new Error("The page hasn't rendered yet.");
 
 	// The operator pass (hidden text, images of text) feeds the full check, not this view, so it's skipped.
+	const engine = import("@reactive-resume/resume/ats-pdf");
+	engine.catch(() => {}); // Awaited below; see run-ats-check.ts.
 	const raw = await extractPdf(blobToPdfFile(file, "resume.pdf"), { operatorBudgetMs: 0 });
-	const { buildExtractedDocument, buildResumeSemantics } = await import("@reactive-resume/resume/ats-pdf");
+	const { buildExtractedDocument, buildResumeSemantics } = await engine;
 	const doc = buildExtractedDocument(raw);
 
 	return { doc, semantics: buildResumeSemantics(raw, doc, { now: new Date() }) };

@@ -86,6 +86,29 @@ export async function createExportFile(
 	return buildDocx(data, resolveTitle);
 }
 
+/** Prints a PDF blob through a hidden iframe; if the browser blocks that, opens it in a new tab instead. */
+function printPdf(blob: Blob) {
+	const url = URL.createObjectURL(blob);
+	// ponytail: print the generated PDF via a hidden iframe (reliable in Chromium). If the browser
+	// blocks iframe printing, fall back to opening the PDF in a new tab so the user can print manually.
+	const iframe = document.createElement("iframe");
+	iframe.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0";
+	iframe.src = url;
+	iframe.onload = () => {
+		try {
+			iframe.contentWindow?.focus();
+			iframe.contentWindow?.print();
+		} catch {
+			window.open(url, "_blank", "noopener");
+		}
+		setTimeout(() => {
+			iframe.remove();
+			URL.revokeObjectURL(url);
+		}, 60_000);
+	};
+	document.body.appendChild(iframe);
+}
+
 /** One-click exports that report their own progress and failures in toasts (the bar, ⌘P, public pages). */
 export function useResumeExport(resume: ExportableResume | undefined, exportOptions: UseResumeExportOptions = {}) {
 	const [isExporting, setIsExporting] = useState(false);
@@ -118,10 +141,12 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 			description: t`Generating your PDF...`,
 		});
 		setIsExporting(true);
+		const makeBlob = () =>
+			exportOptions.publicResumePdf
+				? resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
+				: createExportFile(resume, "pdf");
 		try {
-			const blob = exportOptions.publicResumePdf
-				? await resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
-				: await createExportFile(resume, "pdf");
+			const blob = await makeBlob();
 			downloadWithAnchor(blob, `${getDefaultFileName(resume)}.pdf`);
 			if (exportOptions.publicResumePdf) {
 				// Statistics are best effort and must not delay or fail a completed browser download.
@@ -129,48 +154,29 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 			}
 		} catch {
 			toast.add({ type: "error", description: t`Could not generate the PDF. Please try again.` });
-		} finally {
-			setIsExporting(false);
-			toast.close(toastId);
 		}
+		setIsExporting(false);
+		toast.close(toastId);
 	}, [exportOptions.publicResumePdf, resume]);
 
 	const onPrint = useCallback(async () => {
 		if (!resume) return;
 		const toastId = toast.add({ type: "loading", description: t`Preparing your resume for printing...` });
 		setIsExporting(true);
+		const makeBlob = () =>
+			exportOptions.publicResumePdf
+				? resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
+				: createResumePdfBlob(resume.data);
 		try {
-			const blob = exportOptions.publicResumePdf
-				? await resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
-				: await createResumePdfBlob(resume.data);
-			const url = URL.createObjectURL(blob);
-			// ponytail: print the generated PDF via a hidden iframe (reliable in Chromium). If the browser
-			// blocks iframe printing, fall back to opening the PDF in a new tab so the user can print manually.
-			const iframe = document.createElement("iframe");
-			iframe.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0";
-			iframe.src = url;
-			iframe.onload = () => {
-				try {
-					iframe.contentWindow?.focus();
-					iframe.contentWindow?.print();
-				} catch {
-					window.open(url, "_blank", "noopener");
-				}
-				setTimeout(() => {
-					iframe.remove();
-					URL.revokeObjectURL(url);
-				}, 60_000);
-			};
-			document.body.appendChild(iframe);
+			printPdf(await makeBlob());
 		} catch {
 			toast.add({
 				type: "error",
 				description: t`Could not prepare your resume for printing. Please try again.`,
 			});
-		} finally {
-			setIsExporting(false);
-			toast.close(toastId);
 		}
+		setIsExporting(false);
+		toast.close(toastId);
 	}, [exportOptions.publicResumePdf, resume]);
 
 	return { onDownloadJSON, onDownloadMarkdown, onDownloadDOCX, onDownloadPDF, onPrint, isExporting };

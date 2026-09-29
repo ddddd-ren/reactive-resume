@@ -914,6 +914,24 @@ describe("resume update stream subscription", () => {
 		expect(cancel).toHaveBeenCalledTimes(1);
 	});
 
+	it("resubscribes after the stream errors", () => {
+		const onUpdate = vi.fn().mockResolvedValue(undefined);
+		const onError = vi.fn();
+		consumeEventIteratorMock.mockReturnValue(vi.fn().mockResolvedValue(undefined));
+
+		renderHook(() => useResumeUpdateSubscription({ resumeId: "resume-retry", onUpdate, onError }));
+		expect(orpcMocks.streamSubscribe).toHaveBeenCalledTimes(1);
+
+		const handlers = consumeEventIteratorMock.mock.calls[0]?.[1] as { onError: (error: unknown) => void };
+		act(() => handlers.onError(new Error("stream dropped")));
+		expect(onError).toHaveBeenCalledTimes(1);
+
+		act(() => {
+			vi.advanceTimersByTime(2500);
+		});
+		expect(orpcMocks.streamSubscribe).toHaveBeenCalledTimes(2);
+	});
+
 	it("replaces the builder draft from the server when there are no pending local edits", async () => {
 		const initial = makeResume("resume-clean");
 		const remote = withBasicsName(initial, "Remote Name");

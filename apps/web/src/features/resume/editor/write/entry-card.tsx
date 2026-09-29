@@ -69,7 +69,11 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 	const open = useEditorStore((state) => state.selection?.kind === "item" && state.selection.itemId === entryId);
 	const autoFocus = useEditorStore((state) => state.focusEntryId === entryId);
 	const select = useEditorStore((state) => state.select);
-	const sortable = useSortable({ id: entryId, disabled: locked, transition: DRAG_SETTLE });
+	const { setNodeRef, transform, transition, isDragging, attributes, listeners } = useSortable({
+		id: entryId,
+		disabled: locked,
+		transition: DRAG_SETTLE,
+	});
 	const isPhone = useBreakpoint() === "mobile";
 
 	// The first field took focus as it mounted; later openings shouldn't steal focus again.
@@ -103,14 +107,14 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 
 	return (
 		<div
-			ref={sortable.setNodeRef}
+			ref={setNodeRef}
 			id={entryElementId(entryId)}
 			data-entry-id={entryId}
-			style={{ transform: CSS.Translate.toString(sortable.transform), transition: sortable.transition }}
+			style={{ transform: CSS.Translate.toString(transform), transition: transition }}
 			className={cn(
 				"group/entry relative scroll-mt-[60px] rounded-[10px] border border-line bg-surface transition-[border-color,box-shadow] duration-quick ease-enter",
 				open && "border-accent shadow-e1",
-				sortable.isDragging && "z-10 bg-raised shadow-e2",
+				isDragging && "z-10 bg-raised shadow-e2",
 			)}
 		>
 			<div className="flex items-center gap-0.5 pe-1">
@@ -119,8 +123,8 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 						type="button"
 						aria-label={t`Reorder ${title || t`Untitled`}`}
 						className="-ms-px flex h-10 w-5 shrink-0 cursor-grab items-center justify-center text-ink-3 opacity-0 transition-opacity duration-quick focus-visible:opacity-100 active:cursor-grabbing group-hover/entry:opacity-100"
-						{...sortable.attributes}
-						{...sortable.listeners}
+						{...attributes}
+						{...listeners}
 					>
 						<Icon name="drag_indicator" size={16} />
 					</button>

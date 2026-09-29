@@ -19,7 +19,7 @@ import {
 import { tags } from "@lezer/highlight";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
 	buildSemanticTree,
 	getTemplateSemanticManifest,
@@ -157,12 +157,14 @@ export function StylesheetCodeEditor({
 		setSelectedColor({ token, left: rect.left - hostRect.left, top: rect.top - hostRect.top });
 	}, []);
 
-	onChangeRef.current = onChange;
-	onFocusChangeRef.current = onFocusChange;
-	onCursorChangeRef.current = onCursorChange;
-	onReadyRef.current = onReady;
-	onUndoRef.current = onUndo;
-	onRedoRef.current = onRedo;
+	useLayoutEffect(() => {
+		onChangeRef.current = onChange;
+		onFocusChangeRef.current = onFocusChange;
+		onCursorChangeRef.current = onCursorChange;
+		onReadyRef.current = onReady;
+		onUndoRef.current = onUndo;
+		onRedoRef.current = onRedo;
+	});
 
 	useEffect(() => {
 		const parent = hostRef.current;
@@ -402,10 +404,12 @@ const createEditorMetadata = (data: ResumeData): SemanticCssEditorMetadata => {
 	};
 };
 
+const NO_TOKENS: readonly SemanticCssColorToken[] = [];
+
 function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps) {
 	const { resolvedTheme: theme } = useTheme();
 	const [focusOpen, setFocusOpen] = useState(false);
-	const [colorTokens, setColorTokens] = useState<readonly SemanticCssColorToken[]>([]);
+	const [compiled, setCompiled] = useState<{ source: StylesheetSource; tokens: readonly SemanticCssColorToken[] }>();
 	const [compiler, setCompiler] = useState<ReturnType<typeof createCompileWorkerClient>>();
 	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();
@@ -435,6 +439,8 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	);
 	const metadata = useMemo(() => (data ? createEditorMetadata(data) : emptyMetadata), [data]);
 	const disabled = readOnly || isLocked;
+	// Swatches belong to the source they were compiled from; they go once it changes.
+	const colorTokens = compiled?.source === source ? compiled.tokens : NO_TOKENS;
 
 	// Picking something on the page (Design) aims the stylesheet at it: its rule, added if there isn't one.
 	useEffect(() => {
@@ -461,7 +467,6 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 		if (!compiler || !data) return;
 		let cancelled = false;
 		const editGeneration = ++compileGenerationRef.current;
-		setColorTokens([]);
 		const timer = window.setTimeout(() => {
 			void compiler
 				.compile({
@@ -480,7 +485,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				})
 				.then((result) => {
 					if (cancelled || result.editGeneration !== compileGenerationRef.current) return;
-					setColorTokens(result.colorTokens ?? []);
+					setCompiled({ source, tokens: result.colorTokens ?? [] });
 				})
 				// Swatches are a nicety: a stylesheet that doesn't compile just shows none.
 				.catch(() => undefined);

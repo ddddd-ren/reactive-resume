@@ -325,6 +325,16 @@ function CategoryRows({ report }: { report: AtsReport }) {
 	);
 }
 
+/** Renders the resume to a PDF and runs the file-level engine on it; null when either step fails. */
+async function checkExportedPdf(data: ResumeData) {
+	try {
+		const blob = await createResumePdfBlob(data);
+		return await runAtsCheck(blobToPdfFile(blob, "resume.pdf"));
+	} catch {
+		return null;
+	}
+}
+
 /**
  * Also check the exported PDF: renders it, runs the file-level engine on it in this tab and reports in a toast.
  * What it found is pinned to the page, and its full report opens from the toast or a pin.
@@ -338,25 +348,24 @@ function DeepCheck({ data }: { data: ResumeData }) {
 
 	const run = async () => {
 		setRunning(true);
-		try {
-			const blob = await createResumePdfBlob(data);
-			const result = await runAtsCheck(blobToPdfFile(blob, "resume.pdf"));
-			const problems = result.report.findings.length;
-			setExportCheck({ report: result.report, data });
-
-			toast.add(
-				problems === 0
-					? { description: t`Exported PDF checked: it reads cleanly too.` }
-					: {
-							description: t`Exported PDF checked: ${problems} more to look at.`,
-							actionProps: { children: t`Show`, onClick: () => setReportOpen(true) },
-						},
-			);
-		} catch {
+		const result = await checkExportedPdf(data);
+		setRunning(false);
+		if (!result) {
 			toast.add({ type: "error", description: t`The exported PDF couldn't be checked. Try again.` });
-		} finally {
-			setRunning(false);
+			return;
 		}
+
+		const problems = result.report.findings.length;
+		setExportCheck({ report: result.report, data });
+
+		toast.add(
+			problems === 0
+				? { description: t`Exported PDF checked: it reads cleanly too.` }
+				: {
+						description: t`Exported PDF checked: ${problems} more to look at.`,
+						actionProps: { children: t`Show`, onClick: () => setReportOpen(true) },
+					},
+		);
 	};
 
 	return (

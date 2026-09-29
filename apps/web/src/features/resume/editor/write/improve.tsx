@@ -108,7 +108,7 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 					</div>
 				</div>
 			) : improve.isPending ? (
-				<p role="status" className="flex items-center gap-2 px-2 py-2 text-ink-2 text-sm">
+				<p role="status" className="flex items-center gap-2 p-2 text-ink-2 text-sm">
 					<Icon name="auto_awesome" size={16} className="animate-pulse motion-reduce:animate-none" />
 					<Trans>Improving…</Trans>
 				</p>

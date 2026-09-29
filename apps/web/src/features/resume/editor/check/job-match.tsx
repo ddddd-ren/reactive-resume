@@ -41,6 +41,8 @@ export type JobMatch = {
 	hiddenTerms: readonly string[];
 };
 
+const loadAtsPdf = () => import("@reactive-resume/resume/ats-pdf");
+
 /**
  * Job match reads the posting of the application the resume is linked to, or one pasted for this visit, and sorts
  * its terms into found and missing. Terms hidden as "not true for me" are left out. It isn't part of the score.
@@ -55,7 +57,7 @@ export function useJobMatch(data: ResumeData | undefined): JobMatch {
 	// The matcher (stemmer and skill aliases) loads only once there's a posting to match.
 	const { data: engine } = useQuery({
 		queryKey: ["ats-pdf-engine"],
-		queryFn: () => import("@reactive-resume/resume/ats-pdf"),
+		queryFn: loadAtsPdf,
 		staleTime: Number.POSITIVE_INFINITY,
 		enabled: posting.length > 0,
 	});

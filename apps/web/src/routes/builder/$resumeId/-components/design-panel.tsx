@@ -137,7 +137,7 @@ export function DesignSheet() {
 					))}
 				</TabsList>
 
-				<fieldset disabled={locked} className="m-0 min-h-0 min-w-0 flex-1 overflow-y-auto border-0 px-4 py-4">
+				<fieldset disabled={locked} className="m-0 min-h-0 min-w-0 flex-1 overflow-y-auto border-0 p-4">
 					<OfflineBanner className="mb-4" />
 					{tab === "template" && <TemplateGroup layout="strip" />}
 					{tab === "type" && <TypeGroup />}

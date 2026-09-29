@@ -66,7 +66,11 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 	const open = useEditorStore((state) => state.openSections.includes(section.id));
 	const setOpen = useEditorStore((state) => state.setSectionOpen);
 	const updateResumeData = useUpdateResumeData();
-	const sortable = useSortable({ id: section.id, disabled: locked, transition: DRAG_SETTLE });
+	const { setNodeRef, transform, transition, isDragging, attributes, listeners } = useSortable({
+		id: section.id,
+		disabled: locked,
+		transition: DRAG_SETTLE,
+	});
 
 	const toggleHidden = () =>
 		updateResumeData(
@@ -85,13 +89,13 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 
 	return (
 		<div
-			ref={sortable.setNodeRef}
+			ref={setNodeRef}
 			id={`sidebar-${section.id}`}
 			data-section-id={section.id}
-			style={{ transform: CSS.Translate.toString(sortable.transform), transition: sortable.transition }}
+			style={{ transform: CSS.Translate.toString(transform), transition: transition }}
 			className={cn(
 				"relative scroll-mt-[60px] rounded-lg transition-shadow duration-quick ease-enter",
-				sortable.isDragging && "z-10 bg-raised shadow-e2",
+				isDragging && "z-10 bg-raised shadow-e2",
 			)}
 		>
 			<div className="group/row flex h-11 items-center gap-0.5 rounded-lg pe-1 hover:bg-hover">
@@ -100,8 +104,8 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 					aria-label={t`Reorder ${title}`}
 					disabled={locked}
 					className="flex h-11 w-7 shrink-0 cursor-grab items-center justify-center text-ink-3 active:cursor-grabbing disabled:cursor-default"
-					{...sortable.attributes}
-					{...sortable.listeners}
+					{...attributes}
+					{...listeners}
 				>
 					<Icon name="drag_indicator" size={18} />
 				</button>

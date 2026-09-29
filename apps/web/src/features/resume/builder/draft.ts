@@ -701,8 +701,9 @@ export function useUpdateResumeData() {
 }
 
 export function useResumeUpdateSubscription({ resumeId, onUpdate, onError }: ResumeUpdateSubscriptionOptions) {
-	const [_retryNonce, setRetryNonce] = useState(0);
+	const [retryNonce, setRetryNonce] = useState(0);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: retryNonce isn't read; bumping it resubscribes after a dropped stream
 	useEffect(() => {
 		if (!resumeId) return;
 
@@ -710,8 +711,9 @@ export function useResumeUpdateSubscription({ resumeId, onUpdate, onError }: Res
 		let retryTimer: number | undefined;
 		const cancel = consumeEventIterator(streamClient.resume.updates.subscribe({ id: resumeId }), {
 			onEvent: async (event) => {
+				const update = (event ?? { mutation: "sync" }) as ResumeUpdateEvent;
 				try {
-					await onUpdate((event ?? { mutation: "sync" }) as ResumeUpdateEvent);
+					await onUpdate(update);
 				} catch (error) {
 					if (error instanceof DOMException && error.name === "AbortError") return;
 					onError?.(error);
@@ -729,7 +731,7 @@ export function useResumeUpdateSubscription({ resumeId, onUpdate, onError }: Res
 			if (retryTimer) window.clearTimeout(retryTimer);
 			void cancel().catch(() => {});
 		};
-	}, [onError, onUpdate, resumeId]);
+	}, [onError, onUpdate, resumeId, retryNonce]);
 }
 
 export function useBuilderResumeUpdateSubscription() {
