@@ -1,7 +1,17 @@
 import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { t } from "@lingui/core/macro";
 import { produce } from "immer";
-import { getProposalState, readTarget, splitBlock, splitBlocks, writeTarget } from "@reactive-resume/resume/proposals";
+import {
+	applyProposal,
+	getProposalState,
+	readTarget,
+	splitBlock,
+	splitBlocks,
+	writeTarget,
+} from "@reactive-resume/resume/proposals";
+import { toast } from "@reactive-resume/ui/components/toast";
+import { useResumeStore } from "@/features/resume/builder/draft";
 
 // Colours of the page marks (README §5.9), as the PDF needs them: old text struck through in grey, new text on
 // a pale accent highlight.
@@ -57,5 +67,19 @@ export function markProposals(data: ResumeData, proposals: readonly Proposal[]):
 				value.replace(proposal.before, () => marked),
 			);
 		}
+	});
+}
+
+/** Applies proposals to the resume as one undo step; the toast's Undo takes them back, and they show as pending again. */
+export function acceptResumeProposals(proposals: readonly Proposal[]) {
+	useResumeStore.getState().updateResumeData(
+		(draft) => {
+			for (const proposal of proposals) applyProposal(draft, proposal);
+		},
+		{ newStep: true },
+	);
+	toast.add({
+		description: proposals.length === 1 ? t`Edit applied` : t`${proposals.length} edits applied`,
+		actionProps: { children: t`Undo`, onClick: () => useResumeStore.getState().undo() },
 	});
 }

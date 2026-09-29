@@ -89,7 +89,12 @@ type TestState = { ok: boolean; label: string; error: string | null } | null;
 function useProviderTest() {
 	const queryClient = useQueryClient();
 	const [result, setResult] = useState<TestState>(null);
-	const test = useMutation(orpc.aiProviders.test.mutationOptions({ meta: { noInvalidate: true } }));
+	const test = useMutation(
+		orpc.aiProviders.test.mutationOptions({
+			meta: { noInvalidate: true },
+			onSettled: () => queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() }),
+		}),
+	);
 
 	const run = async (id: string) => {
 		setResult(null);
@@ -107,8 +112,6 @@ function useProviderTest() {
 			};
 			setResult(next);
 			return next;
-		} finally {
-			void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
 		}
 	};
 
@@ -265,21 +268,17 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 
 	const save = async () => {
 		setFailure(null);
+		const input = {
+			label: fields.label.trim() || providerLabel(provider),
+			provider,
+			model: fields.model.trim(),
+			baseURL: fields.baseURL.trim(),
+			apiKey: fields.apiKey.trim(),
+		};
+		let tested: Awaited<ReturnType<typeof test.mutateAsync>> | undefined;
 		try {
-			const created = await create.mutateAsync({
-				label: fields.label.trim() || providerLabel(provider),
-				provider,
-				model: fields.model.trim(),
-				baseURL: fields.baseURL.trim(),
-				apiKey: fields.apiKey.trim(),
-			});
-			const tested = await test.mutateAsync({ id: created.id });
-			if (tested.testStatus === "success") {
-				onOpenChange(false);
-			} else {
-				// The provider is saved either way; its row keeps the error and a Test button.
-				setFailure(tested.testError ?? t`The provider didn't answer. Check the key, the model and the base URL.`);
-			}
+			const created = await create.mutateAsync(input);
+			tested = await test.mutateAsync({ id: created.id });
 		} catch (error) {
 			setFailure(
 				getOrpcErrorMessage(error, {
@@ -290,8 +289,14 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 					fallback: t`Couldn't save the provider.`,
 				}),
 			);
-		} finally {
-			void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
+		}
+		void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
+		if (!tested) return;
+		if (tested.testStatus === "success") {
+			onOpenChange(false);
+		} else {
+			// The provider is saved either way; its row keeps the error and a Test button.
+			setFailure(tested.testError ?? t`The provider didn't answer. Check the key, the model and the base URL.`);
 		}
 	};
 
@@ -401,17 +406,18 @@ function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
 
 	const save = async () => {
 		setFailure(null);
+		let result: Awaited<ReturnType<typeof test.run>> | undefined;
 		try {
 			await update.mutateAsync({ id: provider.id, ...changes });
 			// A new model, key or address needs a fresh test before the app uses it.
-			const result = await test.run(provider.id);
-			if (result.ok) onClose();
-			else setFailure(result.error ?? t`The provider didn't answer.`);
+			result = await test.run(provider.id);
 		} catch (error) {
 			setFailure(getOrpcErrorMessage(error, { fallback: t`Couldn't save the provider.` }));
-		} finally {
-			void invalidate();
 		}
+		void invalidate();
+		if (!result) return;
+		if (result.ok) onClose();
+		else setFailure(result.error ?? t`The provider didn't answer.`);
 	};
 
 	const setEnabled = (enabled: boolean) =>

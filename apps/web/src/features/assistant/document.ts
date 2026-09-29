@@ -14,7 +14,7 @@ import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { useCurrentResume } from "@/features/resume/builder/draft";
 import { getSectionName } from "@/features/resume/editor/check/issues";
-import { acceptResumeProposals } from "@/features/resume/editor/proposals/proposal-list";
+import { acceptResumeProposals } from "@/features/resume/editor/proposals/proposals";
 import { describeEntry } from "@/features/resume/editor/write/model";
 
 /** The document the assistant works on, as the panel needs it. Resumes and letters each provide one. */

@@ -1,5 +1,6 @@
 import type { ProposeEditsOutput } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import type { Proposal } from "@reactive-resume/resume/proposals";
+import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import type { ChatAttachment, MessageContext } from "./chat";
@@ -8,7 +9,7 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
@@ -18,6 +19,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage } from "@/libs/error-message";
+import { isImeComposing } from "@/libs/keyboard";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 import { attachmentPart, fileToBase64, transcriptOf, useAssistantChat } from "./chat";
@@ -121,6 +123,8 @@ export function Conversation(props: ConversationProps) {
 			.catch(() => undefined);
 	};
 
+	const recordUndone = useEffectEvent(record);
+
 	// Undoing an accepted edit makes it pending again.
 	useEffect(() => {
 		for (const message of messages) {
@@ -129,10 +133,10 @@ export function Conversation(props: ConversationProps) {
 				const undone = toProposals(part, statuses, document).filter(
 					(proposal) => proposal.status === "accepted" && document.stateOf(proposal) === "pending",
 				);
-				if (undone.length > 0) record(message, part, undone, "pending");
+				if (undone.length > 0) recordUndone(message, part, undone, "pending");
 			}
 		}
-	});
+	}, [messages, statuses, document]);
 
 	// Follows the reply while it streams, unless the user scrolled up to read.
 	useEffect(() => {
@@ -154,7 +158,7 @@ export function Conversation(props: ConversationProps) {
 				role="log"
 				aria-live="polite"
 				aria-label={t`Conversation`}
-				className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4"
+				className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4"
 			>
 				{messages.map((message, index) => (
 					<MessageView
@@ -569,10 +573,9 @@ export function Composer(props: ComposerProps) {
 				type: "error",
 				description: getOrpcErrorMessage(error, { fallback: t`Couldn't attach the file.` }),
 			});
-		} finally {
-			setUploading(false);
-			if (fileInput.current) fileInput.current.value = "";
 		}
+		setUploading(false);
+		if (fileInput.current) fileInput.current.value = "";
 	};
 
 	const chips = [
@@ -605,38 +608,24 @@ export function Composer(props: ComposerProps) {
 			{(chips.length > 0 || attachments.length > 0) && (
 				<div className="flex flex-wrap gap-1.5">
 					{chips.map((chip) => (
-						<span
+						<RemovableChip
 							key={chip.key}
-							className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-ink-2 text-xs"
-						>
-							<Icon name={chip.icon} size={15} />
-							<span className="max-w-[160px] truncate">{chip.label}</span>
-							<button
-								type="button"
-								aria-label={t`Don't send ${chip.label}`}
-								onClick={() => onContextChange({ ...context, [chip.key]: false })}
-								className="grid size-5 place-items-center rounded text-ink-3 transition-colors hover:bg-hover hover:text-ink"
-							>
-								<Icon name="close" size={14} />
-							</button>
-						</span>
+							icon={chip.icon}
+							label={chip.label}
+							maxWidth="max-w-[160px]"
+							removeLabel={t`Don't send ${chip.label}`}
+							onRemove={() => onContextChange({ ...context, [chip.key]: false })}
+						/>
 					))}
 					{attachments.map((attachment) => (
-						<span
+						<RemovableChip
 							key={attachment.id}
-							className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-ink-2 text-xs"
-						>
-							<Icon name="attach_file" size={15} />
-							<span className="max-w-[140px] truncate">{attachment.filename}</span>
-							<button
-								type="button"
-								aria-label={t`Remove ${attachment.filename}`}
-								onClick={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
-								className="grid size-5 place-items-center rounded text-ink-3 transition-colors hover:bg-hover hover:text-ink"
-							>
-								<Icon name="close" size={14} />
-							</button>
-						</span>
+							icon="attach_file"
+							label={attachment.filename}
+							maxWidth="max-w-[140px]"
+							removeLabel={t`Remove ${attachment.filename}`}
+							onRemove={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
+						/>
 					))}
 				</div>
 			)}
@@ -653,7 +642,7 @@ export function Composer(props: ComposerProps) {
 					placeholder={t`Ask, or describe a change…`}
 					onChange={(event) => setText(event.target.value)}
 					onKeyDown={(event) => {
-						if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+						if (event.key === "Enter" && !event.shiftKey && !isImeComposing(event)) {
 							event.preventDefault();
 							submit();
 						}
@@ -662,7 +651,7 @@ export function Composer(props: ComposerProps) {
 							props.onStop();
 						}
 					}}
-					className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-1.5 py-1 text-sm outline-none placeholder:text-ink-3"
+					className="field-sizing-content max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-1.5 py-1 text-sm outline-none placeholder:text-ink-3"
 				/>
 				{props.threadId && (
 					<>
@@ -699,6 +688,32 @@ export function Composer(props: ComposerProps) {
 
 			<p className="text-ink-3 text-xs leading-4">{disclosure}</p>
 		</div>
+	);
+}
+
+type RemovableChipProps = {
+	icon: IconName;
+	label: string;
+	/** The label's max-width class (Tailwind needs the whole class name in the source). */
+	maxWidth: string;
+	removeLabel: string;
+	onRemove: () => void;
+};
+
+function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove }: RemovableChipProps) {
+	return (
+		<span className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-ink-2 text-xs">
+			<Icon name={icon} size={15} />
+			<span className={cn(maxWidth, "truncate")}>{label}</span>
+			<button
+				type="button"
+				aria-label={removeLabel}
+				onClick={onRemove}
+				className="grid size-5 place-items-center rounded text-ink-3 transition-colors hover:bg-hover hover:text-ink"
+			>
+				<Icon name="close" size={14} />
+			</button>
+		</span>
 	);
 }
 

@@ -4,32 +4,18 @@ import type { KeyboardEvent, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useId, useState } from "react";
-import { applyProposal, getProposalState } from "@reactive-resume/resume/proposals";
+import { getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
-import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
+import { useIsResumeLocked } from "@/features/resume/builder/draft";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { useEditorStore } from "../store";
+import { acceptResumeProposals } from "./proposals";
 
 /** The visible text of a passage's HTML, for the card. */
 const passageText = (html: string) =>
 	new DOMParser().parseFromString(html, "text/html").body.textContent?.replaceAll("\u00a0", " ").trim() ?? "";
-
-/** Applies proposals to the resume as one undo step; the toast's Undo takes them back, and they show as pending again. */
-export function acceptResumeProposals(proposals: readonly Proposal[]) {
-	useResumeStore.getState().updateResumeData(
-		(draft) => {
-			for (const proposal of proposals) applyProposal(draft, proposal);
-		},
-		{ newStep: true },
-	);
-	toast.add({
-		description: proposals.length === 1 ? t`Edit applied` : t`${proposals.length} edits applied`,
-		actionProps: { children: t`Undo`, onClick: () => useResumeStore.getState().undo() },
-	});
-}
 
 type ProposalListProps = {
 	proposals: readonly Proposal[];

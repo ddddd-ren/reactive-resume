@@ -100,6 +100,9 @@ export function ApiKeysSection() {
 				</p>
 			) : (
 				<table className="w-full overflow-hidden rounded-xl text-[13px] starting:opacity-0 outline outline-line transition-opacity duration-standard ease-enter max-sm:block">
+					<caption className="sr-only">
+						<Trans>API keys</Trans>
+					</caption>
 					<thead className="bg-bg text-ink-3 text-xs max-sm:hidden">
 						<tr className="h-9 text-start">
 							<th scope="col" className="ps-3.5 text-start font-medium">

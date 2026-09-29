@@ -31,6 +31,7 @@ import { client, orpc } from "@/libs/orpc/client";
 import { Composer, Conversation } from "./conversation";
 import { ProviderSetup } from "./provider-setup";
 
+type UsableProvider = ReturnType<typeof useHasUsableAiProvider>["usableProviders"][number];
 type ThreadSummary = RouterOutput["agent"]["threads"]["list"][number];
 
 type AssistantPanelProps = {
@@ -59,7 +60,6 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const [providerId, setProviderId] = useState<string | null>(null);
 	const [modelMenuOpen, setModelMenuOpen] = useState(false);
 	const [starting, setStarting] = useState(false);
-	const navigate = useNavigate();
 
 	const mine = (threads.data ?? []).filter((thread) => belongsTo(thread, document));
 	// Opens the document's latest conversation unless a new one (or another) was asked for.
@@ -75,11 +75,12 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const start = async (text: string) => {
 		if (starting) return;
 		setStarting(true);
+		const input = {
+			...(document.kind === "letter" ? { coverLetterId: document.id } : { resumeId: document.id }),
+			...(provider ? { aiProviderId: provider.id } : {}),
+		};
 		try {
-			const created = await client.agent.threads.start({
-				...(document.kind === "letter" ? { coverLetterId: document.id } : { resumeId: document.id }),
-				...(provider ? { aiProviderId: provider.id } : {}),
-			});
+			const created = await client.agent.threads.start(input);
 			setPrompt(text);
 			setSelected(created.id);
 			useEditorStore.getState().setAssistantSuggestions(null);
@@ -90,9 +91,8 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 				type: "error",
 				description: getOrpcErrorMessage(error, { fallback: t`Couldn't start the conversation. Try again.` }),
 			});
-		} finally {
-			setStarting(false);
 		}
+		setStarting(false);
 	};
 
 	// A question from ⌘K (or Prepare for next step) starts a conversation as soon as the assistant can.
@@ -125,35 +125,14 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 				</h2>
 
 				{usable.length > 0 && (
-					<DropdownMenu open={modelMenuOpen} onOpenChange={setModelMenuOpen}>
-						<DropdownMenuTrigger
-							render={
-								<button
-									type="button"
-									aria-label={t`Model: ${providerLabel}`}
-									className="flex h-7 max-w-[140px] items-center gap-0.5 rounded-md px-2 text-ink-2 text-xs transition-colors hover:bg-hover"
-								/>
-							}
-						>
-							<span className="truncate">{provider?.model ?? providerLabel}</span>
-							<Icon name="expand_more" size={16} />
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="w-64">
-							{usable.map((item) => (
-								<DropdownMenuItem key={item.id} onClick={() => void chooseProvider(item.id)}>
-									<span className="grid min-w-0 flex-1">
-										<span className="truncate">{item.label}</span>
-										<span className="truncate text-ink-3 text-xs">{item.model}</span>
-									</span>
-									{item.id === provider?.id && <Icon name="check" size={16} />}
-								</DropdownMenuItem>
-							))}
-							<DropdownMenuSeparator />
-							<DropdownMenuItem onClick={() => void navigate({ to: "/dashboard/settings/ai" })}>
-								<Trans>Connect another…</Trans>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+					<ModelMenu
+						open={modelMenuOpen}
+						onOpenChange={setModelMenuOpen}
+						providers={usable}
+						current={provider}
+						label={providerLabel}
+						onChoose={(id) => void chooseProvider(id)}
+					/>
 				)}
 
 				<IconButton
@@ -276,6 +255,51 @@ function ConversationLoader({ threadId, document, ...props }: ConversationLoader
 			readOnly={thread.data.isReadOnly || document.locked}
 			{...props}
 		/>
+	);
+}
+
+type ModelMenuProps = {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	providers: readonly UsableProvider[];
+	current: UsableProvider | undefined;
+	label: string;
+	onChoose: (id: string) => void;
+};
+
+function ModelMenu({ open, onOpenChange, providers, current, label, onChoose }: ModelMenuProps) {
+	const navigate = useNavigate();
+
+	return (
+		<DropdownMenu open={open} onOpenChange={onOpenChange}>
+			<DropdownMenuTrigger
+				render={
+					<button
+						type="button"
+						aria-label={t`Model: ${label}`}
+						className="flex h-7 max-w-[140px] items-center gap-0.5 rounded-md px-2 text-ink-2 text-xs transition-colors hover:bg-hover"
+					/>
+				}
+			>
+				<span className="truncate">{current?.model ?? label}</span>
+				<Icon name="expand_more" size={16} />
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="w-64">
+				{providers.map((item) => (
+					<DropdownMenuItem key={item.id} onClick={() => onChoose(item.id)}>
+						<span className="grid min-w-0 flex-1">
+							<span className="truncate">{item.label}</span>
+							<span className="truncate text-ink-3 text-xs">{item.model}</span>
+						</span>
+						{item.id === current?.id && <Icon name="check" size={16} />}
+					</DropdownMenuItem>
+				))}
+				<DropdownMenuSeparator />
+				<DropdownMenuItem onClick={() => void navigate({ to: "/dashboard/settings/ai" })}>
+					<Trans>Connect another…</Trans>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 

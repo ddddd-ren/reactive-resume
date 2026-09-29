@@ -59,8 +59,8 @@ export function ThemeProvider({ children, theme }: Props) {
 
 		if (!playSound) return;
 
+		const soundClip = next === "dark" ? "/sounds/switch-off.mp3" : "/sounds/switch-on.mp3";
 		try {
-			const soundClip = next === "dark" ? "/sounds/switch-off.mp3" : "/sounds/switch-on.mp3";
 			const audio = new Audio(soundClip);
 			await audio.play();
 		} catch {

@@ -3,7 +3,7 @@ import type { FileUIPart, UIMessage } from "ai";
 import { useChat } from "@ai-sdk/react";
 import { eventIteratorToUnproxiedDataStream } from "@orpc/client";
 import { lastAssistantMessageIsCompleteWithToolCalls, parseJsonEventStream, uiMessageChunkSchema } from "ai";
-import { useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import { agentMessageMetadataSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { streamClient } from "@/libs/orpc/client";
 
@@ -80,7 +80,9 @@ type UseAssistantChatInput = {
  */
 export function useAssistantChat({ threadId, initialMessages, resume, context, onFinish }: UseAssistantChatInput) {
 	const contextRef = useRef(context);
-	contextRef.current = context;
+	useLayoutEffect(() => {
+		contextRef.current = context;
+	});
 
 	const transport = useMemo(
 		() => ({
