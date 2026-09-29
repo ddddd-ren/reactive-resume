@@ -1,33 +1,36 @@
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
-	"framework": null,
-	"buildCommand": "pnpm build && node apps/server/dist/prepare-deployment.mjs",
-	"outputDirectory": "apps/web/dist",
-	"functions": {
-		"api/index.mjs": {
-			"maxDuration": 300,
-			"includeFiles": "{apps/web/dist/index.html,apps/web/dist-prerender/**,apps/server/dist/**,node_modules/.pnpm/pdfkit@*/node_modules/pdfkit/js/{standard-fonts,data}/**}"
+	"services": {
+		"frontend": {
+			"root": "apps/web",
+			"framework": "vite",
+			"buildCommand": "cd ../.. && pnpm build --filter=web",
+			"outputDirectory": "dist"
+		},
+		"backend": {
+			"root": "apps/server",
+			"runtime": "node",
+			"entrypoint": "vercel.mjs",
+			"buildCommand": "cd ../.. && pnpm build --filter=web --filter=server && node apps/server/dist/prepare-deployment.mjs",
+			"outputDirectory": ".",
+			"functions": {
+				"vercel.mjs": {
+					"maxDuration": 300,
+					"includeFiles": "{apps/web/dist/index.html,apps/web/dist-prerender/**,apps/server/dist/prompts/**}"
+				}
+			}
 		}
 	},
-	"routes": [
+	"rewrites": [
+		{ "source": "/api/(.*)", "destination": { "service": "backend" } },
+		{ "source": "/uploads/(.*)", "destination": { "service": "backend" } },
+		{ "source": "/mcp(/.*)?", "destination": { "service": "backend" } },
+		{ "source": "/\\.well-known(/.*)?", "destination": { "service": "backend" } },
 		{
-			"src": "/",
-			"dest": "/api/index"
+			"source": "/(index\\.html|robots\\.txt|sitemap\\.xml|llms\\.txt|schema\\.json)",
+			"destination": { "service": "backend" }
 		},
-		{
-			"src": "/index.html",
-			"dest": "/api/index"
-		},
-		{
-			"src": "/(robots\\.txt|sitemap\\.xml|llms\\.txt|schema\\.json)",
-			"dest": "/api/index"
-		},
-		{
-			"handle": "filesystem"
-		},
-		{
-			"src": "/(.*)",
-			"dest": "/api/index"
-		}
+		{ "source": "/(.*\\.[^/]+)", "destination": { "service": "frontend" } },
+		{ "source": "/(.*)", "destination": { "service": "backend" } }
 	]
 }

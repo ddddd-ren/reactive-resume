@@ -12,14 +12,13 @@ Runs on every pull request and every push to `main`. It needs no Vercel account 
 The job:
 
 1. Starts an isolated PostgreSQL service.
-2. Writes a local `.vercel/project.json` and runs `vercel build --prod` offline, with placeholder Blob credentials. This also applies migrations to the isolated database.
-3. Checks the generated Function:
-   - runtime is `nodejs24.x` and `maxDuration` is `300`;
-   - PDFKit standard font files are included in the traced files;
-   - every emitted server chunk loads with `--no-experimental-require-module`, which matches the Vercel runtime;
-   - the Vercel entrypoint answers a request.
+2. Writes a local `.vercel/project.json` with the `services` framework and runs `vercel build --prod` offline, with placeholder Blob credentials. This also applies migrations to the isolated database.
+3. Checks the `backend` service Function:
+   - runtime is `nodejs24.x`, `maxDuration` is `300`, and the handler is `apps/server/vercel.mjs`;
+   - a copy of the Function outside the checkout loads with `--no-experimental-require-module`, which matches the Vercel runtime, so a dependency the build left out fails the job;
+   - the copy rejects an unauthenticated staging request and serves the prerendered homepage.
 
-If a new server dependency fails the module-loading check, add it to `bundledInteropPackages` in `apps/server/tsdown.config.ts`.
+If a new server dependency fails the loading check, add it and its own dependencies to `bundledInteropPackages` in `apps/server/tsdown.config.ts`. CommonJS dependencies need this: Vercel's service builder loads them through pnpm links that it leaves out of the Function.
 
 ## Live smoke test
 

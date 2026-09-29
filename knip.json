@@ -2,9 +2,6 @@
 	"$schema": "https://unpkg.com/knip@6/schema.json",
 	"tags": ["-lintignore"],
 	"workspaces": {
-		".": {
-			"entry": ["api/index.mjs"]
-		},
 		"apps/web": {
 			"entry": ["lingui.config.ts", "vite.config.ts", "vitest.config.ts", "src/features/homepage/prerender.tsx"],
 			"vite": {
@@ -15,6 +12,7 @@
 			}
 		},
 		"apps/server": {
+			"entry": ["vercel.mjs"],
 			"ignoreDependencies": [
 				"@ai-sdk/anthropic",
 				"@ai-sdk/cerebras",
@@ -43,7 +41,7 @@
 				"@uiw/color-convert",
 				"@vercel/blob",
 				"ai",
-				"bcrypt",
+				"bcryptjs",
 				"cjk-regex",
 				"css-tree",
 				"drizzle-zod",

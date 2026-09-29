@@ -4,7 +4,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
 import type { ResumeUpdatedEvent } from "./events";
 import { ORPCError } from "@orpc/client";
-import { compare, hash } from "bcrypt";
+import { compare, hash } from "bcryptjs";
 import { and, arrayContains, asc, desc, eq, gte, isNotNull, isNull, sql } from "drizzle-orm";
 import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";

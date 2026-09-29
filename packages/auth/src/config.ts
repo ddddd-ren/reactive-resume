@@ -5,7 +5,7 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { dash } from "@better-auth/infra";
 import { oauthProvider } from "@better-auth/oauth-provider";
 import { passkey } from "@better-auth/passkey";
-import { compare, hash } from "bcrypt";
+import { compare, hash } from "bcryptjs";
 import { APIError, betterAuth } from "better-auth";
 import { createAuthMiddleware } from "better-auth/api";
 import { verifyBearerToken } from "better-auth/oauth2";

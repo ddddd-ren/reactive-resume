@@ -5,7 +5,7 @@ description: "Deploy Reactive Resume on Vercel Hobby with Neon PostgreSQL, priva
 
 This guide deploys Reactive Resume to a Vercel project with the Deploy with Vercel wizard. The wizard provisions a database, file storage, and Redis for you. You supply two secrets.
 
-Vercel serves the static web assets from its CDN and runs the shared Hono server in one Node.js 24 Function. Docker is also supported and uses the same API, authentication, templates, and data format. See [Self-hosting with Docker](/self-hosting/docker) for that option.
+The project deploys as two [Vercel Services](https://vercel.com/docs/services): `frontend` serves the static web app from Vercel's CDN, and `backend` runs the shared Hono server in one Node.js 24 Function. Docker is also supported and uses the same API, authentication, templates, and data format. See [Self-hosting with Docker](/self-hosting/docker) for that option.
 
 ## Before you start
 
@@ -56,7 +56,7 @@ Quotas and permitted use depend on your Vercel, Neon, and Upstash plans. Review 
   </Step>
 
   <Step title="Deploy">
-    Keep the project root at the repository root and keep the committed `vercel.json`. Do not select the `apps/web` subdirectory and do not add an SPA fallback rewrite.
+    Set **Framework Preset** to **Services**. Keep the project root at the repository root and keep the committed `vercel.json`. Do not select the `apps/web` subdirectory and do not add an SPA fallback rewrite.
 
     The build compiles both apps and applies database migrations before the deployment goes live. You do not run migrations yourself.
   </Step>
@@ -86,6 +86,10 @@ Changing the domain does not move stored files. Files stay under the same `DEPLO
 ## Update the deployment
 
 Redeploy the same project. Keep its connected services and secrets unchanged.
+
+<Warning>
+  Installations created before Reactive Resume used Vercel Services must switch first. Open **Settings → Build and Deployment**, set **Framework Preset** to **Services**, save, and then redeploy. Vercel builds the `services` configuration only when the project uses this preset.
+</Warning>
 
 - Migrations run in the build step, never in runtime Functions. A database advisory lock serializes concurrent deployments.
 - Rolling back to an older deployment does not roll back the database schema. Keep migrations backward-compatible, or restore a database backup.
@@ -151,6 +155,7 @@ Blob objects are never public. The application serves public pictures and author
 
 | Symptom | Fix |
 | --- | --- |
+| Deployment does not build as services | Set **Framework Preset** to **Services** under **Settings → Build and Deployment**, then redeploy. |
 | First build fails on configuration | Check that all three services are connected to Production and both secrets are set. Remove any `S3_*` variables and any `STORAGE_BACKEND` value other than `blob`. |
 | Preview build refuses to migrate | Connect isolated preview resources, then set `ALLOW_PREVIEW_MIGRATIONS=true` for Preview. |
 | Large upload returns `413` | Use the web app or the [large RPC requests](/guides/large-rpc-requests) protocol. Vercel Pro does not raise the request body limit. |

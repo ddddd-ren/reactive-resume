@@ -58,29 +58,35 @@ jobs:
           import { writeFileSync } from 'node:fs';
           writeFileSync('.vercel/project.json', JSON.stringify({
             projectId: 'prj_ci', orgId: 'team_ci', projectName: 'reactive-resume-ci',
-            settings: { framework: null, nodeVersion: '24.x', createdAt: 0 }
+            settings: { framework: 'services', nodeVersion: '24.x', createdAt: 0 }
           }));
           JS
-          pnpm dlx --allow-build=esbuild vercel@60.0.1 build --prod --yes --global-config "$RUNNER_TEMP/vercel-offline"
-      - name: Check Lambda module loading and function budget
+          pnpm dlx --allow-build=esbuild vercel@61.0.0 build --prod --yes --global-config "$RUNNER_TEMP/vercel-offline"
+      # Runs the backend Function from a copy outside the checkout, so a dependency the build left out fails here.
+      - name: Check backend Function loading and budget
         run: |
           node --no-experimental-require-module --input-type=module - <<'JS'
           import assert from 'node:assert/strict';
-          import { readFileSync, readdirSync } from 'node:fs';
-          const config = JSON.parse(readFileSync('.vercel/output/functions/api/index.func/.vc-config.json'));
+          import { cpSync, lstatSync, mkdirSync, readFileSync, readlinkSync, symlinkSync } from 'node:fs';
+          import { dirname, join } from 'node:path';
+          const func = '.vercel/output/services/backend/functions/index.func';
+          const config = JSON.parse(readFileSync(`${func}/.vc-config.json`));
           assert.equal(config.runtime, 'nodejs24.x');
           assert.equal(config.maxDuration, 300);
-          const tracedFiles = Object.keys(config.filePathMap ?? {});
-          assert.ok(tracedFiles.some((path) => path.endsWith('/pdfkit/js/standard-fonts/Helvetica.cjs')));
-          assert.ok(tracedFiles.some((path) => path.endsWith('/pdfkit/js/data/Helvetica.afm')));
-          for (const name of readdirSync('apps/server/dist')) {
-            if (name.endsWith('.mjs') && !['index.mjs', 'prepare-deployment.mjs'].includes(name)) {
-              await import(`./apps/server/dist/${name}`);
-            }
+          assert.equal(config.handler, 'apps/server/vercel.mjs');
+          const root = join(process.env.RUNNER_TEMP, 'backend-function');
+          cpSync(func, root, { recursive: true, verbatimSymlinks: true });
+          for (const [path, source] of Object.entries(config.filePathMap ?? {})) {
+            mkdirSync(dirname(join(root, path)), { recursive: true });
+            if (lstatSync(source).isSymbolicLink()) symlinkSync(readlinkSync(source), join(root, path));
+            else cpSync(source, join(root, path));
           }
-          const { default: app } = await import('./apps/server/dist/vercel.mjs');
-          const response = await app.fetch(new Request('http://localhost:3000/api/storage/stage', { method: 'POST', body: '{}' }));
-          assert.equal(response.status, 401);
+          const { default: app } = await import(join(root, config.handler));
+          const stage = await app.fetch(new Request('http://localhost:3000/api/storage/stage', { method: 'POST', body: '{}' }));
+          assert.equal(stage.status, 401);
+          const home = await app.fetch(new Request('http://localhost:3000/'));
+          assert.equal(home.status, 200);
+          assert.match(await home.text(), /application\/ld\+json/);
           process.exit(0);
           JS
 

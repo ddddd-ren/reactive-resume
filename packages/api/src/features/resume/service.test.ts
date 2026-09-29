@@ -66,7 +66,7 @@ vi.mock("drizzle-orm", () => ({
 		join: (values: unknown[]) => values,
 	}),
 }));
-vi.mock("bcrypt", () => ({ hash: vi.fn(), compare: compareMock }));
+vi.mock("bcryptjs", () => ({ hash: vi.fn(), compare: compareMock }));
 vi.mock("./events", () => ({ publishResumeUpdated: publishResumeUpdatedMock }));
 vi.mock("./access", () => ({
 	grantResumeAccess: grantResumeAccessMock,

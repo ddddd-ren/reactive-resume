@@ -101,7 +101,7 @@ export default defineConfig({
 	build: {
 		chunkSizeWarningLimit: 10 * 1024, // 10 MB
 		rolldownOptions: {
-			external: ["bcrypt", "sharp", "@aws-sdk/client-s3", "ioredis", "linkedom"],
+			external: ["bcryptjs", "sharp", "@aws-sdk/client-s3", "ioredis", "linkedom"],
 		},
 	},
 

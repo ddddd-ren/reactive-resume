@@ -3,7 +3,7 @@ title: "Project architecture"
 description: "How the Reactive Resume monorepo is laid out, the runtime boundaries between the web and server apps, and the package ownership model."
 ---
 
-Reactive Resume is a pnpm/Turborepo monorepo. Docker runs one Node.js process. Vercel serves static assets through its CDN and uses a Node.js Function for the same Hono application. Both targets share the web app, API, authentication, renderers, and database schema.
+Reactive Resume is a pnpm/Turborepo monorepo. Docker runs one Node.js process. Vercel deploys two services from one project: `frontend` serves static assets through its CDN, and `backend` runs the same Hono application in a Node.js Function. Both targets share the web app, API, authentication, renderers, and database schema.
 
 Internal packages are source-consumed through their `package.json` export maps. Import package subpaths, not another workspace's private `src` files.
 
