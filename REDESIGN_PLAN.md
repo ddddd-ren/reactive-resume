@@ -1,8 +1,8 @@
 # Reactive Resume redesign plan ("Desk & Paper")
 
-Status: approved on 28 Sep 2026 (every §9 recommendation accepted). Work happens on `redesign/desk-and-paper`. M0 to M12 are done; see §11 and §12. The contract steps in §3.10 are proposed separately.
+Status: approved on 28 Sep 2026 (every §9 recommendation accepted). M0 to M12 are done (§11, §12), the PDF engine is Forme (§13), and the follow-ups and §3.10 contract steps are done (§14, 29 Sep 2026). Everything is committed locally on `redesign/forme-engine`; nothing is pushed.
 
-**PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme".
+**PDF engine (28 Sep 2026):** the react-pdf rendering engine (`packages/pdf`) and Semantic CSS are replaced with [Forme](https://www.formepdf.com/) in the next phase of this redesign. Until then the redesign hosts them as they are: no per-template PDF work, render-performance work or CSS-editor restyling. Engine-dependent items are marked "waits for Forme"; §14 records how each one closed.
 
 Inputs:
 
@@ -1587,3 +1587,33 @@ Done on `redesign/forme-engine`, 29 Sep 2026, in three local commits. All phases
   - `packages/pdf` compiles JSX with `react-jsx`.
 - **Docs:** current-state docs, the privacy policy and the terms name the new engine. `third-party-notices.txt` credits Forme. Both the legal wording and the notices need the owner's review.
 
+## 14. Completion (29 Sep 2026)
+
+The items left open in §12 and §13, in the order they were done. Local commits on `redesign/forme-engine`.
+
+- **Phone keyboard toolbar (M3 spec).** On phones the rich-text toolbar docks above the keyboard (`useKeyboardInset` follows `visualViewport`), with 44 px buttons and Done.
+- **"Imported from…" note (D2).** Opening an import in the editor says what it brought in: sections, entries and dates to check. Dismissing it clears `?imported=` from the address.
+- **Sidebar Left/Right.** `metadata.layout.sidebarSide` (optional, left or right) overrides a template's own side; right to left still mirrors. All eight two-column templates and the DOCX export follow it, and Design's Sidebar panel offers the choice.
+- **Deep-check pins.** Findings from the exported PDF are placed on its lines (`locateEvidence`) and pinned on the page in Issues while the resume is unchanged. A pin opens the full report.
+- **Azurill letter header.** Already fixed by the Forme port; a test now checks the sender header in all 15 templates.
+- **Letter design.** A letter with its own design gets Type, Colour and Page, the same controls as a resume. They save with what's typed; setting them ends the design link.
+- **Custom CSS editor.** Syntax colours use the app's inks, so the editor reads in dark mode. Its toolbar icons show again: an `Icon` now always draws its own glyph, whatever `data-icon` a caller passes.
+- **Preview in a Web Worker.** Every browser PDF (preview, thumbnails, downloads, Check, public page) renders in one module worker. If workers are unavailable it falls back to the main thread. Forme and its 6.9 MB engine stay out of the main bundle. The worker bundle gets the Lingui plugins for translated section titles.
+- **List markers stay with their first line.** Converted list items carry their index into Forme's layout. `renderResume` finds markers left on a page their first line leaves and renders again with a page break before those items (at most three passes). Eleven expected-failure tests now pass. Presence hints are still ignored.
+- **Right to left:** the award title and date row mirrors like every other header row.
+- **§3.10 contract steps**, listed in §3.10. Migration `20260929063245_contract_redesign_legacy_fields` has a `rollback.sql`. It was applied only to the isolated verification database.
+- **Knip:** the Forme port's unused exports and types are removed, and the server's engine dependencies are listed.
+- **Engine limits still open** (expected failures in `packages/pdf`, which pass once Forme supports them):
+  - Right-to-left lines are laid out left to right, then right-aligned.
+  - Characters above U+FFFF don't draw.
+  - Percentage padding is ignored.
+  - Presence hints are ignored.
+  - Rotation, dashed and dotted borders, `z-index`, `max-lines`, `text-indent`, `vertical-align` and `object-position` are ignored (§13).
+  - These are documented here and warned about in the CSS editor; none has been reported upstream.
+- **Verification:**
+  - Every workspace typechecks.
+  - Unit tests pass in every package: pdf 1020 (plus 8 expected failures), web, API, MCP, schema and resume.
+  - Under the full parallel run, three tests with 5 to 20 s timeouts can time out; the heaviest downloads a CJK font. They pass when their package runs alone.
+  - `turbo boundaries` and `knip` are clean.
+  - Playwright against the production build: 45 passed and 7 skipped.
+  - The dark-mode axe check failed once, on the page caption behind the Share sheet, and passed on seven reruns, including five in parallel.
