@@ -129,18 +129,19 @@ function LetterDownloadTab() {
 	const name = fileName ?? letterFileName(letter, words);
 
 	const download = async (as: LetterFormat) => {
+		const bothId = as === "both" ? resumeId : null;
+		const extension = formats.find((option) => option.id === as)?.extension ?? ".pdf";
+		const file = `${sanitizeFileName(name) || letterFileName(letter, words)}${extension}`;
 		setState("busy");
 		try {
-			if (as === "both" && resumeId) {
-				const resume = await client.resume.getById({ id: resumeId });
+			if (bothId) {
+				const resume = await client.resume.getById({ id: bothId });
 				downloadWithAnchor(await createExportFile(resume, "pdf"), `${getDefaultFileName(resume)}.pdf`);
 				// Two downloads in a row are more reliable a moment apart.
 				await new Promise((resolve) => window.setTimeout(resolve, PAUSE_BETWEEN_FILES_MS));
 				downloadWithAnchor(await createLetterFile(letter, words, "pdf"), `${letterFileName(letter, words)}.pdf`);
 				toast.add({ description: t`Downloaded your resume and this letter` });
 			} else if (as !== "both") {
-				const extension = formats.find((option) => option.id === as)?.extension ?? ".pdf";
-				const file = `${sanitizeFileName(name) || letterFileName(letter, words)}${extension}`;
 				downloadWithAnchor(await createLetterFile(letter, words, as), file);
 				toast.add({ description: t`Downloaded ${file}` });
 			}
@@ -192,7 +193,6 @@ function useLetterHistory(open: boolean): HistorySource {
 	});
 	const refresh = () =>
 		queryClient.invalidateQueries({ queryKey: orpc.coverLetters.listVersions.queryKey({ input: { id } }) });
-	const { flush, change } = useLetterEditorStore.getState();
 
 	return {
 		versions,
@@ -201,12 +201,12 @@ function useLetterHistory(open: boolean): HistorySource {
 		nowDetail: t`The letter as it is`,
 		errorMessage: (error) => getOrpcErrorMessage(error, { fallback: t`Something went wrong. Try again.` }),
 		save: async (name) => {
-			await flush();
+			await useLetterEditorStore.getState().flush();
 			await client.coverLetters.createVersion({ id, name });
 			void refresh();
 		},
 		restore: async (versionId) => {
-			await change(() => client.coverLetters.restoreVersion({ id, versionId }));
+			await useLetterEditorStore.getState().change(() => client.coverLetters.restoreVersion({ id, versionId }));
 			void refresh();
 		},
 		rename: async (versionId, name) => {

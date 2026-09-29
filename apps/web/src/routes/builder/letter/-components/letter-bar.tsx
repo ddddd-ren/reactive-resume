@@ -24,7 +24,7 @@ import { AssistantButton } from "@/features/assistant/assistant-button";
 import { useLetterWords } from "@/features/letters/compose";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
-import { BackLink, DrawerControls } from "@/features/resume/editor/chrome";
+import { BackLink, DocumentMenuTrigger, DrawerControls } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { usePrompt } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -108,10 +108,9 @@ export function useDownloadLetter() {
 			downloadWithAnchor(blob, `${letterFileName(letter, words)}.pdf`);
 		} catch {
 			toast.add({ type: "error", description: t`Could not generate the PDF. Please try again.` });
-		} finally {
-			setBusy(false);
-			toast.close(toastId);
 		}
+		setBusy(false);
+		toast.close(toastId);
 	};
 
 	return { run, busy };
@@ -173,18 +172,17 @@ function LetterMenu() {
 	const id = useLetterEditorStore((state) => state.letter?.id ?? "");
 	const name = useLetterEditorStore((state) => state.letter?.name ?? "");
 	const isLocked = useLetterEditorStore((state) => state.letter?.isLocked ?? false);
-	const { edit, change, flush } = useLetterEditorStore.getState();
 	const ref = { type: "letter" as const, id };
 
 	const rename = async () => {
 		const next = await prompt(t`Rename letter`, { defaultValue: name });
 		const trimmed = next?.trim().slice(0, 100);
-		if (trimmed && trimmed !== name) edit({ name: trimmed });
+		if (trimmed && trimmed !== name) useLetterEditorStore.getState().edit({ name: trimmed });
 	};
 
 	const duplicate = async () => {
 		try {
-			await flush();
+			await useLetterEditorStore.getState().flush();
 			const copy = await client.coverLetters.duplicate({ id });
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 			toast.add({ description: t`Duplicated` });
@@ -196,15 +194,18 @@ function LetterMenu() {
 
 	// Locking moves the letter's revision on, so the letter is read again afterwards.
 	const setLocked = (locked: boolean) =>
-		change(async () => {
-			await client.documents.setLocked({ ...ref, isLocked: locked });
-			return client.coverLetters.getById({ id });
-		}).catch(failed);
+		useLetterEditorStore
+			.getState()
+			.change(async () => {
+				await client.documents.setLocked({ ...ref, isLocked: locked });
+				return client.coverLetters.getById({ id });
+			})
+			.catch(failed);
 
 	// Undoable, so it doesn't ask first: the letter waits in Trash for 30 days.
 	const trash = async () => {
 		try {
-			await flush();
+			await useLetterEditorStore.getState().flush();
 			await client.documents.trash(ref);
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 			void navigate({ to: "/dashboard" });
@@ -227,21 +228,7 @@ function LetterMenu() {
 	return (
 		<>
 			<DropdownMenu>
-				<DropdownMenuTrigger
-					render={
-						<button
-							type="button"
-							aria-label={t`Document menu: ${name}`}
-							className="-mx-1.5 flex min-w-0 max-w-[calc(100%+0.75rem)] flex-col items-start rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover"
-						>
-							<span className="flex min-w-0 max-w-full items-center gap-1.5">
-								<span className="truncate font-semibold text-ink text-sm leading-[18px]">{name}</span>
-								{isLocked && <Icon name="lock" size={16} className="text-ink-3" />}
-								<Icon name="expand_more" size={16} className="text-ink-3" />
-							</span>
-						</button>
-					}
-				/>
+				<DropdownMenuTrigger render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
 				<DropdownMenuContent align="start" className="w-60">
 					<DropdownMenuItem disabled={isLocked} onClick={() => void rename()}>
 						<Icon name="edit" />

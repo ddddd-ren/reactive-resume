@@ -15,6 +15,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "@/dialogs/store";
 import { useCurrentBuilderResumeSelector, useCurrentResume, usePatchResume } from "@/features/resume/builder/draft";
+import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
 import { SaveStatus } from "@/features/resume/editor/save-status";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { getResumeErrorMessage } from "@/libs/error-message";
@@ -36,21 +37,7 @@ export function DocumentMenu() {
 	return (
 		<>
 			<DropdownMenu>
-				<DropdownMenuTrigger
-					render={
-						<button
-							type="button"
-							aria-label={t`Document menu: ${name}`}
-							className="-mx-1.5 flex min-w-0 max-w-[calc(100%+0.75rem)] flex-col items-start rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover"
-						>
-							<span className="flex min-w-0 max-w-full items-center gap-1.5">
-								<span className="truncate font-semibold text-ink text-sm leading-[18px]">{name}</span>
-								{isLocked && <Icon name="lock" size={16} className="text-ink-3" />}
-								<Icon name="expand_more" size={16} className="text-ink-3" />
-							</span>
-						</button>
-					}
-				/>
+				<DropdownMenuTrigger render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
 				<DocumentMenuItems onOpenDialog={setDialog} />
 			</DropdownMenu>
 			<SaveStatus />

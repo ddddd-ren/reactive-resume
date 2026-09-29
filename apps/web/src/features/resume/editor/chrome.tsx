@@ -1,3 +1,5 @@
+import type { IconName } from "@reactive-resume/ui/components/icon";
+import type { ComponentProps, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
@@ -7,6 +9,7 @@ import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
+import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
 
@@ -30,9 +33,9 @@ export const useIsLandscape = () =>
 	);
 
 // Page widths in PDF points; 1pt renders as 1 CSS px at 100%.
-export const PAGE_WIDTH = { a4: 595.28, letter: 612, "free-form": 595.28 } as const;
+const PAGE_WIDTH = { a4: 595.28, letter: 612, "free-form": 595.28 } as const;
 // Horizontal room the canvas keeps around the page: 40px each side, 16px on phones.
-export const CANVAS_GUTTER = { wide: 80, narrow: 32 } as const;
+const CANVAS_GUTTER = { wide: 80, narrow: 32 } as const;
 
 export function useCanvasWidth() {
 	const ref = useRef<HTMLDivElement>(null);
@@ -47,6 +50,51 @@ export function useCanvasWidth() {
 	}, []);
 
 	return [ref, width] as const;
+}
+
+/** The canvas ref, the fit scale for the page format, and the scale the page is drawn at (zoom, or fit). */
+export function usePageScale(format: keyof typeof PAGE_WIDTH) {
+	const zoom = useEditorStore((state) => state.zoom);
+	const isPhone = useBreakpoint() === "mobile";
+	const [canvasRef, canvasWidth] = useCanvasWidth();
+	const gutter = isPhone ? CANVAS_GUTTER.narrow : CANVAS_GUTTER.wide;
+	const fitScale = canvasWidth > 0 ? Math.min(ZOOM_MAX, (canvasWidth - gutter) / PAGE_WIDTH[format]) : 1;
+	const pageScale = zoom === "fit" ? Math.max(0.25, fitScale) : zoom;
+
+	return { canvasRef, fitScale, pageScale };
+}
+
+type CanvasStatusPillProps = { icon: IconName; children: ReactNode };
+
+/** The dark pill above the first page while a version or template is previewed instead of the live document. */
+export function CanvasStatusPill({ icon, children }: CanvasStatusPillProps) {
+	return (
+		<span role="status" className="flex h-8 items-center gap-2 rounded-lg bg-ink px-3 text-[13px] text-bg">
+			<Icon name={icon} size={18} />
+			{children}
+		</span>
+	);
+}
+
+// Base UI's trigger hands its ref, handlers and aria state to the element it renders.
+type DocumentMenuTriggerProps = ComponentProps<"button"> & { name: string; isLocked: boolean };
+
+/** The document name in the editor bar, as the button that opens the document menu. */
+export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTriggerProps) {
+	return (
+		<button
+			type="button"
+			{...props}
+			aria-label={t`Document menu: ${name}`}
+			className="-mx-1.5 flex min-w-0 max-w-[calc(100%+0.75rem)] flex-col items-start rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover"
+		>
+			<span className="flex min-w-0 max-w-full items-center gap-1.5">
+				<span className="truncate font-semibold text-ink text-sm leading-[18px]">{name}</span>
+				{isLocked && <Icon name="lock" size={16} className="text-ink-3" />}
+				<Icon name="expand_more" size={16} className="text-ink-3" />
+			</span>
+		</button>
+	);
 }
 
 /** Leaving the editor is navigation, so it's a link styled as an icon button. */
