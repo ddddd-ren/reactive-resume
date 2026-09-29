@@ -203,7 +203,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 	if (jsonResume.basics?.summary) {
 		result.summary = {
 			...defaultResumeData.summary,
-			content: `<p>${jsonResume.basics.summary}</p>`,
+			content: toHtmlDescription(jsonResume.basics.summary),
 			hidden: false,
 		};
 	}
@@ -335,7 +335,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					date: "",
 					dates: toSingleDates(award.date),
 					website: createItemWebsite(),
-					description: award.summary ? `<p>${award.summary}</p>` : "",
+					description: toHtmlDescription(award.summary),
 				})),
 		};
 	}
@@ -373,7 +373,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					date: "",
 					dates: toSingleDates(pub.releaseDate),
 					website: createItemWebsite(pub.url),
-					description: pub.summary ? `<p>${pub.summary}</p>` : "",
+					description: toHtmlDescription(pub.summary),
 				})),
 		};
 	}
@@ -410,7 +410,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					position: "",
 					website: createItemWebsite(),
 					phone: "",
-					description: ref.reference ? `<p>${ref.reference}</p>` : "",
+					description: toHtmlDescription(ref.reference),
 				})),
 		};
 	}

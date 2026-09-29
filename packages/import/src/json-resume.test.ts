@@ -196,4 +196,20 @@ describe("parseJSONResume", () => {
 		expect(next.sections.experience.items).toHaveLength(0);
 		expect(defaultResumeData.sections.experience.items).toHaveLength(0);
 	});
+
+	it("escapes plain-text fields so markup-like text survives as text", () => {
+		const result = parseJSONResume(
+			JSON.stringify({
+				basics: { summary: "Generics like C<T> & more" },
+				work: [{ name: "Acme", summary: "Used List<T>", highlights: ["Wrote <b> tags"] }],
+				awards: [{ title: "Prize", summary: "Best <T>" }],
+			}),
+		);
+
+		expect(result.summary.content).toBe("<p>Generics like C&lt;T&gt; &amp; more</p>");
+		expect(result.sections.experience.items[0]!.description).toBe(
+			"<p>Used List&lt;T&gt;</p><ul><li>Wrote &lt;b&gt; tags</li></ul>",
+		);
+		expect(result.sections.awards.items[0]!.description).toBe("<p>Best &lt;T&gt;</p>");
+	});
 });

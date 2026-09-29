@@ -1,20 +1,20 @@
 import { escapeHtml } from "@reactive-resume/utils/string";
 /**
- * Converts a summary string and optional highlights array into an HTML description.
+ * Converts a plain-text summary and optional highlights array into an escaped HTML description.
  * Summary becomes a <p> tag, highlights become a <ul> list.
  */
 export function toHtmlDescription(summary?: string, highlights?: string[]): string {
 	const parts: string[] = [];
 
 	if (summary) {
-		parts.push(`<p>${summary}</p>`);
+		parts.push(`<p>${escapeHtml(summary)}</p>`);
 	}
 
 	if (highlights && highlights.length > 0) {
 		parts.push("<ul>");
 
 		for (const highlight of highlights) {
-			parts.push(`<li>${highlight}</li>`);
+			parts.push(`<li>${escapeHtml(highlight)}</li>`);
 		}
 
 		parts.push("</ul>");
@@ -24,11 +24,11 @@ export function toHtmlDescription(summary?: string, highlights?: string[]): stri
 }
 
 /**
- * Converts an array of strings into an HTML unordered list.
+ * Converts an array of plain-text strings into an escaped HTML unordered list.
  */
 export function arrayToHtmlList(items: string[]): string {
 	if (items.length === 0) return "";
-	return `<ul>${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+	return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
 }
 
 export const BULLET_PATTERN = /^\s*[-–—•*◦‣·]\s+/;

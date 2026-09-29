@@ -31,9 +31,8 @@ describe("toHtmlDescription", () => {
 		expect(toHtmlDescription("", ["a"])).toBe("<ul><li>a</li></ul>");
 	});
 
-	it("does not escape HTML in inputs (caller's responsibility)", () => {
-		// Document existing behavior: caller must sanitize before passing
-		expect(toHtmlDescription("<script>")).toBe("<p><script></p>");
+	it("escapes HTML in inputs", () => {
+		expect(toHtmlDescription("<script>", ["C<T>"])).toBe("<p>&lt;script&gt;</p><ul><li>C&lt;T&gt;</li></ul>");
 	});
 });
 
@@ -56,7 +55,7 @@ describe("arrayToHtmlList", () => {
 		expect(result.indexOf("a")).toBeLessThan(result.indexOf("b"));
 	});
 
-	it("does not escape HTML in items", () => {
-		expect(arrayToHtmlList(["<b>bold</b>"])).toBe("<ul><li><b>bold</b></li></ul>");
+	it("escapes HTML in items", () => {
+		expect(arrayToHtmlList(["<b>bold</b>"])).toBe("<ul><li>&lt;b&gt;bold&lt;/b&gt;</li></ul>");
 	});
 });
