@@ -1,6 +1,6 @@
 import type { CustomSection as SchemaCustomSection } from "@reactive-resume/schema/resume/data";
-import type { Icon } from "phosphor-icons-react-pdf/dynamic";
 import type { ComponentProps } from "react";
+import type { PhosphorIcon } from "../../forme/icons";
 import type { StyleInput, TemplatePlacement } from "./styles";
 
 export type TemplateColorRoles = {
@@ -18,7 +18,7 @@ export type TemplateStyleContext = {
 
 export type TemplateStyleSlot = StyleInput | ((context: TemplateStyleContext) => StyleInput);
 
-export type TemplateIconProps = Omit<ComponentProps<typeof Icon>, "name">;
+export type TemplateIconProps = Omit<ComponentProps<typeof PhosphorIcon>, "name">;
 
 export type TemplateIconSlot =
 	| Partial<TemplateIconProps>

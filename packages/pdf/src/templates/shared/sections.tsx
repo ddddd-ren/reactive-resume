@@ -1,4 +1,3 @@
-import type { Style } from "@react-pdf/types";
 import type {
 	AwardItem,
 	CertificationItem,
@@ -18,8 +17,9 @@ import type {
 	SummaryItem,
 	VolunteerItem,
 } from "@reactive-resume/schema/resume/data";
-import type { IconName } from "phosphor-icons-react-pdf/dynamic";
 import type { ReactNode } from "react";
+import type { IconName } from "../../forme/icons";
+import type { Style } from "../../forme/style-types";
 import type { CombinedTextName } from "../../semantic/node-keys";
 import type { StyleInput, TemplatePlacement } from "./styles";
 import type { CustomItemSection, ItemSection } from "./types";
@@ -207,6 +207,12 @@ export const getSectionHeadingTextStyle = (...styles: StyleInput[]): Style[] => 
 			paddingRight: _paddingRight,
 			paddingTop: _paddingTop,
 			width: _width,
+			// The container is the one placed; its text flows inside it.
+			position: _position,
+			top: _top,
+			right: _right,
+			bottom: _bottom,
+			left: _left,
 			...textStyle
 		}) => textStyle,
 	);

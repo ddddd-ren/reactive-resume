@@ -1,4 +1,4 @@
-import type { Style } from "@react-pdf/types";
+import type { Style } from "../../forme/style-types";
 import { describe, expect, it } from "vitest";
 import { createCanvas } from "@napi-rs/canvas";
 import { renderToBuffer } from "@react-pdf/renderer";

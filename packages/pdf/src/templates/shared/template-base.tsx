@@ -1,5 +1,5 @@
-import type { Style } from "@react-pdf/types";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { Style } from "../../forme/style-types";
 import type { TemplateIconSlot, TemplateStyleContext } from "./types";
 import { useMemo } from "react";
 import { rgbaStringToHex } from "@reactive-resume/utils/color";

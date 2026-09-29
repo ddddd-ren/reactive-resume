@@ -1,5 +1,5 @@
-import type { Style } from "@react-pdf/types";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { Style } from "../../forme/style-types";
 
 const A4_PAGE_SIZE = {
 	width: 595.28,

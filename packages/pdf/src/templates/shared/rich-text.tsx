@@ -1,5 +1,5 @@
-import type { Style } from "@react-pdf/types";
 import type { ReactElement, ReactNode } from "react";
+import type { Style } from "../../forme/style-types";
 import { cloneElement, isValidElement } from "react";
 import { View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
@@ -74,7 +74,7 @@ const applyRtlDirectionRecursively = (node: ReactNode): ReactNode => {
 };
 
 export const RichText = ({ children, semanticField }: RichTextProps) => {
-	const { metadata, rtl, hyphenationCallback } = useRender();
+	const { metadata, rtl } = useRender();
 	const parentNodeKey = useSemanticNodeKey();
 	const fieldNodeKey =
 		parentNodeKey && semanticField ? semanticNodeKeys.field(parentNodeKey, semanticField) : undefined;
@@ -172,7 +172,6 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 
 	return (
 		<Html
-			resetStyles
 			{...resolvedPdfFlowProps(richTextResolved)}
 			style={composeStyles(fieldResolved.style, richTextResolved.style)}
 			renderers={{
@@ -236,7 +235,6 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 						semanticStyle: resolved.style,
 						textProps: {
 							...resolvedPdfTextProps(resolved),
-							hyphenationCallback,
 							"data-resume-whitespace": props.element.getAttribute("data-resume-whitespace"),
 						},
 						rtl,

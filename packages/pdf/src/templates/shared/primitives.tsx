@@ -1,10 +1,10 @@
-import type { Style } from "@react-pdf/types";
 import type { ComponentProps, ReactNode } from "react";
+import type { Style } from "../../forme/style-types";
 import type { StyleInput } from "./styles";
-import { Icon as PhosphorIcon } from "phosphor-icons-react-pdf/dynamic";
 import { Children, isValidElement } from "react";
 import { Image, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import { PhosphorIcon } from "../../forme/icons";
 import { resolvedPdfFlowProps, resolvedPdfTextProps } from "../../semantic/adapter";
 import {
 	projectRenderedChildren,
@@ -483,8 +483,9 @@ export const SemanticHeaderPicture = ({ style, ...props }: ComponentProps<typeof
 						position: "absolute",
 						left: -shadow.extent - borderInsets.left,
 						top: -shadow.extent - borderInsets.top,
-						right: -shadow.extent - borderInsets.right,
-						bottom: -shadow.extent - borderInsets.bottom,
+						// The engine sizes an image by its width and height, not by opposite offsets.
+						...(typeof pictureStyle.width === "number" ? { width: pictureStyle.width + shadow.extent * 2 } : {}),
+						...(typeof pictureStyle.height === "number" ? { height: pictureStyle.height + shadow.extent * 2 } : {}),
 						opacity: pictureStyle.opacity ?? 1,
 					}}
 				/>
@@ -508,8 +509,19 @@ export const SemanticHeaderPicture = ({ style, ...props }: ComponentProps<typeof
 					right: 0,
 					bottom: 0,
 					left: 0,
-					width: "100%",
-					height: "100%",
+					// The bitmap's corners follow the inside of the frame's border.
+					...(typeof pictureStyle.borderRadius === "number"
+						? { borderRadius: Math.max(0, pictureStyle.borderRadius - Math.max(...Object.values(borderInsets))) }
+						: {}),
+					// In points when the frame's size is known, so the engine can fit the bitmap (`objectFit`) itself.
+					width:
+						typeof pictureStyle.width === "number"
+							? pictureStyle.width - borderInsets.left - borderInsets.right
+							: "100%",
+					height:
+						typeof pictureStyle.height === "number"
+							? pictureStyle.height - borderInsets.top - borderInsets.bottom
+							: "100%",
 					margin: 0,
 					marginTop: 0,
 					marginRight: 0,

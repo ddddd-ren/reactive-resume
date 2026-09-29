@@ -1,5 +1,5 @@
-import type { Style } from "@react-pdf/types";
 import type { TemplatePageProps } from "../../document";
+import type { Style } from "../../forme/style-types";
 import type { TemplateColorRoles, TemplateFeatures, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
 import { useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
@@ -10,7 +10,6 @@ import { getPrimaryTint } from "../shared/color-helpers";
 import { TemplateProvider } from "../shared/context";
 import { filterSections } from "../shared/filtering";
 import { getTemplateMetrics } from "../shared/metrics";
-import { PageMarginBackground } from "../shared/page-margin-background";
 import { SemanticRegionView, SemanticTemplatePartView } from "../shared/primitives";
 import { Section } from "../shared/sections";
 import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
@@ -85,10 +84,6 @@ export const GlaliePage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 								width: `${metadata.layout.sidebarWidth}%`,
 							})}
 						>
-							<PageMarginBackground
-								color={colors.sidebarBackground ?? colors.background}
-								margin={metrics.page.paddingVertical}
-							/>
 							{showHeader && <Header styles={styles} />}
 
 							{!page.fullWidth && (

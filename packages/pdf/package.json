@@ -11,10 +11,11 @@
 		"./semantic-legacy": "./src/semantic/legacy-converter.ts",
 		"./semantic-tree": "./src/semantic/tree.ts",
 		"./section-title": "./src/section-title.ts",
-		"./server": "./src/server.tsx"
+		"./server": "./src/server.tsx",
+		"./primitives": "./src/forme/primitives.tsx"
 	},
 	"imports": {
-		"#react-pdf-renderer": "@react-pdf/renderer"
+		"#react-pdf-renderer": "./src/forme/primitives.tsx"
 	},
 	"scripts": {
 		"typecheck": "tsgo --noEmit",
@@ -24,6 +25,8 @@
 		"test:agent": "vitest run --reporter=agent --reporter=json --outputFile.json=reports/vitest-results.json --passWithNoTests"
 	},
 	"dependencies": {
+		"@formepdf/core": "0.25.0",
+		"@formepdf/react": "0.25.0",
 		"@react-pdf/hyphenate": "0.1.0",
 		"@react-pdf/renderer": "^4.9.0",
 		"@reactive-resume/fonts": "workspace:*",
@@ -32,16 +35,19 @@
 		"@reactive-resume/utils": "workspace:*",
 		"cjk-regex": "^3.5.0",
 		"fast-png": "^8.0.0",
+		"fflate": "^0.8.3",
 		"node-html-parser": "^9.0.4",
 		"phosphor-icons-react-pdf": "^0.1.3",
 		"react": "^19.3.0",
-		"react-pdf-html": "^2.1.5"
+		"react-pdf-html": "^2.1.5",
+		"react-reconciler": "0.34.0"
 	},
 	"devDependencies": {
 		"@napi-rs/canvas": "1.0.9",
 		"@react-pdf/types": "^2.14.0",
 		"@reactive-resume/config": "workspace:*",
 		"@types/react": "^19.3.0",
+		"@types/react-reconciler": "^0.33.0",
 		"@typescript/native-preview": "7.0.0-dev.20260707.2",
 		"pdfjs-dist": "6.3.289",
 		"pixelmatch": "^7.2.0",

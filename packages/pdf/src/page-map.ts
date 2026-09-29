@@ -1,11 +1,13 @@
+import type { ElementInfo, LayoutInfo } from "@formepdf/core";
+
 /**
  * Maps rendered PDF regions back to resume data, so the editor can outline the block a field
  * belongs to and select an entry when its line on the page is clicked.
  *
  * Templates tag the views that own a semantic node with `RESUME_NODE_PROP` (see
- * `templates/shared/primitives.tsx` and `templates/shared/sections.tsx`). React PDF keeps non-style
- * props on its layout nodes and hands the layout tree to `Document.onRender` as
- * `_INTERNAL__LAYOUT__DATA_`. That tree isn't a public API, so everything here reads it defensively.
+ * `templates/shared/primitives.tsx` and `templates/shared/sections.tsx`). The Forme conversion gives
+ * each tagged element a source location, `rr-node:<key>`, which Forme reports back with every box in
+ * its layout info.
  */
 
 export const RESUME_NODE_PROP = "data-resume-node";
@@ -29,14 +31,6 @@ export type PageMapNode = PageMapTarget & {
 export type PageMap = {
 	pages: { width: number; height: number }[];
 	nodes: PageMapNode[];
-};
-
-type LayoutBox = { left?: number; top?: number; width?: number; height?: number };
-type LayoutNode = {
-	type?: string;
-	box?: LayoutBox;
-	props?: Record<string, unknown>;
-	children?: LayoutNode[];
 };
 
 const decode = (value: string) => {
@@ -73,40 +67,30 @@ export const parseResumeNodeKey = (key: string): PageMapTarget | undefined => {
 	}
 };
 
-const finite = (value: number | undefined) => (typeof value === "number" && Number.isFinite(value) ? value : 0);
+/** Source-location files that carry a page-map key: `rr-node:<semantic key>`. */
+export const NODE_SOURCE_PREFIX = "rr-node:";
 
 /**
- * Walks React PDF's layout tree and returns page-relative boxes for every tagged header, section
- * and item. Child boxes in that tree are relative to their parent's box (React PDF translates by
- * each parent's `left`/`top` while painting), so offsets are summed on the way down.
- *
- * ponytail: CSS `transform` on a tagged node or its ancestors isn't applied; templates don't
- * transform blocks today. Apply the transform matrix here if one ever does.
+ * Page-relative boxes for every tagged header, section and item, from Forme's layout info. A block
+ * that breaks across pages has a box on each page it reaches.
  */
-export const extractPageMap = (layout: unknown): PageMap => {
-	const root = layout as LayoutNode | undefined;
-	const pages: PageMap["pages"] = [];
+export const extractPageMap = (layout: LayoutInfo): PageMap => {
 	const nodes: PageMapNode[] = [];
 
-	const visit = (node: LayoutNode, page: number, offsetX: number, offsetY: number) => {
-		const box = node.box ?? {};
-		const x = offsetX + finite(box.left);
-		const y = offsetY + finite(box.top);
-		const key = node.props?.[RESUME_NODE_PROP];
-
-		if (typeof key === "string") {
+	const visit = (element: ElementInfo, page: number) => {
+		const file = element.sourceLocation?.file;
+		if (file?.startsWith(NODE_SOURCE_PREFIX)) {
+			const key = file.slice(NODE_SOURCE_PREFIX.length);
 			const target = parseResumeNodeKey(key);
-			if (target) nodes.push({ ...target, key, page, x, y, width: finite(box.width), height: finite(box.height) });
+			if (target)
+				nodes.push({ ...target, key, page, x: element.x, y: element.y, width: element.width, height: element.height });
 		}
-
-		for (const child of node.children ?? []) visit(child, page, x, y);
+		for (const child of element.children) visit(child, page);
 	};
 
-	for (const pageNode of root?.children ?? []) {
-		const page = pages.length;
-		pages.push({ width: finite(pageNode.box?.width), height: finite(pageNode.box?.height) });
-		for (const child of pageNode.children ?? []) visit(child, page, 0, 0);
-	}
+	layout.pages.forEach((page, index) => {
+		for (const element of page.elements) visit(element, index);
+	});
 
-	return { pages, nodes };
+	return { pages: layout.pages.map((page) => ({ width: page.width, height: page.height })), nodes };
 };

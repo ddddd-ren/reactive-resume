@@ -1503,3 +1503,36 @@ Verification:
   - New: `accessibility` and `keyboard`.
   - The full suite passes against the production build: 46 passed, 7 opt-in skipped.
 
+---
+
+## 13. Forme engine migration
+
+Decided 29 Sep 2026: react-pdf is replaced by [Forme](https://www.formepdf.com/) 0.25.0 in a full cutover, and Semantic CSS is ported to it.
+
+The known 0.25.0 defects are accepted until upstream fixes them:
+- Extracted text drops the second letter of ligatures ([#156](https://github.com/danmolitor/forme/issues/156)). This one gets a workaround: ligature features are switched off in the bundled font bytes.
+- Arabic, Hindi and Hebrew extracted text is scrambled.
+- A link inside part of a paragraph loses its annotation ([#157](https://github.com/danmolitor/forme/issues/157)).
+
+### Shape
+
+- **Host primitives.** `packages/pdf/src/forme/primitives.tsx` exports react-pdf-compatible `Document`, `Page`, `View`, `Text`, `Link`, `Image`, `Svg`, `Path` and `StyleSheet`. The `#react-pdf-renderer` import alias points at it, so templates keep their structure.
+- **Renderer.** A small `react-reconciler` renderer builds the host tree. Hooks and context keep working, which Forme's own serializer can't do because it calls components as plain functions.
+- **Conversion.** The host tree becomes Forme elements. On the way, styles are normalised, `Link` becomes `href`, and `Svg` becomes markup. Nodes tagged `data-resume-node` are registered in `globalThis.__formeSourceMap`, so Forme's layout info yields the page map for click-to-edit, Check and Fit.
+- **Rendering.** `@formepdf/core` renders in Node; the browser uses `@formepdf/core/worker` with explicit WASM init. One `renderResume()` returns the PDF bytes, the page map and warnings.
+- **Fonts.** The bytes are fetched once and cached. WOFF is inflated to sfnt, and the GSUB `liga`, `clig` and `dlig` features are renamed so the shaper skips them (the #156 workaround). Fallback families become a Forme fallback chain.
+- **Rich text.** `react-pdf-html` is replaced by a renderer from normalized HTML to Forme text runs and native lists, which also replaces the react-pdf layout patches for list markers and whitespace.
+- **Icons.** Phosphor icons are generated as SVG markup from `@phosphor-icons/react`, replacing `phosphor-icons-react-pdf`.
+- **Semantic CSS.** The adapter maps resolved styles to Forme style objects. Properties Forme can't draw become diagnostics in the stylesheet editor, for example `object-fit`, `text-indent`, `vertical-align` and `-resume-min-presence-ahead`.
+- **Free-form pages.** They render in two passes: measure the content height, then render at that height.
+- **Removed:** `@react-pdf/renderer`, `@react-pdf/hyphenate`, `react-pdf-html`, `phosphor-icons-react-pdf`, and the four react-pdf patches. Hyphenation uses Forme's `hyphens` and `lang`.
+
+### Phases
+
+1. Engine core: primitives, reconciler, conversion, fonts, render entry points and the page map, proven on Onyx.
+2. Templates and shared primitives: icons, rich text, pictures, page backgrounds and free-form pages, across all 15 templates.
+3. Semantic CSS adapter and diagnostics.
+4. Consumers: the web preview and exports, the template gallery, the server export and public PDF, and the ATS deep check. Remove react-pdf.
+5. Tests: port the render and integration tests to Forme; drop the react-pdf-internal tests.
+6. Verification: typecheck, unit tests, e2e, extraction checks and a visual pass across templates.
+

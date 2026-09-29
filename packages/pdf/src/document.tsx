@@ -3,14 +3,12 @@ import type { Template } from "@reactive-resume/schema/templates";
 import type { Locale } from "@reactive-resume/utils/locale";
 import type { ComponentType } from "react";
 import type { ResumeRenderOptions } from "./context";
-import type { PageMap } from "./page-map";
 import type { SectionTitleResolver } from "./section-title";
 import type { ResolvedResumeRuntime } from "./semantic";
 import { useMemo } from "react";
 import { Document } from "#react-pdf-renderer";
 import { RenderProvider } from "./context";
-import { registerFonts, resumeContentContainsCJK, resumeContentScripts } from "./hooks/use-register-fonts";
-import { extractPageMap } from "./page-map";
+import { resolvePdfFonts, resumeContentContainsCJK, resumeContentScripts } from "./hooks/use-register-fonts";
 import { SemanticRenderProvider } from "./semantic/context";
 import { resolveResumeRuntime, resolveStylesheetMode } from "./semantic/resolve";
 import { getTemplatePage } from "./templates";
@@ -33,8 +31,6 @@ type ResumeDocumentProps = {
 	renderOptions?: ResumeRenderOptions | undefined;
 	resolveSectionTitle?: SectionTitleResolver | undefined;
 	semanticRuntime?: ResolvedResumeRuntime | undefined;
-	/** Receives the rendered page map (header, section and item boxes) after each render. */
-	onPageMap?: ((pageMap: PageMap) => void) | undefined;
 };
 
 const getLayoutPageKey = (page: LayoutPage, pageIndex: number) =>
@@ -46,20 +42,19 @@ export const ResumeDocument = ({
 	renderOptions,
 	resolveSectionTitle,
 	semanticRuntime,
-	onPageMap,
 }: ResumeDocumentProps) => {
 	const TemplatePageComponent = getTemplatePage(template);
 	const creationDate = useMemo(() => new Date(), []);
 	const hasCjkContent = useMemo(() => resumeContentContainsCJK(data), [data]);
 	const scripts = useMemo(() => resumeContentScripts(data), [data]);
-	const typography = registerFonts(
-		data.metadata.typography,
-		data.metadata.page.locale as Locale,
-		hasCjkContent,
-		scripts,
-	) as Typography;
+	const typography = useMemo(
+		() =>
+			resolvePdfFonts(data.metadata.typography, data.metadata.page.locale as Locale, hasCjkContent, scripts)
+				.typography as Typography,
+		[data.metadata.typography, data.metadata.page.locale, hasCjkContent, scripts],
+	);
 
-	// `registerFonts` widens `fontFamily` to `string | string[]` for CJK
+	// `resolvePdfFonts` widens `fontFamily` to `string | string[]` for CJK
 	// fallback (#2986); the cast carries that wider runtime value through
 	// `ResumeData` without changing the public schema.
 	const resumeData = useMemo(() => ({ ...data, metadata: { ...data.metadata, typography } }), [data, typography]);
@@ -76,20 +71,6 @@ export const ResumeDocument = ({
 		[headerResumeData, semanticRuntime, stylesheetMode, template],
 	);
 	const semanticMode = semanticRuntime ? "semantic" : stylesheetMode;
-	// React PDF calls `onRender` inside its stream handler, so a throw here would fail the render.
-	const pageMapProps = onPageMap
-		? {
-				onRender: (params: unknown) => {
-					try {
-						const layout = (params as { _INTERNAL__LAYOUT__DATA_?: unknown } | undefined)?._INTERNAL__LAYOUT__DATA_;
-						onPageMap(extractPageMap(layout));
-					} catch {
-						// The page map is an editor aid; a PDF must never fail because of it.
-					}
-				},
-			}
-		: {};
-
 	return (
 		<SemanticRenderProvider
 			presentation={runtime.presentation}
@@ -107,7 +88,7 @@ export const ResumeDocument = ({
 					creator={resumeData.basics.name}
 					subject={resumeData.basics.headline}
 					language={resumeData.metadata.page.locale}
-					{...pageMapProps}
+					hyphenation={resumeData.metadata.typography.hyphenation === true ? "auto" : "manual"}
 				>
 					{resumeData.metadata.layout.pages.map((page, index) => (
 						<TemplatePageComponent

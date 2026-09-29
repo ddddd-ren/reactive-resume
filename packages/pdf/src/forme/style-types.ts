@@ -1,0 +1,411 @@
+/**
+ * The style contract templates are written against. Vendored from @react-pdf/stylesheet 6.3.2 (MIT, © Diego
+ * Muracciole) when the engine moved to Forme, so templates keep their types; `forme/style.ts` maps it to Forme.
+ */
+export type Percentage = `${string}%`;
+export type BorderStyleValue = "dashed" | "dotted" | "solid";
+export type BorderShorthandStyle = {
+	border?: number | string;
+	borderTop?: number | string;
+	borderRight?: number | string;
+	borderBottom?: number | string;
+	borderLeft?: number | string;
+	borderColor?: string;
+	borderRadius?: number | string;
+	borderStyle?: BorderStyleValue;
+	borderWidth?: number | string;
+};
+export type BorderExpandedStyle = {
+	borderTopColor?: string;
+	borderTopStyle?: BorderStyleValue;
+	borderTopWidth?: number | string;
+	borderRightColor?: string;
+	borderRightStyle?: BorderStyleValue;
+	borderRightWidth?: number | string;
+	borderBottomColor?: string;
+	borderBottomStyle?: BorderStyleValue;
+	borderBottomWidth?: number | string;
+	borderLeftColor?: string;
+	borderLeftStyle?: BorderStyleValue;
+	borderLeftWidth?: number | string;
+	borderTopLeftRadius?: number | string;
+	borderTopRightRadius?: number | string;
+	borderBottomRightRadius?: number | string;
+	borderBottomLeftRadius?: number | string;
+};
+export type BorderSafeStyle = BorderExpandedStyle & {
+	borderTopWidth?: number;
+	borderRightWidth?: number;
+	borderBottomWidth?: number;
+	borderLeftWidth?: number;
+	borderTopLeftRadius?: number | Percentage;
+	borderTopRightRadius?: number | Percentage;
+	borderBottomRightRadius?: number | Percentage;
+	borderBottomLeftRadius?: number | Percentage;
+};
+export type BorderStyle = BorderShorthandStyle & BorderExpandedStyle;
+export type FlexboxShorthandStyle = {
+	flex?: number | string;
+};
+export type AlignContent =
+	| "flex-start"
+	| "flex-end"
+	| "center"
+	| "stretch"
+	| "space-between"
+	| "space-around"
+	| "space-evenly";
+export type AlignItems = "flex-start" | "flex-end" | "center" | "stretch" | "baseline";
+export type AlignSelf = "auto" | "flex-start" | "flex-end" | "center" | "baseline" | "stretch";
+export type FlexDirection = "row" | "row-reverse" | "column" | "column-reverse";
+export type FlexWrap = "nowrap" | "wrap" | "wrap-reverse";
+export type JustifyContent = "flex-start" | "flex-end" | "center" | "space-around" | "space-between" | "space-evenly";
+export type JustifySelf = string;
+export type FlexboxExpandedStyle = {
+	alignContent?: AlignContent;
+	alignItems?: AlignItems;
+	alignSelf?: AlignSelf;
+	flexDirection?: FlexDirection;
+	flexWrap?: FlexWrap;
+	flexFlow?: number | string;
+	flexGrow?: number | string;
+	flexShrink?: number | string;
+	flexBasis?: number | string;
+	justifySelf?: JustifySelf;
+	justifyContent?: JustifyContent;
+};
+export type FlexboxSafeStyle = FlexboxExpandedStyle & {
+	flexGrow?: number;
+	flexShrink?: number;
+};
+export type FlexboxStyle = FlexboxShorthandStyle & FlexboxExpandedStyle;
+export type GapShorthandStyle = {
+	gap?: number | string;
+};
+export type GapExpandedStyle = {
+	rowGap?: number | string;
+	columnGap?: number | string;
+};
+export type GapSafeStyle = {
+	rowGap?: number | string;
+	columnGap?: number | string;
+};
+export type GapStyle = GapShorthandStyle & GapExpandedStyle;
+export type PositionShorthandStyle = {
+	objectPosition?: number | string;
+};
+export type PositionExpandedStyle = {
+	objectPositionX?: number | string;
+	objectPositionY?: number | string;
+	objectFit?: string;
+};
+export type PositionSafeStyle = PositionExpandedStyle & {
+	objectPositionX?: number;
+	objectPositionY?: number;
+};
+export type PositioningStyle = PositionShorthandStyle & PositionExpandedStyle;
+export type ScaleTransform = {
+	operation: "scale";
+	value: [number, number];
+};
+export type TranslateTransform = {
+	operation: "translate";
+	value: [number, number];
+};
+export type RotateTransform = {
+	operation: "rotate";
+	value: [number, number, number];
+};
+export type SkewTransform = {
+	operation: "skew";
+	value: [number, number];
+};
+export type MatrixTransform = {
+	operation: "matrix";
+	value: [number, number, number, number, number, number];
+};
+export type Transform = ScaleTransform | TranslateTransform | RotateTransform | SkewTransform | MatrixTransform;
+export type TransformShorthandStyle = {
+	transformOrigin?: number | string;
+};
+export type TransformExpandedStyle = {
+	transformOriginX?: number | string;
+	transformOriginY?: number | string;
+	transform?: string | Transform[];
+	gradientTransform?: string | Transform[];
+};
+export type TransformSafeStyle = Omit<TransformExpandedStyle, "transform"> & {
+	transformOriginX?: number | Percentage;
+	transformOriginY?: number | Percentage;
+	transform?: Transform[];
+	gradientTransform?: Transform[];
+};
+export type TransformStyle = TransformShorthandStyle & TransformExpandedStyle;
+export type Display = "flex" | "none";
+export type Position = "absolute" | "relative" | "static";
+export type Float = "left" | "right" | "none";
+export type Clear = Float | "both";
+export type ShapeScalar = number | Percentage;
+export type ShapeRadius = ShapeScalar | "closest-side" | "farthest-side";
+export type ShapeOutside =
+	| {
+			type: "circle";
+			cx: ShapeScalar;
+			cy: ShapeScalar;
+			r: ShapeRadius;
+	  }
+	| {
+			type: "ellipse";
+			cx: ShapeScalar;
+			cy: ShapeScalar;
+			rx: ShapeRadius;
+			ry: ShapeRadius;
+	  }
+	| {
+			type: "polygon";
+			points: {
+				x: ShapeScalar;
+				y: ShapeScalar;
+			}[];
+	  }
+	| {
+			type: "inset";
+			top: ShapeScalar;
+			right: ShapeScalar;
+			bottom: ShapeScalar;
+			left: ShapeScalar;
+	  };
+export type LayoutStyle = {
+	aspectRatio?: number | string;
+	bottom?: number | string;
+	clear?: Clear;
+	display?: Display;
+	float?: Float;
+	left?: number | string;
+	position?: Position;
+	right?: number | string;
+	shapeOutside?: string | ShapeOutside;
+	top?: number | string;
+	overflow?: "hidden";
+	zIndex?: number | string;
+};
+export type LayoutExpandedStyle = LayoutStyle;
+export type LayoutSafeStyle = LayoutExpandedStyle & {
+	aspectRatio?: number;
+	bottom?: number;
+	clear?: Clear;
+	float?: Float;
+	left?: number;
+	right?: number;
+	shapeOutside?: ShapeOutside;
+	top?: number;
+	zIndex?: number;
+};
+export type DimensionStyle = {
+	height?: number | string;
+	maxHeight?: number | string;
+	maxWidth?: number | string;
+	minHeight?: number | string;
+	minWidth?: number | string;
+	width?: number | string;
+};
+export type DimensionExpandedStyle = DimensionStyle;
+export type DimensionSafeStyle = DimensionExpandedStyle & {
+	height?: number | Percentage;
+	maxHeight?: number | Percentage;
+	maxWidth?: number | Percentage;
+	minHeight?: number | Percentage;
+	minWidth?: number | Percentage;
+	width?: number | Percentage;
+};
+export type ColorStyle = {
+	backgroundColor?: string;
+	color?: string;
+	opacity?: number | string;
+};
+export type ColorExpandedStyle = ColorStyle;
+export type ColorSafeStyle = {
+	backgroundColor?: string;
+	color?: string;
+	opacity?: number;
+};
+export type FontStyle = "normal" | "italic" | "oblique";
+export type FontWeight =
+	| string
+	| number
+	| "thin"
+	| "hairline"
+	| "ultralight"
+	| "extralight"
+	| "light"
+	| "normal"
+	| "medium"
+	| "semibold"
+	| "demibold"
+	| "bold"
+	| "ultrabold"
+	| "extrabold"
+	| "heavy"
+	| "black";
+export type TextAlign = "left" | "right" | "center" | "justify";
+export type TextDecoration =
+	| "line-through"
+	| "underline"
+	| "none"
+	| "line-through underline"
+	| "underline line-through";
+export type TextDecorationStyle = "dashed" | "dotted" | "solid" | string;
+export type TextTransform = "capitalize" | "lowercase" | "uppercase" | "upperfirst" | "none";
+export type VerticalAlign = "sub" | "super";
+export type FontFeatureSetting =
+	| "liga"
+	| "dlig"
+	| "onum"
+	| "lnum"
+	| "tnum"
+	| "zero"
+	| "frac"
+	| "sups"
+	| "subs"
+	| "smcp"
+	| "c2sc"
+	| "case"
+	| "hlig"
+	| "calt"
+	| "swsh"
+	| "hist"
+	| `ss${"01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20"}`
+	| "kern"
+	| "locl"
+	| "rlig"
+	| "medi"
+	| "init"
+	| "isol"
+	| "fina"
+	| "mark"
+	| "mkmk"
+	| (string & {});
+export type FontFeatureSettings = FontFeatureSetting[] | Partial<Record<FontFeatureSetting, number | boolean>>;
+export type SafeFontFeatureSettings = Record<string, boolean>;
+export type TextStyle = {
+	direction?: "ltr" | "rtl";
+	fontSize?: number | string;
+	fontFamily?: string | string[];
+	fontStyle?: FontStyle;
+	fontWeight?: FontWeight;
+	fontFeatureSettings?: FontFeatureSettings;
+	letterSpacing?: number | string;
+	lineHeight?: number | string;
+	maxLines?: number | string;
+	textAlign?: TextAlign;
+	textDecoration?: TextDecoration;
+	textDecorationColor?: string;
+	textDecorationStyle?: TextDecorationStyle;
+	textIndent?: number | string;
+	textOverflow?: "ellipsis";
+	textTransform?: TextTransform;
+	verticalAlign?: VerticalAlign;
+};
+export type TextExpandedStyle = TextStyle;
+export type TextSafeStyle = TextExpandedStyle & {
+	fontSize?: number;
+	fontWeight?: number;
+	fontFeatureSettings?: SafeFontFeatureSettings;
+	letterSpacing?: number;
+	lineHeight?: number;
+};
+export type MarginShorthandStyle = {
+	margin?: number | string;
+	marginHorizontal?: number | string;
+	marginVertical?: number | string;
+};
+export type MarginExpandedStyle = {
+	marginTop?: number | string;
+	marginRight?: number | string;
+	marginBottom?: number | string;
+	marginLeft?: number | string;
+};
+export type MarginSafeStyle = MarginExpandedStyle & {
+	marginTop?: number | Percentage;
+	marginRight?: number | Percentage;
+	marginBottom?: number | Percentage;
+	marginLeft?: number | Percentage;
+};
+export type MarginStyle = MarginShorthandStyle & MarginExpandedStyle;
+export type PaddingShorthandStyle = {
+	padding?: number | string;
+	paddingHorizontal?: number | string;
+	paddingVertical?: number | string;
+};
+export type PaddingExpandedStyle = {
+	paddingTop?: number | string;
+	paddingRight?: number | string;
+	paddingBottom?: number | string;
+	paddingLeft?: number | string;
+};
+export type PaddingSafeStyle = PaddingExpandedStyle & {
+	paddingTop?: number | Percentage;
+	paddingRight?: number | Percentage;
+	paddingBottom?: number | Percentage;
+	paddingLeft?: number | Percentage;
+};
+export type PaddingStyle = PaddingShorthandStyle & PaddingExpandedStyle;
+interface SvgStyle {
+	fill?: string;
+	stroke?: string;
+	strokeDasharray?: string;
+	strokeWidth?: string | number;
+	fillOpacity?: string | number;
+	fillRule?: "nonzero" | "evenodd";
+	strokeOpacity?: string | number;
+	textAnchor?: "start" | "middle" | "end";
+	strokeLinecap?: "butt" | "round" | "square";
+	strokeLinejoin?: "butt" | "round" | "square" | "miter" | "bevel";
+	visibility?: "visible" | "hidden" | "collapse";
+	clipPath?: string;
+	dominantBaseline?:
+		| "auto"
+		| "middle"
+		| "central"
+		| "hanging"
+		| "mathematical"
+		| "text-after-edge"
+		| "text-before-edge";
+}
+export type SvgExpandedStyle = SvgStyle;
+export type SvgSafeStyle = SvgStyle & {
+	strokeWidth?: number;
+	fillOpacity?: number;
+	strokeOpacity?: number;
+};
+export type BaseStyle = BorderStyle &
+	ColorStyle &
+	DimensionStyle &
+	FlexboxStyle &
+	GapStyle &
+	LayoutStyle &
+	MarginStyle &
+	PaddingStyle &
+	PositioningStyle &
+	TextStyle &
+	TransformStyle &
+	SvgStyle;
+export type MediaQueryStyle = {
+	[key in `@media${string}`]: BaseStyle;
+};
+export type Style = BaseStyle & MediaQueryStyle;
+export type RecursiveArray<T> = Array<T | ReadonlyArray<T> | RecursiveArray<T>>;
+export type StyleProp = Style | Style[] | RecursiveArray<Style | Style[] | undefined>;
+export type StyleKey = keyof BaseStyle;
+export type ExpandedStyle = BorderExpandedStyle &
+	ColorExpandedStyle &
+	DimensionExpandedStyle &
+	FlexboxExpandedStyle &
+	GapExpandedStyle &
+	LayoutExpandedStyle &
+	MarginExpandedStyle &
+	PaddingExpandedStyle &
+	PositionExpandedStyle &
+	TextExpandedStyle &
+	TransformExpandedStyle &
+	SvgExpandedStyle;

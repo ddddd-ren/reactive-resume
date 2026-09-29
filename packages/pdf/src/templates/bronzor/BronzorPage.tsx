@@ -1,5 +1,5 @@
-import type { Style } from "@react-pdf/types";
 import type { TemplatePageProps } from "../../document";
+import type { Style } from "../../forme/style-types";
 import type { TemplateColorRoles, TemplateStyleSlots } from "../shared/types";
 import { useMemo } from "react";
 import { Page, StyleSheet } from "#react-pdf-renderer";

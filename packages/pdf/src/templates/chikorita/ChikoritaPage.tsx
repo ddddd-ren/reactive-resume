@@ -1,5 +1,5 @@
-import type { Style } from "@react-pdf/types";
 import type { TemplatePageProps } from "../../document";
+import type { Style } from "../../forme/style-types";
 import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
 import { Fragment, useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
@@ -16,7 +16,6 @@ import {
 import { TemplateProvider } from "../shared/context";
 import { filterSections } from "../shared/filtering";
 import { getTemplateMetrics } from "../shared/metrics";
-import { PageMarginBackground } from "../shared/page-margin-background";
 import { hasTemplatePicture } from "../shared/picture";
 import {
 	Heading,
@@ -28,6 +27,7 @@ import {
 	Text,
 } from "../shared/primitives";
 import { Section } from "../shared/sections";
+import { SidebarBackground } from "../shared/sidebar-background";
 import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
 import { createIconSlot, useTemplateBase } from "../shared/template-base";
 
@@ -78,6 +78,13 @@ export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, 
 			)}
 		>
 			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
+				{!page.fullWidth && (
+					<SidebarBackground
+						end
+						color={String(sidebarStyle?.backgroundColor ?? colors.primary)}
+						width={`${metadata.layout.sidebarWidth}%`}
+					/>
+				)}
 				<SemanticRegionView
 					region="main"
 					style={composeStyles(styles.mainColumn, {
@@ -110,10 +117,6 @@ export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, 
 						rowGap: metrics.sectionGap,
 					})}
 				>
-					<PageMarginBackground
-						color={sidebarStyle?.backgroundColor ?? colors.primary}
-						margin={metrics.page.paddingVertical}
-					/>
 					{sidebarSections.map((section) => (
 						<Fragment key={section}>
 							<Section section={section} placement="sidebar" />
