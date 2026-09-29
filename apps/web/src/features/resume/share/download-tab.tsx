@@ -234,13 +234,14 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 
 	const download = async (as: ExportFormat) => {
 		const extension = formats.find((option) => option.id === as)?.extension ?? ".pdf";
+		const file = `${sanitizeFileName(name) || getDefaultFileName(resume)}${extension}`;
+		const letterId = withLetter ? linkedLetter?.id : undefined;
 		setState("busy");
 		try {
 			const blob = await createExportFile(resume, as);
-			const file = `${sanitizeFileName(name) || getDefaultFileName(resume)}${extension}`;
 			downloadWithAnchor(blob, file);
-			if (withLetter && linkedLetter) {
-				const letter = await client.coverLetters.getById({ id: linkedLetter.id });
+			if (letterId) {
+				const letter = await client.coverLetters.getById({ id: letterId });
 				downloadWithAnchor(await createLetterFile(letter, words, as), `${letterFileName(letter, words)}${extension}`);
 				toast.add({ description: t`Downloaded ${file} and the cover letter` });
 			} else {

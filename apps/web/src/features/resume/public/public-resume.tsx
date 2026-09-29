@@ -3,15 +3,15 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Swap } from "@reactive-resume/ui/components/swap";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { LoadingScreen } from "@/components/layout/loading-screen";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
+import { CopyLinkButton } from "@/features/resume/share/copy-link-button";
 import { POP_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { PdfViewer } from "./pdf-viewer";
@@ -46,7 +46,6 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 		...(resume ? { publicResumePdf: { publicResume } } : {}),
 	});
 	const phone = useBreakpoint() === "mobile";
-	const [copied, setCopied] = useState(false);
 	const [, copy] = useCopyToClipboard();
 
 	if (!resume) return <LoadingScreen />;
@@ -55,16 +54,11 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 	const downloads = resume.showDownloadButtons !== false;
 	const subtitle = [basics.headline, basics.location].filter(Boolean).join(" · ");
 
-	const copyLink = async () => {
-		await copy(window.location.href);
-		setCopied(true);
-		setTimeout(() => setCopied(false), 2000);
-	};
-
 	const share = async () => {
+		const title = basics.name || resume.name;
 		if (typeof navigator.share === "function") {
 			try {
-				await navigator.share({ title: basics.name || resume.name, url: window.location.href });
+				await navigator.share({ title, url: window.location.href });
 			} catch {
 				// Closing the share sheet isn't an error.
 			}
@@ -135,23 +129,7 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 								<h1 className="truncate font-display font-medium text-xl leading-6">{basics.name || resume.name}</h1>
 								{subtitle && <p className="truncate text-ink-3 text-xs">{subtitle}</p>}
 							</div>
-							<Button variant="secondary" aria-live="polite" onClick={() => void copyLink()}>
-								<Swap
-									swapped={copied}
-									from={
-										<>
-											<Icon name="link" size={18} />
-											<Trans>Copy link</Trans>
-										</>
-									}
-									to={
-										<>
-											<Icon name="check" size={18} />
-											<Trans>Copied</Trans>
-										</>
-									}
-								/>
-							</Button>
+							<CopyLinkButton url={window.location.href} label={t`Copy link`} icon="link" />
 							{downloads && download}
 						</header>
 						<main id="main-content" className="flex flex-1 justify-center px-6 pt-8 pb-5 print:block print:p-0">

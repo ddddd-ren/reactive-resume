@@ -487,17 +487,209 @@ type CropState = {
 	imageSrc: string;
 };
 
+type PictureCropDialogProps = {
+	cropState: CropState | null;
+	aspect: number;
+	onClose: () => void;
+	onUpload: (file: File) => void;
+};
+
+function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCropDialogProps) {
+	// Closing keeps the picture in the cropper until the dialog has faded out.
+	const [shownCrop, onCropOpenChangeComplete] = useClosingValue(cropState);
+	const [crop, setCrop] = useState({ x: 0, y: 0 });
+	const [zoom, setZoom] = useState(1);
+	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+
+	const onConfirmCrop = async () => {
+		if (!cropState) return;
+
+		let fileToUpload: File = cropState.file;
+		try {
+			if (croppedAreaPixels) {
+				const blob = await getCroppedImageBlob(cropState.imageSrc, croppedAreaPixels, cropState.file.type);
+				fileToUpload = new File([blob], cropState.file.name, { type: blob.type });
+			}
+		} catch {
+			// ponytail: canvas crop can fail (tainted image, no context) — fall back to the original file.
+			fileToUpload = cropState.file;
+		}
+
+		onUpload(fileToUpload);
+		onClose();
+	};
+
+	return (
+		<Dialog
+			open={cropState !== null}
+			onOpenChange={(open) => {
+				if (!open) onClose();
+			}}
+			onOpenChangeComplete={(open) => {
+				if (!open) {
+					// The object URL is freed only once the cropper has gone; the next picture starts unzoomed.
+					if (shownCrop) URL.revokeObjectURL(shownCrop.imageSrc);
+					setCrop({ x: 0, y: 0 });
+					setZoom(1);
+					setCroppedAreaPixels(null);
+				}
+				onCropOpenChangeComplete(open);
+			}}
+		>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>
+						<Trans>Crop picture</Trans>
+					</DialogTitle>
+					<DialogDescription>
+						<Trans>Drag to reposition and use the slider to zoom before uploading.</Trans>
+					</DialogDescription>
+				</DialogHeader>
+
+				{shownCrop && (
+					<div className="relative h-64 w-full overflow-hidden rounded-md bg-sunken ring-1 ring-line ring-inset">
+						<Cropper
+							image={shownCrop.imageSrc}
+							crop={crop}
+							zoom={zoom}
+							aspect={aspect}
+							onCropChange={setCrop}
+							onZoomChange={setZoom}
+							onCropComplete={(_, areaPixels) => {
+								setCroppedAreaPixels(areaPixels);
+							}}
+						/>
+					</div>
+				)}
+
+				<div className="space-y-2.5">
+					<div className="flex items-center justify-between">
+						<FormLabel className="mb-0">
+							<Trans>Zoom</Trans>
+						</FormLabel>
+						<span className="text-ink-3 text-xs tabular-nums">{zoom.toFixed(1)}×</span>
+					</div>
+					<div className="flex items-center gap-x-3">
+						<Icon name="zoom_out" size={16} className="shrink-0 text-ink-3" />
+						<Slider
+							min={1}
+							max={3}
+							step={0.01}
+							value={[zoom]}
+							aria-label={t`Zoom`}
+							className="flex-1"
+							onValueChange={(value) => {
+								setZoom(Array.isArray(value) ? value[0] : value);
+							}}
+						/>
+						<Icon name="zoom_in" size={16} className="shrink-0 text-ink-3" />
+					</div>
+				</div>
+
+				<DialogFooter className="flex-row flex-wrap justify-between">
+					<Button variant="secondary" onClick={onClose}>
+						<Trans>Cancel</Trans>
+					</Button>
+					<div className="flex flex-wrap gap-2">
+						<Button
+							variant="secondary"
+							onClick={() => {
+								if (!cropState) return;
+								onUpload(cropState.file);
+								onClose();
+							}}
+						>
+							<Trans>Skip and Upload</Trans>
+						</Button>
+						<Button
+							onClick={() => {
+								void onConfirmCrop();
+							}}
+						>
+							<Trans>Crop and Upload</Trans>
+						</Button>
+					</div>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+type ColorWidthFieldsProps = PictureFieldProps & {
+	colorName: "borderColor" | "shadowColor";
+	widthName: "borderWidth" | "shadowWidth";
+	colorLabel: string;
+	widthLabel: string;
+	step: number;
+};
+
+function ColorWidthFields(props: ColorWidthFieldsProps) {
+	const { form, onAutoSave, colorName, widthName, colorLabel, widthLabel, step } = props;
+
+	return (
+		<div className="flex items-end gap-x-3">
+			<form.Field name={colorName}>
+				{(field) => (
+					<FormItem
+						className="mb-1.5 shrink-0"
+						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+					>
+						<FormLabel className="sr-only">{colorLabel}</FormLabel>
+						<FormControl
+							render={
+								<ColorPicker
+									defaultValue={field.state.value}
+									onChange={(color) => {
+										field.handleChange(color);
+										onAutoSave();
+									}}
+								/>
+							}
+						/>
+					</FormItem>
+				)}
+			</form.Field>
+
+			<form.Field name={widthName}>
+				{(field) => (
+					<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormLabel>{widthLabel}</FormLabel>
+						<InputGroup>
+							<FormControl
+								render={
+									<InputGroupInput
+										name={field.name}
+										value={field.state.value}
+										type="number"
+										min={0}
+										step={step}
+										onBlur={field.handleBlur}
+										onChange={(e) => {
+											const value = e.target.value;
+											if (value === "") field.handleChange("" as unknown as number);
+											else field.handleChange(Number(value));
+											onAutoSave();
+										}}
+									/>
+								}
+							/>
+							<InputGroupAddon align="inline-end">
+								<InputGroupText>pt</InputGroupText>
+							</InputGroupAddon>
+						</InputGroup>
+					</FormItem>
+				)}
+			</form.Field>
+		</div>
+	);
+}
+
 /** Every photo option: upload with crop, address, show or hide, delete, fit, size, rotation, shape, border and shadow. */
 export function PictureSettings() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const appOrigin = window.location.origin;
 
 	const [cropState, setCropState] = useState<CropState | null>(null);
-	// Closing keeps the picture in the cropper until the dialog has faded out.
-	const [shownCrop, onCropOpenChangeComplete] = useClosingValue(cropState);
-	const [crop, setCrop] = useState({ x: 0, y: 0 });
-	const [zoom, setZoom] = useState(1);
-	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
 	const picture = useCurrentBuilderResumeSelector((resume) => resume.data.picture);
 	const normalizedPictureUrl = normalizePictureUrl(picture.url, appOrigin);
@@ -578,9 +770,6 @@ export function PictureSettings() {
 
 		// Open the interactive crop step instead of uploading immediately.
 		setCropState({ file, imageSrc: URL.createObjectURL(file) });
-		setCrop({ x: 0, y: 0 });
-		setZoom(1);
-		setCroppedAreaPixels(null);
 	};
 
 	const closeCropDialog = () => {
@@ -588,115 +777,14 @@ export function PictureSettings() {
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
 
-	const onConfirmCrop = async () => {
-		if (!cropState) return;
-
-		let fileToUpload: File = cropState.file;
-		try {
-			if (croppedAreaPixels) {
-				const blob = await getCroppedImageBlob(cropState.imageSrc, croppedAreaPixels, cropState.file.type);
-				fileToUpload = new File([blob], cropState.file.name, { type: blob.type });
-			}
-		} catch {
-			// ponytail: canvas crop can fail (tainted image, no context) — fall back to the original file.
-			fileToUpload = cropState.file;
-		}
-
-		uploadPictureFile(fileToUpload);
-		closeCropDialog();
-	};
-
-	const cropAspect = Number(form.state.values.aspectRatio) || 1;
-
 	return (
 		<>
-			<Dialog
-				open={cropState !== null}
-				onOpenChange={(open) => {
-					if (!open) closeCropDialog();
-				}}
-				onOpenChangeComplete={(open) => {
-					// The object URL is freed only once the cropper has gone.
-					if (!open && shownCrop) URL.revokeObjectURL(shownCrop.imageSrc);
-					onCropOpenChangeComplete(open);
-				}}
-			>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>
-							<Trans>Crop picture</Trans>
-						</DialogTitle>
-						<DialogDescription>
-							<Trans>Drag to reposition and use the slider to zoom before uploading.</Trans>
-						</DialogDescription>
-					</DialogHeader>
-
-					{shownCrop && (
-						<div className="relative h-64 w-full overflow-hidden rounded-md bg-sunken ring-1 ring-line ring-inset">
-							<Cropper
-								image={shownCrop.imageSrc}
-								crop={crop}
-								zoom={zoom}
-								aspect={cropAspect}
-								onCropChange={setCrop}
-								onZoomChange={setZoom}
-								onCropComplete={(_, areaPixels) => {
-									setCroppedAreaPixels(areaPixels);
-								}}
-							/>
-						</div>
-					)}
-
-					<div className="space-y-2.5">
-						<div className="flex items-center justify-between">
-							<FormLabel className="mb-0">
-								<Trans>Zoom</Trans>
-							</FormLabel>
-							<span className="text-ink-3 text-xs tabular-nums">{zoom.toFixed(1)}×</span>
-						</div>
-						<div className="flex items-center gap-x-3">
-							<Icon name="zoom_out" size={16} className="shrink-0 text-ink-3" />
-							<Slider
-								min={1}
-								max={3}
-								step={0.01}
-								value={[zoom]}
-								aria-label={t`Zoom`}
-								className="flex-1"
-								onValueChange={(value) => {
-									setZoom(Array.isArray(value) ? value[0] : value);
-								}}
-							/>
-							<Icon name="zoom_in" size={16} className="shrink-0 text-ink-3" />
-						</div>
-					</div>
-
-					<DialogFooter className="flex-row flex-wrap justify-between">
-						<Button variant="secondary" onClick={closeCropDialog}>
-							<Trans>Cancel</Trans>
-						</Button>
-						<div className="flex flex-wrap gap-2">
-							<Button
-								variant="secondary"
-								onClick={() => {
-									if (!cropState) return;
-									uploadPictureFile(cropState.file);
-									closeCropDialog();
-								}}
-							>
-								<Trans>Skip and Upload</Trans>
-							</Button>
-							<Button
-								onClick={() => {
-									void onConfirmCrop();
-								}}
-							>
-								<Trans>Crop and Upload</Trans>
-							</Button>
-						</div>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			<PictureCropDialog
+				cropState={cropState}
+				aspect={Number(form.state.values.aspectRatio) || 1}
+				onClose={closeCropDialog}
+				onUpload={uploadPictureFile}
+			/>
 
 			<form
 				className="space-y-4"
@@ -722,123 +810,24 @@ export function PictureSettings() {
 				<div className="grid @md:grid-cols-2 grid-cols-1 gap-4">
 					<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
 
-					<div className="flex items-end gap-x-3">
-						<form.Field name="borderColor">
-							{(field) => (
-								<FormItem
-									className="mb-1.5 shrink-0"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-								>
-									<FormControl
-										render={
-											<ColorPicker
-												defaultValue={field.state.value}
-												onChange={(color) => {
-													field.handleChange(color);
-													handleAutoSave();
-												}}
-											/>
-										}
-									/>
-								</FormItem>
-							)}
-						</form.Field>
-
-						<form.Field name="borderWidth">
-							{(field) => (
-								<FormItem
-									className="flex-1"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-								>
-									<FormLabel>
-										<Trans>Border Width</Trans>
-									</FormLabel>
-									<InputGroup>
-										<FormControl
-											render={
-												<InputGroupInput
-													name={field.name}
-													value={field.state.value}
-													type="number"
-													min={0}
-													step={1}
-													onBlur={field.handleBlur}
-													onChange={(e) => {
-														const value = e.target.value;
-														if (value === "") field.handleChange("" as unknown as number);
-														else field.handleChange(Number(value));
-														handleAutoSave();
-													}}
-												/>
-											}
-										/>
-										<InputGroupAddon align="inline-end">
-											<InputGroupText>pt</InputGroupText>
-										</InputGroupAddon>
-									</InputGroup>
-								</FormItem>
-							)}
-						</form.Field>
-					</div>
-
-					<div className="flex items-end gap-x-3">
-						<form.Field name="shadowColor">
-							{(field) => (
-								<FormItem
-									className="mb-1.5 shrink-0"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-								>
-									<FormControl
-										render={
-											<ColorPicker
-												defaultValue={field.state.value}
-												onChange={(color) => {
-													field.handleChange(color);
-													handleAutoSave();
-												}}
-											/>
-										}
-									/>
-								</FormItem>
-							)}
-						</form.Field>
-
-						<form.Field name="shadowWidth">
-							{(field) => (
-								<FormItem
-									className="flex-1"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-								>
-									<FormLabel>
-										<Trans>Shadow Width</Trans>
-									</FormLabel>
-									<InputGroup>
-										<FormControl
-											render={
-												<InputGroupInput
-													name={field.name}
-													value={field.state.value}
-													type="number"
-													min={0}
-													step={0.5}
-													onBlur={field.handleBlur}
-													onChange={(e) => {
-														const value = e.target.value;
-														if (value === "") field.handleChange("" as unknown as number);
-														else field.handleChange(Number(value));
-														handleAutoSave();
-													}}
-												/>
-											}
-										/>
-										<InputGroupAddon align="inline-end">
-											<InputGroupText>pt</InputGroupText>
-										</InputGroupAddon>
-									</InputGroup>
-								</FormItem>
-							)}
-						</form.Field>
-					</div>
+					<ColorWidthFields
+						form={form}
+						colorName="borderColor"
+						widthName="borderWidth"
+						colorLabel={t`Border Color`}
+						widthLabel={t`Border Width`}
+						step={1}
+						onAutoSave={handleAutoSave}
+					/>
+					<ColorWidthFields
+						form={form}
+						colorName="shadowColor"
+						widthName="shadowWidth"
+						colorLabel={t`Shadow Color`}
+						widthLabel={t`Shadow Width`}
+						step={0.5}
+						onAutoSave={handleAutoSave}
+					/>
 				</div>
 			</form>
 		</>

@@ -5,12 +5,11 @@ import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useId, useRef, useState } from "react";
-import { useCopyToClipboard, useDebounceValue } from "usehooks-ts";
+import { useDebounceValue } from "usehooks-ts";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Separator } from "@reactive-resume/ui/components/separator";
-import { Swap } from "@reactive-resume/ui/components/swap";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
@@ -20,10 +19,10 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
+import { CopyLinkButton } from "./copy-link-button";
 import { formatTimeSince, summarizeViews } from "./format";
 
 const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-const COPIED_MS = 2000;
 
 const errorMessage = (error: unknown) =>
 	error instanceof ORPCError ? error.message : t`Something went wrong. Please try again.`;
@@ -41,12 +40,13 @@ export function LinkTab() {
 	const url = `${window.location.origin}/${session?.user.username ?? ""}/${resume.slug}`;
 
 	const setPublic = async (checked: boolean) => {
+		const description = checked ? t`Link is live` : t`Link turned off. The address is kept`;
 		try {
 			const updated = await updateResume({ id: resume.id, isPublic: checked });
 			patchResume((draft) => {
 				draft.isPublic = updated.isPublic;
 			});
-			toast.add({ description: checked ? t`Link is live` : t`Link turned off. The address is kept` });
+			toast.add({ description });
 		} catch (error) {
 			toast.add({ type: "error", description: errorMessage(error) });
 		}
@@ -113,24 +113,19 @@ export function LinkTab() {
 
 type AddressFieldProps = { url: string; username: string };
 
-/** The address, checked as you type (300 ms). The old one stays live until the new one is valid and saved. */
-function AddressField({ url, username }: AddressFieldProps) {
+/** The address as typed, its live availability check (300 ms), and the save once a new one checks out. */
+function useSlugAvailability() {
 	const resume = useCurrentResume();
 	const patchResume = usePatchResume();
-	const id = useId();
-	const isPublic = resume.isPublic ?? false;
 	const [slug, setSlug] = useState(resume.slug);
 	const [debouncedSlug] = useDebounceValue(slug, 300);
-	const [copied, setCopied] = useState(false);
-	const [, copyToClipboard] = useCopyToClipboard();
-	const copiedTimer = useRef<number>(undefined);
 	const { mutateAsync: updateResume } = useMutation(orpc.resume.update.mutationOptions());
 
 	const changed = slug !== resume.slug;
 	const wellFormed = SLUG_PATTERN.test(slug);
 	const check = useQuery({
 		...orpc.resume.checkSlug.queryOptions({ input: { resumeId: resume.id, slug: debouncedSlug } }),
-		enabled: isPublic && changed && wellFormed && debouncedSlug === slug,
+		enabled: (resume.isPublic ?? false) && changed && wellFormed && debouncedSlug === slug,
 	});
 	const result = debouncedSlug === slug ? check.data : undefined;
 
@@ -151,31 +146,46 @@ function AddressField({ url, username }: AddressFieldProps) {
 			});
 	}, [result?.status, slug, resume.id, updateResume, patchResume]);
 
-	// A save here, another tab or a restore can change the address; the field follows it.
-	useEffect(() => setSlug(resume.slug), [resume.slug]);
+	// A save here, another tab or a restore can change the address; the field follows it unless the user is typing.
+	const [savedSlug, setSavedSlug] = useState(resume.slug);
+	if (resume.slug !== savedSlug) {
+		setSavedSlug(resume.slug);
+		if (slug === savedSlug) setSlug(resume.slug);
+	}
+
+	return { slug, setSlug, changed, wellFormed, result };
+}
+
+type AddressMessageArgs = {
+	isPublic: boolean;
+	slug: string;
+	wellFormed: boolean;
+	changed: boolean;
+	status: string | undefined;
+	url: string;
+	username: string;
+};
+
+/** The hint under the field; null when the taken-address block renders its own text. */
+function addressMessage({ isPublic, slug, wellFormed, changed, status, url, username }: AddressMessageArgs) {
+	if (!isPublic) return t`Turn on the link to choose an address.`;
+	if (!slug) return t`Add an address.`;
+	if (!wellFormed) return t`Use lowercase letters, numbers and single dashes.`;
+	if (!changed) return t`Live at ${url.replace(/^https?:\/\//, "")}`;
+	if (status === "taken") return null;
+	if (status === "available") return t`Available · ${window.location.host}/${username}/${slug}`;
+	return t`Checking…`;
+}
+
+/** The address, checked as you type. The old one stays live until the new one is valid and saved. */
+function AddressField({ url, username }: AddressFieldProps) {
+	const resume = useCurrentResume();
+	const id = useId();
+	const isPublic = resume.isPublic ?? false;
+	const { slug, setSlug, changed, wellFormed, result } = useSlugAvailability();
 
 	const invalid = isPublic && (!slug || !wellFormed || result?.status === "taken");
-	const message = !isPublic
-		? t`Turn on the link to choose an address.`
-		: !slug
-			? t`Add an address.`
-			: !wellFormed
-				? t`Use lowercase letters, numbers and single dashes.`
-				: !changed
-					? t`Live at ${url.replace(/^https?:\/\//, "")}`
-					: result?.status === "taken"
-						? null
-						: result?.status === "available"
-							? t`Available · ${window.location.host}/${username}/${slug}`
-							: t`Checking…`;
-
-	const copy = async () => {
-		await copyToClipboard(url);
-		setCopied(true);
-		window.clearTimeout(copiedTimer.current);
-		copiedTimer.current = window.setTimeout(() => setCopied(false), COPIED_MS);
-		toast.add({ description: t`Link copied` });
-	};
+	const message = addressMessage({ isPublic, slug, wellFormed, changed, status: result?.status, url, username });
 
 	const canShare = typeof navigator.share === "function";
 
@@ -213,23 +223,13 @@ function AddressField({ url, username }: AddressFieldProps) {
 						/>
 					)}
 				</div>
-				<Button variant="secondary" className="h-[38px] gap-1.5" disabled={!isPublic || changed} onClick={copy}>
-					<Swap
-						swapped={copied}
-						from={
-							<>
-								<Icon name="content_copy" size={18} />
-								<Trans>Copy</Trans>
-							</>
-						}
-						to={
-							<>
-								<Icon name="check" size={18} />
-								<Trans>Copied</Trans>
-							</>
-						}
-					/>
-				</Button>
+				<CopyLinkButton
+					url={url}
+					label={t`Copy`}
+					className="h-[38px] gap-1.5"
+					disabled={!isPublic || changed}
+					onCopied={() => toast.add({ description: t`Link copied` })}
+				/>
 			</div>
 			<p
 				id={`${id}-message`}

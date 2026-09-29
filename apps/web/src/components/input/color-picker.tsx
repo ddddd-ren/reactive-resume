@@ -27,7 +27,10 @@ const presetColors = [
 	"rgba(69, 85, 108, 1)",
 ] as const;
 
-type ColorPickerProps = {
+type ColorPickerProps = Omit<
+	React.ComponentProps<typeof PopoverTrigger>,
+	"children" | "defaultValue" | "onChange" | "value"
+> & {
 	value?: string;
 	defaultValue?: string;
 	onChange?: (value: string) => void;
@@ -47,6 +50,7 @@ export function ColorPicker({
 	onOpenChangeComplete,
 	trigger,
 	children,
+	...triggerProps
 }: ColorPickerProps) {
 	const [currentValue, setCurrentValue] = useControlledState<string>({
 		value,
@@ -64,7 +68,7 @@ export function ColorPicker({
 	return (
 		<Popover open={open} onOpenChange={onOpenChange} onOpenChangeComplete={onOpenChangeComplete}>
 			{trigger ?? (
-				<PopoverTrigger>
+				<PopoverTrigger aria-label={t`Choose color`} {...triggerProps}>
 					<div
 						className="size-6 shrink-0 cursor-pointer rounded-full border border-ink/60 transition-transform duration-quick ease-enter focus-visible:outline-hidden active:scale-[0.97]"
 						style={{ backgroundColor: currentValue }}

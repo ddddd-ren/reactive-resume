@@ -112,9 +112,8 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 			await action();
 		} catch (error) {
 			toast.add({ type: "error", description: source.errorMessage(error) });
-		} finally {
-			setBusy(false);
 		}
+		setBusy(false);
 	};
 
 	const save = () => {
