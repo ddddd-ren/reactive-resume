@@ -835,6 +835,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `metadata.template` | `string` | yes | enum: ["azurill","bronzor","chikorita","ditgar","ditto","gengar","glalie","kakuna","lapras","leafish","meowth","onyx","pikachu","rhyhorn","scizor"]; default: "onyx" | The template to use for the resume. Determines the overall design and appearance of the resume. |
 | `metadata.layout` | `object` | yes | — | The layout of the resume. Determines the structure and arrangement of the sections on the resume. |
 | `metadata.layout.sidebarWidth` | `number` | yes | minimum: 10; maximum: 50; default: 35 | The width of the sidebar column, defined as a percentage of the page width. |
+| `metadata.layout.sidebarSide` | `string` | no | enum: ["left","right"] | Which side of the page the sidebar column sits on in two-column templates. When unset, each template uses its own side (and right-to-left resumes mirror it). |
 | `metadata.layout.pages` | `array` | yes | — | The pages to display in the layout. |
 | `metadata.layout.pages[]` | `object` | — | — | — |
 | `metadata.layout.pages[].fullWidth` | `boolean` | yes | — | Whether the layout of the page should be full width. If true, the main column will span the entire width of the page. This means that there should be no items in the sidebar column. |

@@ -19,10 +19,10 @@ import { Heading, SemanticContactListView, SemanticHeaderPicture, SemanticHeader
 import { createRtlStyleHelpers } from "./rtl";
 
 export const useTemplateBase = () => {
-	const { picture, metadata, rtl } = useRender();
+	const { picture, metadata, rtl, columnsReversed } = useRender();
 
 	return useMemo(() => {
-		const r = createRtlStyleHelpers(rtl);
+		const r = createRtlStyleHelpers(rtl, columnsReversed);
 		const foreground = rgbaStringToHex(metadata.design.colors.text);
 		const background = rgbaStringToHex(metadata.design.colors.background);
 		const primary = rgbaStringToHex(metadata.design.colors.primary);
@@ -30,7 +30,7 @@ export const useTemplateBase = () => {
 		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
 
 		return { picture, metadata, rtl, r, foreground, background, primary, metrics, base };
-	}, [picture, metadata, rtl]);
+	}, [picture, metadata, rtl, columnsReversed]);
 };
 
 export const createIconSlot = ({

@@ -210,7 +210,7 @@ const usePikachuTemplate = (): PikachuTemplate => {
 				backgroundColor: primary,
 			},
 			layout: {
-				flexDirection: r.row,
+				flexDirection: r.columns,
 				columnGap: metrics.columnGap,
 			},
 			sidebarColumn: {
@@ -302,5 +302,6 @@ const usePikachuTemplate = (): PikachuTemplate => {
 		base,
 		metrics.gapX,
 		background,
+		r.columns,
 	]);
 };

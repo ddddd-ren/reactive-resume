@@ -525,6 +525,13 @@ export const layoutSchema = z.object({
 		.max(50)
 		.catch(35)
 		.describe("The width of the sidebar column, defined as a percentage of the page width."),
+	sidebarSide: z
+		.enum(["left", "right"])
+		.optional()
+		.catch(undefined)
+		.describe(
+			"Which side of the page the sidebar column sits on in two-column templates. When unset, each template uses its own side (and right-to-left resumes mirror it).",
+		),
 	pages: z.array(pageLayoutSchema).describe("The pages to display in the layout."),
 });
 

@@ -78,7 +78,12 @@ export const ResumeDocument = ({
 			sourceTree={runtime.sourceTree}
 			renderTree={runtime.renderTree}
 		>
-			<RenderProvider data={resumeData} resolveSectionTitle={resolveSectionTitle} renderOptions={renderOptions}>
+			<RenderProvider
+				data={resumeData}
+				template={template}
+				resolveSectionTitle={resolveSectionTitle}
+				renderOptions={renderOptions}
+			>
 				<Document
 					pageMode="useNone"
 					creationDate={creationDate}

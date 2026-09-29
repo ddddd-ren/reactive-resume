@@ -218,7 +218,7 @@ const useDitgarTemplate = (): DitgarTemplate => {
 			...base,
 			page: {
 				...base.page,
-				flexDirection: r.row,
+				flexDirection: r.columns,
 			},
 			section: {
 				flexDirection: "column",
@@ -356,5 +356,6 @@ const useDitgarTemplate = (): DitgarTemplate => {
 		metrics.page.paddingHorizontal,
 		foreground,
 		background,
+		r.columns,
 	]);
 };

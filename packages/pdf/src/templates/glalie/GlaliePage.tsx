@@ -168,12 +168,12 @@ const useGlalieTemplate = (): GlalieTemplate => {
 				position: "absolute",
 				top: 0,
 				bottom: 0,
-				...r.anchorToStart(0),
+				...r.anchorToColumnStart(0),
 				width: `${metadata.layout.sidebarWidth}%`,
 				backgroundColor: primaryTint,
 			},
 			layout: {
-				flexDirection: r.row,
+				flexDirection: r.columns,
 				minHeight: "100%",
 			},
 			sidebarColumn: {
@@ -247,7 +247,6 @@ const useGlalieTemplate = (): GlalieTemplate => {
 	}, [
 		metadata,
 		r.row,
-		r.anchorToStart,
 		primary,
 		metrics.sectionGap,
 		metrics.gapY,
@@ -257,5 +256,7 @@ const useGlalieTemplate = (): GlalieTemplate => {
 		metrics.page.paddingHorizontal,
 		foreground,
 		background,
+		r.columns,
+		r.anchorToColumnStart,
 	]);
 };

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import type { Resume } from "@/features/resume/builder/draft";
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -33,13 +33,15 @@ afterEach(() => {
 	toastState.add.mockClear();
 });
 
-function renderGroup() {
+function renderGroup(edit?: (data: Resume["data"]) => void) {
+	const data = parseResumeData(structuredClone(sampleResumeData));
+	edit?.(data);
 	const resume: Resume = {
 		id: "template-group",
 		name: "Template group",
 		slug: "template-group",
 		tags: [],
-		data: parseResumeData(structuredClone(sampleResumeData)),
+		data,
 		isLocked: false,
 		updatedAt: new Date("2026-09-28T00:00:00.000Z"),
 	};
@@ -129,5 +131,29 @@ describe("TemplateGroup", () => {
 
 		expect(screen.getByText(`${twoColumn} of ${Object.keys(templateLayouts).length} shown`)).toBeInTheDocument();
 		expect(screen.queryByRole("button", { name: /^Bronzor\b/ })).not.toBeInTheDocument();
+	});
+
+	it("puts a two-column template's sidebar on the side chosen, starting from the side the page shows", () => {
+		renderGroup((data) => {
+			data.metadata.template = "azurill";
+		});
+		const side = screen.getByRole("radiogroup", { name: "Sidebar side" });
+		const option = (name: string) => within(side).getByRole("radio", { name });
+
+		expect(option("Left")).toBeChecked();
+		fireEvent.click(option("Right"));
+
+		expect(useResumeStore.getState().resume?.data.metadata.layout.sidebarSide).toBe("right");
+		expect(option("Right")).toBeChecked();
+	});
+
+	it("shows a right-to-left page's mirrored sidebar as the side it's on", () => {
+		renderGroup((data) => {
+			data.metadata.template = "azurill";
+			data.metadata.page.locale = "ar-SA";
+		});
+		const side = screen.getByRole("radiogroup", { name: "Sidebar side" });
+
+		expect(within(side).getByRole("radio", { name: "Right" })).toBeChecked();
 	});
 });

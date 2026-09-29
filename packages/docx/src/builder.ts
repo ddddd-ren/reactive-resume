@@ -453,7 +453,8 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 						sidebarParagraphs,
 						sidebarWidth,
 						gapXTwips,
-						templateConfig.sidebarSide,
+						// The side chosen in Design, else the template's own.
+						data.metadata.layout.sidebarSide ?? templateConfig.sidebarSide,
 						sidebarShadingHex,
 					),
 				);

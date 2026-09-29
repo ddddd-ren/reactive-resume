@@ -219,7 +219,7 @@ const useLeafishTemplate = (): LeafishTemplate => {
 				columnGap: metrics.gapX(1 / 6),
 			},
 			body: {
-				flexDirection: r.row,
+				flexDirection: r.columns,
 				columnGap: metrics.columnGap,
 				paddingHorizontal: metrics.page.paddingHorizontal,
 				paddingTop: metrics.page.paddingVertical,
@@ -257,5 +257,6 @@ const useLeafishTemplate = (): LeafishTemplate => {
 		metrics.columnGap,
 		foreground,
 		background,
+		r.columns,
 	]);
 };

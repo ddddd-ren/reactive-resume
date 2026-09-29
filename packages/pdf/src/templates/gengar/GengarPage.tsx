@@ -199,7 +199,7 @@ const useGengarTemplate = (): GengarTemplate => {
 			...base,
 			page: {
 				...base.page,
-				flexDirection: r.row,
+				flexDirection: r.columns,
 			},
 			section: {
 				flexDirection: "column",
@@ -333,5 +333,6 @@ const useGengarTemplate = (): GengarTemplate => {
 		metrics.page.paddingHorizontal,
 		foreground,
 		background,
+		r.columns,
 	]);
 };

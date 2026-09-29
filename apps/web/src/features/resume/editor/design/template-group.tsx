@@ -9,8 +9,10 @@ import { useEffect, useId, useRef, useState } from "react";
 import { templateLayouts } from "@reactive-resume/schema/templates";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
 import { useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
@@ -140,7 +142,7 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 				))}
 			</div>
 
-			{templateLayouts[current].columns === 2 && <SidebarPanel data={data} />}
+			{templateLayouts[current].columns === 2 && <SidebarPanel data={data} template={current} />}
 		</div>
 	);
 }
@@ -205,9 +207,15 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 	);
 }
 
-/** Two-column templates: the sidebar's width and which sections it holds, with the ATS caveat. */
-function SidebarPanel({ data }: { data: ResumeData }) {
+type SidebarPanelProps = { data: ResumeData; template: Template };
+
+/** Two-column templates: the sidebar's side and width, which sections it holds, and the ATS caveat. */
+function SidebarPanel({ data, template }: SidebarPanelProps) {
 	const updateResumeData = useUpdateResumeData();
+	// The side the page shows now: the chosen one, else the template's own (mirrored on right-to-left pages).
+	const ownSide = templateLayouts[template].sidebarSide ?? "left";
+	const shownOwnSide = isRTL(data.metadata.page.locale) ? (ownSide === "left" ? "right" : "left") : ownSide;
+	const side = data.metadata.layout.sidebarSide ?? shownOwnSide;
 	const rows = getOutlineRows(data);
 	const width = Math.min(42, Math.max(26, data.metadata.layout.sidebarWidth));
 	const titleId = useId();
@@ -244,6 +252,26 @@ function SidebarPanel({ data }: { data: ResumeData }) {
 			<p id={titleId} className="font-medium text-sm">
 				<Trans>Sidebar</Trans>
 			</p>
+			<SegmentedControl
+				aria-label={t`Sidebar side`}
+				value={side}
+				onValueChange={(value) =>
+					updateResumeData(
+						(draft) => {
+							draft.metadata.layout.sidebarSide = value === "right" ? "right" : "left";
+						},
+						{ newStep: true },
+					)
+				}
+				className="w-full"
+			>
+				<SegmentedControlItem value="left">
+					<Trans>Left</Trans>
+				</SegmentedControlItem>
+				<SegmentedControlItem value="right">
+					<Trans>Right</Trans>
+				</SegmentedControlItem>
+			</SegmentedControl>
 			<div className="grid gap-2">
 				<div className="flex items-center justify-between text-[13px]">
 					<span id={widthId}>

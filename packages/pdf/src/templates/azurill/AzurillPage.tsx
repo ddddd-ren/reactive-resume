@@ -135,7 +135,7 @@ const useAzurillTemplate = (): AzurillTemplate => {
 				color: primary,
 			},
 			contentRow: {
-				flexDirection: r.row,
+				flexDirection: r.columns,
 			},
 			sidebarColumn: {},
 			mainColumn: {
@@ -264,5 +264,6 @@ const useAzurillTemplate = (): AzurillTemplate => {
 		metrics.gapY,
 		foreground,
 		background,
+		r.columns,
 	]);
 };

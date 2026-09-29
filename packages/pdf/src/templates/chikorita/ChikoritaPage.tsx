@@ -61,6 +61,7 @@ export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, 
 	const { metadata, picture } = data;
 	const { colors, styles } = useChikoritaTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
+	const { r } = useTemplateBase();
 	const hasPicture = hasTemplatePicture(picture);
 	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
 	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
@@ -90,8 +91,10 @@ export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, 
 					style={composeStyles(styles.mainColumn, {
 						marginTop: -metrics.page.paddingVertical,
 						paddingTop: metrics.page.paddingVertical,
-						paddingRight: page.fullWidth ? metrics.page.paddingHorizontal : metrics.columnGap,
-						paddingLeft: metrics.page.paddingHorizontal,
+						...r.columnInset(
+							metrics.page.paddingHorizontal,
+							page.fullWidth ? metrics.page.paddingHorizontal : metrics.columnGap,
+						),
 						rowGap: metrics.sectionGap,
 					})}
 				>
@@ -112,8 +115,7 @@ export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, 
 							showHeader && hasPicture
 								? metrics.page.paddingVertical + picture.size + metrics.itemGapY * 3
 								: metrics.page.paddingVertical,
-						paddingRight: metrics.page.paddingHorizontal,
-						paddingLeft: metrics.columnGap,
+						...r.columnInset(metrics.columnGap, metrics.page.paddingHorizontal),
 						rowGap: metrics.sectionGap,
 					})}
 				>
@@ -178,7 +180,7 @@ const useChikoritaTemplate = (): ChikoritaTemplate => {
 			inline: { ...base.inline, columnGap: metrics.gapX(0.25) },
 			page: {
 				...base.page,
-				flexDirection: r.row,
+				flexDirection: r.columns,
 			},
 			section: {
 				flexDirection: "column",
@@ -282,5 +284,5 @@ const useChikoritaTemplate = (): ChikoritaTemplate => {
 				icon: createIconSlot({ metadata, accentFor }),
 			} satisfies ChikoritaStyles,
 		};
-	}, [metadata, r.row, r.headerIdentity, metrics.gapX, primary, foreground, base, metrics.gapY, background]);
+	}, [metadata, r.row, r.headerIdentity, metrics.gapX, primary, foreground, base, metrics.gapY, background, r.columns]);
 };

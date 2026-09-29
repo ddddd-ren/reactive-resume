@@ -14,7 +14,7 @@ type SidebarBackgroundProps = {
  * continues on a later page still reads as one band. Render it as a direct child of the page.
  */
 export const SidebarBackground = ({ color, width, end = false }: SidebarBackgroundProps) => {
-	const { rtl } = useRender();
-	const side = end !== rtl ? "right" : "left";
+	const { columnsReversed } = useRender();
+	const side = end !== columnsReversed ? "right" : "left";
 	return <View fixed style={{ position: "absolute", top: 0, bottom: 0, [side]: 0, width, backgroundColor: color }} />;
 };
