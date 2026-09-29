@@ -351,6 +351,70 @@ function unreverseRow(spread: { style: FormeStyle; children: ReactNode[] }): {
 	};
 }
 
+// What lays a container's children out, as opposed to what sizes, spaces and paints the container.
+const CONTAINER_KEYS = new Set([
+	"flexDirection",
+	"flexWrap",
+	"justifyContent",
+	"alignItems",
+	"alignContent",
+	"rowGap",
+	"columnGap",
+	"gap",
+]);
+
+/**
+ * Forme 0.25 gives an absolute box no height from its `top` and `bottom`, where Yoga stretched it between them
+ * (Azurill's timeline line). A plain bar down the whole content box becomes the left border of a box around the other
+ * children instead: that box is as tall as they are, and its border is drawn on every page it reaches. A box that
+ * merely stretches along a row keeps its whole height on the page where the row breaks.
+ */
+function barAsBorder(spread: { style: FormeStyle; children: ReactNode[] }): {
+	style: FormeStyle;
+	children: ReactNode[];
+} {
+	const isBar = (child: ReactNode): child is ReactElement<{ style: FormeStyle }> => {
+		if (!isValidElement<{ style?: FormeStyle }>(child)) return false;
+		const { position, height, top, bottom, left, width, backgroundColor } = child.props.style ?? {};
+		return (
+			position === "absolute" &&
+			height === undefined &&
+			top === 0 &&
+			bottom === 0 &&
+			typeof left === "number" &&
+			typeof width === "number" &&
+			width > 0 &&
+			typeof backgroundColor === "string"
+		);
+	};
+	const bar = spread.children.find(isBar);
+	if (!bar) return spread;
+	const { left, width, backgroundColor } = bar.props.style as { left: number; width: number; backgroundColor: string };
+
+	const outer: Record<string, unknown> = {};
+	const inner: Record<string, unknown> = { position: "relative", flexGrow: 1 };
+	for (const [property, value] of Object.entries(spread.style))
+		(CONTAINER_KEYS.has(property) ? inner : outer)[property] = value;
+	// Forme strokes a border centred on the box's edge, so the edge sits half the bar's width in.
+	const edge = left + width / 2;
+	inner.marginLeft = -(edge + width);
+
+	const content = createElement(
+		FormeView,
+		{ key: "content", style: inner as FormeStyle },
+		...spread.children.filter((child) => child !== bar),
+	);
+	const bordered = createElement(
+		FormeView,
+		{
+			key: "bar",
+			style: { flexGrow: 1, marginLeft: edge, borderLeftWidth: width, borderLeftColor: backgroundColor },
+		},
+		content,
+	);
+	return { style: outer as FormeStyle, children: [bordered] };
+}
+
 function convertChildren(children: HostNode[], context: Context): ReactNode[] {
 	return children.map((child, index) => convertNode(child, context, index));
 }
@@ -378,8 +442,8 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 			const converted = convertStyle(props.style, context, node);
 			const { style } = converted;
 			if (converted.hidden) return null;
-			const spread = unreverseRow(
-				spreadRowGap(style, convertChildren(node.children, childContext(context, converted)), context),
+			const spread = barAsBorder(
+				unreverseRow(spreadRowGap(style, convertChildren(node.children, childContext(context, converted)), context)),
 			);
 			let children = spread.children;
 			const viewStyle = flowStyle(props, spread.style);
