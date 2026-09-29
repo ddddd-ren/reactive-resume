@@ -6,8 +6,8 @@ type AccountExport = RouterOutput["auth"]["exportData"];
 
 const json = (value: unknown) => strToU8(`${JSON.stringify(value, null, 2)}\n`);
 
-// The id keeps two documents with the same name apart.
-const fileName = (name: string, id: string) => `${slugify(name)}-${id.slice(0, 8)}.json`;
+// The whole id keeps two documents with the same name apart. Ids are UUIDv7, so a prefix is only a timestamp and repeats.
+const fileName = (name: string, id: string) => `${slugify(name)}-${id}.json`;
 
 /**
  * "Export everything": one zip with the account, each resume and letter as its own JSON file, and the applications.
