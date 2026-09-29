@@ -1,6 +1,7 @@
 import type { ProxyOptions } from "vite";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { lingui, linguiTransformerBabelPreset } from "@lingui/vite-plugin";
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
@@ -13,6 +14,42 @@ const rootPackageJsonPath = new URL("../../package.json", import.meta.url);
 const rootPackageJson = JSON.parse(readFileSync(rootPackageJsonPath, "utf-8")) as { version: string | undefined };
 const appVersion = JSON.stringify(rootPackageJson.version ?? "0.0.0");
 const workspaceRoot = fileURLToPath(new URL("../..", import.meta.url));
+
+const webRoot = fileURLToPath(new URL(".", import.meta.url));
+const prerenderBundleDir = `${webRoot}node_modules/.prerender`;
+// Outside dist/, so the static server and the CDN never serve these pages at their own addresses.
+const prerenderOutDir = `${webRoot}dist-prerender`;
+
+const escapeHtml = (value: string) =>
+	value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+
+/**
+ * Writes dist-prerender/<locale>.html: the built index.html with the homepage rendered into #app, in that locale's
+ * language, direction, title and description. The server sends it for "/" (apps/server/src/static/web.ts).
+ */
+async function prerenderHomepage() {
+	type PrerenderModule = typeof import("./src/features/homepage/prerender");
+	const { locales, renderHomepage }: PrerenderModule = await import(
+		pathToFileURL(`${prerenderBundleDir}/prerender.js`).href
+	);
+	const shell = await readFile(`${webRoot}dist/index.html`, "utf8");
+
+	await rm(prerenderOutDir, { recursive: true, force: true });
+	await mkdir(prerenderOutDir, { recursive: true });
+
+	for (const locale of locales) {
+		const page = await renderHomepage(locale);
+		const html = shell
+			.replace(/<html lang="[^"]*">/, () => `<html lang="${locale}" dir="${page.dir}">`)
+			.replace(/<title>[^<]*<\/title>/, () => `<title>${escapeHtml(page.title)}</title>`)
+			.replace(
+				/<meta name="description"[^>]*>/,
+				() => `<meta name="description" content="${escapeHtml(page.description)}">`,
+			)
+			.replace('<div id="app"></div>', () => `<div id="app">${page.html}</div>`);
+		await writeFile(`${prerenderOutDir}/${locale}.html`, html);
+	}
+}
 
 const serverPaths = ["/api", "/mcp", "/uploads", "/.well-known", "/schema.json"] as const;
 
@@ -36,6 +73,25 @@ export default defineConfig({
 
 	define: {
 		__APP_VERSION__: appVersion,
+	},
+
+	// `vite build` builds the app, then the homepage's server entry, then prerenders the homepage with it.
+	builder: {
+		buildApp: async (builder) => {
+			await builder.build(builder.environments.client);
+			await builder.build(builder.environments.ssr);
+			await prerenderHomepage();
+		},
+	},
+
+	environments: {
+		ssr: {
+			build: {
+				outDir: prerenderBundleDir,
+				emptyOutDir: true,
+				rolldownOptions: { input: "src/features/homepage/prerender.tsx" },
+			},
+		},
 	},
 
 	build: {

@@ -104,6 +104,13 @@ export function formatRelativeTime(value: Date | string, locale: string) {
 }
 
 export const getLocale = () => {
+	// A `?locale=` address (the homepage's hreflang alternates) picks the language and keeps it, like the switcher.
+	const requested = new URLSearchParams(window.location.search).get(storageKey);
+	if (isLocale(requested)) {
+		Cookies.set(storageKey, requested);
+		return requested;
+	}
+
 	const locale = Cookies.get(storageKey);
 	if (!locale || !isLocale(locale)) return defaultLocale;
 	return locale;

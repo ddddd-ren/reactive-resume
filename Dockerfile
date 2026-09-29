@@ -26,7 +26,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile
 
 COPY --from=pruner /app/out/full/ ./
-RUN rm -rf apps/web/dist apps/server/dist && pnpm turbo run build --filter=web --filter=server --force
+RUN rm -rf apps/web/dist apps/web/dist-prerender apps/server/dist && pnpm turbo run build --filter=web --filter=server --force
 
 FROM base AS runtime-pruner
 COPY . .
@@ -63,6 +63,7 @@ COPY --from=pruner --chown=node:node /app/package.json /app/pnpm-lock.yaml /app/
 COPY --from=runtime-deps --chown=node:node /app/apps/server/package.json ./apps/server/package.json
 COPY --from=runtime-deps --chown=node:node /app/apps/server/node_modules ./apps/server/node_modules
 COPY --from=builder --chown=node:node /app/apps/web/dist ./apps/web/dist
+COPY --from=builder --chown=node:node /app/apps/web/dist-prerender ./apps/web/dist-prerender
 COPY --from=builder --chown=node:node /app/apps/server/dist ./apps/server/dist
 COPY --from=pruner --chown=node:node /app/migrations ./migrations
 

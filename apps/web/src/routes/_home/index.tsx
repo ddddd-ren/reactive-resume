@@ -5,10 +5,12 @@ import { NotFoundScreen } from "@/components/layout/not-found-screen";
 import { Homepage } from "@/features/homepage/page";
 import { orpc } from "@/libs/orpc/client";
 import {
+	createHomepageLinks,
 	createNoindexFollowMeta,
 	createResumeSocialMeta,
 	createRootStructuredDataScript,
 	getCanonicalRootUrl,
+	getHomepageMeta,
 } from "@/libs/seo";
 
 const PublicResumePage = lazyRouteComponent(() => import("@/features/resume/public/public-resume"), "PublicResumePage");
@@ -24,7 +26,7 @@ export const Route = createFileRoute("/_home/")({
 			throw redirect({ to: "/auth/resume-password", search: { redirect: `/${username}/${slug}`, returnTo: "/" } });
 		}
 	},
-	head: ({ loaderData }) => {
+	head: ({ loaderData, match }) => {
 		const root = loaderData?.root;
 		if (root && root.status !== "disabled") {
 			const { canonicalUrl } = root;
@@ -50,11 +52,12 @@ export const Route = createFileRoute("/_home/")({
 			};
 		}
 		const appUrl = window.location.origin;
-		const canonicalUrl = getCanonicalRootUrl(appUrl);
+		const { title, description } = getHomepageMeta();
 
 		return {
-			links: [{ rel: "canonical", href: canonicalUrl }],
-			scripts: [createRootStructuredDataScript(canonicalUrl)],
+			meta: [{ title }, { name: "description", content: description }],
+			links: createHomepageLinks(appUrl, (match.search as { locale?: unknown }).locale),
+			scripts: [createRootStructuredDataScript(getCanonicalRootUrl(appUrl))],
 		};
 	},
 });

@@ -16,6 +16,7 @@ const router = await getRouter();
 const serverSeoSelectors = [
 	"[data-root-resume-shell]",
 	'head link[rel="canonical"]',
+	'head link[rel="alternate"][hreflang]',
 	'head script[type="application/ld+json"]',
 	'head meta[property^="og:"]',
 	'head meta[name^="twitter:"]',
@@ -23,5 +24,9 @@ const serverSeoSelectors = [
 document.querySelectorAll(serverSeoSelectors.join(",")).forEach((element) => {
 	element.remove();
 });
+
+// The server may send the homepage prerendered into #app. React replaces it on its first render, so that render waits
+// for the route to load; otherwise the prerendered page would give way to a loading screen before coming back.
+if (rootElement.hasChildNodes()) await router.load();
 
 ReactDOM.createRoot(rootElement).render(<RouterProvider router={router} />);

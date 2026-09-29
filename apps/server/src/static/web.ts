@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { env } from "@reactive-resume/env/server";
+import { defaultLocale, getLocaleAlternates, isLocale, localizedUrl } from "@reactive-resume/utils/locale";
 
 function resolveWebDistPath() {
 	const candidates = [
@@ -19,6 +20,9 @@ function resolveWebDistPath() {
 
 const staticRoot = resolveWebDistPath();
 const indexHtmlPath = `${staticRoot}/index.html`;
+// The homepage prerendered per locale by the web build (apps/web/vite.config.ts), kept beside dist/ so it's never
+// served at an address of its own.
+const prerenderRoot = `${staticRoot}-prerender`;
 const noindexShellPrefixes = ["/auth", "/dashboard", "/builder", "/agent", "/templates"];
 /**
  * Marketing pages the SPA owns that search engines should index.
@@ -72,40 +76,8 @@ const ROOT_TITLE = "Reactive Resume — A free and open-source resume builder";
 // Keep under ~120 characters so Google's mobile SERP snippet is not truncated at 3 lines.
 const ROOT_DESCRIPTION =
 	"Free, open-source resume builder. Create, update, and share your resume, with no ads and no paywall.";
-const ROOT_POSTER_PATH = "/videos/timelapse-v1.webp";
-const ROOT_FAQ_ITEMS = [
-	{
-		question: "Is Reactive Resume really free?",
-		answer:
-			"Yes. Reactive Resume is free to use, with no hidden costs, premium tiers, or subscription fees. It's open source, and it will stay free.",
-	},
-	{
-		question: "How is my data protected?",
-		answer:
-			"Your data is stored securely and never shared with third parties. If you want full control over it, you can self-host Reactive Resume on your own servers.",
-	},
-	{
-		question: "Can I export my resume to PDF?",
-		answer: "Yes. One click exports your resume to PDF, with your formatting and styling intact.",
-	},
-	{
-		question: "Is Reactive Resume available in multiple languages?",
-		answer:
-			"Yes. Pick your language on the settings page, or with the language switcher in the top right corner. If your language is missing, or the existing translation could be better, you can contribute to the translations on Crowdin.",
-	},
-	{
-		question: "What makes Reactive Resume different from other resume builders?",
-		answer:
-			"Reactive Resume is open source, private, and free. It shows no ads, doesn't track what you do, and doesn't lock features behind a paywall.",
-	},
-	{
-		question: "How do I share my resume?",
-		answer: "Share it with a public URL, put a password on that URL, or download the PDF and send it yourself.",
-	},
-] as const;
-
-function createRootSeoMarkup(canonicalUrl: string) {
-	const origin = new URL(canonicalUrl).origin;
+function createRootSeoMarkup(rootUrl: string, canonicalUrl: string) {
+	const origin = new URL(rootUrl).origin;
 	const imageUrl = `${origin}/opengraph/banner.jpg`;
 	const structuredData = {
 		"@context": "https://schema.org",
@@ -113,12 +85,12 @@ function createRootSeoMarkup(canonicalUrl: string) {
 			{
 				"@type": "WebSite",
 				name: "Reactive Resume",
-				url: canonicalUrl,
+				url: rootUrl,
 			},
 			{
 				"@type": ["SoftwareApplication", "WebApplication"],
 				name: "Reactive Resume",
-				url: canonicalUrl,
+				url: rootUrl,
 				description: ROOT_DESCRIPTION,
 				applicationCategory: "BusinessApplication",
 				operatingSystem: "Web",
@@ -133,31 +105,24 @@ function createRootSeoMarkup(canonicalUrl: string) {
 			{
 				"@type": "Project",
 				name: "Reactive Resume",
-				url: canonicalUrl,
+				url: rootUrl,
 				sameAs: ["https://github.com/reactive-resume/reactive-resume"],
-			},
-			{
-				"@type": "FAQPage",
-				mainEntity: ROOT_FAQ_ITEMS.map((item) => ({
-					"@type": "Question",
-					name: item.question,
-					acceptedAnswer: {
-						"@type": "Answer",
-						text: item.answer,
-					},
-				})),
 			},
 		],
 	};
 
+	const alternates = getLocaleAlternates(rootUrl)
+		.map(({ hreflang, href }) => `<link rel="alternate" hreflang="${hreflang}" href="${escapeAttribute(href)}">`)
+		.join("");
+
 	return `
-		<link rel="canonical" href="${canonicalUrl}">
-		<link rel="preload" href="${ROOT_POSTER_PATH}" as="image" fetchpriority="high">
+		<link rel="canonical" href="${escapeAttribute(canonicalUrl)}">
+		${alternates}
 		<meta property="og:type" content="website">
 		<meta property="og:site_name" content="Reactive Resume">
 		<meta property="og:title" content="${ROOT_TITLE}">
 		<meta property="og:description" content="${ROOT_DESCRIPTION}">
-		<meta property="og:url" content="${canonicalUrl}">
+		<meta property="og:url" content="${escapeAttribute(canonicalUrl)}">
 		<meta property="og:image" content="${imageUrl}">
 		<meta name="twitter:card" content="summary_large_image">
 		<meta name="twitter:title" content="${ROOT_TITLE}">
@@ -281,6 +246,18 @@ function getFallbackResponseHeaders(pathname: string) {
 	return null;
 }
 
+/**
+ * The homepage's language: a `?locale=` address first (its hreflang alternates), then the visitor's saved choice, in
+ * the order the app reads them (apps/web/src/libs/locale.ts).
+ */
+function getHomepageLocale(request: Request) {
+	const requested = new URL(request.url).searchParams.get("locale");
+	if (isLocale(requested)) return { locale: requested, requested: true };
+
+	const saved = request.headers.get("cookie")?.match(/(?:^|;\s*)locale=([^;]*)/)?.[1] ?? "";
+	return { locale: isLocale(saved) ? saved : defaultLocale, requested: false };
+}
+
 function notFoundResponse(options: { head?: boolean; noindex?: boolean } = {}) {
 	const headers = new Headers({ "Content-Type": "text/plain; charset=UTF-8" });
 	if (options.noindex) headers.set("X-Robots-Tag", "noindex, nofollow");
@@ -322,9 +299,15 @@ export async function handleWebApp(request: Request) {
 	}
 
 	if (pathname === "/") {
+		const { locale, requested } = getHomepageLocale(request);
+		// Without a prerendered page (a build that skipped it), the app renders the homepage in the browser.
+		const page = await fs.readFile(`${prerenderRoot}/${locale}.html`, "utf-8").catch(() => html);
+		const pageUrl = requested ? localizedUrl(canonicalUrl, locale) : canonicalUrl;
+
 		return new Response(
-			html.replace("</head>", () => `${createRootSeoMarkup(canonicalUrl)}</head>`),
-			{ headers },
+			page.replace("</head>", () => `${createRootSeoMarkup(canonicalUrl, pageUrl)}</head>`),
+			// The saved locale changes what this address shows, so caches have to key on the cookie.
+			{ headers: { ...headers, Vary: "Cookie" } },
 		);
 	}
 

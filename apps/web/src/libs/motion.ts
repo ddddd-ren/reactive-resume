@@ -17,9 +17,6 @@ export const D3 = 0.32;
 /** Exits run at 70% of the enter duration, e.g. `D2 * EXIT`. */
 export const EXIT = 0.7;
 
-/** --ease-out-strong. Landing page only (features/homepage/site-footer.tsx); app code uses EASE. */
-export const EASE_OUT_STRONG = [0.23, 1, 0.32, 1] as const;
-
 /** Springy, a little elastic: the mobile tab bar's marker hopping to the new tab (interruptible mid-flight). */
 export const TAB_SPRING = { type: "spring", duration: 0.4, bounce: 0.3 } as const;
 

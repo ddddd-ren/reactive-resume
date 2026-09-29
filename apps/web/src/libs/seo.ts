@@ -1,3 +1,6 @@
+import { t } from "@lingui/core/macro";
+import { getLocaleAlternates, isLocale, localizedUrl } from "@reactive-resume/utils/locale";
+
 const appName = "Reactive Resume";
 const repositoryUrl = "https://github.com/reactive-resume/reactive-resume";
 
@@ -80,17 +83,6 @@ const getRootStructuredData = (canonicalUrl: string): JsonLd[] => [
 		url: canonicalUrl,
 		sameAs: [repositoryUrl],
 	},
-	{
-		"@type": "FAQPage",
-		mainEntity: homeFaqJsonLdItems.map((item) => ({
-			"@type": "Question",
-			name: item.question,
-			acceptedAnswer: {
-				"@type": "Answer",
-				text: item.answer,
-			},
-		})),
-	},
 ];
 
 export const createRootStructuredDataScript = (canonicalUrl: string) =>
@@ -99,33 +91,18 @@ export const createRootStructuredDataScript = (canonicalUrl: string) =>
 		"@graph": getRootStructuredData(canonicalUrl),
 	});
 
-const homeFaqJsonLdItems = [
-	{
-		question: "Is Reactive Resume really free?",
-		answer:
-			"Yes. Reactive Resume is free to use, with no hidden costs, premium tiers, or subscription fees. It's open source, and it will stay free.",
-	},
-	{
-		question: "How is my data protected?",
-		answer:
-			"Your data is stored securely and never shared with third parties. If you want full control over it, you can self-host Reactive Resume on your own servers.",
-	},
-	{
-		question: "Can I export my resume to PDF?",
-		answer: "Yes. One click exports your resume to PDF, with your formatting and styling intact.",
-	},
-	{
-		question: "Is Reactive Resume available in multiple languages?",
-		answer:
-			"Yes. Pick your language on the settings page, or with the language switcher in the top right corner. If your language is missing, or the existing translation could be better, you can contribute to the translations on Crowdin.",
-	},
-	{
-		question: "What makes Reactive Resume different from other resume builders?",
-		answer:
-			"Reactive Resume is open source, private, and free. It shows no ads, doesn't track what you do, and doesn't lock features behind a paywall.",
-	},
-	{
-		question: "How do I share my resume?",
-		answer: "Share it with a public URL, put a password on that URL, or download the PDF and send it yourself.",
-	},
-] as const;
+/** The homepage's title and description in the active locale. The prerendered page and the route share them. */
+export const getHomepageMeta = () => ({
+	title: `${appName} — ${t`A free and open-source resume builder`}`,
+	description: t`Free, open-source resume builder. Create, update, and share your resume, with no ads and no paywall.`,
+});
+
+/** The homepage's canonical link and hreflang alternates. A `?locale=` address is canonical for its own language. */
+export const createHomepageLinks = (origin: string, locale: unknown) => [
+	{ rel: "canonical", href: localizedUrl(getCanonicalRootUrl(origin), isLocale(locale) ? locale : undefined) },
+	...getLocaleAlternates(getCanonicalRootUrl(origin)).map(({ hreflang, href }) => ({
+		rel: "alternate",
+		hrefLang: hreflang,
+		href,
+	})),
+];
