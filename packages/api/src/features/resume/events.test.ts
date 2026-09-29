@@ -1,3 +1,4 @@
+import { EventEmitter } from "node:events";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const pool = vi.hoisted(() => ({
@@ -50,16 +51,14 @@ describe("publishResumeUpdated", () => {
 });
 
 function makeSubscriber() {
-	const handlers = new Map<string, (...args: string[]) => void>();
-	return {
+	const emitter = new EventEmitter();
+	return Object.assign(emitter, {
 		subscribe: vi.fn().mockResolvedValue(1),
 		disconnect: vi.fn(),
-		on: vi.fn((event: string, handler: (...args: string[]) => void) => handlers.set(event, handler)),
-		off: vi.fn((event: string) => handlers.delete(event)),
-		emit(channel: string, payload: string) {
-			handlers.get("message")?.(channel, payload);
+		send(channel: string, payload: string) {
+			emitter.emit("message", channel, payload);
 		},
-	};
+	});
 }
 
 describe("Redis resume subscriptions", () => {
@@ -71,10 +70,10 @@ describe("Redis resume subscriptions", () => {
 		const iterator = subscribeResumeUpdated({ resumeId: "r1", userId: "u1", signal: controller.signal });
 		const first = iterator.next();
 		const channel = "reactive-resume:preview:resume_updated";
-		subscriber.emit("other", JSON.stringify(exampleEvent));
-		subscriber.emit(channel, "not json");
-		subscriber.emit(channel, JSON.stringify({ ...exampleEvent, userId: "other" }));
-		subscriber.emit(channel, JSON.stringify(exampleEvent));
+		subscriber.send("other", JSON.stringify(exampleEvent));
+		subscriber.send(channel, "not json");
+		subscriber.send(channel, JSON.stringify({ ...exampleEvent, userId: "other" }));
+		subscriber.send(channel, JSON.stringify(exampleEvent));
 		expect(await first).toEqual({ done: false, value: exampleEvent });
 		const next = iterator.next();
 		controller.abort();
@@ -82,8 +81,8 @@ describe("Redis resume subscriptions", () => {
 		expect(redis.duplicate).toHaveBeenCalledWith({ commandTimeout: 5_000 });
 		expect(subscriber.subscribe).toHaveBeenCalledWith(channel);
 		expect(subscriber.disconnect).toHaveBeenCalledTimes(1);
-		expect(subscriber.off).toHaveBeenCalledWith("message", expect.any(Function));
-		expect(subscriber.off).toHaveBeenCalledWith("error", expect.any(Function));
+		expect(subscriber.listenerCount("message")).toBe(0);
+		expect(subscriber.listenerCount("error")).toBe(0);
 		expect(pool.connect).not.toHaveBeenCalled();
 	});
 
@@ -112,23 +111,14 @@ describe("Redis resume subscriptions", () => {
 });
 
 const makeFakeClient = () => {
-	type Listener = (notification: { channel?: string; payload?: string }) => void;
-	const listeners = new Set<Listener>();
-
-	const client = {
+	const emitter = new EventEmitter();
+	return Object.assign(emitter, {
 		query: vi.fn().mockResolvedValue(undefined),
-		on: vi.fn((event: string, fn: Listener) => {
-			if (event === "notification") listeners.add(fn);
-		}),
-		off: vi.fn((event: string, fn: Listener) => {
-			if (event === "notification") listeners.delete(fn);
-		}),
 		release: vi.fn(),
 		__notify(channel: string, payload: string) {
-			for (const fn of listeners) fn({ channel, payload });
+			emitter.emit("notification", { channel, payload });
 		},
-	};
-	return client;
+	});
 };
 
 describe("subscribeResumeUpdated", () => {
