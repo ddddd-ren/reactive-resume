@@ -1310,16 +1310,25 @@ export const agentService = {
 						.for("update");
 					if (!thread) throw new ORPCError("NOT_FOUND");
 
+					// Files already sent belong to their messages: only unsent ones count toward the next message.
+					const [unsent] = await tx
+						.select({ total: count() })
+						.from(schema.agentAttachment)
+						.where(
+							and(
+								eq(schema.agentAttachment.threadId, input.threadId),
+								eq(schema.agentAttachment.userId, input.userId),
+								isNull(schema.agentAttachment.messageId),
+							),
+						);
+					if ((unsent?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE) throw new ORPCError("BAD_REQUEST");
+
 					const [stats] = await tx
-						.select({
-							totalBytes: sql<number>`coalesce(sum(${schema.agentAttachment.size}), 0)`,
-							total: count(),
-						})
+						.select({ totalBytes: sql<number>`coalesce(sum(${schema.agentAttachment.size}), 0)` })
 						.from(schema.agentAttachment)
 						.where(
 							and(eq(schema.agentAttachment.threadId, input.threadId), eq(schema.agentAttachment.userId, input.userId)),
 						);
-					if ((stats?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE) throw new ORPCError("BAD_REQUEST");
 					if (Number(stats?.totalBytes ?? 0) + input.data.byteLength > MAX_THREAD_ATTACHMENT_BYTES) {
 						throw new ORPCError("BAD_REQUEST");
 					}
