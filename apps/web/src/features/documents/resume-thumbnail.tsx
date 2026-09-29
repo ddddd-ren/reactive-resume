@@ -1,10 +1,12 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { QueryClient } from "@tanstack/react-query";
 import type { RefObject } from "react";
 import type { ResumeThumbnailSize } from "@/features/resume/preview/resume-thumbnail.shared";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { createPdfFirstPageImageUrl, releaseThumbnailUrls } from "@/features/resume/preview/pdf-thumbnail";
 import { getResumeThumbnailCacheKey, getResumeThumbnailSize } from "@/features/resume/preview/resume-thumbnail.shared";
@@ -46,7 +48,7 @@ function useThumbnailSize(containerRef: RefObject<HTMLDivElement | null>, enable
 		let media: MediaQueryList;
 		const syncSize = () => {
 			clearTimeout(timeout);
-			// Coalesce sidebar animations and continuous viewport resizing.
+			// Coalesce continuous resizing (window drags, zoom, the grid reflowing).
 			timeout = setTimeout(() => {
 				if (measured.width <= 0 || measured.height <= 0) return;
 				const next = getResumeThumbnailSize(measured, window.devicePixelRatio);
@@ -79,6 +81,19 @@ function useThumbnailSize(containerRef: RefObject<HTMLDivElement | null>, enable
 	return size;
 }
 
+// The newest thumbnail already drawn for this resume (an earlier edit, or another size), shown until the current
+// one is ready, so an edit or a return visit never drops the card back to a placeholder.
+const findLatestThumbnail = (queryClient: QueryClient, resumePrefix: string) => {
+	let latest: { url: string; at: number } | undefined;
+	for (const query of queryClient.getQueryCache().findAll({ queryKey: ["resume-thumbnail"] })) {
+		const key = query.queryKey[1];
+		const url = query.state.data;
+		if (typeof key !== "string" || !key.startsWith(resumePrefix) || typeof url !== "string") continue;
+		if (!latest || query.state.dataUpdatedAt > latest.at) latest = { url, at: query.state.dataUpdatedAt };
+	}
+	return latest?.url;
+};
+
 function useResumeThumbnail(
 	data: ResumeData | undefined,
 	cacheKey: string,
@@ -86,22 +101,11 @@ function useResumeThumbnail(
 	enabled: boolean,
 ): ThumbnailState {
 	const queryClient = useQueryClient();
+	const resumePrefix = `${cacheKey.slice(0, cacheKey.lastIndexOf(":"))}:`;
 
 	useEffect(() => {
 		releaseThumbnailUrls(queryClient, "resume-thumbnail");
 	}, [queryClient]);
-
-	useEffect(() => {
-		const queryCache = queryClient.getQueryCache();
-		const resumePrefix = `${cacheKey.slice(0, cacheKey.lastIndexOf(":"))}:`;
-
-		for (const query of queryCache.findAll({ queryKey: ["resume-thumbnail"] })) {
-			const queryCacheKey = query.queryKey[1];
-			if (typeof queryCacheKey === "string" && queryCacheKey.startsWith(resumePrefix) && queryCacheKey !== cacheKey) {
-				queryCache.remove(query);
-			}
-		}
-	}, [cacheKey, queryClient]);
 
 	const {
 		data: thumbnailData,
@@ -114,11 +118,29 @@ function useResumeThumbnail(
 			return createResumeThumbnailUrl(data, size, signal);
 		},
 		enabled: Boolean(enabled && data && size.width && size.height),
-		placeholderData: (previous, query) => (query?.queryKey[1] === cacheKey ? previous : undefined),
+		placeholderData: (previous) => previous ?? findLatestThumbnail(queryClient, resumePrefix),
 		staleTime: Number.POSITIVE_INFINITY,
 		gcTime: THUMBNAIL_CACHE_TIME,
 	});
 	const previousThumbnailData = useRef<string | undefined>(undefined);
+
+	// Drops this resume's thumbnails from earlier edits, except the one still on screen: it goes (and its URL is
+	// revoked) once its replacement is what's shown.
+	useEffect(() => {
+		const queryCache = queryClient.getQueryCache();
+
+		for (const query of queryCache.findAll({ queryKey: ["resume-thumbnail"] })) {
+			const queryCacheKey = query.queryKey[1];
+			if (
+				typeof queryCacheKey === "string" &&
+				queryCacheKey.startsWith(resumePrefix) &&
+				queryCacheKey !== cacheKey &&
+				query.state.data !== thumbnailData
+			) {
+				queryCache.remove(query);
+			}
+		}
+	}, [cacheKey, queryClient, resumePrefix, thumbnailData]);
 
 	useEffect(() => {
 		if (thumbnailError) console.error("Failed to generate resume thumbnail", thumbnailError);
@@ -136,9 +158,9 @@ function useResumeThumbnail(
 		previousThumbnailData.current = thumbnailData;
 	}, [queryClient, thumbnailData]);
 
-	if (!data || !cacheKey) return { status: "idle" };
 	if (thumbnailIsError) return { status: "error" };
 	if (thumbnailData) return { status: "ready", url: thumbnailData };
+	if (!data || !cacheKey) return { status: "idle" };
 
 	return { status: "loading" };
 }
@@ -165,7 +187,7 @@ export function ResumeThumbnail({ resume }: ResumeThumbnailProps) {
 			{thumbnail.status === "ready" ? (
 				<div
 					aria-hidden
-					className="absolute inset-0 bg-center bg-contain bg-white bg-no-repeat"
+					className="absolute inset-0 bg-center bg-contain bg-white bg-no-repeat starting:opacity-0 transition-opacity duration-standard ease-enter"
 					style={{ backgroundImage: `url(${thumbnail.url})` }}
 				/>
 			) : hasFailed ? (
@@ -174,7 +196,7 @@ export function ResumeThumbnail({ resume }: ResumeThumbnailProps) {
 				</div>
 			) : (
 				// Loading: a sunken placeholder at the page's real size, so nothing jumps.
-				<div className="absolute inset-0 animate-pulse bg-sunken" />
+				<Skeleton className="absolute inset-0 rounded-none" />
 			)}
 		</div>
 	);

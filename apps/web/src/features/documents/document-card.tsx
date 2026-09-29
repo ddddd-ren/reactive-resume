@@ -10,6 +10,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { cn } from "@reactive-resume/utils/style";
 import { formatRelativeTime } from "@/libs/locale";
+import { ENTER_CLASS, stagger } from "@/libs/motion";
 import { DocumentMenuContent, useDocumentActions } from "./document-actions";
 import { daysLeftInTrash } from "./filter";
 import { useNewDocumentsStore } from "./new-documents";
@@ -19,6 +20,8 @@ export type DocumentItemProps = {
 	document: DocumentSummary;
 	onTags: (document: DocumentSummary) => void;
 	onLink: (document: DocumentSummary) => void;
+	/** Position in the library's first appearance, which staggers in; undefined afterwards and in Trash. */
+	introIndex?: number | undefined;
 };
 
 /** "Resume · Edited 2h ago", or the days left for a document in Trash. */
@@ -103,7 +106,7 @@ function LetterThumbnail({ name }: { name: string }) {
 }
 
 /** A 204px card: the real first page, title with ⋯, "Resume · Edited 2h ago" and the linked application. */
-export function DocumentCard({ document, onTags, onLink }: DocumentItemProps) {
+export function DocumentCard({ document, onTags, onLink, introIndex }: DocumentItemProps) {
 	const openDocument = useOpenDocument();
 	const [renaming, setRenaming] = useState(false);
 	const isNew = useNewDocumentsStore((state) => state.ids.includes(document.id)) && !document.trashedAt;
@@ -119,7 +122,17 @@ export function DocumentCard({ document, onTags, onLink }: DocumentItemProps) {
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger
-				render={<article className={cn("group/card grid gap-2", document.trashedAt && "opacity-70")} />}
+				render={
+					<article
+						style={introIndex === undefined ? undefined : stagger(introIndex)}
+						className={cn(
+							"group/card grid gap-2",
+							introIndex !== undefined && ENTER_CLASS,
+							isNew && "animate-arrive",
+							document.trashedAt && "opacity-70",
+						)}
+					/>
+				}
 			>
 				<OpenLink
 					document={document}
@@ -127,7 +140,7 @@ export function DocumentCard({ document, onTags, onLink }: DocumentItemProps) {
 					className={cn(
 						"relative block aspect-page overflow-hidden rounded-[6px] shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[translate,scale,box-shadow] duration-quick ease-enter hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)] active:scale-[0.98]",
 						isNew &&
-							"shadow-[0_0_0_2px_var(--accent),var(--shadow-1)] hover:shadow-[0_0_0_2px_var(--accent),var(--shadow-2)]",
+							"shadow-[0_0_0_2px_var(--accent),var(--shadow-1)] starting:shadow-[0_0_0_2px_transparent,var(--shadow-1)] hover:shadow-[0_0_0_2px_var(--accent),var(--shadow-2)]",
 						document.trashedAt && "pointer-events-none",
 					)}
 				>
@@ -189,7 +202,7 @@ export function DocumentCard({ document, onTags, onLink }: DocumentItemProps) {
 }
 
 /** The list view's row: Name, Type, Application, Edited, ⋯. */
-export function DocumentRow({ document, onTags, onLink }: DocumentItemProps) {
+export function DocumentRow({ document, onTags, onLink, introIndex }: DocumentItemProps) {
 	const { i18n } = useLingui();
 	const openDocument = useOpenDocument();
 	const [renaming, setRenaming] = useState(false);
@@ -208,8 +221,10 @@ export function DocumentRow({ document, onTags, onLink }: DocumentItemProps) {
 			<ContextMenuTrigger
 				render={
 					<tr
+						style={introIndex === undefined ? undefined : stagger(introIndex)}
 						className={cn(
 							"border-line border-b transition-colors duration-quick hover:bg-hover",
+							introIndex !== undefined && ENTER_CLASS,
 							document.trashedAt && "opacity-70",
 						)}
 					/>

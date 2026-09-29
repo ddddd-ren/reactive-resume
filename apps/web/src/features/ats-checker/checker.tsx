@@ -16,6 +16,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { ImportError, readResumeFile } from "@/features/resume/import/read-file";
 import { PdfViewer } from "@/features/resume/public/pdf-viewer";
 import { getOrpcErrorMessage } from "@/libs/error-message";
+import { ENTER_CLASS, stagger } from "@/libs/motion";
 import { client } from "@/libs/orpc/client";
 import { PdfPasswordRequiredError, PdfTooLargeError, PdfUnreadableError } from "./extract-client";
 import { getPdfCategoryLabel, getPdfFindingMessage } from "./messages";
@@ -334,7 +335,7 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 					<div
 						role="img"
 						aria-label={t`Readability score: ${report.score} out of 100`}
-						className="score-ring grid size-[84px] shrink-0 place-items-center rounded-full"
+						className="score-ring score-ring-reveal grid size-[84px] shrink-0 place-items-center rounded-full"
 						style={
 							{
 								"--ring-value": `${report.score}%`,
@@ -370,7 +371,11 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 						{rows.map((row, index) => {
 							const expanded = open === row.key;
 							return (
-								<div key={row.key} className={cn(index > 0 && "border-line border-t")}>
+								<div
+									key={row.key}
+									style={stagger(index)}
+									className={cn(ENTER_CLASS, index > 0 && "border-line border-t")}
+								>
 									<button
 										type="button"
 										aria-expanded={expanded}

@@ -7,9 +7,45 @@
 	initial-value: 0%;
 }
 
+/* Registered so crossing 80 blends accent and warn instead of snapping. */
+@property --ring-color {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+
 @utility score-ring {
 	background: conic-gradient(var(--ring-color) 0 var(--ring-value), var(--sunken) 0);
-	transition: --ring-value var(--d3) var(--ease);
+	transition:
+		--ring-value var(--d3) var(--ease),
+		--ring-color var(--d3) var(--ease);
+}
+
+/*
+ * The free ATS checker's first reveal: the arc fills from 0 once per checked file. 480ms is over the UI budget on
+ * purpose: it happens once per file and the fill is what explains the number. A keyframe (not @starting-style)
+ * because it must run on the element's first style; the reduced-motion rule in globals.css makes it instant.
+ */
+@utility score-ring-reveal {
+	animation: score-ring-reveal 480ms var(--ease) backwards;
+}
+
+@keyframes score-ring-reveal {
+	from {
+		--ring-value: 0%;
+	}
+}
+
+@theme {
+	/* A document made on this device lands on the grid: a fade up from 96%, once per mount. */
+	--animate-arrive: arrive var(--d2) var(--ease) backwards;
+
+	@keyframes arrive {
+		from {
+			opacity: 0;
+			scale: 0.96;
+		}
+	}
 }
 
 /* A wavy warn underline under a line of the page that has a Check issue. */

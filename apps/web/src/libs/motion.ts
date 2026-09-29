@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 // Motion (JS) mirrors of the CSS motion tokens in packages/ui/src/styles/globals.css (--d1/--d2/--d3, --ease,
 // --ease-in-out-strong). Durations are in seconds, Motion's unit; multiply by 1000 for APIs that take ms (dnd-kit).
 
@@ -30,3 +32,13 @@ export function switchModeInstantly(change: () => void) {
 	change();
 	requestAnimationFrame(() => requestAnimationFrame(() => list?.removeAttribute("data-instant")));
 }
+
+/**
+ * Something entering from nothing on its first appearance: a 4px rise and fade over D2. In a list, pair it with
+ * `stagger(index)` on the same element; without it the delay is 0.
+ */
+export const ENTER_CLASS =
+	"starting:translate-y-1 starting:opacity-0 transition-[opacity,translate] delay-(--stagger) duration-standard ease-enter motion-reduce:delay-0";
+
+/** The index-th item of a list's first appearance: 30ms apart, capped at 150ms (the first six are staggered). */
+export const stagger = (index: number) => ({ "--stagger": `${Math.min(index, 5) * 30}ms` }) as CSSProperties;

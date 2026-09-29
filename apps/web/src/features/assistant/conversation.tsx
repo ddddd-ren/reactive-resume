@@ -18,6 +18,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage } from "@/libs/error-message";
+import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 import { attachmentPart, fileToBase64, transcriptOf, useAssistantChat } from "./chat";
 import { AssistantMarkdown } from "./markdown";
@@ -49,6 +50,8 @@ export function Conversation(props: ConversationProps) {
 	const [statuses, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
 	const [stopped, setStopped] = useState(false);
 	const scroller = useRef<HTMLDivElement>(null);
+	// Messages already in the thread when it opens are history; only new ones rise in.
+	const [initialIds] = useState(() => new Set(props.initialMessages.map((message) => message.id)));
 
 	const refresh = () => void queryClient.invalidateQueries({ queryKey: orpc.agent.threads.list.key() });
 	const { messages, sendMessage, status, error, clearError, regenerate, stop, addToolOutput } = useAssistantChat({
@@ -158,6 +161,7 @@ export function Conversation(props: ConversationProps) {
 						key={message.id}
 						message={message}
 						streaming={streaming && index === messages.length - 1}
+						enter={!initialIds.has(message.id)}
 						readOnly={readOnly}
 						statuses={statuses}
 						document={document}
@@ -167,14 +171,14 @@ export function Conversation(props: ConversationProps) {
 				))}
 
 				{status === "submitted" && (
-					<p className="flex items-center gap-2 text-ink-3 text-sm">
+					<p className={cn("flex items-center gap-2 text-ink-3 text-sm", ENTER_CLASS)}>
 						<Spinner decorative className="size-3.5" />
 						<Trans>Thinking…</Trans>
 					</p>
 				)}
 
 				{stopped && !streaming && !proposedInLast && (
-					<p className="flex items-center gap-2 text-ink-2 text-sm">
+					<p className="flex items-center gap-2 text-ink-2 text-sm starting:opacity-0 transition-opacity duration-standard ease-enter">
 						<Icon name="stop_circle" size={18} className="text-ink-3" />
 						<Trans>Stopped. No edits were proposed.</Trans>
 						<button
@@ -188,7 +192,10 @@ export function Conversation(props: ConversationProps) {
 				)}
 
 				{error && !streaming && (
-					<div role="alert" className="grid gap-2 rounded-xl bg-danger-soft p-3 text-[13px] text-danger-text">
+					<div
+						role="alert"
+						className="grid gap-2 rounded-xl bg-danger-soft p-3 text-[13px] text-danger-text starting:opacity-0 transition-opacity duration-standard ease-enter"
+					>
 						<span className="flex gap-2">
 							<Icon name="error" size={18} className="shrink-0" />
 							<Trans>
@@ -209,7 +216,7 @@ export function Conversation(props: ConversationProps) {
 				)}
 
 				{!streaming && messages.length > 0 && (
-					<div className="flex justify-end">
+					<div className="flex justify-end starting:opacity-0 transition-opacity duration-standard ease-enter">
 						<Button size="sm" variant="ghost" className="text-ink-3" onClick={() => void copyTranscript(messages)}>
 							<Icon name="content_copy" size={16} />
 							<Trans>Copy transcript</Trans>
@@ -253,6 +260,7 @@ function toProposals(
 type MessageViewProps = {
 	message: UIMessage;
 	streaming: boolean;
+	enter: boolean;
 	readOnly: boolean;
 	statuses: ReadonlyMap<string, EditStatus>;
 	document: AssistantDocument;
@@ -260,12 +268,21 @@ type MessageViewProps = {
 	onRecord: (message: UIMessage, part: ToolPart, proposals: readonly Proposal[], status: EditStatus) => void;
 };
 
-function MessageView({ message, streaming, readOnly, statuses, document, onAnswer, onRecord }: MessageViewProps) {
+function MessageView({
+	message,
+	streaming,
+	enter,
+	readOnly,
+	statuses,
+	document,
+	onAnswer,
+	onRecord,
+}: MessageViewProps) {
 	if (message.role === "user") {
 		const text = message.parts.flatMap((part) => (part.type === "text" ? [part.text] : [])).join("\n");
 		const files = message.parts.filter((part) => part.type === "file");
 		return (
-			<div className="ms-8 grid justify-items-end gap-1">
+			<div className={cn("ms-8 grid justify-items-end gap-1", enter && ENTER_CLASS)}>
 				{text && <p className="whitespace-pre-wrap rounded-[12px_12px_4px_12px] bg-sunken px-3 py-2 text-sm">{text}</p>}
 				{files.map((file, index) => (
 					<span
@@ -286,7 +303,7 @@ function MessageView({ message, streaming, readOnly, statuses, document, onAnswe
 	const lastTextIndex = message.parts.findLastIndex((part) => part.type === "text");
 
 	return (
-		<div className="grid gap-3 text-sm">
+		<div className={cn("grid gap-3 text-sm", enter && ENTER_CLASS)}>
 			{message.parts.map((part, index) => {
 				const key = `${message.id}-${index}`;
 				if (part.type === "text")
@@ -333,7 +350,7 @@ function MessageView({ message, streaming, readOnly, statuses, document, onAnswe
 	);
 }
 
-type ToolPartViewProps = Omit<MessageViewProps, "streaming"> & { part: ToolPart };
+type ToolPartViewProps = Omit<MessageViewProps, "streaming" | "enter"> & { part: ToolPart };
 
 function ToolPartView({ part, message, readOnly, statuses, document, onAnswer, onRecord }: ToolPartViewProps) {
 	const working = part.state === "input-streaming" || part.state === "input-available";

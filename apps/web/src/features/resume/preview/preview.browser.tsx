@@ -40,19 +40,14 @@ const EXITING_TRANSITION = { duration: 0.1, delay: 0.18 };
 // the old one at once, and no half-faded page is ever on screen.
 const INSTANT_TRANSITION = { duration: 0 };
 
-const createPreviewPdf = (
-	file: Blob,
-	id: number,
-	hasExistingPreview: boolean,
-	template: Template,
-	pageMap: PageMap | undefined,
-): PreviewPdf => ({
+const createPreviewPdf = (file: Blob, id: number, template: Template, pageMap: PageMap | undefined): PreviewPdf => ({
 	file,
 	id,
 	pageMap,
 	numPages: 0,
 	pageSizes: {},
-	phase: hasExistingPreview ? "staged" : "active",
+	// Every render, the first one included, paints hidden and fades in once all its pages are drawn.
+	phase: "staged",
 	renderedPages: [],
 	template,
 });
@@ -158,13 +153,7 @@ export function ResumePreviewClient({
 				);
 
 				if (!cancelled && requestId === requestIdRef.current) {
-					const nextPdf = createPreviewPdf(
-						blob,
-						pdfIdRef.current++,
-						hasPreviewRef.current,
-						resumeData.metadata.template,
-						pageMap,
-					);
+					const nextPdf = createPreviewPdf(blob, pdfIdRef.current++, resumeData.metadata.template, pageMap);
 
 					hasPreviewRef.current = true;
 					setPreviewLayers((current) => addPreviewLayer(current, nextPdf));
@@ -203,26 +192,28 @@ export function ResumePreviewClient({
 	const visiblePdf = getActivePreviewLayer(previewLayers);
 	const resolvedPageGap = getResumePreviewGapValue(pageGap);
 
-	if (!visiblePdf) {
-		return (
-			<>
-				<ResumeAccessibleText data={resumeData} />
-				<ResumePreviewLoader
-					pageCount={getResumePreviewPageCount(resumeData)}
-					pageClassName={pageClassName}
-					pageGap={pageGap}
-					pageLayout={pageLayout}
-					pageScale={pageScale}
-					showPageNumbers={showPageNumbers}
-				/>
-			</>
-		);
-	}
-
 	return (
 		<div className={cn("grid", className)}>
 			<ResumeAccessibleText data={resumeData} />
 			<AnimatePresence initial={false}>
+				{!visiblePdf && (
+					// Holds under the first render until it's opaque, then drops out, like any replaced layer.
+					<m.div
+						key="loader"
+						className="col-start-1 row-start-1"
+						exit={{ opacity: 0 }}
+						transition={reducedMotion ? INSTANT_TRANSITION : EXITING_TRANSITION}
+					>
+						<ResumePreviewLoader
+							pageCount={getResumePreviewPageCount(resumeData)}
+							pageClassName={pageClassName}
+							pageGap={pageGap}
+							pageLayout={pageLayout}
+							pageScale={pageScale}
+							showPageNumbers={showPageNumbers}
+						/>
+					</m.div>
+				)}
 				{previewLayers.map((visiblePdf) => (
 					<m.div
 						key={visiblePdf.id}

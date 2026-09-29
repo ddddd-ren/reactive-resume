@@ -239,7 +239,11 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 							notes={[t`file read`, t`${step.sections} sections`, t`${step.entries} entries`]}
 						/>
 						<p role="status" className="flex gap-2 text-[13px] leading-[19px]">
-							<Icon name="check_circle" size={20} className="text-accent-text" />
+							<Icon
+								name="check_circle"
+								size={20}
+								className="starting:scale-80 text-accent-text starting:opacity-0 transition-[opacity,scale] duration-standard ease-enter"
+							/>
 							<span>
 								<Trans>
 									{step.sections} sections and {step.entries} entries found.

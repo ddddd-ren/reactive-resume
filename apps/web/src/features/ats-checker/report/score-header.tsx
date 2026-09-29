@@ -29,10 +29,11 @@ export function ScoreHeader({ report }: ScoreHeaderProps) {
 				</span>
 			</div>
 
+			{/* Fills from empty when the report first shows. The starting --fill needs !important to beat the inline one; it's derived through --fill so RTL still fills from the right. */}
 			<div className="h-1.5 overflow-hidden rounded-full bg-sunken">
 				<div
 					className={cn(
-						"h-full translate-x-(--fill) rounded-full transition-[translate] duration-standard ease-enter rtl:-translate-x-(--fill)",
+						"h-full translate-x-(--fill) rounded-full transition-[translate,background-color] duration-emphasized ease-enter starting:[--fill:-100%]! rtl:-translate-x-(--fill)",
 						tone.bar,
 					)}
 					style={{ "--fill": `${report.score - 100}%` } as CSSProperties}

@@ -6,7 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { stagger } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { computeInsights, computeOutcomes, computeTimeline } from "../insights";
 import { getStageColor, getStageLabel } from "../stages";
@@ -17,6 +19,20 @@ const byNewest = (a: ApplicationTimelineEntry, b: ApplicationTimelineEntry) =>
 const appliedDate = (app: Application) =>
 	[...app.activity].sort(byNewest).find((entry) => entry.type === "stage" && entry.stage === "applied")?.at ??
 	app.appliedAt;
+
+/** The page's shape while stats load: the funnel, the two figures, then the charts. */
+export function InsightsSkeleton() {
+	return (
+		<div className="flex max-w-4xl flex-col gap-4">
+			<Skeleton className="h-56 rounded-xl" />
+			<div className="grid gap-4 sm:grid-cols-2">
+				<Skeleton className="h-[102px] rounded-xl" />
+				<Skeleton className="h-[102px] rounded-xl" />
+			</div>
+			<Skeleton className="h-80 rounded-xl" />
+		</div>
+	);
+}
 
 export function ApplicationInsights({ applications }: { applications: Application[] }) {
 	const { data } = useQuery(orpc.applications.stats.queryOptions({}));
@@ -36,7 +52,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 	);
 	const maxWeek = Math.max(1, ...timeline.map((bucket) => bucket.count));
 
-	if (!data) return <div className="h-40 animate-pulse rounded-xl bg-sunken" />;
+	if (!data) return <InsightsSkeleton />;
 
 	const insights = computeInsights(data.byStage);
 	const maxSource = Math.max(1, ...data.bySource.map((s) => s.count));
@@ -57,7 +73,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 					<Trans>How far applications get</Trans>
 				</h2>
 				<ol className="grid gap-2">
-					{outcomes.funnel.map((row) => (
+					{outcomes.funnel.map((row, index) => (
 						<li key={row.status} className="grid grid-cols-[92px_minmax(0,1fr)_32px] items-center gap-3 text-sm">
 							<span className="flex items-center gap-1.5 text-ink-2">
 								<span
@@ -69,8 +85,12 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 							</span>
 							<span className="h-5 overflow-hidden rounded bg-sunken">
 								<span
-									className="block h-full rounded"
-									style={{ width: `${(row.reached / widest) * 100}%`, background: getStageColor(row.status) }}
+									className="block h-full origin-left starting:scale-x-0 rounded transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right"
+									style={{
+										...stagger(index),
+										width: `${(row.reached / widest) * 100}%`,
+										background: getStageColor(row.status),
+									}}
 								/>
 							</span>
 							<span className="text-end font-display text-base tabular-nums">{row.reached}</span>
@@ -132,13 +152,16 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 						<Trans>Applications sent per week (last 8 weeks)</Trans>
 					</p>
 					<div className="mt-4 flex items-end gap-2">
-						{timeline.map((bucket) => (
+						{timeline.map((bucket, index) => (
 							<div key={bucket.label} className="flex flex-1 flex-col items-center gap-1">
 								<div className="flex h-28 w-full flex-col justify-end">
 									<span className="mb-1 text-center text-[10px] text-ink-3 tabular-nums">{bucket.count || ""}</span>
 									<div
-										className="w-full rounded-t bg-accent"
-										style={{ height: `${bucket.count ? Math.max((bucket.count / maxWeek) * 100, 8) : 0}%` }}
+										className="w-full origin-bottom starting:scale-y-0 rounded-t bg-accent transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0"
+										style={{
+											...stagger(index),
+											height: `${bucket.count ? Math.max((bucket.count / maxWeek) * 100, 8) : 0}%`,
+										}}
 									/>
 								</div>
 								<span className="text-[10px] text-ink-3 tabular-nums">{bucket.label}</span>
@@ -161,13 +184,13 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 								<Trans>No source data yet.</Trans>
 							</p>
 						) : (
-							data.bySource.map((row) => (
+							data.bySource.map((row, index) => (
 								<div key={row.source} className="flex items-center gap-3 text-xs">
 									<span className="w-28 shrink-0 truncate font-medium">{row.source}</span>
 									<div className="h-2.5 flex-1 overflow-hidden rounded-full bg-sunken">
 										<div
-											className="h-full rounded-full bg-ink-2"
-											style={{ width: `${Math.max((row.count / maxSource) * 100, 3)}%` }}
+											className="h-full origin-left starting:scale-x-0 rounded-full bg-ink-2 transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right"
+											style={{ ...stagger(index), width: `${Math.max((row.count / maxSource) * 100, 3)}%` }}
 										/>
 									</div>
 									<span className="w-6 text-right text-ink-3">{row.count}</span>

@@ -9,6 +9,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
+import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tabs, TabsCount, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
 import { useDialogStore } from "@/dialogs/store";
@@ -44,6 +45,13 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	// Grid and list animate in only after a switch, never on the page's first render.
 	const [viewSwitched, setViewSwitched] = useState(false);
 	const { data: documents, isPending } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	// The library staggers in on its first appearance only; cards that appear later (filters, a new document) don't.
+	const [intro, setIntro] = useState(true);
+	useEffect(() => {
+		if (isPending) return;
+		const timeout = setTimeout(() => setIntro(false), INTRO_MS);
+		return () => clearTimeout(timeout);
+	}, [isPending]);
 	const view = search.view ?? readStoredView();
 	const setView = (next: "grid" | "list") => {
 		setViewSwitched(true);
@@ -174,14 +182,25 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 					)}
 
 					{isPending ? (
-						<div className="grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4">
-							{Array.from({ length: 6 }, (_, index) => (
-								<div key={index} className="grid gap-2">
-									<div className="aspect-page animate-pulse rounded-[6px] bg-sunken" />
-									<div className="h-4 w-3/4 animate-pulse rounded bg-sunken" />
-								</div>
-							))}
-						</div>
+						view === "list" ? (
+							<div className="grid">
+								<div className="h-10 border-line border-b" />
+								{Array.from({ length: 6 }, (_, index) => (
+									<div key={index} className="flex h-[45px] items-center border-line border-b ps-3">
+										<Skeleton className="h-4 w-1/3" />
+									</div>
+								))}
+							</div>
+						) : (
+							<div className="grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4">
+								{Array.from({ length: 6 }, (_, index) => (
+									<div key={index} className="grid gap-2">
+										<Skeleton className="aspect-page rounded-[6px]" />
+										<Skeleton className="h-4 w-3/4 rounded" />
+									</div>
+								))}
+							</div>
+						)
 					) : shown.length === 0 ? (
 						<div className="grid justify-items-center gap-2 py-16 text-center">
 							<Icon name="search_off" size={28} className="text-ink-3" />
@@ -229,8 +248,13 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 								</tr>
 							</thead>
 							<tbody>
-								{shown.map((document) => (
-									<DocumentRow key={`${document.type}:${document.id}`} document={document} {...itemProps} />
+								{shown.map((document, index) => (
+									<DocumentRow
+										key={`${document.type}:${document.id}`}
+										document={document}
+										introIndex={intro ? index : undefined}
+										{...itemProps}
+									/>
 								))}
 							</tbody>
 						</table>
@@ -241,8 +265,13 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 								viewEnter,
 							)}
 						>
-							{shown.map((document) => (
-								<DocumentCard key={`${document.type}:${document.id}`} document={document} {...itemProps} />
+							{shown.map((document, index) => (
+								<DocumentCard
+									key={`${document.type}:${document.id}`}
+									document={document}
+									introIndex={intro ? index : undefined}
+									{...itemProps}
+								/>
 							))}
 						</div>
 					)}
@@ -257,6 +286,8 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 }
 
 const VIEW_KEY = "documents-view";
+// Longest stagger (150ms) plus the D2 entrance (200ms), with room to spare: then the intro classes come off.
+const INTRO_MS = 400;
 
 // The last view picked on this device; storage can be unavailable, and then it's the grid.
 function readStoredView(): "grid" | "list" {
@@ -280,7 +311,7 @@ function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
 	const { startBlank, trySample, creating } = useStartDocument();
 
 	return (
-		<section className="grid max-w-xl gap-4 pt-4">
+		<section className="grid max-w-xl starting:translate-y-2 gap-4 pt-4 starting:opacity-0 transition-[opacity,translate] duration-emphasized ease-enter">
 			<h2 className="font-display font-medium text-[26px] leading-8">
 				<Trans>Let's start with what you have</Trans>
 			</h2>

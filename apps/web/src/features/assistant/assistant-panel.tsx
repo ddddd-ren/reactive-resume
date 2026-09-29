@@ -26,6 +26,7 @@ import { formatVersionTime } from "@/features/resume/share/format";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
+import { ENTER_CLASS, stagger } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 import { Composer, Conversation } from "./conversation";
 import { ProviderSetup } from "./provider-setup";
@@ -260,7 +261,8 @@ function ConversationLoader({ threadId, document, ...props }: ConversationLoader
 		);
 	if (!thread.data || !thread.isFetchedAfterMount)
 		return (
-			<div className="grid flex-1 place-items-center">
+			// Hidden for the first 150ms, so a quick refetch never flashes a spinner.
+			<div className="grid flex-1 place-items-center starting:opacity-0 transition-opacity delay-150 duration-standard ease-enter">
 				<Spinner />
 			</div>
 		);
@@ -352,8 +354,8 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 				)}
 			</div>
 			<ul className="grid gap-1">
-				{suggestionsFor(document, prepare).map((suggestion) => (
-					<li key={suggestion.label}>
+				{suggestionsFor(document, prepare).map((suggestion, index) => (
+					<li key={suggestion.label} style={stagger(index)} className={ENTER_CLASS}>
 						<button
 							type="button"
 							disabled={disabled}
@@ -434,9 +436,10 @@ function PastConversations({ threads, document, currentId, onOpen }: PastConvers
 				</h3>
 				{mine.length > 0 ? (
 					<ul className="grid">
-						{mine.map((thread) => (
+						{mine.map((thread, index) => (
 							<ConversationRow
 								key={thread.id}
+								index={index}
 								thread={thread}
 								current={thread.id === currentId}
 								detail={`${formatVersionTime(new Date(thread.lastMessageAt), i18n.locale)} · ${outcome(thread)}`}
@@ -457,9 +460,10 @@ function PastConversations({ threads, document, currentId, onOpen }: PastConvers
 						<Trans>Other documents · {others.length}</Trans>
 					</h3>
 					<ul className="grid">
-						{others.map((thread) => (
+						{others.map((thread, index) => (
 							<ConversationRow
 								key={thread.id}
+								index={mine.length + index}
 								thread={thread}
 								current={false}
 								detail={`${formatVersionTime(new Date(thread.lastMessageAt), i18n.locale)} · ${outcome(thread)} · ${thread.coverLetterName ?? thread.resumeName ?? ""}`}
@@ -478,13 +482,22 @@ type ConversationRowProps = {
 	thread: ThreadSummary;
 	current: boolean;
 	detail: string;
+	index: number;
 	onOpen: () => void;
 	onDelete: () => void;
 };
 
-function ConversationRow({ thread, current, detail, onOpen, onDelete }: ConversationRowProps) {
+function ConversationRow({ thread, current, detail, index, onOpen, onDelete }: ConversationRowProps) {
 	return (
-		<li className="group/row flex items-center gap-1 rounded-lg transition-colors hover:bg-hover">
+		<li
+			style={stagger(index)}
+			// cn keeps the last transition list, so the hover colour is named again after ENTER_CLASS's.
+			className={cn(
+				"group/row flex items-center gap-1 rounded-lg hover:bg-hover",
+				ENTER_CLASS,
+				"transition-[opacity,translate,background-color]",
+			)}
+		>
 			<button
 				type="button"
 				aria-current={current ? "true" : undefined}

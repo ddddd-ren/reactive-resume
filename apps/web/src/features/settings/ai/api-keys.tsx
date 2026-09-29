@@ -15,6 +15,7 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
+import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { authClient } from "@/libs/auth/client";
@@ -89,12 +90,14 @@ export function ApiKeysSection() {
 				</Button>
 			}
 		>
-			{isLoading ? null : keys.length === 0 ? (
-				<p className="rounded-xl border border-line-2 border-dashed p-4 text-ink-2 text-sm">
+			{isLoading ? (
+				<Skeleton className="h-14 rounded-xl" />
+			) : keys.length === 0 ? (
+				<p className="rounded-xl border border-line-2 border-dashed p-4 text-ink-2 text-sm starting:opacity-0 transition-opacity duration-standard ease-enter">
 					<Trans>No keys yet.</Trans>
 				</p>
 			) : (
-				<table className="w-full overflow-hidden rounded-xl text-[13px] outline outline-line max-sm:block">
+				<table className="w-full overflow-hidden rounded-xl text-[13px] starting:opacity-0 outline outline-line transition-opacity duration-standard ease-enter max-sm:block">
 					<thead className="bg-bg text-ink-3 text-xs max-sm:hidden">
 						<tr className="h-9 text-start">
 							<th scope="col" className="ps-3.5 text-start font-medium">

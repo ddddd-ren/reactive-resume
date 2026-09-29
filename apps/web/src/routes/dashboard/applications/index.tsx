@@ -14,6 +14,7 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
@@ -24,7 +25,7 @@ import { ApplicationBoard } from "@/features/applications/components/board";
 import { ApplicationCalendar } from "@/features/applications/components/calendar-view";
 import { ExportApplicationsSheet } from "@/features/applications/components/export-applications-sheet";
 import { ImportApplicationsSheet } from "@/features/applications/components/import-applications-sheet";
-import { ApplicationInsights } from "@/features/applications/components/insights-view";
+import { ApplicationInsights, InsightsSkeleton } from "@/features/applications/components/insights-view";
 import { ApplicationList } from "@/features/applications/components/list-view";
 import { getNextStep } from "@/features/applications/next-step";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -197,7 +198,9 @@ function RouteComponent() {
 						)}
 					</div>
 
-					{noMatches ? (
+					{isPending ? (
+						<ViewSkeleton view={shown} />
+					) : noMatches ? (
 						<div className="grid justify-items-center gap-2 py-16 text-center">
 							<p className="font-medium text-sm">
 								<Trans>No applications match “{query.trim()}”.</Trans>
@@ -210,8 +213,10 @@ function RouteComponent() {
 						<div
 							key={shown}
 							className={cn(
-								viewSwitched &&
-									"starting:translate-y-1 starting:opacity-0 transition-[opacity,translate] duration-standard ease-enter",
+								viewSwitched
+									? "starting:translate-y-1 starting:opacity-0 transition-[opacity,translate] duration-standard ease-enter"
+									: // The list fades in on its first appearance, after its skeleton.
+										shown === "list" && "starting:opacity-0 transition-opacity duration-standard ease-enter",
 							)}
 						>
 							{shown === "list" && (
@@ -331,7 +336,7 @@ function FollowUpNudge({ applications, onOpen }: { applications: Application[]; 
 
 function EmptyState({ onAdd, onImport }: { onAdd: () => void; onImport: () => void }) {
 	return (
-		<div className="grid justify-items-center gap-3 py-20 text-center">
+		<div className="grid starting:translate-y-2 justify-items-center gap-3 py-20 text-center starting:opacity-0 transition-[opacity,translate] duration-emphasized ease-enter">
 			<span className="grid size-12 place-items-center rounded-xl bg-sunken text-ink-2">
 				<Icon name="work" size={26} />
 			</span>
@@ -352,4 +357,18 @@ function EmptyState({ onAdd, onImport }: { onAdd: () => void; onImport: () => vo
 			</div>
 		</div>
 	);
+}
+
+/** Each view's shape while applications load, so the first rows land where the placeholders were. */
+function ViewSkeleton({ view }: { view: View }) {
+	if (view === "insights") return <InsightsSkeleton />;
+	if (view === "list")
+		return (
+			<div className="grid gap-2 pt-10">
+				{Array.from({ length: 6 }, (_, index) => (
+					<Skeleton key={index} className="h-[52px]" />
+				))}
+			</div>
+		);
+	return <Skeleton className="h-[calc(100svh-230px)] min-h-96 rounded-xl" />;
 }
