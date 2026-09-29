@@ -1,5 +1,5 @@
 ---
-version: 2.0-alpha
+version: 6.0.0
 name: Reactive Resume · Desk & Paper
 description: A quiet, warm desk around a bright page. The resume is the only white, detailed object on screen; one moss-green accent marks the next action. Light and dark themes, with the page always white.
 colors:

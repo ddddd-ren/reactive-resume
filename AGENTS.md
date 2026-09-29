@@ -168,7 +168,6 @@ pnpm --filter @reactive-resume/pdf test src/templates/shared/filtering.test.ts
 pnpm --filter @reactive-resume/pdf exec vitest run src/templates/shared/filtering.test.ts -t "filterItems"
 pnpm --filter @reactive-resume/pdf test:coverage
 pnpm exec biome check apps/web/src/features/resume
-pnpm exec markdownlint-cli2 --no-globs AGENTS.md
 pnpm exec turbo boundaries
 ```
 
@@ -199,7 +198,7 @@ pnpm test:e2e:ui
 
 - TypeScript is strict, including `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, and unused-symbol checks; packages typecheck with `tsgo --noEmit`.
 - Biome uses tabs, double quotes, 120-column lines, separated type imports, organized import groups, and sorted Tailwind classes in `clsx`, `cva`, and `cn`. Use existing file naming and feature-local conventions.
-- **`pnpm check` modifies files**: it regenerates PDF translations, runs Biome with `--write --unsafe`, runs Markdown fixes, and checks GitHub Actions syntax. Call out its write behavior and review the diff; use narrow non-mutating commands when inspecting unrelated edits.
+- **`pnpm check` modifies files**: it regenerates PDF translations and runs Biome with `--write --unsafe`. Call out its write behavior and review the diff; use narrow non-mutating commands when inspecting unrelated edits.
 - Lefthook's pre-commit hook checks conflict markers and runs write-capable Biome on supported staged files, staging fixes. The commit-message hook enforces Conventional Commits (`fix:`, `feat:`, `docs:`, etc.).
 
 ## Build and deployment
