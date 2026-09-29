@@ -34,6 +34,7 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		showDownloadButtons: "show_download_buttons",
 		isLocked: "is_locked",
 		password: "password",
+		trashedAt: "trashed_at",
 		updatedAt: "updated_at",
 		createdAt: "created_at",
 	},
@@ -1146,6 +1147,13 @@ describe("statistics.recordDownload", () => {
 			expect(dbMock.transaction).not.toHaveBeenCalled();
 		},
 	);
+
+	it("does not look in Trash for the resume", async () => {
+		const where = vi.fn((_condition: unknown) => Promise.resolve([]));
+		dbMock.select.mockReturnValueOnce({ from: () => ({ innerJoin: () => ({ where }) }) });
+		await expect(resumeService.statistics.recordDownload(input)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect(where.mock.calls[0]?.[0]).toContainEqual(["trashed_at"]);
+	});
 
 	it("requires current password access before recording a download", async () => {
 		selectResume([{ ...publicResume, passwordHash: "hash" }]);

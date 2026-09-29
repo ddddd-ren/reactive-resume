@@ -29,7 +29,7 @@ export type PublicResumePdfDependencies = {
 };
 
 const findResume = async ({ username, slug }: Pick<CreatePublicResumePdfInput, "username" | "slug">) => {
-	const [{ db }, schema, { and, eq }] = await Promise.all([
+	const [{ db }, schema, { and, eq, isNull }] = await Promise.all([
 		import("@reactive-resume/db/client"),
 		import("@reactive-resume/db/schema"),
 		import("drizzle-orm"),
@@ -44,7 +44,7 @@ const findResume = async ({ username, slug }: Pick<CreatePublicResumePdfInput, "
 		})
 		.from(schema.resume)
 		.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-		.where(and(eq(schema.resume.slug, slug), eq(schema.user.username, username)));
+		.where(and(eq(schema.resume.slug, slug), eq(schema.user.username, username), isNull(schema.resume.trashedAt)));
 	return resume ?? null;
 };
 

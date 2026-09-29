@@ -2,6 +2,19 @@ import { describe, expect, it, vi } from "vitest";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { createPublicResumePdf } from "./public-pdf";
 
+// The default lookup runs its real query against a stand-in `pg` client that records the SQL and finds nothing.
+const queries = vi.hoisted(() => [] as string[]);
+vi.mock("@reactive-resume/db/client", async () => {
+	const { drizzle } = await import("drizzle-orm/node-postgres");
+	const client = {
+		query: ({ text }: { text: string }) => {
+			queries.push(text);
+			return Promise.resolve({ rows: [] });
+		},
+	};
+	return { db: drizzle({ client: client as never }) };
+});
+
 const requestHeaders = new Headers({ "x-forwarded-for": "203.0.113.7" });
 const input = {
 	username: "jane",
@@ -38,6 +51,11 @@ describe("createPublicResumePdf", () => {
 		await expect(createPublicResumePdf(input, passwordDependencies)).rejects.toMatchObject({ code: "NEED_PASSWORD" });
 		expect(passwordDependencies.rateLimiter.consume).not.toHaveBeenCalled();
 		expect(passwordDependencies.renderPdf).not.toHaveBeenCalled();
+	});
+
+	it("does not look in Trash, so a trashed resume's link stops serving its PDF", async () => {
+		await expect(createPublicResumePdf(input)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect(queries.at(-1)).toContain('"resume"."trashed_at" is null');
 	});
 
 	it("rejects renderer-unsafe stored data before budget or rendering", async () => {
