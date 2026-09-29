@@ -14,9 +14,14 @@ import { useEditorStore } from "../store";
 import { WritePanel } from "./write-panel";
 
 const routerParams = vi.hoisted(() => ({ resumeId: "write-panel" }));
+const router = vi.hoisted(() => ({ search: {} as Record<string, unknown>, navigate: vi.fn() }));
 const toastState = vi.hoisted(() => ({ add: vi.fn() }));
 
-vi.mock("@tanstack/react-router", () => ({ useParams: () => routerParams, useNavigate: () => vi.fn() }));
+vi.mock("@tanstack/react-router", () => ({
+	useParams: () => routerParams,
+	useNavigate: () => router.navigate,
+	useSearch: () => router.search,
+}));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		resume: {
@@ -40,6 +45,8 @@ afterEach(() => {
 	cleanup();
 	useEditorStore.getState().reset();
 	toastState.add.mockClear();
+	router.search = {};
+	router.navigate.mockClear();
 });
 
 function renderPanel(edit?: (data: ResumeData) => void) {
@@ -133,5 +140,35 @@ describe("WritePanel", () => {
 		fireEvent.click(within(sectionRow("skills")).getByRole("button", { name: "Show Skills on the page" }));
 
 		expect(data().sections.skills.hidden).toBe(false);
+	});
+
+	it("says what an import brought in, keeps count of fields to check, and dismisses", () => {
+		router.search = { imported: "resume.pdf" };
+		renderPanel((draft) => {
+			const [first] = draft.sections.experience.items;
+			if (first)
+				first.dates = {
+					start: first.dates?.start ?? null,
+					end: first.dates?.end ?? null,
+					present: first.dates?.present ?? false,
+					raw: "Summer 2016",
+				};
+		});
+
+		const note = document.querySelector('[role="status"]') as HTMLElement;
+		expect(note.textContent).toContain("Imported from resume.pdf.");
+		expect(note.textContent).toContain("1 field needs a look.");
+		expect(within(sectionRow("experience")).getByText("1 to check")).toBeInTheDocument();
+
+		fireEvent.click(document.querySelector('button[aria-label="Dismiss"]') as HTMLElement);
+		expect(router.navigate).toHaveBeenCalledWith(expect.objectContaining({ replace: true }));
+		const [options] = router.navigate.mock.calls[0] ?? [];
+		const { search } = options as { search: (previous: object) => object };
+		expect(search({ imported: "resume.pdf", mode: "design" })).toEqual({ imported: undefined, mode: "design" });
+	});
+
+	it("shows no import note on an ordinary visit", () => {
+		renderPanel();
+		expect(document.body.textContent).not.toContain("Imported from");
 	});
 });

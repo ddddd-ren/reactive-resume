@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -18,7 +19,7 @@ import { orpc } from "@/libs/orpc/client";
 import { useEditorStore } from "../store";
 import { AddSectionMenu, StartSuggestions } from "./add-section";
 import { BasicsCard } from "./basics-card";
-import { getOutlineRows } from "./model";
+import { getOutlineRows, summarizeContent } from "./model";
 import { Outline } from "./outline";
 
 /**
@@ -38,6 +39,7 @@ export function WritePanel() {
 	return (
 		<div className="grid gap-4 p-4">
 			{locked && <LockedNote />}
+			<ImportedNote />
 
 			<BasicsCard locked={locked} />
 
@@ -64,6 +66,50 @@ export function WritePanel() {
 				<Trans>Hidden sections keep their content but aren't printed or shared. Fields save as you type.</Trans>
 			</p>
 		</div>
+	);
+}
+
+/**
+ * After an import (D2): what came in, and how many entries still ask for a look. The counts follow the resume,
+ * so the note keeps up as flags are cleared; it stays until dismissed.
+ */
+function ImportedNote() {
+	const { imported } = useSearch({ strict: false }) as { imported?: string };
+	const navigate = useNavigate();
+	const data = useCurrentBuilderResumeSelector((resume) => resume.data);
+	const { sections, entries, toCheck } = useMemo(() => summarizeContent(data), [data]);
+	if (!imported) return null;
+
+	const dismiss = () =>
+		void navigate({
+			to: ".",
+			search: (previous: Record<string, unknown>) => ({ ...previous, imported: undefined }),
+			replace: true,
+		});
+
+	return (
+		<Alert variant="success" className="items-start">
+			<Icon name="check_circle" size={20} />
+			<AlertDescription className="flex items-start justify-between gap-3">
+				<span role="status">
+					<Trans>Imported from {imported}.</Trans> <Plural value={sections} one="# section" other="# sections" />,{" "}
+					<Plural value={entries} one="# entry" other="# entries" />.{" "}
+					{toCheck > 0 ? (
+						<Plural value={toCheck} one="# field needs a look." other="# fields need a look." />
+					) : (
+						<Trans>Everything was read clearly.</Trans>
+					)}
+				</span>
+				<button
+					type="button"
+					aria-label={t`Dismiss`}
+					onClick={dismiss}
+					className="-m-1.5 flex size-8 shrink-0 items-center justify-center rounded-md hover:bg-hover"
+				>
+					<Icon name="close" size={18} />
+				</button>
+			</AlertDescription>
+		</Alert>
 	);
 }
 

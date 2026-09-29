@@ -40,6 +40,8 @@ type Step =
 	| { name: "failed"; file: File; message: string }
 	| { name: "copy" };
 
+type OpenResumeOptions = { withAssistant?: boolean; importedFrom?: string };
+
 const ACCEPT = ".pdf,.doc,.docx,.json,.zip,application/pdf,application/json,application/zip";
 
 const formatSize = (bytes: number) =>
@@ -61,12 +63,15 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	const refreshDocuments = () => queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 
 	// A copy made for a job opens with the assistant ready to tailor it.
-	const openResume = (resumeId: string, withAssistant = false) => {
+	const openResume = (resumeId: string, { withAssistant = false, importedFrom }: OpenResumeOptions = {}) => {
 		closeDialog();
 		void navigate({
 			to: "/builder/$resumeId",
 			params: { resumeId },
-			search: withAssistant ? { assistant: "new" } : {},
+			search: {
+				...(withAssistant ? { assistant: "new" } : {}),
+				...(importedFrom ? { imported: importedFrom } : {}),
+			},
 		});
 	};
 	const openLetter = (coverLetterId: string) => {
@@ -170,7 +175,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 					onCreated={(resumeId, forJob) => {
 						markNew(resumeId);
 						void refreshDocuments();
-						openResume(resumeId, forJob);
+						openResume(resumeId, { withAssistant: forJob });
 					}}
 				/>
 			</DialogContent>
@@ -245,7 +250,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 							<Button variant="secondary" onClick={closeDialog}>
 								<Trans>Stay here</Trans>
 							</Button>
-							<Button onClick={() => openResume(step.resumeId)}>
+							<Button onClick={() => openResume(step.resumeId, { importedFrom: step.file.name })}>
 								<Trans>Open in editor</Trans>
 							</Button>
 						</div>

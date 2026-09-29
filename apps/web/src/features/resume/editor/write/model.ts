@@ -218,6 +218,21 @@ export function countEntriesToCheck(entries: readonly Entry[]): number {
 	return count;
 }
 
+/** What an import brought in, as the editor shows it now: sections, their entries, and entries still to check. */
+export function summarizeContent(data: Data): { sections: number; entries: number; toCheck: number } {
+	const rows = getOutlineRows(data);
+	let entries = 0;
+	let toCheck = 0;
+	for (const row of rows) {
+		const section = resolveSection(data, row.id);
+		if (!section || section.kind === "summary") continue;
+		const items = getEntries(data, section);
+		entries += items.length;
+		toCheck += countEntriesToCheck(items);
+	}
+	return { sections: rows.length, entries, toCheck };
+}
+
 /** Sections that have something in them. The rest wait in Add section. Custom sections always count. */
 export function isSectionInUse(data: Data, id: string, recentlyAdded: ReadonlySet<string> = new Set()): boolean {
 	if (recentlyAdded.has(id)) return true;
