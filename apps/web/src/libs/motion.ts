@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { MotionGlobalConfig } from "motion/react";
 
 // Motion (JS) mirrors of the CSS motion tokens in packages/ui/src/styles/globals.css (--d1/--d2/--d3, --ease,
 // --ease-in-out-strong). Durations are in seconds, Motion's unit; multiply by 1000 for APIs that take ms (dnd-kit).
@@ -45,3 +46,16 @@ export const stagger = (index: number) => ({ "--stagger": `${Math.min(index, 5) 
 
 /** A status icon arriving in place (a success check, a spinner taking its slot): fades and scales up from 90% over D1. */
 export const POP_CLASS = "starting:scale-90 starting:opacity-0 transition-[opacity,scale] duration-quick ease-enter";
+
+/**
+ * Reduced motion makes every duration instant (DESIGN.md, Motion). The CSS tokens drop to 1ms; Motion's own
+ * `reducedMotion="user"` only drops transforms and still fades, so its animations are made instant here as well.
+ */
+export function followReducedMotion() {
+	const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+	const apply = () => {
+		MotionGlobalConfig.instantAnimations = query.matches;
+	};
+	apply();
+	query.addEventListener("change", apply);
+}
