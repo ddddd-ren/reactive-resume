@@ -51,10 +51,4 @@ function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
 	);
 }
 
-function PopoverDescription({ className, ...props }: PopoverPrimitive.Description.Props) {
-	return (
-		<PopoverPrimitive.Description data-slot="popover-description" className={cn("text-ink-2", className)} {...props} />
-	);
-}
-
-export { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger };
+export { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger };

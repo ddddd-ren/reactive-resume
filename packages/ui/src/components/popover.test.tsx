@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from "./popover";
+import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from "./popover";
 
 describe("Popover", () => {
 	it("trigger element has data-slot='popover-trigger'", () => {
@@ -75,20 +75,6 @@ describe("PopoverTitle", () => {
 			</Popover>,
 		);
 		expect(screen.getByText("My title")).toHaveAttribute("data-slot", "popover-title");
-	});
-});
-
-describe("PopoverDescription", () => {
-	it("uses data-slot='popover-description'", () => {
-		render(
-			<Popover open>
-				<PopoverTrigger>Open</PopoverTrigger>
-				<PopoverContent>
-					<PopoverDescription>My description</PopoverDescription>
-				</PopoverContent>
-			</Popover>,
-		);
-		expect(screen.getByText("My description")).toHaveAttribute("data-slot", "popover-description");
 	});
 });
 

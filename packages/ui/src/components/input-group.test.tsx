@@ -3,14 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, test } from "vitest";
 import { createPortal } from "react-dom";
 import { FormControl, FormItem, FormLabel } from "./form";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupButton,
-	InputGroupInput,
-	InputGroupText,
-	InputGroupTextarea,
-} from "./input-group";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText } from "./input-group";
 
 function PortaledInput() {
 	return createPortal(<input aria-label="Portaled input" />, document.body);
@@ -201,14 +194,5 @@ describe("InputGroupInput", () => {
 	it("uses data-slot='input-group-control'", () => {
 		render(<InputGroupInput data-testid="i" />);
 		expect(screen.getByTestId("i")).toHaveAttribute("data-slot", "input-group-control");
-	});
-});
-
-describe("InputGroupTextarea", () => {
-	it("uses data-slot='input-group-control' and renders textarea", () => {
-		render(<InputGroupTextarea data-testid="t" />);
-		const t = screen.getByTestId("t");
-		expect(t.tagName).toBe("TEXTAREA");
-		expect(t).toHaveAttribute("data-slot", "input-group-control");
 	});
 });

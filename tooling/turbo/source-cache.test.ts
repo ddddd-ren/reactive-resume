@@ -7,7 +7,7 @@ import { afterAll, beforeAll, expect, it } from "vitest";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const turbo = join(root, "node_modules", "turbo", "bin", "turbo");
-const tasks = ["build", "check", "typecheck", "test", "test:coverage", "test:ci", "test:agent"];
+const tasks = ["build", "typecheck", "test", "test:coverage", "test:ci", "test:agent"];
 type DryTask = { taskId: string; task: string; hash: string; command: string; dependencies: string[] };
 let directory: string;
 let baseline: Map<string, DryTask>;

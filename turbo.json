@@ -119,9 +119,6 @@
 			"outputs": ["dist/**", ".vercel/**"],
 			"dependsOn": ["transit"]
 		},
-		"check": {
-			"dependsOn": ["transit"]
-		},
 		"typecheck": {
 			"dependsOn": ["transit"]
 		},
@@ -133,9 +130,6 @@
 		},
 		"test:ci": {
 			"dependsOn": ["transit"]
-		},
-		"test:e2e": {
-			"cache": false
 		},
 		"test:agent": {
 			"dependsOn": ["transit"]

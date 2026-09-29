@@ -1,6 +1,7 @@
 import type { CoverLetter, CoverLetterStyle } from "@reactive-resume/schema/cover-letter/data";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { escapeHtml } from "@reactive-resume/utils/string";
 
 export function copyCoverLetterStyle(
 	data: ResumeData,
@@ -78,14 +79,6 @@ export function detachEmbeddedLetters(data: ResumeData): EmbeddedLetter[] {
 		}),
 	);
 }
-
-const escapeHtml = (text: string) =>
-	text
-		.replaceAll("&", "&amp;")
-		.replaceAll("<", "&lt;")
-		.replaceAll(">", "&gt;")
-		.replaceAll('"', "&quot;")
-		.replaceAll("'", "&#39;");
 
 export function coverLetterTextToHtml(text: string): string {
 	return text

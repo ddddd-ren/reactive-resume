@@ -67,10 +67,6 @@ export function isLocale(value: unknown): value is Locale {
 	return localeSchema.safeParse(value).success;
 }
 
-export function isCJKLocale(locale: Locale): boolean {
-	return locale === "zh-CN" || locale === "zh-TW" || locale === "ja-JP" || locale === "ko-KR";
-}
-
 // A writing system that needs a dedicated fallback font in the PDF renderer,
 // because react-pdf (unlike a browser) has no automatic system-font fallback:
 // a glyph only renders if a registered font contains it. We pick the matching

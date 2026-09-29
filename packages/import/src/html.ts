@@ -1,3 +1,4 @@
+import { escapeHtml } from "@reactive-resume/utils/string";
 /**
  * Converts a summary string and optional highlights array into an HTML description.
  * Summary becomes a <p> tag, highlights become a <ul> list.
@@ -31,14 +32,6 @@ export function arrayToHtmlList(items: string[]): string {
 }
 
 export const BULLET_PATTERN = /^\s*[-–—•*◦‣·]\s+/;
-
-const escapeHtml = (value: string) =>
-	value
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&#39;");
 
 /**
  * Converts plain-text lines into escaped HTML: a <ul> when most lines are bullets, otherwise one <p> per line.

@@ -1,4 +1,5 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { escapeHtml } from "@reactive-resume/utils/string";
 
 /**
  * Suggested edits to a document's text, shared by Check, the assistant and Improve. A proposal replaces one passage
@@ -100,9 +101,6 @@ export function splitBlock(html: string) {
 	const match = BLOCK.exec(html);
 	return match ? { open: match[1] ?? "", inner: match[3] ?? "", close: match[4] ?? "" } : undefined;
 }
-
-const escapeHtml = (text: string) =>
-	text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /**
  * The block with its text replaced by plain text (a model's rewrite), keeping the tag and its attributes. An empty

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "./avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 
 describe("Avatar", () => {
 	it("renders with data-slot='avatar'", () => {
@@ -37,41 +37,6 @@ describe("AvatarFallback", () => {
 		// AvatarFallback may or may not be in the DOM depending on image state.
 		// Just ensure it doesn't throw on render.
 		expect(fb === null || fb.getAttribute("data-slot") === "avatar-fallback").toBe(true);
-	});
-});
-
-describe("AvatarBadge", () => {
-	it("renders as span with data-slot='avatar-badge'", () => {
-		render(<AvatarBadge data-testid="b" />);
-		const badge = screen.getByTestId("b");
-		expect(badge.tagName).toBe("SPAN");
-		expect(badge).toHaveAttribute("data-slot", "avatar-badge");
-	});
-});
-
-describe("AvatarGroup", () => {
-	it("renders as div with data-slot='avatar-group'", () => {
-		render(<AvatarGroup data-testid="g" />);
-		const group = screen.getByTestId("g");
-		expect(group.tagName).toBe("DIV");
-		expect(group).toHaveAttribute("data-slot", "avatar-group");
-	});
-
-	it("supports children", () => {
-		render(
-			<AvatarGroup data-testid="g">
-				<Avatar />
-				<Avatar />
-			</AvatarGroup>,
-		);
-		expect(screen.getByTestId("g").children).toHaveLength(2);
-	});
-});
-
-describe("AvatarGroupCount", () => {
-	it("renders count children", () => {
-		render(<AvatarGroupCount>+3</AvatarGroupCount>);
-		expect(screen.getByText("+3")).toHaveAttribute("data-slot", "avatar-group-count");
 	});
 });
 

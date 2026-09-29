@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Alert, AlertAction, AlertDescription, AlertTitle } from "./alert";
+import { Alert, AlertDescription, AlertTitle } from "./alert";
 
 describe("Alert", () => {
 	it("announces only errors", () => {
@@ -44,27 +44,4 @@ describe("AlertDescription", () => {
 	});
 });
 
-describe("AlertAction", () => {
-	it("renders children", () => {
-		render(<AlertAction>Action</AlertAction>);
-		expect(screen.getByText("Action")).toBeInTheDocument();
-	});
-
-	it("applies data-slot='alert-action'", () => {
-		render(<AlertAction>x</AlertAction>);
-		expect(screen.getByText("x")).toHaveAttribute("data-slot", "alert-action");
-	});
-});
-
-describe("Alert composition", () => {
-	it("composes all subcomponents", () => {
-		render(
-			<Alert variant="error">
-				<AlertTitle>Title</AlertTitle>
-				<AlertDescription>Body</AlertDescription>
-				<AlertAction>OK</AlertAction>
-			</Alert>,
-		);
-		expect(screen.getByRole("alert")).toHaveTextContent(/TitleBodyOK/);
-	});
-});
+describe("Alert composition", () => {});

@@ -4,7 +4,6 @@ import { cva } from "class-variance-authority";
 import { Button } from "@reactive-resume/ui/components/button";
 import { useFormControl } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
-import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { cn } from "@reactive-resume/utils/style";
 
 function InputGroup({
@@ -161,31 +160,4 @@ function InputGroupInput({
 	);
 }
 
-function InputGroupTextarea({
-	className,
-	id: idProp,
-	"aria-describedby": ariaDescribedByProp,
-	"aria-invalid": ariaInvalidProp,
-	...props
-}: React.ComponentProps<"textarea">) {
-	const formControl = useFormControl();
-	const controlId = idProp ?? formControl.id;
-	const describedBy = ariaDescribedByProp ?? formControl["aria-describedby"];
-	const invalid = ariaInvalidProp ?? formControl["aria-invalid"];
-
-	return (
-		<Textarea
-			data-slot="input-group-control"
-			id={controlId}
-			aria-describedby={describedBy}
-			aria-invalid={invalid}
-			className={cn(
-				"flex-1 resize-none rounded-none border-0 bg-transparent py-2 shadow-none focus:shadow-none disabled:bg-transparent aria-invalid:focus:shadow-none",
-				className,
-			)}
-			{...props}
-		/>
-	);
-}
-
-export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea };
+export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText };
