@@ -2,9 +2,9 @@
  * The style contract templates are written against. Vendored from @react-pdf/stylesheet 6.3.2 (MIT, © Diego
  * Muracciole) when the engine moved to Forme, so templates keep their types; `forme/style.ts` maps it to Forme.
  */
-export type Percentage = `${string}%`;
-export type BorderStyleValue = "dashed" | "dotted" | "solid";
-export type BorderShorthandStyle = {
+type Percentage = `${string}%`;
+type BorderStyleValue = "dashed" | "dotted" | "solid";
+type BorderShorthandStyle = {
 	border?: number | string;
 	borderTop?: number | string;
 	borderRight?: number | string;
@@ -15,7 +15,7 @@ export type BorderShorthandStyle = {
 	borderStyle?: BorderStyleValue;
 	borderWidth?: number | string;
 };
-export type BorderExpandedStyle = {
+type BorderExpandedStyle = {
 	borderTopColor?: string;
 	borderTopStyle?: BorderStyleValue;
 	borderTopWidth?: number | string;
@@ -33,21 +33,11 @@ export type BorderExpandedStyle = {
 	borderBottomRightRadius?: number | string;
 	borderBottomLeftRadius?: number | string;
 };
-export type BorderSafeStyle = BorderExpandedStyle & {
-	borderTopWidth?: number;
-	borderRightWidth?: number;
-	borderBottomWidth?: number;
-	borderLeftWidth?: number;
-	borderTopLeftRadius?: number | Percentage;
-	borderTopRightRadius?: number | Percentage;
-	borderBottomRightRadius?: number | Percentage;
-	borderBottomLeftRadius?: number | Percentage;
-};
-export type BorderStyle = BorderShorthandStyle & BorderExpandedStyle;
-export type FlexboxShorthandStyle = {
+type BorderStyle = BorderShorthandStyle & BorderExpandedStyle;
+type FlexboxShorthandStyle = {
 	flex?: number | string;
 };
-export type AlignContent =
+type AlignContent =
 	| "flex-start"
 	| "flex-end"
 	| "center"
@@ -55,13 +45,13 @@ export type AlignContent =
 	| "space-between"
 	| "space-around"
 	| "space-evenly";
-export type AlignItems = "flex-start" | "flex-end" | "center" | "stretch" | "baseline";
-export type AlignSelf = "auto" | "flex-start" | "flex-end" | "center" | "baseline" | "stretch";
-export type FlexDirection = "row" | "row-reverse" | "column" | "column-reverse";
-export type FlexWrap = "nowrap" | "wrap" | "wrap-reverse";
-export type JustifyContent = "flex-start" | "flex-end" | "center" | "space-around" | "space-between" | "space-evenly";
-export type JustifySelf = string;
-export type FlexboxExpandedStyle = {
+type AlignItems = "flex-start" | "flex-end" | "center" | "stretch" | "baseline";
+type AlignSelf = "auto" | "flex-start" | "flex-end" | "center" | "baseline" | "stretch";
+type FlexDirection = "row" | "row-reverse" | "column" | "column-reverse";
+type FlexWrap = "nowrap" | "wrap" | "wrap-reverse";
+type JustifyContent = "flex-start" | "flex-end" | "center" | "space-around" | "space-between" | "space-evenly";
+type JustifySelf = string;
+type FlexboxExpandedStyle = {
 	alignContent?: AlignContent;
 	alignItems?: AlignItems;
 	alignSelf?: AlignSelf;
@@ -74,80 +64,62 @@ export type FlexboxExpandedStyle = {
 	justifySelf?: JustifySelf;
 	justifyContent?: JustifyContent;
 };
-export type FlexboxSafeStyle = FlexboxExpandedStyle & {
-	flexGrow?: number;
-	flexShrink?: number;
-};
-export type FlexboxStyle = FlexboxShorthandStyle & FlexboxExpandedStyle;
-export type GapShorthandStyle = {
+type FlexboxStyle = FlexboxShorthandStyle & FlexboxExpandedStyle;
+type GapShorthandStyle = {
 	gap?: number | string;
 };
-export type GapExpandedStyle = {
+type GapExpandedStyle = {
 	rowGap?: number | string;
 	columnGap?: number | string;
 };
-export type GapSafeStyle = {
-	rowGap?: number | string;
-	columnGap?: number | string;
-};
-export type GapStyle = GapShorthandStyle & GapExpandedStyle;
-export type PositionShorthandStyle = {
+type GapStyle = GapShorthandStyle & GapExpandedStyle;
+type PositionShorthandStyle = {
 	objectPosition?: number | string;
 };
-export type PositionExpandedStyle = {
+type PositionExpandedStyle = {
 	objectPositionX?: number | string;
 	objectPositionY?: number | string;
 	objectFit?: string;
 };
-export type PositionSafeStyle = PositionExpandedStyle & {
-	objectPositionX?: number;
-	objectPositionY?: number;
-};
-export type PositioningStyle = PositionShorthandStyle & PositionExpandedStyle;
-export type ScaleTransform = {
+type PositioningStyle = PositionShorthandStyle & PositionExpandedStyle;
+type ScaleTransform = {
 	operation: "scale";
 	value: [number, number];
 };
-export type TranslateTransform = {
+type TranslateTransform = {
 	operation: "translate";
 	value: [number, number];
 };
-export type RotateTransform = {
+type RotateTransform = {
 	operation: "rotate";
 	value: [number, number, number];
 };
-export type SkewTransform = {
+type SkewTransform = {
 	operation: "skew";
 	value: [number, number];
 };
-export type MatrixTransform = {
+type MatrixTransform = {
 	operation: "matrix";
 	value: [number, number, number, number, number, number];
 };
-export type Transform = ScaleTransform | TranslateTransform | RotateTransform | SkewTransform | MatrixTransform;
-export type TransformShorthandStyle = {
+type Transform = ScaleTransform | TranslateTransform | RotateTransform | SkewTransform | MatrixTransform;
+type TransformShorthandStyle = {
 	transformOrigin?: number | string;
 };
-export type TransformExpandedStyle = {
+type TransformExpandedStyle = {
 	transformOriginX?: number | string;
 	transformOriginY?: number | string;
 	transform?: string | Transform[];
 	gradientTransform?: string | Transform[];
 };
-export type TransformSafeStyle = Omit<TransformExpandedStyle, "transform"> & {
-	transformOriginX?: number | Percentage;
-	transformOriginY?: number | Percentage;
-	transform?: Transform[];
-	gradientTransform?: Transform[];
-};
-export type TransformStyle = TransformShorthandStyle & TransformExpandedStyle;
-export type Display = "flex" | "none";
-export type Position = "absolute" | "relative" | "static";
-export type Float = "left" | "right" | "none";
-export type Clear = Float | "both";
-export type ShapeScalar = number | Percentage;
-export type ShapeRadius = ShapeScalar | "closest-side" | "farthest-side";
-export type ShapeOutside =
+type TransformStyle = TransformShorthandStyle & TransformExpandedStyle;
+type Display = "flex" | "none";
+type Position = "absolute" | "relative" | "static";
+type Float = "left" | "right" | "none";
+type Clear = Float | "both";
+type ShapeScalar = number | Percentage;
+type ShapeRadius = ShapeScalar | "closest-side" | "farthest-side";
+type ShapeOutside =
 	| {
 			type: "circle";
 			cx: ShapeScalar;
@@ -175,7 +147,7 @@ export type ShapeOutside =
 			bottom: ShapeScalar;
 			left: ShapeScalar;
 	  };
-export type LayoutStyle = {
+type LayoutStyle = {
 	aspectRatio?: number | string;
 	bottom?: number | string;
 	clear?: Clear;
@@ -189,19 +161,7 @@ export type LayoutStyle = {
 	overflow?: "hidden";
 	zIndex?: number | string;
 };
-export type LayoutExpandedStyle = LayoutStyle;
-export type LayoutSafeStyle = LayoutExpandedStyle & {
-	aspectRatio?: number;
-	bottom?: number;
-	clear?: Clear;
-	float?: Float;
-	left?: number;
-	right?: number;
-	shapeOutside?: ShapeOutside;
-	top?: number;
-	zIndex?: number;
-};
-export type DimensionStyle = {
+type DimensionStyle = {
 	height?: number | string;
 	maxHeight?: number | string;
 	maxWidth?: number | string;
@@ -209,28 +169,13 @@ export type DimensionStyle = {
 	minWidth?: number | string;
 	width?: number | string;
 };
-export type DimensionExpandedStyle = DimensionStyle;
-export type DimensionSafeStyle = DimensionExpandedStyle & {
-	height?: number | Percentage;
-	maxHeight?: number | Percentage;
-	maxWidth?: number | Percentage;
-	minHeight?: number | Percentage;
-	minWidth?: number | Percentage;
-	width?: number | Percentage;
-};
-export type ColorStyle = {
+type ColorStyle = {
 	backgroundColor?: string;
 	color?: string;
 	opacity?: number | string;
 };
-export type ColorExpandedStyle = ColorStyle;
-export type ColorSafeStyle = {
-	backgroundColor?: string;
-	color?: string;
-	opacity?: number;
-};
-export type FontStyle = "normal" | "italic" | "oblique";
-export type FontWeight =
+type FontStyle = "normal" | "italic" | "oblique";
+type FontWeight =
 	| string
 	| number
 	| "thin"
@@ -247,17 +192,12 @@ export type FontWeight =
 	| "extrabold"
 	| "heavy"
 	| "black";
-export type TextAlign = "left" | "right" | "center" | "justify";
-export type TextDecoration =
-	| "line-through"
-	| "underline"
-	| "none"
-	| "line-through underline"
-	| "underline line-through";
-export type TextDecorationStyle = "dashed" | "dotted" | "solid" | string;
-export type TextTransform = "capitalize" | "lowercase" | "uppercase" | "upperfirst" | "none";
-export type VerticalAlign = "sub" | "super";
-export type FontFeatureSetting =
+type TextAlign = "left" | "right" | "center" | "justify";
+type TextDecoration = "line-through" | "underline" | "none" | "line-through underline" | "underline line-through";
+type TextDecorationStyle = "dashed" | "dotted" | "solid" | string;
+type TextTransform = "capitalize" | "lowercase" | "uppercase" | "upperfirst" | "none";
+type VerticalAlign = "sub" | "super";
+type FontFeatureSetting =
 	| "liga"
 	| "dlig"
 	| "onum"
@@ -285,9 +225,8 @@ export type FontFeatureSetting =
 	| "mark"
 	| "mkmk"
 	| (string & {});
-export type FontFeatureSettings = FontFeatureSetting[] | Partial<Record<FontFeatureSetting, number | boolean>>;
-export type SafeFontFeatureSettings = Record<string, boolean>;
-export type TextStyle = {
+type FontFeatureSettings = FontFeatureSetting[] | Partial<Record<FontFeatureSetting, number | boolean>>;
+type TextStyle = {
 	direction?: "ltr" | "rtl";
 	fontSize?: number | string;
 	fontFamily?: string | string[];
@@ -306,50 +245,30 @@ export type TextStyle = {
 	textTransform?: TextTransform;
 	verticalAlign?: VerticalAlign;
 };
-export type TextExpandedStyle = TextStyle;
-export type TextSafeStyle = TextExpandedStyle & {
-	fontSize?: number;
-	fontWeight?: number;
-	fontFeatureSettings?: SafeFontFeatureSettings;
-	letterSpacing?: number;
-	lineHeight?: number;
-};
-export type MarginShorthandStyle = {
+type MarginShorthandStyle = {
 	margin?: number | string;
 	marginHorizontal?: number | string;
 	marginVertical?: number | string;
 };
-export type MarginExpandedStyle = {
+type MarginExpandedStyle = {
 	marginTop?: number | string;
 	marginRight?: number | string;
 	marginBottom?: number | string;
 	marginLeft?: number | string;
 };
-export type MarginSafeStyle = MarginExpandedStyle & {
-	marginTop?: number | Percentage;
-	marginRight?: number | Percentage;
-	marginBottom?: number | Percentage;
-	marginLeft?: number | Percentage;
-};
-export type MarginStyle = MarginShorthandStyle & MarginExpandedStyle;
-export type PaddingShorthandStyle = {
+type MarginStyle = MarginShorthandStyle & MarginExpandedStyle;
+type PaddingShorthandStyle = {
 	padding?: number | string;
 	paddingHorizontal?: number | string;
 	paddingVertical?: number | string;
 };
-export type PaddingExpandedStyle = {
+type PaddingExpandedStyle = {
 	paddingTop?: number | string;
 	paddingRight?: number | string;
 	paddingBottom?: number | string;
 	paddingLeft?: number | string;
 };
-export type PaddingSafeStyle = PaddingExpandedStyle & {
-	paddingTop?: number | Percentage;
-	paddingRight?: number | Percentage;
-	paddingBottom?: number | Percentage;
-	paddingLeft?: number | Percentage;
-};
-export type PaddingStyle = PaddingShorthandStyle & PaddingExpandedStyle;
+type PaddingStyle = PaddingShorthandStyle & PaddingExpandedStyle;
 interface SvgStyle {
 	fill?: string;
 	stroke?: string;
@@ -372,13 +291,7 @@ interface SvgStyle {
 		| "text-after-edge"
 		| "text-before-edge";
 }
-export type SvgExpandedStyle = SvgStyle;
-export type SvgSafeStyle = SvgStyle & {
-	strokeWidth?: number;
-	fillOpacity?: number;
-	strokeOpacity?: number;
-};
-export type BaseStyle = BorderStyle &
+type BaseStyle = BorderStyle &
 	ColorStyle &
 	DimensionStyle &
 	FlexboxStyle &
@@ -390,22 +303,9 @@ export type BaseStyle = BorderStyle &
 	TextStyle &
 	TransformStyle &
 	SvgStyle;
-export type MediaQueryStyle = {
+type MediaQueryStyle = {
 	[key in `@media${string}`]: BaseStyle;
 };
 export type Style = BaseStyle & MediaQueryStyle;
-export type RecursiveArray<T> = Array<T | ReadonlyArray<T> | RecursiveArray<T>>;
+type RecursiveArray<T> = Array<T | ReadonlyArray<T> | RecursiveArray<T>>;
 export type StyleProp = Style | Style[] | RecursiveArray<Style | Style[] | undefined>;
-export type StyleKey = keyof BaseStyle;
-export type ExpandedStyle = BorderExpandedStyle &
-	ColorExpandedStyle &
-	DimensionExpandedStyle &
-	FlexboxExpandedStyle &
-	GapExpandedStyle &
-	LayoutExpandedStyle &
-	MarginExpandedStyle &
-	PaddingExpandedStyle &
-	PositionExpandedStyle &
-	TextExpandedStyle &
-	TransformExpandedStyle &
-	SvgExpandedStyle;

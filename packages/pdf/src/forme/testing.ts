@@ -11,6 +11,7 @@ import { renderResumeElement } from "./render";
  * `pdf(element).container.document` for the tree the templates drew, in react-pdf's node shape.
  */
 
+/** @lintignore Tests reach these through the module namespace. */
 export { Document, Image, Link, Page, Svg, Text, View } from "./primitives";
 
 // Icons draw nothing until their paths are loaded; `renderResume` waits for them, and so do the tests.

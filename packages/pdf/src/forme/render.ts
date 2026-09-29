@@ -60,7 +60,7 @@ const isFixed = (element: ElementInfo): boolean =>
 	element.sourceLocation?.file === FIXED_SOURCE || element.children.some(isFixed);
 
 /** List items whose marker sits on an earlier page than their first line (see `LIST_ROLE`). */
-export function listMarkersLeftBehind(layout: RenderWithLayoutResult["layout"]): number[] {
+function listMarkersLeftBehind(layout: RenderWithLayoutResult["layout"]): number[] {
 	const markerPage = new Map<number, number>();
 	const contentPage = new Map<number, number>();
 	layout.pages.forEach((page, pageIndex) => {

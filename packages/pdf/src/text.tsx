@@ -15,8 +15,8 @@ export type HtmlElement = HTMLElement & {
 	styles: Style[];
 };
 
-export type HtmlRendererProps = { element: HtmlElement; style: Style[]; children: ReactNode };
-export type HtmlRenderer = (props: HtmlRendererProps) => ReactNode;
+type HtmlRendererProps = { element: HtmlElement; style: Style[]; children: ReactNode };
+type HtmlRenderer = (props: HtmlRendererProps) => ReactNode;
 
 type HtmlProps = Omit<ViewProps, "children"> & {
 	children: string;

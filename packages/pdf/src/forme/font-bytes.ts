@@ -74,7 +74,7 @@ function woffToSfnt(bytes: Uint8Array): Uint8Array {
 }
 
 /** Renames the discretionary ligature features in GSUB, in place. Returns how many it renamed. */
-export function disableLigatures(sfnt: Uint8Array): number {
+function disableLigatures(sfnt: Uint8Array): number {
 	const view = new DataView(sfnt.buffer, sfnt.byteOffset, sfnt.byteLength);
 	const numTables = view.getUint16(4);
 	for (let index = 0; index < numTables; index++) {

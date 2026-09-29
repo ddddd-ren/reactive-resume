@@ -77,7 +77,7 @@ const FONT_WEIGHTS: Record<string, number> = {
 	black: 900,
 };
 
-export const toFontWeight = (value: unknown): number | undefined => {
+const toFontWeight = (value: unknown): number | undefined => {
 	if (typeof value === "number") return value;
 	if (typeof value !== "string") return undefined;
 	const numeric = Number(value);

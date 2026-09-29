@@ -18,8 +18,6 @@ export const loadIcons = () =>
 		icons = module.default as Record<string, string>;
 	}));
 
-export const isIconName = (name: string): name is IconName => icons === undefined || name in icons;
-
 type PhosphorIconProps = {
 	name: IconName | string;
 	size?: number | string | undefined;

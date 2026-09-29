@@ -14,7 +14,7 @@ const ascii = (bytes: Uint8Array, at: number, length: number) =>
 	String.fromCharCode(...bytes.subarray(at, at + length));
 
 /** Format and pixel size of a PNG, JPEG or WebP, the formats Forme draws; undefined for anything else. */
-export function readImageHeader(
+function readImageHeader(
 	bytes: Uint8Array,
 ): { format: keyof typeof MIME_TYPES; width: number; height: number } | undefined {
 	if (bytes[0] === 0x89 && ascii(bytes, 1, 3) === "PNG")

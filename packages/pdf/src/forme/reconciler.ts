@@ -4,7 +4,7 @@ import { ConcurrentRoot, DefaultEventPriority } from "react-reconciler/constants
 
 /** An element the templates rendered: one of the host primitives in `primitives.tsx`, with its resolved props. */
 export type HostElement = { type: string; props: Record<string, unknown>; children: HostNode[] };
-export type HostText = { type: "#text"; text: string };
+type HostText = { type: "#text"; text: string };
 export type HostNode = HostElement | HostText;
 
 type Container = { children: HostNode[] };
