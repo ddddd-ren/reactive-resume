@@ -24,6 +24,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -205,8 +206,10 @@ export function DocumentMenuContent({
 type TagsDialogProps = { document: DocumentSummary | null; onClose: () => void };
 
 /** Tags… from the card menu: tags filter the library once any exist. */
-export function TagsDialog({ document, onClose }: TagsDialogProps) {
+export function TagsDialog({ document: requested, onClose }: TagsDialogProps) {
 	const queryClient = useQueryClient();
+	// Closing keeps the document's tags on screen until the dialog has faded out.
+	const [document, onDocumentOpenChangeComplete] = useClosingValue(requested);
 	const [tags, setTags] = useState<string[] | null>(null);
 	const setDocumentTags = useMutation(orpc.documents.setTags.mutationOptions());
 
@@ -215,7 +218,6 @@ export function TagsDialog({ document, onClose }: TagsDialogProps) {
 		try {
 			await setDocumentTags.mutateAsync({ type: document.type, id: document.id, tags: tags ?? document.tags });
 			await queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
-			setTags(null);
 			onClose();
 		} catch (error) {
 			failed(error);
@@ -224,11 +226,12 @@ export function TagsDialog({ document, onClose }: TagsDialogProps) {
 
 	return (
 		<Dialog
-			open={document !== null}
-			onOpenChange={(open) => {
-				if (open) return;
-				setTags(null);
-				onClose();
+			open={requested !== null}
+			onOpenChange={(open) => !open && onClose()}
+			onOpenChangeComplete={(open) => {
+				onDocumentOpenChangeComplete(open);
+				// Unsaved edits are dropped once the dialog has closed, so the chips don't change while it fades.
+				if (!open) setTags(null);
 			}}
 		>
 			<DialogContent>
@@ -254,9 +257,11 @@ export function TagsDialog({ document, onClose }: TagsDialogProps) {
 type LinkApplicationDialogProps = { document: DocumentSummary | null; onClose: () => void };
 
 /** Link to application… for letters: the job the letter is for. */
-export function LinkApplicationDialog({ document, onClose }: LinkApplicationDialogProps) {
+export function LinkApplicationDialog({ document: requested, onClose }: LinkApplicationDialogProps) {
 	const queryClient = useQueryClient();
-	const { data: applications } = useQuery({ ...applicationsListQueryOptions(), enabled: document !== null });
+	// Closing keeps the list, its highlight and Unlink on screen until the dialog has faded out.
+	const [document, onOpenChangeComplete] = useClosingValue(requested);
+	const { data: applications } = useQuery({ ...applicationsListQueryOptions(), enabled: requested !== null });
 	const link = useMutation(orpc.documents.linkApplication.mutationOptions());
 
 	const choose = async (applicationId: string | null) => {
@@ -273,7 +278,11 @@ export function LinkApplicationDialog({ document, onClose }: LinkApplicationDial
 	const jobs = (applications ?? []).filter((application) => application.status !== "closed");
 
 	return (
-		<Dialog open={document !== null} onOpenChange={(open) => !open && onClose()}>
+		<Dialog
+			open={requested !== null}
+			onOpenChange={(open) => !open && onClose()}
+			onOpenChangeComplete={onOpenChangeComplete}
+		>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>

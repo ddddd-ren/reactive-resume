@@ -31,6 +31,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import "react-easy-crop/react-easy-crop.css";
 import { ColorPicker } from "@/components/input/color-picker";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useClosingValue } from "@/hooks/use-closing-value";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -492,6 +493,8 @@ export function PictureSettings() {
 	const appOrigin = window.location.origin;
 
 	const [cropState, setCropState] = useState<CropState | null>(null);
+	// Closing keeps the picture in the cropper until the dialog has faded out.
+	const [shownCrop, onCropOpenChangeComplete] = useClosingValue(cropState);
 	const [crop, setCrop] = useState({ x: 0, y: 0 });
 	const [zoom, setZoom] = useState(1);
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
@@ -581,7 +584,6 @@ export function PictureSettings() {
 	};
 
 	const closeCropDialog = () => {
-		if (cropState) URL.revokeObjectURL(cropState.imageSrc);
 		setCropState(null);
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
@@ -613,6 +615,11 @@ export function PictureSettings() {
 				onOpenChange={(open) => {
 					if (!open) closeCropDialog();
 				}}
+				onOpenChangeComplete={(open) => {
+					// The object URL is freed only once the cropper has gone.
+					if (!open && shownCrop) URL.revokeObjectURL(shownCrop.imageSrc);
+					onCropOpenChangeComplete(open);
+				}}
 			>
 				<DialogContent>
 					<DialogHeader>
@@ -624,10 +631,10 @@ export function PictureSettings() {
 						</DialogDescription>
 					</DialogHeader>
 
-					{cropState && (
+					{shownCrop && (
 						<div className="relative h-64 w-full overflow-hidden rounded-md bg-sunken ring-1 ring-line ring-inset">
 							<Cropper
-								image={cropState.imageSrc}
+								image={shownCrop.imageSrc}
 								crop={crop}
 								zoom={zoom}
 								aspect={cropAspect}

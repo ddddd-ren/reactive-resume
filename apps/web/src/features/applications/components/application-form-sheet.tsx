@@ -22,6 +22,7 @@ import {
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Combobox } from "@/components/ui/combobox";
+import { useClosingValue } from "@/hooks/use-closing-value";
 import { orpc } from "@/libs/orpc/client";
 import { applicationsListQueryKey } from "../queries";
 import { FileAttachmentField } from "./file-attachment-field";
@@ -86,8 +87,10 @@ type Props = {
 	application?: Application | null;
 };
 
-export function ApplicationFormSheet({ open, onOpenChange, application }: Props) {
+export function ApplicationFormSheet({ open, onOpenChange, application: requested }: Props) {
 	const queryClient = useQueryClient();
+	// Closing keeps the application (title and fields) on screen until the sheet has slid away.
+	const [application, onApplicationOpenChangeComplete] = useClosingValue(requested ?? null);
 	const isEditing = !!application;
 
 	const [form, setForm] = useState<FormState>(() => (application ? toForm(application) : emptyForm()));
@@ -127,7 +130,6 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 			onSuccess: () => {
 				invalidate();
 				toast.add({ type: "success", description: t`Application added to your pipeline.` });
-				setForm(emptyForm());
 				onOpenChange(false);
 			},
 			onError: () => toast.add({ type: "error", description: t`Couldn't add the application. Please try again.` }),
@@ -195,7 +197,18 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 	};
 
 	return (
-		<Sheet open={open} onOpenChange={onOpenChange}>
+		<Sheet
+			open={open}
+			onOpenChange={onOpenChange}
+			onOpenChangeComplete={(next) => {
+				onApplicationOpenChangeComplete(next);
+				// After adding, the fields clear once the sheet has closed; closing without saving keeps the draft.
+				if (!next && create.isSuccess) {
+					setForm(emptyForm());
+					create.reset();
+				}
+			}}
+		>
 			<SheetContent side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
 				<SheetHeader>
 					<SheetTitle>{isEditing ? <Trans>Edit application</Trans> : <Trans>Add application</Trans>}</SheetTitle>

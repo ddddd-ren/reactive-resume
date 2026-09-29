@@ -103,10 +103,9 @@ function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
 	return (
 		<AlertDialog
 			open={open}
-			onOpenChange={(next) => {
-				onOpenChange(next);
-				if (!next) setTyped("");
-			}}
+			onOpenChange={onOpenChange}
+			// The typed confirmation clears once the dialog has faded out.
+			onOpenChangeComplete={(next) => !next && setTyped("")}
 		>
 			<AlertDialogContent>
 				<AlertDialogHeader>

@@ -23,6 +23,7 @@ import {
 	getExportFormats,
 } from "@/features/resume/share/download-tab";
 import { HistoryTimeline } from "@/features/resume/share/history-tab";
+import { useClosingValue } from "@/hooks/use-closing-value";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -32,13 +33,19 @@ import { client, orpc } from "@/libs/orpc/client";
  */
 export function LetterShareSheet() {
 	const tab = useEditorStore((state) => state.shareTab);
+	// Closing keeps the open tab on screen until the sheet has slid away.
+	const [shownTab, onOpenChangeComplete] = useClosingValue(tab);
 	const setTab = useEditorStore((state) => state.setShareTab);
 	const setHistoryVersion = useEditorStore((state) => state.setHistoryVersion);
 	const isPhone = useBreakpoint() === "mobile";
 	const history = useLetterHistory(tab === "history");
 
 	return (
-		<Sheet open={tab !== null} onOpenChange={(open) => !open && setTab(null)}>
+		<Sheet
+			open={tab !== null}
+			onOpenChange={(open) => !open && setTab(null)}
+			onOpenChangeComplete={onOpenChangeComplete}
+		>
 			<SheetContent
 				side={isPhone ? "bottom" : "right"}
 				closeLabel={t`Close`}
@@ -51,7 +58,7 @@ export function LetterShareSheet() {
 				</SheetHeader>
 
 				<Tabs
-					value={tab === "history" ? "history" : "download"}
+					value={shownTab === "history" ? "history" : "download"}
 					onValueChange={(value) => {
 						// The page shows a version only while History is open.
 						if (value !== "history") setHistoryVersion(null);

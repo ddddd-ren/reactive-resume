@@ -87,7 +87,6 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 						? t`Imported ${response.imported} applications. ${skipped} rows had no company or role and were skipped.`
 						: t`Imported ${response.imported} applications.`,
 			});
-			reset();
 			onOpenChange(false);
 		},
 		onError: () => toast.add({ type: "error", description: t`Import failed. Check the CSV and try again.` }),
@@ -100,7 +99,16 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	};
 
 	return (
-		<Sheet open={open} onOpenChange={onOpenChange}>
+		<Sheet
+			open={open}
+			onOpenChange={onOpenChange}
+			// After an import, the rows clear once the sheet has slid away; closing without importing keeps them.
+			onOpenChangeComplete={(next) => {
+				if (next || !importMutation.isSuccess) return;
+				reset();
+				importMutation.reset();
+			}}
+		>
 			<SheetContent side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
 				<SheetHeader>
 					<SheetTitle>

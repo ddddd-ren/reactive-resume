@@ -33,6 +33,7 @@ type ColorPickerProps = {
 	onChange?: (value: string) => void;
 	open?: boolean;
 	onOpenChange?: React.ComponentProps<typeof Popover>["onOpenChange"];
+	onOpenChangeComplete?: React.ComponentProps<typeof Popover>["onOpenChangeComplete"];
 	trigger?: React.ReactNode;
 	children?: React.ReactNode;
 };
@@ -43,6 +44,7 @@ export function ColorPicker({
 	onChange,
 	open,
 	onOpenChange,
+	onOpenChangeComplete,
 	trigger,
 	children,
 }: ColorPickerProps) {
@@ -60,7 +62,7 @@ export function ColorPicker({
 	}
 
 	return (
-		<Popover open={open} onOpenChange={onOpenChange}>
+		<Popover open={open} onOpenChange={onOpenChange} onOpenChangeComplete={onOpenChangeComplete}>
 			{trigger ?? (
 				<PopoverTrigger>
 					<div

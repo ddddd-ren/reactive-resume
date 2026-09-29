@@ -10,6 +10,7 @@ import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { DownloadTab } from "@/features/resume/share/download-tab";
 import { HistoryTab } from "@/features/resume/share/history-tab";
 import { LinkTab } from "@/features/resume/share/link-tab";
+import { useClosingValue } from "@/hooks/use-closing-value";
 
 /**
  * Share & export: one sheet with Link, Download and History. Share opens Link, the ▾ beside Download PDF
@@ -17,13 +18,19 @@ import { LinkTab } from "@/features/resume/share/link-tab";
  */
 export function ShareSheet() {
 	const tab = useEditorStore((state) => state.shareTab);
+	// Closing keeps the open tab on screen until the sheet has slid away.
+	const [shownTab, onOpenChangeComplete] = useClosingValue(tab);
 	const setTab = useEditorStore((state) => state.setShareTab);
 	const setHistoryVersion = useEditorStore((state) => state.setHistoryVersion);
 	const [, setMode] = useEditorMode();
 	const isPhone = useBreakpoint() === "mobile";
 
 	return (
-		<Sheet open={tab !== null} onOpenChange={(open) => !open && setTab(null)}>
+		<Sheet
+			open={tab !== null}
+			onOpenChange={(open) => !open && setTab(null)}
+			onOpenChangeComplete={onOpenChangeComplete}
+		>
 			<SheetContent
 				side={isPhone ? "bottom" : "right"}
 				closeLabel={t`Close`}
@@ -36,7 +43,7 @@ export function ShareSheet() {
 				</SheetHeader>
 
 				<Tabs
-					value={tab ?? "link"}
+					value={shownTab ?? "link"}
 					onValueChange={(value) => {
 						// The page shows a version only while History is open.
 						if (value !== "history") setHistoryVersion(null);

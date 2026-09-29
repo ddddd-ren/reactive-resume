@@ -186,9 +186,8 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 	const [copied, setCopied] = useState(false);
 	const [, copy] = useCopyToClipboard();
 
-	const close = (next: boolean) => {
-		onOpenChange(next);
-		if (next) return;
+	// Everything clears once the dialog has faded out, so the key doesn't turn back into the form while it does.
+	const reset = () => {
 		setName("");
 		setExpiry(0);
 		setKey(null);
@@ -210,7 +209,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={close}>
+		<Dialog open={open} onOpenChange={onOpenChange} onOpenChangeComplete={(next) => !next && reset()}>
 			<DialogContent className="sm:max-w-[500px]">
 				<DialogHeader>
 					<DialogTitle>
@@ -246,7 +245,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 							</Button>
 						</div>
 						<DialogFooter>
-							<Button onClick={() => close(false)}>
+							<Button onClick={() => onOpenChange(false)}>
 								<Trans>Done</Trans>
 							</Button>
 						</DialogFooter>
@@ -302,7 +301,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 							</p>
 						)}
 						<DialogFooter>
-							<Button type="button" variant="secondary" onClick={() => close(false)}>
+							<Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
 								<Trans>Cancel</Trans>
 							</Button>
 							<Button type="submit" disabled={!name.trim() || creating} loading={creating}>

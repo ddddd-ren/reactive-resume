@@ -34,6 +34,7 @@ import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/
 import { ColorPicker } from "@/components/input/color-picker";
 import { useIsResumeLocked, useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useTheme } from "@/features/theme/provider";
+import { useClosingValue } from "@/hooks/use-closing-value";
 import { serializeStylesheetColor, toStylesheetPickerColor } from "./color-format";
 import { compositionAwareDocumentListener, createSemanticCssEditorExtensions } from "./editor-extensions";
 import { formatEditorDocument } from "./formatter";
@@ -143,6 +144,8 @@ export function StylesheetCodeEditor({
 		left: number;
 		top: number;
 	} | null>(null);
+	// Closing keeps the picker on its swatch until it has faded out.
+	const [shownColor, onColorOpenChangeComplete] = useClosingValue(selectedColor);
 	const selectColor = useCallback((token: SemanticCssColorToken, rect: DOMRect) => {
 		const hostRect = hostRef.current?.getBoundingClientRect();
 		if (!hostRect) return;
@@ -319,10 +322,11 @@ export function StylesheetCodeEditor({
 
 	return (
 		<div ref={hostRef} className="relative h-full overflow-hidden rounded-md border text-xs" dir="ltr">
-			{selectedColor && (
-				<div className="pointer-events-none absolute z-20" style={{ left: selectedColor.left, top: selectedColor.top }}>
+			{shownColor && (
+				<div className="pointer-events-none absolute z-20" style={{ left: shownColor.left, top: shownColor.top }}>
 					<ColorPicker
-						open
+						open={selectedColor !== null}
+						onOpenChangeComplete={onColorOpenChangeComplete}
 						onOpenChange={(open, details) => {
 							const target = details.event.target;
 							if (
@@ -333,7 +337,7 @@ export function StylesheetCodeEditor({
 								return;
 							if (!open) setSelectedColor(null);
 						}}
-						value={toStylesheetPickerColor(selectedColor.token.value)}
+						value={toStylesheetPickerColor(shownColor.token.value)}
 						onChange={updateColor}
 						trigger={
 							<PopoverTrigger
@@ -341,10 +345,10 @@ export function StylesheetCodeEditor({
 									<button
 										data-semantic-css-color-picker-trigger=""
 										type="button"
-										title={t`Edit color ${selectedColor.token.value}`}
-										aria-label={t`Edit color ${selectedColor.token.value}`}
+										title={t`Edit color ${shownColor.token.value}`}
+										aria-label={t`Edit color ${shownColor.token.value}`}
 										className="pointer-events-auto size-3 rounded-full border border-ink/40"
-										style={{ backgroundColor: selectedColor.token.value }}
+										style={{ backgroundColor: shownColor.token.value }}
 									/>
 								}
 							/>

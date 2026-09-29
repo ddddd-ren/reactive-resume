@@ -28,6 +28,7 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
 import { stageSince } from "../next-step";
@@ -52,15 +53,18 @@ type DetailSheetProps = {
  */
 export function ApplicationDetailSheet({ application, onOpenChange, onEditDetails }: DetailSheetProps) {
 	const phone = useBreakpoint() === "mobile";
+	// Closing keeps the last application on screen until the sheet has slid away.
+	const [shown, onOpenChangeComplete] = useClosingValue(application);
 	const { data } = useQuery({
-		...orpc.applications.getById.queryOptions({ input: { id: application?.id ?? "" } }),
+		...orpc.applications.getById.queryOptions({ input: { id: shown?.id ?? "" } }),
+		// Fetch only while open; while closing, the cached copy keeps showing.
 		enabled: Boolean(application),
-		...(application ? { placeholderData: application } : {}),
+		...(shown ? { placeholderData: shown } : {}),
 	});
-	const current = data ?? application;
+	const current = data ?? shown;
 
 	return (
-		<Sheet open={Boolean(application)} onOpenChange={onOpenChange}>
+		<Sheet open={Boolean(application)} onOpenChange={onOpenChange} onOpenChangeComplete={onOpenChangeComplete}>
 			<SheetContent
 				side={phone ? "bottom" : "right"}
 				closeLabel={t`Close`}

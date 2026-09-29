@@ -24,6 +24,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
 import { interviewKindOf } from "../../interviews";
@@ -53,6 +54,8 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 	const confirm = useConfirm();
 	const [note, setNote] = useState("");
 	const [editing, setEditing] = useState<{ entry: ApplicationTimelineEntry; date: string; text: string } | null>(null);
+	// Closing keeps the entry's title and fields on screen until the dialog has faded out.
+	const [shownEdit, onEditOpenChangeComplete] = useClosingValue(editing);
 
 	const onError = () => toast.add({ type: "error", description: t`Couldn't update the timeline. Try again.` });
 	const addNote = useMutation({
@@ -194,22 +197,27 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 				})}
 			</ol>
 
-			<Dialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)}>
+			<Dialog
+				open={editing !== null}
+				onOpenChange={(open) => !open && setEditing(null)}
+				onOpenChangeComplete={onEditOpenChangeComplete}
+			>
 				<DialogContent className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>
-							{editing?.entry.type === "note" ? <Trans>Edit note</Trans> : <Trans>Edit date</Trans>}
+							{shownEdit?.entry.type === "note" ? <Trans>Edit note</Trans> : <Trans>Edit date</Trans>}
 						</DialogTitle>
 						<DialogDescription className="sr-only">
 							<Trans>Change this timeline entry.</Trans>
 						</DialogDescription>
 					</DialogHeader>
-					{editing && (
+					{shownEdit && (
 						<form
 							id="timeline-entry-form"
 							className="grid gap-3"
 							onSubmit={(event) => {
 								event.preventDefault();
+								if (!editing) return;
 								updateEntry.mutate({
 									id: application.id,
 									entryId: editing.entry.id,
@@ -218,19 +226,25 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 								});
 							}}
 						>
-							{editing.entry.type === "note" && (
+							{shownEdit.entry.type === "note" && (
 								<Textarea
 									aria-label={t`Note`}
 									rows={3}
-									value={editing.text}
-									onChange={(event) => setEditing({ ...editing, text: event.target.value })}
+									value={shownEdit.text}
+									onChange={(event) => {
+										const text = event.target.value;
+										setEditing((current) => current && { ...current, text });
+									}}
 								/>
 							)}
 							<Input
 								type="date"
 								aria-label={t`Date`}
-								value={editing.date}
-								onChange={(event) => setEditing({ ...editing, date: event.target.value })}
+								value={shownEdit.date}
+								onChange={(event) => {
+									const date = event.target.value;
+									setEditing((current) => current && { ...current, date });
+								}}
 							/>
 						</form>
 					)}
@@ -238,7 +252,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 						<Button variant="secondary" onClick={() => setEditing(null)}>
 							<Trans>Cancel</Trans>
 						</Button>
-						<Button type="submit" form="timeline-entry-form" disabled={!editing?.date || updateEntry.isPending}>
+						<Button type="submit" form="timeline-entry-form" disabled={!shownEdit?.date || updateEntry.isPending}>
 							<Trans>Save</Trans>
 						</Button>
 					</DialogFooter>
