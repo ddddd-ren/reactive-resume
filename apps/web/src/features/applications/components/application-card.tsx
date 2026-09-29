@@ -22,7 +22,9 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 		<div
 			className={cn(
 				"group relative grid gap-2 rounded-[10px] border border-line bg-surface p-3 shadow-e1 transition-[border-color,scale] duration-quick ease-enter hover:border-line-2 active:not-has-[[data-slot=button]:active]:scale-[0.98]",
-				dragging && "rotate-1 shadow-e3",
+				// The overlay card lifts as it's picked up and settles flat again while the drop animation flies it home.
+				dragging &&
+					"in-[.is-dropping]:rotate-0 rotate-1 starting:rotate-0 in-[.is-dropping]:scale-100 scale-[1.02] starting:scale-100 cursor-grabbing in-[.is-dropping]:shadow-e1 shadow-e3 starting:shadow-e1 transition-[rotate,scale,box-shadow] duration-quick ease-enter **:cursor-grabbing",
 			)}
 		>
 			<div className="flex items-start gap-2.5">

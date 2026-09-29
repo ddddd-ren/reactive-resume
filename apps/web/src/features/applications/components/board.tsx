@@ -4,6 +4,7 @@ import type { Application } from "../types";
 import {
 	DndContext,
 	DragOverlay,
+	defaultDropAnimationSideEffects,
 	PointerSensor,
 	pointerWithin,
 	useDraggable,
@@ -12,8 +13,10 @@ import {
 	useSensors,
 } from "@dnd-kit/core";
 import { t } from "@lingui/core/macro";
+import { useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { cn } from "@reactive-resume/utils/style";
+import { DRAG_SETTLE } from "@/libs/motion";
 import { getStageColor, getStageLabel, PIPELINE } from "../stages";
 import { useApplicationActions } from "../use-application-actions";
 import { ApplicationCard } from "./application-card";
@@ -24,20 +27,43 @@ type BoardProps = {
 	onOpen: (application: Application) => void;
 };
 
+// While the overlay settles, the real card waits hidden in its new slot and the overlay's tilt eases off.
+const dropSideEffects = defaultDropAnimationSideEffects({
+	styles: { active: { opacity: "0" } },
+	className: { dragOverlay: "is-dropping" },
+});
+
 /**
  * A column per stage (Closed only when shown). Dropping a card on a column moves it, with the same toast as the
  * other ways to change stage; each card's menu has Move to… for the keyboard. Desktop and tablet only.
  */
 export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProps) {
 	const { moveTo } = useApplicationActions();
+	const reduceMotion = useReducedMotion();
 	const [activeId, setActiveId] = useState<string | null>(null);
+	// The list query publishes the optimistic move a task after the drop (TanStack Query notifies on a timeout), so
+	// until it does the board shows the dropped card in its new column itself. Otherwise the card blinks back to its
+	// old column for a frame, and the drop animation would fly there.
+	const [pendingMove, setPendingMove] = useState<{ id: string; from: ApplicationStatus; to: ApplicationStatus } | null>(
+		null,
+	);
+
+	// The query caught up, rolled back, or the card went away: the override has done its job.
+	if (
+		pendingMove &&
+		applications.find((application) => application.id === pendingMove.id)?.status !== pendingMove.from
+	) {
+		setPendingMove(null);
+	}
+	const statusOf = (application: Application) =>
+		pendingMove?.id === application.id ? pendingMove.to : application.status;
 
 	// A small activation distance so a click still opens the detail sheet instead of starting a drag.
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 	const stages: ApplicationStatus[] = showClosed ? [...PIPELINE, "closed"] : [...PIPELINE];
 
 	const byStage = new Map<ApplicationStatus, Application[]>(stages.map((stage) => [stage, []]));
-	for (const application of applications) byStage.get(application.status)?.push(application);
+	for (const application of applications) byStage.get(statusOf(application))?.push(application);
 
 	const active = activeId ? applications.find((application) => application.id === activeId) : null;
 
@@ -48,6 +74,8 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 		const target = event.over?.id as ApplicationStatus | undefined;
 		const application = applications.find((item) => item.id === event.active.id);
 		if (!target || !application || application.status === target) return;
+		// Same batched render as setActiveId(null): the card is already in its new column when the drop animation measures it.
+		setPendingMove({ id: application.id, from: application.status, to: target });
 		moveTo(application, target);
 	};
 
@@ -59,8 +87,8 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 				))}
 			</div>
 
-			{/* No drop animation: the optimistic move lands after an await, so the default would fly the card back. */}
-			<DragOverlay dropAnimation={null}>
+			{/* The overlay settles into the card's new slot (or back where it came from); the drop itself shows at once, see pendingMove. */}
+			<DragOverlay dropAnimation={reduceMotion ? null : { ...DRAG_SETTLE, sideEffects: dropSideEffects }}>
 				{active ? <ApplicationCard application={active} dragging /> : null}
 			</DragOverlay>
 		</DndContext>
