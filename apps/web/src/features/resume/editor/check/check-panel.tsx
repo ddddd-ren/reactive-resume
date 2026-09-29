@@ -1,5 +1,4 @@
 import type { AtsCategory, AtsReport } from "@reactive-resume/resume/ats";
-import type { PdfAtsReport } from "@reactive-resume/resume/ats-pdf";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
 import type { CheckTab } from "../store";
@@ -324,11 +323,14 @@ function CategoryRows({ report }: { report: AtsReport }) {
 
 /**
  * Also check the exported PDF: renders it, runs the file-level engine on it in this tab and reports in a toast.
- * Its full report opens from the toast.
+ * What it found is pinned to the page, and its full report opens from the toast or a pin.
  */
 function DeepCheck({ data }: { data: ResumeData }) {
 	const [running, setRunning] = useState(false);
-	const [report, setReport] = useState<PdfAtsReport | null>(null);
+	const report = useEditorStore((state) => state.exportCheck?.report ?? null);
+	const reportOpen = useEditorStore((state) => state.exportReportOpen);
+	const setExportCheck = useEditorStore((state) => state.setExportCheck);
+	const setReportOpen = useEditorStore((state) => state.setExportReportOpen);
 
 	const run = async () => {
 		setRunning(true);
@@ -336,13 +338,14 @@ function DeepCheck({ data }: { data: ResumeData }) {
 			const blob = await createResumePdfBlob(data);
 			const result = await runAtsCheck(blobToPdfFile(blob, "resume.pdf"));
 			const problems = result.report.findings.length;
+			setExportCheck({ report: result.report, data });
 
 			toast.add(
 				problems === 0
 					? { description: t`Exported PDF checked: it reads cleanly too.` }
 					: {
 							description: t`Exported PDF checked: ${problems} more to look at.`,
-							actionProps: { children: t`Show`, onClick: () => setReport(result.report) },
+							actionProps: { children: t`Show`, onClick: () => setReportOpen(true) },
 						},
 			);
 		} catch {
@@ -359,7 +362,7 @@ function DeepCheck({ data }: { data: ResumeData }) {
 				{running ? <Trans>Checking the exported PDF…</Trans> : <Trans>Also check the exported PDF</Trans>}
 			</Button>
 
-			<Dialog open={report !== null} onOpenChange={(open) => !open && setReport(null)}>
+			<Dialog open={reportOpen && report !== null} onOpenChange={setReportOpen}>
 				<DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-2xl">
 					<DialogHeader>
 						<DialogTitle>

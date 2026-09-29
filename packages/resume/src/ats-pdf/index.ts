@@ -12,6 +12,7 @@ import { buildResumeSemantics } from "./analyze/semantics";
 import { pdfRuleCategory, pdfRuleSeverity } from "./catalog";
 import { buildExtractedDocument } from "./extract";
 import { matchJobDescription } from "./jd/match";
+import { locateEvidence } from "./locate";
 import { PDF_CHECKS } from "./rules";
 import { scoreChecks } from "./score";
 
@@ -90,7 +91,13 @@ export function analyzePdfResume(raw: RawExtraction, options: AnalyzePdfOptions 
 	const context: PdfCheckContext = { raw, doc, semantics, now };
 	const checks = PDF_CHECKS.map((check) => runCheck(check, context));
 
-	const allFindings = checks.flatMap((result) => result.findings).sort(compareFindings);
+	const allFindings = checks
+		.flatMap((result) => result.findings)
+		.map((finding) => {
+			const evidence = locateEvidence(doc, finding.evidence);
+			return evidence ? { ...finding, evidence } : finding;
+		})
+		.sort(compareFindings);
 	const breakdown = scoreChecks(checks);
 
 	const counts: Record<PdfSeverity, number> = { blocker: 0, warning: 0, tip: 0 };

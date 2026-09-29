@@ -1,5 +1,7 @@
 import type { PageMap, PageMapTarget } from "@reactive-resume/pdf/page-map";
+import type { PdfAtsReport } from "@reactive-resume/resume/ats-pdf";
 import type { Proposal } from "@reactive-resume/resume/proposals";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { create } from "zustand/react";
 
@@ -85,6 +87,12 @@ type EditorStore = {
 	/** Edits suggested for the page (Check → Writing), shown on it until accepted or rejected. */
 	proposals: readonly Proposal[];
 	writingReview: WritingReview | null;
+	/**
+	 * Check's deep check: the report on the exported PDF, and the resume it was run on. Its findings are pinned to
+	 * the page only while the resume is unchanged.
+	 */
+	exportCheck: { report: PdfAtsReport; data: ResumeData } | null;
+	exportReportOpen: boolean;
 	select: (selection: EditorSelection | null) => void;
 	setZoom: (zoom: number | "fit") => void;
 	setDrawerOpen: (open: boolean) => void;
@@ -112,6 +120,8 @@ type EditorStore = {
 	setProposals: (proposals: readonly Proposal[]) => void;
 	setProposalStatus: (ids: readonly string[], status: Proposal["status"]) => void;
 	setWritingReview: (review: WritingReview | null) => void;
+	setExportCheck: (check: { report: PdfAtsReport; data: ResumeData } | null) => void;
+	setExportReportOpen: (open: boolean) => void;
 	reset: () => void;
 };
 
@@ -153,6 +163,8 @@ const initialState = {
 	pastedPosting: "",
 	proposals: [],
 	writingReview: null,
+	exportCheck: null,
+	exportReportOpen: false,
 } as const;
 
 export const useEditorStore = create<EditorStore>()((set) => ({
@@ -196,5 +208,7 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 			proposals: state.proposals.map((proposal) => (ids.includes(proposal.id) ? { ...proposal, status } : proposal)),
 		})),
 	setWritingReview: (writingReview) => set({ writingReview }),
+	setExportCheck: (exportCheck) => set({ exportCheck }),
+	setExportReportOpen: (exportReportOpen) => set({ exportReportOpen }),
 	reset: () => set(initialState),
 }));

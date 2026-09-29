@@ -10,6 +10,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { getPdfFindingMessage } from "@/features/ats-checker/messages";
 import { isSameSelection, useEditorStore } from "../store";
 import { findEntry } from "../write/model";
 import { scrollToIssue, useCheckActions } from "./actions";
@@ -29,13 +30,15 @@ const findNode = (pageMap: PageMap, target: PageMapTarget) =>
  * A marker in the page margin, level with the top of a block: 30px left of it, but never off the page, whose
  * margins can be narrower than the marker. `stack` moves further markers on the same block down.
  */
-const marginStyle = (node: PageMapNode, page: { width: number; height: number }, stack = 0): CSSProperties => ({
+type Box = Pick<PageMapNode, "x" | "y" | "width" | "height">;
+
+const marginStyle = (node: Box, page: { width: number; height: number }, stack = 0): CSSProperties => ({
 	left: `max(4px, calc(${(node.x / page.width) * 100}% - 30px))`,
 	top: `calc(${(node.y / page.height) * 100}% - 3px + ${stack * 26}px)`,
 });
 
 /** Page-relative placement of a block, as percentages of its page. */
-function boxStyle(node: PageMapNode, page: { width: number; height: number }): CSSProperties {
+function boxStyle(node: Box, page: { width: number; height: number }): CSSProperties {
 	return {
 		left: `${(node.x / page.width) * 100}%`,
 		top: `${(node.y / page.height) * 100}%`,
@@ -87,6 +90,8 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	const selected = useEditorStore((state) => state.checkIssue);
 	const highlightTerm = useEditorStore((state) => state.highlightTerm);
 	const proposals = useEditorStore((state) => state.proposals);
+	const exportCheck = useEditorStore((state) => state.exportCheck);
+	const openExportReport = useEditorStore((state) => state.setExportReportOpen);
 	const breakpoint = useBreakpoint();
 	const page = pageMap?.pages[pageIndex];
 
@@ -127,6 +132,16 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 						: { kind: "section", sectionId: proposal.target.sectionId };
 					const node = findNode(pageMap, target);
 					return node && node.page === pageIndex ? [{ number: index + 1, node }] : [];
+				})
+			: [];
+
+	// The deep check's findings, where it found them in the exported PDF: the same pages as the preview, as long as
+	// the resume hasn't changed since it ran.
+	const exportPins =
+		tab === "issues" && exportCheck?.data === check.data
+			? [...exportCheck.report.findings, ...exportCheck.report.tips].flatMap((finding, index) => {
+					const { page: pageNumber, box } = finding.evidence ?? {};
+					return box && pageNumber === pageIndex + 1 ? [{ finding, box, key: `${finding.code}:${index}` }] : [];
 				})
 			: [];
 
@@ -175,6 +190,27 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 					</div>
 				);
 			})}
+
+			{exportPins.map(({ finding, box, key }) => (
+				<div key={key}>
+					<div
+						aria-hidden="true"
+						className="absolute -m-[3px] rounded-[3px] border-[1.5px] border-info-text border-dashed p-[3px]"
+						style={boxStyle(box, page)}
+					/>
+					<button
+						type="button"
+						data-export-pin={finding.code}
+						aria-label={t`Exported PDF: ${getPdfFindingMessage(finding.code).title}`}
+						title={getPdfFindingMessage(finding.code).title}
+						onClick={() => openExportReport(true)}
+						style={marginStyle(box, page)}
+						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-full border-2 border-white bg-info-text text-bg shadow-[0_1px_3px_oklch(0_0_0/0.25)]"
+					>
+						<Icon name="picture_as_pdf" size={13} />
+					</button>
+				</div>
+			))}
 
 			{markers.map(({ number, node }) => (
 				<span
