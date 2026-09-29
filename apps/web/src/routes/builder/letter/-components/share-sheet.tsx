@@ -145,7 +145,7 @@ function LetterDownloadTab() {
 				downloadWithAnchor(await createLetterFile(letter, words, as), file);
 				toast.add({ description: t`Downloaded ${file}` });
 			}
-			setState("idle");
+			setState("done");
 		} catch {
 			setState("error");
 		}

@@ -143,6 +143,7 @@ async function applyResumePatchTx(
 			isPublic: schema.resume.isPublic,
 			isLocked: schema.resume.isLocked,
 			showDownloadButtons: schema.resume.showDownloadButtons,
+			createdAt: schema.resume.createdAt,
 			updatedAt: schema.resume.updatedAt,
 			hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
 		});
@@ -448,6 +449,7 @@ export const resumeService = {
 				isPublic: schema.resume.isPublic,
 				isLocked: schema.resume.isLocked,
 				showDownloadButtons: schema.resume.showDownloadButtons,
+				createdAt: schema.resume.createdAt,
 				updatedAt: schema.resume.updatedAt,
 				hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
 				applicationId: schema.resume.applicationId,
@@ -666,6 +668,7 @@ export const resumeService = {
 						isPublic: schema.resume.isPublic,
 						isLocked: schema.resume.isLocked,
 						showDownloadButtons: schema.resume.showDownloadButtons,
+						createdAt: schema.resume.createdAt,
 						updatedAt: schema.resume.updatedAt,
 						hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
 					});

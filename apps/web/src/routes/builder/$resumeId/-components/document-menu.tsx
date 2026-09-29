@@ -20,14 +20,14 @@ import { SaveStatus } from "@/features/resume/editor/save-status";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-import { InformationSectionBuilder } from "../-sidebar/right/sections/information";
 import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
+import { DocumentDetails } from "./document-details";
 
-type DocumentDialog = "notes" | "information" | null;
+type DocumentDialog = "notes" | "details" | null;
 
 /**
  * The document name in the editor bar opens the document menu: rename, duplicate, lock, notes,
- * information, print and delete.
+ * details, print and delete.
  */
 export function DocumentMenu() {
 	const name = useCurrentBuilderResumeSelector((resume) => resume.name);
@@ -53,14 +53,9 @@ export function DocumentMenu() {
 				</DialogContent>
 			</Dialog>
 
-			<Dialog open={dialog === "information"} onOpenChange={(open) => !open && setDialog(null)}>
-				<DialogContent className="sm:max-w-[560px]">
-					<DialogHeader>
-						<DialogTitle>
-							<Trans>Information</Trans>
-						</DialogTitle>
-					</DialogHeader>
-					<InformationSectionBuilder />
+			<Dialog open={dialog === "details"} onOpenChange={(open) => !open && setDialog(null)}>
+				<DialogContent className="sm:max-w-[440px]">
+					<DocumentDetails />
 				</DialogContent>
 			</Dialog>
 		</>
@@ -145,9 +140,9 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 				<Icon name="sticky_note_2" />
 				<Trans>Notes</Trans>
 			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => onOpenDialog("information")}>
+			<DropdownMenuItem onClick={() => onOpenDialog("details")}>
 				<Icon name="info" />
-				<Trans>Information</Trans>
+				<Trans>Details</Trans>
 			</DropdownMenuItem>
 			<DropdownMenuItem onClick={() => void onPrint()}>
 				<Icon name="print" />

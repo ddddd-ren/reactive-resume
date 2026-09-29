@@ -405,6 +405,7 @@ msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr ""
 
@@ -481,10 +482,6 @@ msgstr ""
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr ""
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "<0>Thank you for using Reactive Resume. I build this app mostly in my spare time, with help from open-source contributors around the world.</0><1>If it has been useful to you and you'd like to keep it free and open for everyone, please consider donating. Any amount helps.</1>"
-msgstr "<0>Reactive Resume-ஐப் பயன்படுத்தியதற்கு நன்றி. உலகெங்கிலும் உள்ள ஓபன் சோர்ஸ் பங்களிப்பாளர்களின் உதவியுடன், பெரும்பாலும் என் ஓய்வு நேரத்தில்தான் இந்த ஆப்பை உருவாக்குகிறேன்.</0><1>இது உங்களுக்குப் பயனுள்ளதாக இருந்திருந்தால், அனைவருக்கும் இலவசமாகவும் திறந்ததாகவும் இது தொடர வேண்டும் என நீங்கள் விரும்பினால், நன்கொடை அளிப்பதைப் பரிசீலியுங்கள். எந்தத் தொகையும் உதவும்.</1>"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -2334,6 +2331,7 @@ msgstr "இப்போதே உருவாக்குங்கள்"
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
 #: src/features/settings/ai/api-keys.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Created"
 msgstr "உருவாக்கப்பட்டது"
 
@@ -2645,6 +2643,10 @@ msgstr ""
 msgid "Design systems"
 msgstr "வடிவமைப்பு அமைப்புகள்"
 
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Details"
+msgstr ""
+
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
 msgid "Details from the provider:"
@@ -2694,7 +2696,6 @@ msgid "Document type"
 msgstr ""
 
 #: src/features/homepage/footer.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Documentation"
 msgstr "ஆவணங்கள்"
 
@@ -2714,13 +2715,10 @@ msgid "Don't send {0}"
 msgstr ""
 
 #: src/components/ui/donation-toast.tsx
+#: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Donate"
 msgstr "நன்கொடை அளிக்கவும்"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Donate to Reactive Resume"
-msgstr "Reactive Resume-க்கு நன்கொடை அளிக்கவும்"
 
 #: src/features/resume/editor/write/rich-text-editor.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3611,6 +3609,10 @@ msgstr "டாஷ்போர்டுக்கு செல்லவும்"
 msgid "Go to…"
 msgstr "… க்குச் செல்லவும்"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Good luck out there. Reactive Resume stays free because people chip in."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Brand name label for Google social sign-in button
 #: src/features/auth/components/social-auth.tsx
@@ -3933,11 +3935,6 @@ msgstr "இரண்டு வரிகள் ஒன்றாக இணையா
 msgid "Indonesian"
 msgstr "இந்தோனேஷியன்"
 
-#: src/libs/resume/section.tsx
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
-msgid "Information"
-msgstr "தகவல்"
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "வரிசைப்பூர்வமான"
@@ -4251,6 +4248,7 @@ msgstr "கிடைமட்டப் படலம்"
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/user/dropdown-menu.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Language"
 msgstr "மொழி"
 
@@ -4267,6 +4265,7 @@ msgid "Last changed in {0}"
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
 msgstr ""
 
@@ -4339,6 +4338,7 @@ msgstr ""
 msgid "Legal"
 msgstr "சட்டரீதியான"
 
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Length"
 msgstr ""
@@ -5903,6 +5903,10 @@ msgstr ""
 msgid "Private"
 msgstr "தனியார்"
 
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Private. Only you can see it."
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "Product"
 msgstr "தயாரிப்பு"
@@ -5965,11 +5969,16 @@ msgid "Provider"
 msgstr "வழங்குபவர்"
 
 #: src/features/homepage/share.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Public"
 msgstr "பொது"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Public link"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Public, with a password"
 msgstr ""
 
 #: src/libs/resume/section-title.ts
@@ -6276,12 +6285,9 @@ msgid "Replace tables with plain paragraphs and lists. Cells extract in storage 
 msgstr "அட்டவணைகளை எளிய பத்திகள் மற்றும் பட்டியல்களாக மாற்றவும். செல்கள் படிக்கும் வரிசையில் அல்ல, சேமிப்பு வரிசையில்தான் பிரித்தெடுக்கப்படும்."
 
 #: src/features/homepage/sections.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Report a bug"
 msgstr "பிழையைப் புகாரளி"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Report a Bug"
-msgstr "ஒரு பிழையை அறிவிக்கவும்"
 
 #: src/features/homepage/footer.tsx
 msgid "Report an issue"
@@ -6372,6 +6378,10 @@ msgstr ""
 #: src/features/resume/preview/resume-accessible-text.tsx
 msgid "Resume content"
 msgstr "ரெஸ்யூம் உள்ளடக்கம்"
+
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Resume details"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Resume file"
@@ -6832,6 +6842,7 @@ msgid "Share via…"
 msgstr ""
 
 #: src/libs/resume/section.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Sharing"
 msgstr "பகிர்வு"
 
@@ -7153,10 +7164,6 @@ msgstr "ஆதாரம்"
 msgid "Source code"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Source Code"
-msgstr "மூல குறியீடு"
-
 #: src/features/assistant/conversation.tsx
 msgid "Sources"
 msgstr "ஆதாரங்கள்"
@@ -7189,10 +7196,6 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Spell the month, as in \"Mar 2022\"."
 msgstr "\"Mar 2022\" போன்று மாதத்தை எழுத்துக்களில் எழுதவும்."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Sponsors"
-msgstr "ஆதார ஆதாரவர்கள்"
 
 #. Preset button for setting picture aspect ratio to square
 #: src/components/level/combobox.tsx
@@ -7362,10 +7365,6 @@ msgstr "சுருக்கம்"
 msgid "Support"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Support the app by doing what you can!"
-msgstr "உங்களால் இயன்ற அளவு செய்து இந்த செயலியை ஆதரிக்கவும்!"
-
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
 msgstr "தொடக்க மற்றும் முடிவு தேதிகளை மாற்றவும்."
@@ -7476,6 +7475,7 @@ msgstr "தெலுங்கு"
 
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Template"
 msgstr "டெம்ப்ளேட்"
@@ -8042,12 +8042,15 @@ msgstr ""
 msgid "Transcript copied"
 msgstr ""
 
+#: src/routes/dashboard/settings/route.tsx
+msgid "Translate"
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"
 msgstr "செயலியை மொழிபெயர்க்கவும்"
 
 #: src/features/homepage/footer.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Translations"
 msgstr "மொழிபெயர்ப்புகள்"
 

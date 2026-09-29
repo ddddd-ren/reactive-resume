@@ -17,8 +17,7 @@ export type RightSidebarSection =
 	| "notes"
 	| "sharing"
 	| "statistics"
-	| "export"
-	| "information";
+	| "export";
 
 export type SidebarSection = LeftSidebarSection | RightSidebarSection;
 
@@ -57,7 +56,6 @@ export const getSectionTitle = (type: SidebarSection | CustomOnlyType): string =
 			.with("sharing", () => t`Sharing`)
 			.with("statistics", () => t`Statistics`)
 			.with("export", () => t`Export`)
-			.with("information", () => t`Information`)
 
 			.exhaustive()
 	);

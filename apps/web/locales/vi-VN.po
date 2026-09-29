@@ -405,6 +405,7 @@ msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr ""
 
@@ -481,10 +482,6 @@ msgstr ""
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr ""
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "<0>Thank you for using Reactive Resume. I build this app mostly in my spare time, with help from open-source contributors around the world.</0><1>If it has been useful to you and you'd like to keep it free and open for everyone, please consider donating. Any amount helps.</1>"
-msgstr "<0>Cảm ơn bạn đã sử dụng Reactive Resume. Tôi xây dựng ứng dụng này chủ yếu trong thời gian rảnh, với sự giúp đỡ của những người đóng góp mã nguồn mở trên khắp thế giới.</0><1>Nếu nó hữu ích với bạn và bạn muốn giữ cho nó miễn phí và mở với tất cả mọi người, xin hãy cân nhắc quyên góp. Mọi khoản đóng góp đều có ý nghĩa.</1>"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -2334,6 +2331,7 @@ msgstr "Tạo ngay bây giờ"
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
 #: src/features/settings/ai/api-keys.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Created"
 msgstr "Đã tạo"
 
@@ -2645,6 +2643,10 @@ msgstr ""
 msgid "Design systems"
 msgstr "Hệ thống thiết kế"
 
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Details"
+msgstr ""
+
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
 msgid "Details from the provider:"
@@ -2694,7 +2696,6 @@ msgid "Document type"
 msgstr ""
 
 #: src/features/homepage/footer.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Documentation"
 msgstr "Tài liệu"
 
@@ -2714,13 +2715,10 @@ msgid "Don't send {0}"
 msgstr ""
 
 #: src/components/ui/donation-toast.tsx
+#: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Donate"
 msgstr "Quyên tặng"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Donate to Reactive Resume"
-msgstr "Đóng góp cho Reactive Resume"
 
 #: src/features/resume/editor/write/rich-text-editor.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3611,6 +3609,10 @@ msgstr "Đi đến bảng điều khiển"
 msgid "Go to…"
 msgstr "Đi đến…"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Good luck out there. Reactive Resume stays free because people chip in."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Brand name label for Google social sign-in button
 #: src/features/auth/components/social-auth.tsx
@@ -3933,11 +3935,6 @@ msgstr "Tăng khoảng cách dòng để hai dòng không bị hợp nhất thà
 msgid "Indonesian"
 msgstr "Tiếng Indonesia"
 
-#: src/libs/resume/section.tsx
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
-msgid "Information"
-msgstr "Thông tin"
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "Nội tuyến"
@@ -4251,6 +4248,7 @@ msgstr "Ngang"
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/user/dropdown-menu.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Language"
 msgstr "Ngôn ngữ"
 
@@ -4267,6 +4265,7 @@ msgid "Last changed in {0}"
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
 msgstr ""
 
@@ -4339,6 +4338,7 @@ msgstr ""
 msgid "Legal"
 msgstr "Pháp lý"
 
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Length"
 msgstr ""
@@ -5903,6 +5903,10 @@ msgstr ""
 msgid "Private"
 msgstr "Riêng tư"
 
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Private. Only you can see it."
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "Product"
 msgstr "Sản phẩm"
@@ -5965,11 +5969,16 @@ msgid "Provider"
 msgstr "Nhà cung cấp"
 
 #: src/features/homepage/share.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Public"
 msgstr "Công khai"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Public link"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Public, with a password"
 msgstr ""
 
 #: src/libs/resume/section-title.ts
@@ -6276,11 +6285,8 @@ msgid "Replace tables with plain paragraphs and lists. Cells extract in storage 
 msgstr "Thay thế bảng biểu bằng đoạn văn và danh sách thuần túy. Các ô được trích xuất theo thứ tự lưu trữ, không theo thứ tự đọc."
 
 #: src/features/homepage/sections.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Report a bug"
-msgstr "Báo lỗi"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Report a Bug"
 msgstr "Báo lỗi"
 
 #: src/features/homepage/footer.tsx
@@ -6372,6 +6378,10 @@ msgstr ""
 #: src/features/resume/preview/resume-accessible-text.tsx
 msgid "Resume content"
 msgstr "Nội dung sơ yếu lý lịch"
+
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Resume details"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Resume file"
@@ -6832,6 +6842,7 @@ msgid "Share via…"
 msgstr ""
 
 #: src/libs/resume/section.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Sharing"
 msgstr "Chia sẻ"
 
@@ -7153,10 +7164,6 @@ msgstr "Nguồn"
 msgid "Source code"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Source Code"
-msgstr "Mã nguồn"
-
 #: src/features/assistant/conversation.tsx
 msgid "Sources"
 msgstr "Nguồn"
@@ -7189,10 +7196,6 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Spell the month, as in \"Mar 2022\"."
 msgstr "Viết đầy đủ tên tháng, chẳng hạn \"Tháng 3 năm 2022\"."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Sponsors"
-msgstr "Nhà tài trợ"
 
 #. Preset button for setting picture aspect ratio to square
 #: src/components/level/combobox.tsx
@@ -7362,10 +7365,6 @@ msgstr "Tóm tắt"
 msgid "Support"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Support the app by doing what you can!"
-msgstr "Hãy ủng hộ ứng dụng bằng cách làm bất cứ điều gì bạn có thể!"
-
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
 msgstr "Hoán đổi ngày bắt đầu và ngày kết thúc."
@@ -7476,6 +7475,7 @@ msgstr "Tiếng Telugu"
 
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Template"
 msgstr "Mẫu"
@@ -8042,12 +8042,15 @@ msgstr ""
 msgid "Transcript copied"
 msgstr ""
 
+#: src/routes/dashboard/settings/route.tsx
+msgid "Translate"
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"
 msgstr "Dịch ứng dụng"
 
 #: src/features/homepage/footer.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Translations"
 msgstr "Bản dịch"
 

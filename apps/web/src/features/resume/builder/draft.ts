@@ -20,6 +20,7 @@ export type Resume = {
 	tags: string[];
 	data: ResumeData;
 	isLocked: boolean;
+	createdAt: Date;
 	updatedAt: Date;
 	hasPassword?: boolean;
 	isPublic?: boolean;

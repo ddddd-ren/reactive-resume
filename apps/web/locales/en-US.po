@@ -400,6 +400,7 @@ msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{open, plural, one {# thing to review.} other {# things to review.}}"
 
 #: src/features/resume/editor/chrome.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {# page} other {# pages}}"
 
@@ -476,10 +477,6 @@ msgstr "+13 pts activation"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr "<0>Nothing to fix.</0> Every check passes."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "<0>Thank you for using Reactive Resume. I build this app mostly in my spare time, with help from open-source contributors around the world.</0><1>If it has been useful to you and you'd like to keep it free and open for everyone, please consider donating. Any amount helps.</1>"
-msgstr "<0>Thank you for using Reactive Resume. I build this app mostly in my spare time, with help from open-source contributors around the world.</0><1>If it has been useful to you and you'd like to keep it free and open for everyone, please consider donating. Any amount helps.</1>"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -2329,6 +2326,7 @@ msgstr "Create one now"
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
 #: src/features/settings/ai/api-keys.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Created"
 msgstr "Created"
 
@@ -2640,6 +2638,10 @@ msgstr "Design reset to the template defaults"
 msgid "Design systems"
 msgstr "Design systems"
 
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Details"
+msgstr "Details"
+
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
 msgid "Details from the provider:"
@@ -2689,7 +2691,6 @@ msgid "Document type"
 msgstr "Document type"
 
 #: src/features/homepage/footer.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Documentation"
 msgstr "Documentation"
 
@@ -2709,13 +2710,10 @@ msgid "Don't send {0}"
 msgstr "Don't send {0}"
 
 #: src/components/ui/donation-toast.tsx
+#: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Donate"
 msgstr "Donate"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Donate to Reactive Resume"
-msgstr "Donate to Reactive Resume"
 
 #: src/features/resume/editor/write/rich-text-editor.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3606,6 +3604,10 @@ msgstr "Go to dashboard"
 msgid "Go to…"
 msgstr "Go to…"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Good luck out there. Reactive Resume stays free because people chip in."
+msgstr "Good luck out there. Reactive Resume stays free because people chip in."
+
 #. Authentication provider display name in account settings
 #. Brand name label for Google social sign-in button
 #: src/features/auth/components/social-auth.tsx
@@ -3928,11 +3930,6 @@ msgstr "Increase line spacing so two lines are not merged into one."
 msgid "Indonesian"
 msgstr "Indonesian"
 
-#: src/libs/resume/section.tsx
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
-msgid "Information"
-msgstr "Information"
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "Inline"
@@ -4246,6 +4243,7 @@ msgstr "Landscape"
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/user/dropdown-menu.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Language"
 msgstr "Language"
 
@@ -4262,6 +4260,7 @@ msgid "Last changed in {0}"
 msgstr "Last changed in {0}"
 
 #: src/features/documents/documents-page.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
 msgstr "Last edited"
 
@@ -4334,6 +4333,7 @@ msgstr "Left"
 msgid "Legal"
 msgstr "Legal"
 
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Length"
 msgstr "Length"
@@ -5898,6 +5898,10 @@ msgstr "Privacy policy"
 msgid "Private"
 msgstr "Private"
 
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Private. Only you can see it."
+msgstr "Private. Only you can see it."
+
 #: src/features/homepage/footer.tsx
 msgid "Product"
 msgstr "Product"
@@ -5960,12 +5964,17 @@ msgid "Provider"
 msgstr "Provider"
 
 #: src/features/homepage/share.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Public"
 msgstr "Public"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Public link"
 msgstr "Public link"
+
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Public, with a password"
+msgstr "Public, with a password"
 
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
@@ -6271,12 +6280,9 @@ msgid "Replace tables with plain paragraphs and lists. Cells extract in storage 
 msgstr "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 
 #: src/features/homepage/sections.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Report a bug"
 msgstr "Report a bug"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Report a Bug"
-msgstr "Report a Bug"
 
 #: src/features/homepage/footer.tsx
 msgid "Report an issue"
@@ -6367,6 +6373,10 @@ msgstr "Resume builder"
 #: src/features/resume/preview/resume-accessible-text.tsx
 msgid "Resume content"
 msgstr "Resume content"
+
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Resume details"
+msgstr "Resume details"
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Resume file"
@@ -6827,6 +6837,7 @@ msgid "Share via…"
 msgstr "Share via…"
 
 #: src/libs/resume/section.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Sharing"
 msgstr "Sharing"
 
@@ -7148,10 +7159,6 @@ msgstr "Source"
 msgid "Source code"
 msgstr "Source code"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Source Code"
-msgstr "Source Code"
-
 #: src/features/assistant/conversation.tsx
 msgid "Sources"
 msgstr "Sources"
@@ -7184,10 +7191,6 @@ msgstr "Speaks your language"
 #: src/features/ats-checker/messages.ts
 msgid "Spell the month, as in \"Mar 2022\"."
 msgstr "Spell the month, as in \"Mar 2022\"."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Sponsors"
-msgstr "Sponsors"
 
 #. Preset button for setting picture aspect ratio to square
 #: src/components/level/combobox.tsx
@@ -7357,10 +7360,6 @@ msgstr "Summary"
 msgid "Support"
 msgstr "Support"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Support the app by doing what you can!"
-msgstr "Support the app by doing what you can!"
-
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
 msgstr "Swap the start and end dates."
@@ -7471,6 +7470,7 @@ msgstr "Telugu"
 
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Template"
 msgstr "Template"
@@ -8037,12 +8037,15 @@ msgstr "Tracking"
 msgid "Transcript copied"
 msgstr "Transcript copied"
 
+#: src/routes/dashboard/settings/route.tsx
+msgid "Translate"
+msgstr "Translate"
+
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"
 msgstr "Translate the app"
 
 #: src/features/homepage/footer.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Translations"
 msgstr "Translations"
 

@@ -405,6 +405,7 @@ msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr ""
 
@@ -481,10 +482,6 @@ msgstr ""
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr ""
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "<0>Thank you for using Reactive Resume. I build this app mostly in my spare time, with help from open-source contributors around the world.</0><1>If it has been useful to you and you'd like to keep it free and open for everyone, please consider donating. Any amount helps.</1>"
-msgstr "<0>Gràcies per fer servir Reactive Resume. Desenvolupo aquesta aplicació sobretot en el meu temps lliure, amb l'ajuda de col·laboradors de codi obert d'arreu del món.</0><1>Si t'ha estat útil i vols que continuï sent gratuïta i oberta per a tothom, considera fer una donació. Qualsevol quantitat ajuda.</1>"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -2334,6 +2331,7 @@ msgstr "Crea'n un ara"
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
 #: src/features/settings/ai/api-keys.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Created"
 msgstr "Creat"
 
@@ -2645,6 +2643,10 @@ msgstr ""
 msgid "Design systems"
 msgstr "Sistemes de disseny"
 
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Details"
+msgstr ""
+
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
 msgid "Details from the provider:"
@@ -2694,7 +2696,6 @@ msgid "Document type"
 msgstr ""
 
 #: src/features/homepage/footer.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Documentation"
 msgstr "Documentació"
 
@@ -2714,13 +2715,10 @@ msgid "Don't send {0}"
 msgstr ""
 
 #: src/components/ui/donation-toast.tsx
+#: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Donate"
 msgstr "Donar"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Donate to Reactive Resume"
-msgstr "Fes una donació a Reactive Resume"
 
 #: src/features/resume/editor/write/rich-text-editor.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3611,6 +3609,10 @@ msgstr "Ves al tauler"
 msgid "Go to…"
 msgstr "Ves a…"
 
+#: src/features/resume/share/download-tab.tsx
+msgid "Good luck out there. Reactive Resume stays free because people chip in."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Brand name label for Google social sign-in button
 #: src/features/auth/components/social-auth.tsx
@@ -3933,11 +3935,6 @@ msgstr "Augmenta l'interlineat perquè dues línies no es fusionin en una."
 msgid "Indonesian"
 msgstr "Indonesi"
 
-#: src/libs/resume/section.tsx
-#: src/routes/builder/$resumeId/-components/document-menu.tsx
-msgid "Information"
-msgstr "Informació"
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "En línia"
@@ -4251,6 +4248,7 @@ msgstr "Apaïsat"
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/user/dropdown-menu.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Language"
 msgstr "Idioma"
 
@@ -4267,6 +4265,7 @@ msgid "Last changed in {0}"
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
 msgstr ""
 
@@ -4339,6 +4338,7 @@ msgstr ""
 msgid "Legal"
 msgstr "Legal"
 
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Length"
 msgstr ""
@@ -5903,6 +5903,10 @@ msgstr ""
 msgid "Private"
 msgstr "Privat"
 
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Private. Only you can see it."
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "Product"
 msgstr "Producte"
@@ -5965,11 +5969,16 @@ msgid "Provider"
 msgstr "Proveïdor"
 
 #: src/features/homepage/share.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Public"
 msgstr "Públic"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Public link"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Public, with a password"
 msgstr ""
 
 #: src/libs/resume/section-title.ts
@@ -6276,12 +6285,9 @@ msgid "Replace tables with plain paragraphs and lists. Cells extract in storage 
 msgstr "Substitueix les taules per paràgrafs i llistes simples. Les cel·les s'extreuen en l'ordre d'emmagatzematge, no en l'ordre de lectura."
 
 #: src/features/homepage/sections.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Report a bug"
 msgstr "Informa d'un error"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Report a Bug"
-msgstr "Informar d’un error"
 
 #: src/features/homepage/footer.tsx
 msgid "Report an issue"
@@ -6372,6 +6378,10 @@ msgstr ""
 #: src/features/resume/preview/resume-accessible-text.tsx
 msgid "Resume content"
 msgstr "Contingut del currículum"
+
+#: src/routes/builder/$resumeId/-components/document-details.tsx
+msgid "Resume details"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Resume file"
@@ -6832,6 +6842,7 @@ msgid "Share via…"
 msgstr ""
 
 #: src/libs/resume/section.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Sharing"
 msgstr "Compartició"
 
@@ -7153,10 +7164,6 @@ msgstr "Font"
 msgid "Source code"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Source Code"
-msgstr "Codi font"
-
 #: src/features/assistant/conversation.tsx
 msgid "Sources"
 msgstr "Fonts"
@@ -7189,10 +7196,6 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Spell the month, as in \"Mar 2022\"."
 msgstr "Escriu el mes amb lletres, com a «Mar 2022»."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Sponsors"
-msgstr "Patrocinadors"
 
 #. Preset button for setting picture aspect ratio to square
 #: src/components/level/combobox.tsx
@@ -7362,10 +7365,6 @@ msgstr "Resum"
 msgid "Support"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
-msgid "Support the app by doing what you can!"
-msgstr "Dóna suport a l’aplicació fent el que puguis!"
-
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
 msgstr "Intercanvieu les dates d'inici i de finalització."
@@ -7476,6 +7475,7 @@ msgstr "Telugu"
 
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
+#: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Template"
 msgstr "Plantilla"
@@ -8042,12 +8042,15 @@ msgstr ""
 msgid "Transcript copied"
 msgstr ""
 
+#: src/routes/dashboard/settings/route.tsx
+msgid "Translate"
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"
 msgstr "Tradueix l'aplicació"
 
 #: src/features/homepage/footer.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Translations"
 msgstr "Traduccions"
 

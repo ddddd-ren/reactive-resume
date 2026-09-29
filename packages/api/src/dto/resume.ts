@@ -48,7 +48,7 @@ export const resumeDto = {
 
 	getById: {
 		input: resumeSchema.pick({ id: true }),
-		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({
+		output: resumeSchema.omit({ password: true, userId: true }).extend({
 			hasPassword: z.boolean(),
 			applicationId: z.string().nullable().describe("The job application this resume was made for, if any."),
 		}),
@@ -99,7 +99,7 @@ export const resumeDto = {
 						"Identifies one editing session. Saves that share it keep one autosave version, refreshed at most every two minutes.",
 					),
 			}),
-		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+		output: resumeSchema.omit({ password: true, userId: true }).extend({ hasPassword: z.boolean() }),
 	},
 
 	checkSlug: {
@@ -145,7 +145,7 @@ export const resumeDto = {
 				.min(1)
 				.describe("An array of JSON Patch (RFC 6902) operations to apply to the resume data."),
 		}),
-		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+		output: resumeSchema.omit({ password: true, userId: true }).extend({ hasPassword: z.boolean() }),
 	},
 
 	duplicate: {
@@ -205,6 +205,6 @@ export const resumeDto = {
 			resumeId: z.string().describe("The ID of the resume to restore."),
 			versionId: z.string().describe("The ID of the version snapshot to restore."),
 		}),
-		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+		output: resumeSchema.omit({ password: true, userId: true }).extend({ hasPassword: z.boolean() }),
 	},
 };

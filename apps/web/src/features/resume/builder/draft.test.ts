@@ -96,6 +96,7 @@ function makeResume(id: string): Resume {
 		isLocked: false,
 		isPublic: false,
 		hasPassword: false,
+		createdAt: new Date("2026-05-20T09:00:00.000Z"),
 		updatedAt: new Date("2026-05-26T12:00:00.000Z"),
 	};
 }
