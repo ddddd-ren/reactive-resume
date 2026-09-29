@@ -13,7 +13,7 @@ const MAX_AUTOSAVES = 500;
 // History shows at most this many versions, newest first.
 const LIST_LIMIT = 100;
 
-export type VersionSummary<TKind extends string> = { id: string; kind: TKind; name: string | null; createdAt: Date };
+type VersionSummary<TKind extends string> = { id: string; kind: TKind; name: string | null; createdAt: Date };
 
 type VersionTable = {
 	table: PgTable;
