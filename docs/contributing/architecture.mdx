@@ -51,7 +51,7 @@ flowchart TD
 | `packages/env` | Server environment validation and root `.env` loading |
 | `packages/schema` | Zod schemas and typed resume/page/template models |
 | `packages/resume` | Pure resume-domain helpers, including JSON Patch behavior and network icon mapping |
-| `packages/pdf` | React PDF document, template primitives, templates, font registration, and browser/server generation adapters |
+| `packages/pdf` | Resume document, template primitives, Forme conversion, templates, font registration, and browser/server generation adapters |
 | `packages/docx` | DOCX export generation |
 | `packages/mcp` | MCP tools, prompts, resources, server card, and tool metadata |
 | `packages/ui` | Shared Base UI/shadcn-style primitives and hooks |
@@ -93,7 +93,7 @@ When adding code, choose the owner by behavior:
 | API procedure or authenticated business behavior | `packages/api/src/features/<domain>` |
 | Pure resume data logic | `packages/resume` |
 | Resume schema or template list shape | `packages/schema` |
-| React PDF template/rendering behavior | `packages/pdf` |
+| PDF template/rendering behavior | `packages/pdf` |
 | PDF.js canvas/viewer UI | `apps/web/src/features/resume` |
 | DOCX export behavior | `packages/docx` |
 | MCP tool/prompt/resource behavior | `packages/mcp` |
@@ -124,7 +124,7 @@ Avoid reintroducing technical-layer folders such as `services/` or `helpers/` at
 
 ## PDF and export boundaries
 
-`packages/pdf` owns React PDF generation:
+`packages/pdf` owns PDF generation. Templates are written with React primitives; `src/forme` renders them with a small React renderer and converts the result into a [Forme](https://www.formepdf.com/) document, which the Forme engine (WebAssembly) lays out and draws:
 
 - `@reactive-resume/pdf/browser` creates browser PDF blobs.
 - `@reactive-resume/pdf/server` creates server PDF files.

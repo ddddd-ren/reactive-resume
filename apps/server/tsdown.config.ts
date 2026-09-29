@@ -37,7 +37,9 @@ const shouldExternalizeThirdParty = (id: string) => {
 		.slice(0, id.startsWith("@") ? 2 : 1)
 		.join("/");
 	if (id.startsWith("@reactive-resume/") || bundledInteropPackages.has(packageName)) return false;
-	if (id.startsWith("@/") || id.startsWith(".") || id.startsWith("/") || id.startsWith("\0")) return false;
+	// Subpath imports (`#…`) are resolved by the workspace package that declares them, so they're bundled with it.
+	if (id.startsWith("@/") || id.startsWith("#") || id.startsWith(".") || id.startsWith("/") || id.startsWith("\0"))
+		return false;
 
 	return true;
 };

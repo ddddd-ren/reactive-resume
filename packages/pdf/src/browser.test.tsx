@@ -4,19 +4,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 
 const rendererMock = vi.hoisted(() => ({
-	pdf: vi.fn(() => ({
-		toBlob: vi.fn(async () => new Blob(["%PDF"], { type: "application/pdf" })),
+	renderResume: vi.fn(async () => ({
+		pdf: new TextEncoder().encode("%PDF"),
+		pageMap: { pages: [], nodes: [] },
+		layout: { pages: [] },
+		warnings: [],
 	})),
 }));
 
-vi.mock("#react-pdf-renderer", async (importOriginal) => ({
-	...(await importOriginal<typeof import("@react-pdf/renderer")>()),
-	pdf: rendererMock.pdf,
-}));
-
-vi.mock("./document", () => ({
-	ResumeDocument: () => null,
-}));
+vi.mock("./forme/render", () => ({ renderResume: rendererMock.renderResume }));
+vi.mock("@formepdf/core/worker", () => ({ init: vi.fn(async () => {}) }));
 
 const createLegacyRendererSafeResumeData = (): ResumeData =>
 	({
@@ -57,7 +54,7 @@ const createRendererUnsafeResumeData = (): ResumeData => {
 
 describe("createResumePdfBlob", () => {
 	beforeEach(() => {
-		rendererMock.pdf.mockClear();
+		rendererMock.renderResume.mockClear();
 	});
 
 	it("renders ResumeDocument with data, template, and section title resolver", async () => {
@@ -72,25 +69,24 @@ describe("createResumePdfBlob", () => {
 		});
 
 		expect(blob.type).toBe("application/pdf");
-		expect(rendererMock.pdf).toHaveBeenCalledTimes(1);
-		expect(rendererMock.pdf).toHaveBeenCalledWith(
+		expect(rendererMock.renderResume).toHaveBeenCalledTimes(1);
+		expect(rendererMock.renderResume).toHaveBeenCalledWith(
+			expect.anything(),
 			expect.objectContaining({
-				props: expect.objectContaining({
-					template: "azurill",
-					resolveSectionTitle,
-					data: expect.objectContaining({
-						customSections: [
-							expect.objectContaining({
-								items: [
-									expect.objectContaining({
-										content: "<p>Compatible overlap</p>",
-										roles: [],
-										website: { url: "", label: "", inlineLink: false },
-									}),
-								],
-							}),
-						],
-					}),
+				template: "azurill",
+				resolveSectionTitle,
+				data: expect.objectContaining({
+					customSections: [
+						expect.objectContaining({
+							items: [
+								expect.objectContaining({
+									content: "<p>Compatible overlap</p>",
+									roles: [],
+									website: { url: "", label: "", inlineLink: false },
+								}),
+							],
+						}),
+					],
 				}),
 			}),
 		);
@@ -104,11 +100,11 @@ describe("createResumePdfBlob", () => {
 		);
 
 		expect(error).toHaveProperty("issues.0.path", ["customSections", 0, "items", 0, "company"]);
-		expect(rendererMock.pdf).not.toHaveBeenCalled();
+		expect(rendererMock.renderResume).not.toHaveBeenCalled();
 	});
 
 	it("returns a rejected Promise when the renderer fails synchronously", async () => {
-		rendererMock.pdf.mockImplementationOnce(() => {
+		rendererMock.renderResume.mockImplementationOnce(() => {
 			throw new Error("renderer failed");
 		});
 		const { createResumePdfBlob } = await import("./browser");
@@ -125,6 +121,6 @@ describe("createResumePdfBlob", () => {
 		const { createResumePdfBlob } = await import("./browser");
 
 		await expect(createResumePdfBlob({ data })).resolves.toHaveProperty("type", "application/pdf");
-		expect(rendererMock.pdf).toHaveBeenCalledTimes(1);
+		expect(rendererMock.renderResume).toHaveBeenCalledTimes(1);
 	});
 });

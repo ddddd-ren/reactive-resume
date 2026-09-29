@@ -464,6 +464,7 @@ export function toFormeStyle(input: Style, context: Context): ConvertedStyle {
 			else dropped.push(key);
 			continue;
 		}
+		if (key === "alignSelf" && value === "auto") continue;
 		const keywords = KEYWORD_KEYS[key];
 		if (keywords) {
 			const keyword = String(value).trim();
@@ -476,6 +477,8 @@ export function toFormeStyle(input: Style, context: Context): ConvertedStyle {
 			style[key] = String(value);
 			continue;
 		}
+		// Only solid borders are drawn; a dashed or dotted one is drawn solid, and said so.
+		if (/^border(?:Top|Right|Bottom|Left)?Style$/.test(key) && value !== "solid") dropped.push(key);
 		if (IGNORED.has(key)) continue;
 		dropped.push(key);
 	}

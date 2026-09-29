@@ -4,7 +4,7 @@ description: "How to self-host Reactive Resume on Kubernetes with plain manifest
 ---
 
 <Info>
-  **From v5.1.0 onwards** — the builder generates PDFs in the browser via `@react-pdf/renderer`. New deployments no
+  **From v5.1.0 onwards** — the builder generates PDFs in the browser with the Forme PDF engine (WebAssembly). New deployments no
   longer require Browserless, Chromium, or any external print service as a dependency. The `PRINTER_*` and
   `BROWSERLESS_*` environment variables are no longer read and can be removed from your configuration.
 </Info>
@@ -416,8 +416,8 @@ curl -f http://localhost:3000/api/health
   </Step>
 
   <Step title="Export a PDF">
-    Open **Download** in the builder header and choose **PDF**. Builder PDF rendering happens in the browser via
-    `@react-pdf/renderer`. Open the downloaded file and check its text, fonts, and picture.
+    Open **Download** in the builder header and choose **PDF**. Builder PDF rendering happens in the browser with
+    the Forme PDF engine. Open the downloaded file and check its text, fonts, and picture.
   </Step>
 
   <Step title="Check persistence">

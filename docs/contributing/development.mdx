@@ -43,7 +43,7 @@ These steps set up Reactive Resume for local development, whether you're contrib
     - **SeaweedFS** — S3-compatible storage (port 8333)
 
     <Info>
-      **From v5.1.0 onwards** — PDF generation now runs entirely in the browser via `@react-pdf/renderer`, so no Browserless or Chromium container is required for development.
+      **From v5.1.0 onwards** — PDF generation now runs entirely in the browser with the Forme PDF engine (WebAssembly), so no Browserless or Chromium container is required for development.
     </Info>
     
     <Tip>
@@ -164,7 +164,7 @@ reactive-resume/
 │   ├── db/                 # Drizzle client and schema
 │   ├── docx/               # DOCX export generation
 │   ├── mcp/                # MCP tools, prompts, resources, and metadata
-│   ├── pdf/                # React PDF rendering and PDF generation adapters
+│   ├── pdf/                # PDF rendering (Forme) and PDF generation adapters
 │   ├── resume/             # Pure resume-domain helpers
 │   ├── schema/             # Zod schemas and typed models
 │   ├── ui/                 # Shared Base UI/shadcn-style primitives

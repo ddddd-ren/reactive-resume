@@ -2,11 +2,11 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { TextItem } from "pdfjs-dist/types/src/display/api";
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../../document";
+import { renderToBuffer } from "../../forme/testing";
 
 const fixture = (): ResumeData => {
 	const data = structuredClone(defaultResumeData);
@@ -64,11 +64,13 @@ const findText = (items: TextItem[], text: string) => {
 	return item;
 };
 
-const expectTrailingAlignment = (items: TextItem[]) => {
+/** Dates end flush with the content box: its right edge, or its left edge in right-to-left resumes. */
+const expectTrailingAlignment = (items: TextItem[], rtl = false) => {
 	const expectedText = ["2010", "2011", "2012", "Paris • 2020", "Paris • 2021", "Paris • 2022", "Paris • 2023"];
 	for (const text of expectedText) {
 		const item = findText(items, text);
-		expect(item.transform[4] + item.width, text).toBeCloseTo(565.28, 1);
+		if (rtl) expect(item.transform[4], text).toBeCloseTo(30, 1);
+		else expect(item.transform[4] + item.width, text).toBeCloseTo(565.28, 1);
 	}
 };
 
@@ -87,7 +89,7 @@ describe("optional experience and education header fields (#3338)", () => {
 		const data = fixture();
 		data.metadata.page.locale = "ar-SA";
 		const items = await renderText(data);
-		expectTrailingAlignment(items);
+		expectTrailingAlignment(items, true);
 	});
 
 	it("preserves the leading alignment of stacked sidebar fields", async () => {

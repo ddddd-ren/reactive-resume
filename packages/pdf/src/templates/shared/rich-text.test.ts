@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 import { describe, expect, it } from "vitest";
-import { Text as PdfText } from "@react-pdf/renderer";
 import { parse } from "node-html-parser";
 import { createElement } from "react";
+import { Text as PdfText } from "#react-pdf-renderer";
 import { normalizeRichTextHtml } from "./rich-text-html";
 import { renderRichTextParagraph } from "./rich-text-renderers";
 import { createRichTextStylesheet } from "./rich-text-stylesheet";

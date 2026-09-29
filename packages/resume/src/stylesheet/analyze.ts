@@ -1,7 +1,7 @@
 import type { SemanticCssDiagnostic, SemanticNode, StyleProgram } from "./types";
 import { createDiagnostic } from "./diagnostics";
 import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";
-import { PROPERTY_REGISTRY_V1 } from "./registry/properties";
+import { isEngineSupportedDeclaration, PROPERTY_REGISTRY_V1 } from "./registry/properties";
 import { createSelectorMatcher } from "./selector";
 
 function flatten(root: SemanticNode): SemanticNode[] | null {
@@ -46,6 +46,20 @@ export function analyzeStylesheet(program: StyleProgram, tree: SemanticNode): re
 						"PROPERTY_NOT_APPLICABLE",
 						"warning",
 						`${declaration.property} cannot apply to the matched semantic node kinds.`,
+						declaration.range,
+					),
+				);
+			}
+			// A shorthand expands to longhands that share its source range; one warning covers them.
+			const warned = diagnostics.some(
+				({ code, range }) => code === "ENGINE_UNSUPPORTED" && range?.start.offset === declaration.range.start.offset,
+			);
+			if (definition && !warned && !isEngineSupportedDeclaration(declaration.property, declaration.value)) {
+				diagnostics.push(
+					createDiagnostic(
+						"ENGINE_UNSUPPORTED",
+						"warning",
+						`The PDF engine can't draw ${declaration.property}: ${declaration.value} yet, so it has no effect.`,
 						declaration.range,
 					),
 				);

@@ -1,11 +1,11 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { act } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../document";
+import { renderToBuffer } from "../forme/testing";
 import { rasterizePdf } from "./test/rasterize-pdf";
 
 const table = (paragraphs = false) =>

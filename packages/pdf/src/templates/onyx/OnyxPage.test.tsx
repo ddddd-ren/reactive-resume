@@ -1,10 +1,10 @@
 import type { TextItem } from "pdfjs-dist/types/src/display/api";
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../../document";
+import { renderToBuffer } from "../../forme/testing";
 
 const PICTURE =
 	"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a1ioAAAAASUVORK5CYII=";

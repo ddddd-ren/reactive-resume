@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { act } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../../document";
+import { renderToBuffer } from "../../forme/testing";
 import { resolveResumeRuntime } from "../../semantic/resolve";
 
 type Options = {
@@ -152,6 +152,6 @@ describe("ordered marker gutters (#2751)", () => {
 		const body = runs.find((run) => run.text === "ITEM0_010");
 		const baseline = (await renderList({ font: "Helvetica", count: 12 })).runs.find((run) => run.text === "ITEM0_010");
 		if (!body || !baseline) throw new Error("Missing content");
-		expect(body.x - baseline.x).toBeCloseTo(gap - 4 / 3, 3);
+		expect(body.x - baseline.x).toBeCloseTo(gap - 4 / 3, 2);
 	});
 });

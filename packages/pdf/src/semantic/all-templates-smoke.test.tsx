@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { createElement } from "react";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { ResumeDocument } from "../document";
+import { renderToBuffer } from "../forme/testing";
 import { buildAllTemplatesFixture } from "./all-templates-fixture";
 
 describe("Semantic CSS all-template smoke", () => {

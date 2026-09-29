@@ -1521,9 +1521,9 @@ The known 0.25.0 defects are accepted until upstream fixes them:
 - **Conversion.** The host tree becomes Forme elements. On the way, styles are normalised, `Link` becomes `href`, and `Svg` becomes markup. Nodes tagged `data-resume-node` are registered in `globalThis.__formeSourceMap`, so Forme's layout info yields the page map for click-to-edit, Check and Fit.
 - **Rendering.** `@formepdf/core` renders in Node; the browser uses `@formepdf/core/worker` with explicit WASM init. One `renderResume()` returns the PDF bytes, the page map and warnings.
 - **Fonts.** The bytes are fetched once and cached. WOFF is inflated to sfnt, and the GSUB `liga`, `clig` and `dlig` features are renamed so the shaper skips them (the #156 workaround). Fallback families become a Forme fallback chain.
-- **Rich text.** `react-pdf-html` is replaced by a renderer from normalized HTML to Forme text runs and native lists, which also replaces the react-pdf layout patches for list markers and whitespace.
+- **Rich text.** `react-pdf-html` is replaced by a small `Html` renderer in `packages/pdf/src/text.tsx` with the same contract (per-tag renderers, tag and class stylesheet, inline runs grouped into one text).
 - **Icons.** Phosphor icons are generated as SVG markup from `@phosphor-icons/react`, replacing `phosphor-icons-react-pdf`.
-- **Semantic CSS.** The adapter maps resolved styles to Forme style objects. Properties Forme can't draw become diagnostics in the stylesheet editor, for example `object-fit`, `text-indent`, `vertical-align` and `-resume-min-presence-ahead`.
+- **Semantic CSS.** The language is unchanged, so saved stylesheets keep working. Resolved styles flow through the same conversion as template styles. Declarations Forme can't draw raise an `ENGINE_UNSUPPORTED` warning in the stylesheet editor: `z-index`, `max-lines`, `text-indent`, `vertical-align`, `object-position`, `text-decoration-color`/`-style`, `-resume-min-presence-ahead` and dashed or dotted borders. `object-fit` is drawn by the converter.
 - **Free-form pages.** They render in two passes: measure the content height, then render at that height.
 - **Removed:** `@react-pdf/renderer`, `@react-pdf/hyphenate`, `react-pdf-html`, `phosphor-icons-react-pdf`, and the four react-pdf patches. Hyphenation uses Forme's `hyphens` and `lang`.
 

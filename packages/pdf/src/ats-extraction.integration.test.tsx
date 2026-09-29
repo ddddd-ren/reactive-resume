@@ -5,12 +5,12 @@ import type { SectionTitleResolver } from "./section-title";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { createElement } from "react";
 import { analyzePdfResume, harvestPdfDocument, PDF_OPS } from "@reactive-resume/resume/ats-pdf";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { ResumeDocument } from "./document";
+import { renderToBuffer } from "./forme/testing";
 
 const NOW = new Date("2024-06-15T00:00:00Z");
 

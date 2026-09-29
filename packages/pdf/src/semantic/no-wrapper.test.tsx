@@ -1,14 +1,14 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it, vi } from "vitest";
-import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { ResumeDocument } from "../document";
+import { pdf } from "../forme/testing";
 
-vi.mock("@react-pdf/renderer", async (importOriginal) => ({
-	...(await importOriginal<typeof import("@react-pdf/renderer")>()),
+vi.mock("../forme/testing", async (importOriginal) => ({
+	...(await importOriginal<typeof import("../forme/testing")>()),
 }));
 
 type HostNode = {

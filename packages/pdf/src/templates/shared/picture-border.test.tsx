@@ -1,10 +1,10 @@
 import type { Style } from "../../forme/style-types";
 import { describe, expect, it } from "vitest";
 import { createCanvas } from "@napi-rs/canvas";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../../document";
+import { renderToBuffer } from "../../forme/testing";
 import { resolveResumeRuntime } from "../../semantic/resolve";
 import { rasterizePdf } from "../../semantic/test/rasterize-pdf";
 

@@ -1,10 +1,10 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "./document";
+import { renderToBuffer } from "./forme/testing";
 
 type Line = { text: string; x: number; y: number; right: number };
 
@@ -48,7 +48,7 @@ async function pdfLines(data: ResumeData) {
 			lines.set(y, line);
 		}
 		const ordered = [...lines.values()].sort((a, b) => b.y - a.y);
-		const title = ordered.find((line) => line.text === "Whitespace");
+		const title = ordered.find((line) => line.text === data.summary.title);
 		if (!title) throw new Error("Missing summary title in PDF");
 		const plain = ordered[1];
 		if (!plain) throw new Error("Missing plain headline control in PDF");
@@ -113,6 +113,8 @@ describe("Unicode spaces in exported rich text", () => {
 
 	it("retains a literal nonbreaking space's word grouping", { timeout: 60_000 }, async () => {
 		const data = resume("a hello world", "<p>a hello\u00a0world</p>", "Helvetica", "en-US");
+		// A title that fits the 50pt section: Forme breaks a word wider than its line, where react-pdf let it overflow.
+		data.summary.title = "Ws";
 		data.metadata.stylesheet = {
 			mode: "semantic",
 			source: { languageVersion: 1, text: "@version 1; section { width: 50pt; }" },

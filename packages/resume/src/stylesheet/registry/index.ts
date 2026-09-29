@@ -9,9 +9,11 @@ export type { SystemVariableDefinition, SystemVariableRegistry } from "./system-
 export { escapeCssIdentifier, escapeCssString } from "../css-escape";
 export { SEMANTIC_CSS_DIAGNOSTIC_CATALOG_V1 } from "../diagnostics";
 export {
+	isEngineSupportedDeclaration,
 	PROPERTY_REGISTRY_V1,
 	SEMANTIC_CSS_BORDER_STYLE_VALUES_V1,
 	SEMANTIC_CSS_CSS_WIDE_KEYWORDS_V1,
+	SEMANTIC_CSS_ENGINE_UNSUPPORTED_V1,
 	SEMANTIC_CSS_LENGTH_PROPERTIES_V1,
 	SEMANTIC_CSS_LENGTH_UNITS_V1,
 	SEMANTIC_CSS_LENGTH_VALUE_KEYWORDS_V1,

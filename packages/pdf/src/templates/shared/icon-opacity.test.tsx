@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../../document";
+import { renderToBuffer } from "../../forme/testing";
 
 const renderLevel = async (level: number, css = "") => {
 	const data = structuredClone(defaultResumeData);

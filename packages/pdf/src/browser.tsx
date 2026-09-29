@@ -5,6 +5,7 @@ import type { PageMap } from "./page-map";
 import type { SectionTitleResolver } from "./section-title";
 import wasmUrl from "@formepdf/core/pkg-web/forme_bg.wasm?url";
 import * as forme from "@formepdf/core/worker";
+import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { renderResume } from "./forme/render";
 
 export type CreateResumePdfBlobOptions = {
@@ -17,9 +18,10 @@ export type CreateResumePdfBlobOptions = {
 };
 
 export const createResumePdfBlob = async ({ onPageMap, ...input }: CreateResumePdfBlobOptions): Promise<Blob> => {
+	const data = parseResumeData(input.data);
 	// The 6.5 MB engine downloads with the first PDF, not with the app.
 	await forme.init(wasmUrl);
-	const { pdf, pageMap } = await renderResume(forme, input);
+	const { pdf, pageMap } = await renderResume(forme, { ...input, data });
 	onPageMap?.(pageMap);
 	return new Blob([pdf as Uint8Array<ArrayBuffer>], { type: "application/pdf" });
 };

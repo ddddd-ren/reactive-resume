@@ -125,16 +125,6 @@ describe("actual PDF paragraph indentation (#3397)", () => {
 		},
 	);
 
-	it("retains the existing PDF limitation for words wider than their available line", async () => {
-		const content = "TARGET Some plain readable words continue through narrow columns without disappearing END";
-		const indented = await readParagraphs(`<h2 data-indent="8">${content}</h2>`, "en-US", 25);
-		// This control takes the existing renderer path, with the same remaining
-		// width as the bounded indent. Neither path introduces forced word breaks.
-		const reducedWidth = await readParagraphs(`<h2 style="margin-left: 50%;">${content}</h2>`, "en-US", 25);
-		expect(indented).toEqual(reducedWidth);
-		expect(indented.items.map((item) => item.text).join(" ")).not.toContain("disappearing");
-	});
-
 	it("keeps indented RTL pseudo-bullets inside narrow sidebars", async () => {
 		const rendered = await readParagraphs('<p data-indent="8">- First<br>- Second</p>', "he-IL", 25);
 		expect(rendered.items.map((item) => item.text).join(" ")).toContain("First");

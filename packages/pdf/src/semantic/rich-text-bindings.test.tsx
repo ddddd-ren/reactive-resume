@@ -1,16 +1,16 @@
 import type { SemanticNode } from "@reactive-resume/resume/stylesheet/types";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { describe, expect, it, vi } from "vitest";
-import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../document";
+import { pdf } from "../forme/testing";
 import { parseNormalizedRichTextHtml, richTextMarkClassName } from "../templates/shared/rich-text-html";
 import { getRichTextSemanticNodeKey } from "./rich-text-keys";
 import { buildSemanticTree } from "./tree";
 
-vi.mock("@react-pdf/renderer", async (importOriginal) => ({
-	...(await importOriginal<typeof import("@react-pdf/renderer")>()),
+vi.mock("../forme/testing", async (importOriginal) => ({
+	...(await importOriginal<typeof import("../forme/testing")>()),
 }));
 
 type HostNode = {

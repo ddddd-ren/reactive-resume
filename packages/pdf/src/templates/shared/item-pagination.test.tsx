@@ -6,8 +6,8 @@ import { createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../../document";
 
-vi.mock("@react-pdf/renderer", async (importOriginal) => ({
-	...(await importOriginal<typeof import("@react-pdf/renderer")>()),
+vi.mock("../../forme/testing", async (importOriginal) => ({
+	...(await importOriginal<typeof import("../../forme/testing")>()),
 }));
 
 type PdfTextItem = { str: string };
@@ -15,7 +15,7 @@ type ParsedPdfPage = { getTextContent: () => Promise<{ items: PdfTextItem[] }> }
 type ParsedPdf = { numPages: number; getPage: (pageNumber: number) => Promise<ParsedPdfPage> };
 
 const renderPdf = async (data: ResumeData, template: Template = "onyx"): Promise<Uint8Array> => {
-	const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>("@react-pdf/renderer");
+	const renderer = await vi.importActual<typeof import("../../forme/testing")>("../../forme/testing");
 	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<
 		typeof renderer.renderToBuffer
 	>[0];
@@ -190,8 +190,8 @@ describe("item pagination token matrix", () => {
 		expect(pages.length).toBeGreaterThan(authoredPagesBeforeRender.length);
 	});
 
-	it("records unsafe renderer fallback for an oversized non-wrapping item", async () => {
-		const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>("@react-pdf/renderer");
+	it("keeps every line of an oversized non-wrapping item", async () => {
+		const renderer = await vi.importActual<typeof import("../../forme/testing")>("../../forme/testing");
 		const tokens = Array.from({ length: 180 }, (_value, index) => `UNSAFE_${String(index + 1).padStart(3, "0")}`);
 		const item = createElement(
 			renderer.View,
@@ -205,8 +205,7 @@ describe("item pagination token matrix", () => {
 		) as Parameters<typeof renderer.renderToBuffer>[0];
 		const pages = await readPhysicalPages(await parsePdf(new Uint8Array(await renderer.renderToBuffer(element))));
 
-		// React PDF warns that an oversized View cannot wrap and drops content; this is the blocker for item Keep together.
-		expect(pages.join(" ")).toContain("UNSAFE_001");
-		expect(pages.join(" ")).not.toContain("UNSAFE_180");
+		// react-pdf dropped what didn't fit. Forme moves the block to a fresh page and splits it there, so nothing is lost.
+		expectTokensExactlyOnce(pages, tokens);
 	});
 });

@@ -1,10 +1,10 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { describe, expect, it, vi } from "vitest";
-import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
 import { compileStylesheet } from "@reactive-resume/resume/stylesheet";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../document";
+import { pdf } from "../forme/testing";
 import { semanticNodeKeys } from "./node-keys";
 import { resolveResumePresentation, resolveStylesheetMode } from "./resolve";
 

@@ -59,9 +59,7 @@ describe("Typography hyphenation", () => {
 
 		const toggle = screen.getByRole("switch", { name: "Hyphenation" });
 		expect(toggle).not.toBeChecked();
-		expect(toggle).toHaveAccessibleDescription(
-			"Currently available for German resumes. Uses the language set in Page.",
-		);
+		expect(toggle).toHaveAccessibleDescription("Breaks long words between syllables, using the language set in Page.");
 		expect(state.update).not.toHaveBeenCalled();
 	});
 

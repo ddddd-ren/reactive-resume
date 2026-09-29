@@ -1,11 +1,11 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it } from "vitest";
-import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { ResumeDocument } from "../document";
+import { pdf } from "../forme/testing";
 import { resolveResumeRuntime } from "./resolve";
 
 type HostNode = { type: string; style?: unknown; value?: string; children?: HostNode[] };

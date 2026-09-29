@@ -112,8 +112,8 @@ for (const font of fontList) {
 }
 
 // Compatibility aliases for fonts that v5.0.x resolved via the browser
-// (Arial, Times New Roman, ...) but that aren't registered with
-// @react-pdf/renderer in v5.1+. Targets are metric-compatible web fonts
+// (Arial, Times New Roman, ...) but that the PDF engine doesn't know by
+// name. Targets are metric-compatible web fonts
 // already shipped in webfontlist (#2989).
 const legacyFontAliases: Record<string, string> = {
 	Arial: "Arimo",

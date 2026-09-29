@@ -16,7 +16,7 @@ import {
 	serialize,
 } from "@formepdf/react";
 import { cloneElement, createElement, isValidElement } from "react";
-import { NODE_SOURCE_PREFIX, RESUME_NODE_PROP } from "../page-map";
+import { NODE_CONTENT_PREFIX, NODE_SOURCE_PREFIX, RESUME_NODE_PROP } from "../page-map";
 import { HOST } from "./primitives";
 import { flattenAlpha, flattenStyle, toFormeStyle, toPoints, WHITE } from "./style";
 
@@ -39,8 +39,13 @@ type Context = {
 	inText: boolean;
 	/** The pictures, loaded by `renderResume`, by source. */
 	images: ReadonlyMap<string, LoadedImage>;
+	/** The key of the nearest tagged block (see `tagNode`). */
+	nodeKey?: string | undefined;
 	/** Whether some ancestor lays its children out in a row. */
 	insideRow: boolean;
+	/** Whether the parent lays its children out in a row. */
+	rowParent: boolean;
+	keepNestedRowsWhole: boolean;
 	/** The parent's padding: Forme places absolute boxes inside it, react-pdf over it. */
 	parentPadding: Edges;
 	/** The opaque colour behind the element being converted (see `flattenAlpha`). */
@@ -112,6 +117,7 @@ const childContext = (context: Context, parent: ParentStyle, inText = context.in
 	backdrop: parent.backdrop,
 	parentPadding: paddingEdges(parent.style),
 	insideRow: context.insideRow || parent.style.flexDirection === "row" || parent.style.flexDirection === "row-reverse",
+	rowParent: parent.style.flexDirection === "row" || parent.style.flexDirection === "row-reverse",
 	inText,
 });
 
@@ -207,26 +213,132 @@ function spreadRowGap(
 	return { style: next, children: result };
 }
 
+const ITEM_KEYS = [
+	"flex",
+	"flexGrow",
+	"flexShrink",
+	"alignSelf",
+	"margin",
+	"marginTop",
+	"marginRight",
+	"marginBottom",
+	"marginLeft",
+	"marginHorizontal",
+	"marginVertical",
+] as const;
+
+/**
+ * Forme 0.25 sizes a row's child by its content and ignores its `minWidth`. The child goes in a box with an empty
+ * strut of that width beside it, which is as wide as the wider of the two; the child stretches across it.
+ */
+function strutMinWidth(element: ReactElement, context: Context): ReactElement {
+	const style = flowStyleOf(element);
+	const { minWidth } = style;
+	if (
+		!context.rowParent ||
+		typeof minWidth !== "number" ||
+		minWidth <= 0 ||
+		style.width !== undefined ||
+		style.flexBasis !== undefined ||
+		style.position === "absolute"
+	)
+		return element;
+	const outer: Record<string, unknown> = { position: "relative" };
+	const inner: Record<string, unknown> = { ...style };
+	delete inner.minWidth;
+	for (const property of ITEM_KEYS)
+		if (inner[property] !== undefined) {
+			outer[property] = inner[property];
+			delete inner[property];
+		}
+	const content = cloneElement(element as ReactElement<{ style: FormeStyle }>, {
+		key: "content",
+		style: inner as FormeStyle,
+	});
+	const source = context.sourceMap.get(element);
+	if (source) context.sourceMap.set(content, source);
+	return createElement(
+		FormeView,
+		{ key: element.key, style: outer as FormeStyle },
+		content,
+		createElement(FormeView, { key: "strut", style: { width: minWidth, height: 0 } }),
+	);
+}
+
+const isEmptyText = (node: HostNode): boolean =>
+	"text" in node
+		? node.text.length === 0
+		: (node.type === HOST.text || node.type === HOST.link) && node.children.every(isEmptyText);
+
+const MIRRORED_JUSTIFY: Record<string, FormeStyle["justifyContent"]> = {
+	"flex-start": "flex-end",
+	"flex-end": "flex-start",
+};
+
+/**
+ * Forme 0.25 lays `row-reverse` out as `row`. The children go in reverse order in a row packed from the other end,
+ * which places them the same, except that a wrapping row fills its lines in the reverse order.
+ */
+function unreverseRow(spread: { style: FormeStyle; children: ReactNode[] }): {
+	style: FormeStyle;
+	children: ReactNode[];
+} {
+	const { style, children } = spread;
+	if (style.flexDirection !== "row-reverse") return spread;
+	const inFlow = children.filter(
+		(child) => isValidElement<{ style?: FormeStyle }>(child) && child.props.style?.position !== "absolute",
+	);
+	// `space-between` packs a lone child at the start, which for `row-reverse` is the right.
+	const justify =
+		style.justifyContent === "space-between" && inFlow.length < 2
+			? "flex-start"
+			: (style.justifyContent ?? "flex-start");
+	// A growing child leaves no free space to pack. Mirroring anyway trips another Forme 0.25 defect: a row grown by
+	// its column packs its children along its height too (the page's layout box is such a row).
+	const grows = inFlow.some(
+		(child) =>
+			isValidElement<{ style?: FormeStyle }>(child) &&
+			Number(child.props.style?.flexGrow ?? child.props.style?.flex ?? 0) > 0,
+	);
+	return {
+		style: {
+			...style,
+			flexDirection: "row",
+			...(grows ? {} : { justifyContent: MIRRORED_JUSTIFY[justify] ?? justify }),
+		},
+		children: [...children].reverse(),
+	};
+}
+
 function convertChildren(children: HostNode[], context: Context): ReactNode[] {
 	return children.map((child, index) => convertNode(child, context, index));
 }
 
-function convertNode(node: HostNode, context: Context, key: number): ReactNode {
+function convertNode(node: HostNode, parentContext: Context, key: number): ReactNode {
 	if ("text" in node) return node.text;
 	const { props } = node;
+	const ownKey = props[RESUME_NODE_PROP];
+	// Everything drawn inside a tagged block carries its key, so a block Forme leaves out of its layout (it does when
+	// a plain box breaks across pages) can be found by what it contains.
+	const context =
+		typeof ownKey === "string" && ownKey.length > 0 ? { ...parentContext, nodeKey: ownKey } : parentContext;
 
 	switch (node.type) {
 		case HOST.view: {
 			const converted = convertStyle(props.style, context, node);
 			const { style } = converted;
 			if (converted.hidden) return null;
-			const spread = spreadRowGap(style, convertChildren(node.children, childContext(context, converted)), context);
+			const spread = unreverseRow(
+				spreadRowGap(style, convertChildren(node.children, childContext(context, converted)), context),
+			);
 			const children = spread.children;
 			const viewStyle = flowStyle(props, spread.style);
-			// Forme 0.25 gives a row within a row a box at y -1.8e308 on the next page when the outer row splits, which
-			// wrecks the rest of the document. Rows within rows are headings, list items and icon-label pairs, which are
-			// better kept whole anyway.
-			if (context.insideRow && (style.flexDirection === "row" || style.flexDirection === "row-reverse"))
+			// See `ConvertOptions.keepNestedRowsWhole`.
+			if (
+				context.keepNestedRowsWhole &&
+				context.insideRow &&
+				(style.flexDirection === "row" || style.flexDirection === "row-reverse")
+			)
 				viewStyle.wrap = false;
 			const bordered = insetBorder(viewStyle, children);
 			const element = createElement(
@@ -239,7 +351,8 @@ function convertNode(node: HostNode, context: Context, key: number): ReactNode {
 				...bordered.children,
 			);
 			tagNode(element, props, context);
-			if (props.fixed !== true) return shrinkToFit(placePercentOffset(element, style, context), context);
+			if (props.fixed !== true)
+				return strutMinWidth(shrinkToFit(placePercentOffset(element, style, context), context), context);
 			// A repeated view nested in a column stays with the column: its fragments already paint on each page.
 			if (!context.pageMargin) return element;
 			return createElement(
@@ -253,14 +366,38 @@ function convertNode(node: HostNode, context: Context, key: number): ReactNode {
 			const converted = convertStyle(props.style, context, node);
 			const { style } = converted;
 			if (converted.hidden) return null;
+			// react-pdf gives a text with nothing in it no height; Forme gives it a line.
+			if (!context.inText && node.children.every(isEmptyText)) {
+				const element = createElement(FormeView, { key, style: flowStyle(props, style) });
+				tagNode(element, props, context);
+				return element;
+			}
 			const href = node.type === HOST.link && typeof props.src === "string" ? props.src : undefined;
 			const hasBlockChild = node.children.some(
 				(child) => child.type !== "#text" && child.type !== HOST.text && child.type !== HOST.link,
 			);
-			// A link around views (a whole entry, a picture) becomes a linked view.
-			if (href && hasBlockChild && !context.inText) {
-				const children = convertChildren(node.children, childContext(context, converted));
-				const element = createElement(FormeView, { key, style: flowStyle(props, style), href }, ...children);
+			// Text around views (a whole entry in a link, a nested list in an RTL list item) becomes a view: Forme's
+			// Text keeps only its text runs. Inline children between the views share a Text, as react-pdf flowed them.
+			if (hasBlockChild && !context.inText) {
+				const inner = childContext(context, converted);
+				const children: ReactNode[] = [];
+				let inline: HostNode[] = [];
+				const flush = () => {
+					if (inline.length === 0) return;
+					const runs = convertChildren(inline, { ...inner, inText: true });
+					children.push(createElement(FormeText, { key: children.length, style: context.textDefaults }, ...runs));
+					inline = [];
+				};
+				for (const child of node.children) {
+					if (child.type === "#text" || child.type === HOST.text || child.type === HOST.link) inline.push(child);
+					else {
+						flush();
+						children.push(convertNode(child, inner, children.length));
+					}
+				}
+				flush();
+				const viewStyle: FormeStyle = { ...flowStyle(props, style), flexDirection: "column" };
+				const element = createElement(FormeView, { key, style: viewStyle, ...(href ? { href } : {}) }, ...children);
 				tagNode(element, props, context);
 				return element;
 			}
@@ -271,14 +408,16 @@ function convertNode(node: HostNode, context: Context, key: number): ReactNode {
 				...children,
 			);
 			tagNode(element, props, context);
-			return element;
+			return context.inText ? element : strutMinWidth(element, context);
 		}
 		case HOST.image: {
 			const image = context.images.get(imageSource(props.src) ?? "");
 			if (!image) return null;
 			const { style, hidden } = convertStyle(props.style, context, node);
 			if (hidden) return null;
-			return placePercentOffset(fitImage(image, style, key), style, context);
+			const fitted = fitImage(image, style, key);
+			tagNode(fitted, props, context);
+			return placePercentOffset(fitted, style, context);
 		}
 		case HOST.svg: {
 			const { style, hidden } = convertStyle(props.style, context, node);
@@ -286,7 +425,7 @@ function convertNode(node: HostNode, context: Context, key: number): ReactNode {
 			const width = number(props.width, context) ?? (typeof style.width === "number" ? style.width : 12);
 			const height = number(props.height, context) ?? (typeof style.height === "number" ? style.height : width);
 			const opacity = typeof props.opacity === "number" ? props.opacity : undefined;
-			return createElement(FormeSvg, {
+			const svg = createElement(FormeSvg, {
 				key,
 				width,
 				height,
@@ -294,6 +433,8 @@ function convertNode(node: HostNode, context: Context, key: number): ReactNode {
 				style: opacity === undefined ? style : { ...style, opacity },
 				...(typeof props.viewBox === "string" ? { viewBox: props.viewBox } : {}),
 			});
+			tagNode(svg, props, context);
+			return svg;
 		}
 		default:
 			context.warnings.add(`Unknown element ${node.type}`);
@@ -418,7 +559,8 @@ function placePercentOffset(element: ReactElement, style: FormeStyle, context: C
 	}
 	const place: FormeStyle = {
 		position: "absolute",
-		flexDirection: fromLeft ? "row" : "row-reverse",
+		flexDirection: "row",
+		justifyContent: fromLeft ? "flex-start" : "flex-end",
 		alignItems: "flex-start",
 		left: 0,
 		right: 0,
@@ -431,11 +573,14 @@ function placePercentOffset(element: ReactElement, style: FormeStyle, context: C
 	});
 	const source = context.sourceMap.get(element);
 	if (source) context.sourceMap.set(content, source);
+	const offset = createElement(FormeView, {
+		key: "offset",
+		style: { width: String(fromLeft ? left : right), flexShrink: 0 },
+	});
 	return createElement(
 		FormeView,
 		{ key: element.key, style: place },
-		createElement(FormeView, { key: "offset", style: { width: String(fromLeft ? left : right), flexShrink: 0 } }),
-		content,
+		...(fromLeft ? [offset, content] : [content, offset]),
 	);
 }
 
@@ -512,6 +657,8 @@ function tagNode(element: object, props: Record<string, unknown>, context: Conte
 	const key = props[RESUME_NODE_PROP];
 	if (typeof key === "string" && key.length > 0)
 		context.sourceMap.set(element, { file: `${NODE_SOURCE_PREFIX}${key}`, line: 1, column: 1 });
+	else if (context.nodeKey)
+		context.sourceMap.set(element, { file: `${NODE_CONTENT_PREFIX}${context.nodeKey}`, line: 1, column: 1 });
 }
 
 function convertPage(page: HostElement, context: Context, key: number): ReactNode {
@@ -529,8 +676,9 @@ function convertPage(page: HostElement, context: Context, key: number): ReactNod
 		convertChildren(page.children, { ...childContext(pageContext, converted), pageMargin: margin }),
 		pageContext,
 	);
-	converted.style = spread.style;
-	const { children } = spread;
+	const unreversed = unreverseRow(spread);
+	converted.style = unreversed.style;
+	const { children } = unreversed;
 	const fixed = children.filter((child) => isValidElement(child) && child.type === FormeFixed);
 	if (fixed.length === 0)
 		return createElement(FormePage, { key, size: pageSizeProp(size), margin, style: converted.style }, ...children);
@@ -573,9 +721,20 @@ export type ConvertedDocument = { document: FormeDocument; warnings: string[] };
  * Host tree → Forme document JSON. Tagged blocks get a source location Forme carries into its layout info, which
  * is how the page map finds them.
  */
+export type ConvertOptions = {
+	images?: ReadonlyMap<string, LoadedImage>;
+	/**
+	 * Forme 0.25 sometimes gives a row within a row a box at y -1.8e308 on the next page when the outer row splits,
+	 * which wrecks the rest of the document. Keeping such rows whole avoids it, at a cost: a kept-whole row in a
+	 * splitting row moves to the next page, so a section heading can land beside its continuation. `renderResume`
+	 * converts without it first, and again with it only when the engine misplaces a box.
+	 */
+	keepNestedRowsWhole?: boolean;
+};
+
 export function toFormeDocument(
 	tree: HostNode[],
-	images: ReadonlyMap<string, LoadedImage> = new Map(),
+	{ images = new Map(), keepNestedRowsWhole = false }: ConvertOptions = {},
 ): ConvertedDocument {
 	const root = tree.find((node): node is HostElement => node.type === HOST.document);
 	if (!root) throw new Error("The resume didn't render a <Document>.");
@@ -587,10 +746,15 @@ export function toFormeDocument(
 		inText: false,
 		parentPadding: NO_EDGES,
 		insideRow: false,
+		rowParent: false,
+		keepNestedRowsWhole,
 		images,
 		backdrop: WHITE,
 		pageMargin: undefined,
 		textDefaults: {
+			// Forme 0.25's optimal breaking shrinks spaces to fit a line, then draws them at full width, so ragged text
+			// runs past its box. Greedy breaking, as react-pdf did, keeps every line inside.
+			lineBreaking: "greedy",
 			hyphens: root.props.hyphenation === "auto" ? "auto" : "manual",
 			...(typeof root.props.language === "string" ? { lang: root.props.language } : {}),
 		},

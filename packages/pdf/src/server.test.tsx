@@ -1,11 +1,15 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { SectionTitleResolver } from "./section-title";
-import { Buffer } from "node:buffer";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 
 const rendererMock = vi.hoisted(() => ({
-	renderToBuffer: vi.fn(async () => Buffer.from("%PDF")),
+	renderResume: vi.fn(async () => ({
+		pdf: new TextEncoder().encode("%PDF"),
+		pageMap: { pages: [], nodes: [] },
+		layout: { pages: [] },
+		warnings: [],
+	})),
 }));
 
 const createRendererUnsafeResumeData = (): ResumeData => {
@@ -55,18 +59,11 @@ const createLegacyRendererSafeResumeData = (): ResumeData =>
 		],
 	}) as unknown as ResumeData;
 
-vi.mock("#react-pdf-renderer", async (importOriginal) => ({
-	...(await importOriginal<typeof import("@react-pdf/renderer")>()),
-	renderToBuffer: rendererMock.renderToBuffer,
-}));
-
-vi.mock("./document", () => ({
-	ResumeDocument: () => null,
-}));
+vi.mock("./forme/render", () => ({ renderResume: rendererMock.renderResume }));
 
 describe("createResumePdfFile", () => {
 	beforeEach(() => {
-		rendererMock.renderToBuffer.mockClear();
+		rendererMock.renderResume.mockClear();
 	});
 
 	it("renders ResumeDocument with data, filename, template, and section title resolver", async () => {
@@ -84,25 +81,24 @@ describe("createResumePdfFile", () => {
 		expect(file.name).toBe("resume.pdf");
 		expect(file.type).toBe("application/pdf");
 		expect(await file.text()).toBe("%PDF");
-		expect(rendererMock.renderToBuffer).toHaveBeenCalledTimes(1);
-		expect(rendererMock.renderToBuffer).toHaveBeenCalledWith(
+		expect(rendererMock.renderResume).toHaveBeenCalledTimes(1);
+		expect(rendererMock.renderResume).toHaveBeenCalledWith(
+			expect.anything(),
 			expect.objectContaining({
-				props: expect.objectContaining({
-					template: "azurill",
-					resolveSectionTitle,
-					data: expect.objectContaining({
-						customSections: [
-							expect.objectContaining({
-								items: [
-									expect.objectContaining({
-										content: "<p>Compatible overlap</p>",
-										roles: [],
-										website: { url: "", label: "", inlineLink: false },
-									}),
-								],
-							}),
-						],
-					}),
+				template: "azurill",
+				resolveSectionTitle,
+				data: expect.objectContaining({
+					customSections: [
+						expect.objectContaining({
+							items: [
+								expect.objectContaining({
+									content: "<p>Compatible overlap</p>",
+									roles: [],
+									website: { url: "", label: "", inlineLink: false },
+								}),
+							],
+						}),
+					],
 				}),
 			}),
 		);
@@ -117,7 +113,7 @@ describe("createResumePdfFile", () => {
 			"type",
 			"application/pdf",
 		);
-		expect(rendererMock.renderToBuffer).toHaveBeenCalledTimes(1);
+		expect(rendererMock.renderResume).toHaveBeenCalledTimes(1);
 	});
 
 	it("rejects renderer-unsafe data at the server boundary before React PDF dispatch", async () => {
@@ -129,6 +125,6 @@ describe("createResumePdfFile", () => {
 		}).catch((caught: unknown) => caught);
 
 		expect(error).toHaveProperty("issues.0.path", ["customSections", 0, "items", 0, "company"]);
-		expect(rendererMock.renderToBuffer).not.toHaveBeenCalled();
+		expect(rendererMock.renderResume).not.toHaveBeenCalled();
 	});
 });

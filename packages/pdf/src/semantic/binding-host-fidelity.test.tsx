@@ -1,10 +1,10 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it } from "vitest";
-import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../document";
+import { pdf } from "../forme/testing";
 
 type HostNode = {
 	type: string;
@@ -134,7 +134,11 @@ describe("semantic binding host fidelity", () => {
 		expect(mergedStyle(headingPath?.at(-1) as HostNode).backgroundColor).toBeUndefined();
 		expect(skillPath?.some((node) => mergedStyle(node).backgroundColor === "#404040")).toBe(true);
 		expect(skillPath?.some((node) => mergedStyle(node).backgroundColor === "#101010")).toBe(true);
-		expect(nodesWithStyle(document, "opacity", 0.25).some(({ type }) => type === "SVG")).toBe(true);
+		// Icons carry their opacity in their paint (`fill-opacity`), not their style.
+		expect(
+			nodesWithStyle(document, "opacity", 0.25).some(({ type }) => type === "SVG") ||
+				JSON.stringify(document).includes('fill-opacity=\\"0.25\\"'),
+		).toBe(true);
 	});
 
 	it.each([

@@ -1,13 +1,13 @@
+import type { ElementInfo, LayoutInfo } from "@formepdf/core";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { PageMap } from "./page-map";
 import type { SectionTitleResolver } from "./section-title";
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
-import { createElement } from "react";
+import * as forme from "@formepdf/core";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { templateSchema } from "@reactive-resume/schema/templates";
-import { ResumeDocument } from "./document";
+import { renderResume } from "./forme/render";
 import { extractPageMap, parseResumeNodeKey } from "./page-map";
 
 const resolveSectionTitle: SectionTitleResolver = (input) => input.defaultEnglishTitle ?? input.sectionId;
@@ -15,20 +15,8 @@ const resolveSectionTitle: SectionTitleResolver = (input) => input.defaultEnglis
 // The sample's picture points at a web path that doesn't exist in Node; hide it so renders stay quiet.
 const data: ResumeData = { ...sampleResumeData, picture: { ...sampleResumeData.picture, hidden: true } };
 
-const renderPageMap = async (template: Template): Promise<PageMap> => {
-	let pageMap: PageMap | undefined;
-	const element = createElement(ResumeDocument, {
-		data,
-		template,
-		resolveSectionTitle,
-		onPageMap: (map) => {
-			pageMap = map;
-		},
-	}) as unknown as Parameters<typeof renderToBuffer>[0];
-	await renderToBuffer(element);
-	if (!pageMap) throw new Error("onPageMap was not called");
-	return pageMap;
-};
+const renderPageMap = async (template: Template): Promise<PageMap> =>
+	(await renderResume(forme, { data, template, resolveSectionTitle })).pageMap;
 
 describe("parseResumeNodeKey", () => {
 	it("reads headers, sections and items, and ignores deeper nodes", () => {
@@ -56,33 +44,39 @@ describe("parseResumeNodeKey", () => {
 });
 
 describe("extractPageMap", () => {
-	it("sums parent offsets into page-relative boxes", () => {
+	const box = (x: number, y: number, width: number, height: number, file?: string, children: ElementInfo[] = []) =>
+		({
+			x,
+			y,
+			width,
+			height,
+			kind: "View",
+			children,
+			...(file ? { sourceLocation: { file, line: 1, column: 1 } } : {}),
+		}) as unknown as ElementInfo;
+
+	it("maps tagged boxes on every page they reach, and ignores untagged ones", () => {
 		const layout = {
-			type: "DOCUMENT",
-			children: [
+			pages: [
 				{
-					type: "PAGE",
-					box: { left: 0, top: 0, width: 600, height: 800 },
-					children: [
-						{
-							type: "VIEW",
-							box: { left: 20, top: 30, width: 500, height: 200 },
-							props: { "data-resume-node": "page-1/region-main/section-skills" },
-							children: [
-								{
-									type: "VIEW",
-									box: { left: 5, top: 40, width: 100, height: 20 },
-									props: { "data-resume-node": "page-1/region-main/section-skills/section-items/item-x" },
-								},
-							],
-						},
+					width: 600,
+					height: 800,
+					elements: [
+						box(20, 30, 500, 770, "rr-node:page-1/region-main/section-skills", [
+							box(20, 70, 100, 20, "rr-node:page-1/region-main/section-skills/section-items/item-x"),
+							box(20, 95, 100, 20),
+						]),
 					],
 				},
+				{ width: 600, height: 800, elements: [box(20, 20, 500, 40, "rr-node:page-1/region-main/section-skills")] },
 			],
-		};
+		} as unknown as LayoutInfo;
 
 		expect(extractPageMap(layout)).toEqual({
-			pages: [{ width: 600, height: 800 }],
+			pages: [
+				{ width: 600, height: 800 },
+				{ width: 600, height: 800 },
+			],
 			nodes: [
 				{
 					kind: "section",
@@ -92,7 +86,7 @@ describe("extractPageMap", () => {
 					x: 20,
 					y: 30,
 					width: 500,
-					height: 200,
+					height: 770,
 				},
 				{
 					kind: "item",
@@ -100,17 +94,23 @@ describe("extractPageMap", () => {
 					itemId: "x",
 					key: "page-1/region-main/section-skills/section-items/item-x",
 					page: 0,
-					x: 25,
+					x: 20,
 					y: 70,
 					width: 100,
 					height: 20,
 				},
+				{
+					kind: "section",
+					sectionId: "skills",
+					key: "page-1/region-main/section-skills",
+					page: 1,
+					x: 20,
+					y: 20,
+					width: 500,
+					height: 40,
+				},
 			],
 		});
-	});
-
-	it("returns an empty map for missing layout data", () => {
-		expect(extractPageMap(undefined)).toEqual({ pages: [], nodes: [] });
 	});
 });
 

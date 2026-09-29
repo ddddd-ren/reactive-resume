@@ -4,13 +4,13 @@ import type { Style } from "../forme/style-types";
 import type { TemplateStyleSlots } from "../templates/shared/types";
 import { describe, expect, it, vi } from "vitest";
 import { createCanvas } from "@napi-rs/canvas";
-import { pdf } from "@react-pdf/renderer";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { Document, Page } from "#react-pdf-renderer";
 import { RenderProvider } from "../context";
 import { ResumeDocument } from "../document";
+import { pdf } from "../forme/testing";
 import { TemplateProvider } from "../templates/shared/context";
 import { Text } from "../templates/shared/primitives";
 import { SemanticTextRuns } from "../templates/shared/sections";
@@ -84,7 +84,7 @@ const renderHost = async (template: Template, data: ResumeData): Promise<HostNod
 };
 
 const renderPdf = async (template: Template, data: ResumeData): Promise<Uint8Array> => {
-	const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>("@react-pdf/renderer");
+	const renderer = await vi.importActual<typeof import("../forme/testing")>("../forme/testing");
 	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<
 		typeof renderer.renderToBuffer
 	>[0];
@@ -178,7 +178,7 @@ const CombinedFieldRasterDocument = ({
 };
 
 const renderCombinedFieldRaster = async (testCase: CombinedFieldRasterCase, preSplit: boolean): Promise<Buffer> => {
-	const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>("@react-pdf/renderer");
+	const renderer = await vi.importActual<typeof import("../forme/testing")>("../forme/testing");
 	const element = createElement(CombinedFieldRasterDocument, {
 		testCase,
 		preSplit,

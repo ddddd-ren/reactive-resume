@@ -876,7 +876,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `metadata.typography.heading.lineHeight` | `number` | yes | minimum: 0.5; maximum: 4; default: 1.5 | The line height of the font to use, defined as a multiplier of the font size (e.g. 1.5 for 1.5x). |
 | `metadata.typography.hyphenation` | `boolean` | no | — | Enable automatic PDF hyphenation using the resume language. Currently supports German. Defaults to false. |
 | `metadata.notes` | `string` | yes | — | Personal notes for the resume. Can be used to add any additional information or instructions for the resume. These notes are not displayed on the resume, they are only visible to the author of the resume when editing the resume. This should be a HTML-formatted string. |
-| `metadata.styleRules` | `array` | yes | — | Structured style rules that target semantic resume sections and slots for React PDF rendering. |
+| `metadata.styleRules` | `array` | yes | — | Structured style rules that target semantic resume sections and slots for PDF rendering. |
 | `metadata.styleRules[]` | `any` | — | — | — |
 | `metadata.stylesheet` | `object` | no | — | — |
 | `metadata.stylesheet.mode` | `string` | yes | enum: ["legacy","semantic"] | — |

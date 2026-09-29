@@ -1,12 +1,9 @@
-import type { ReactElement } from "react";
+import type { HostElement } from "../../forme/reconciler";
 import { describe, expect, it } from "vitest";
-import { renderHtml } from "react-pdf-html";
-import { Text as PdfText } from "#react-pdf-renderer";
+import { HOST } from "../../forme/primitives";
+import { renderHostTree } from "../../forme/reconciler";
+import { Html } from "../../text";
 import { convertPseudoBulletParagraphs, normalizeRichTextHtml, richTextMarkClassName } from "./rich-text-html";
-
-type PdfElement = ReactElement<{ children?: unknown; element?: { tag: string } }>;
-
-const getPdfElementProps = (element: unknown) => (element as PdfElement).props;
 
 describe("normalizeRichTextHtml", () => {
 	it("expands tabs only inside marked paragraphs and headings", () => {
@@ -150,25 +147,20 @@ describe("normalizeRichTextHtml", () => {
 		expect(result).toBe('<p><span class="rr-pdf-mark">yellow</span></p>');
 	});
 
-	it("keeps highlighted text in the same react-pdf-html inline text bucket", () => {
-		const root = renderHtml(normalizeRichTextHtml("before <mark>highlighted</mark> after"), {
-			resetStyles: true,
-			stylesheet: {
-				[`.${richTextMarkClassName}`]: { backgroundColor: "#ffff00" },
-			},
-		});
+	it("keeps highlighted text in the same inline text run as its paragraph", () => {
+		const [root] = renderHostTree(
+			<Html stylesheet={{ [`.${richTextMarkClassName}`]: { backgroundColor: "#ffff00" } }}>
+				{normalizeRichTextHtml("before <mark>highlighted</mark> after")}
+			</Html>,
+		);
+		const paragraph = (root as HostElement).children[0] as HostElement;
+		const run = paragraph.children[0] as HostElement;
 
-		const paragraph = getPdfElementProps(root).children;
-		const textBucket = getPdfElementProps(paragraph).children as PdfElement;
-		const textChildren = getPdfElementProps(textBucket).children as unknown[];
-		const highlightedSpan = textChildren[1];
-
-		expect(textBucket.type).toBe(PdfText);
-		expect(textChildren).toHaveLength(3);
-		expect(textChildren[0]).toBe("before ");
-		expect(getPdfElementProps(highlightedSpan).element?.tag).toBe("span");
-		expect(getPdfElementProps(highlightedSpan).children).toBe("highlighted");
-		expect(textChildren[2]).toBe(" after");
+		expect(run.type).toBe(HOST.text);
+		expect(run.children).toHaveLength(3);
+		expect(run.children[0]).toEqual({ type: "#text", text: "before " });
+		expect(run.children[1]).toMatchObject({ type: HOST.text, children: [{ type: "#text", text: "highlighted" }] });
+		expect(run.children[2]).toEqual({ type: "#text", text: " after" });
 	});
 
 	it("trims input whitespace", () => {

@@ -8,7 +8,8 @@ import { describe, expect, it } from "vitest";
 import { createElement } from "react";
 import { compileStylesheet, PROPERTY_REGISTRY_V1, resolveStylesheet } from "@reactive-resume/resume/stylesheet";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { Document, Image, Page, renderToBuffer, Text, View } from "#react-pdf-renderer";
+import { Document, Image, Page, Text, View } from "#react-pdf-renderer";
+import { renderToBuffer } from "../forme/testing";
 import { adaptResolvedPdfNode, resolvedPdfFlowProps, resolvedPdfTextProps } from "./adapter";
 
 const pictureFixture =

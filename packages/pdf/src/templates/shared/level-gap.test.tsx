@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { renderToBuffer } from "@react-pdf/renderer";
 import { act } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../../document";
+import { renderToBuffer } from "../../forme/testing";
 import { resolveResumeRuntime } from "../../semantic/resolve";
 import { rasterizePdf } from "../../semantic/test/rasterize-pdf";
 

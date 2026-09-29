@@ -99,7 +99,7 @@ function TypographySectionForm() {
 							</FormLabel>
 						</div>
 						<FormDescription>
-							<Trans>Currently available for German resumes. Uses the language set in Page.</Trans>
+							<Trans>Breaks long words between syllables, using the language set in Page.</Trans>
 						</FormDescription>
 					</FormItem>
 				)}

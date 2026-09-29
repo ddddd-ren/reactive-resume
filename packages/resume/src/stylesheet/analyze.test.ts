@@ -115,4 +115,20 @@ describe("Semantic CSS semantic analysis", () => {
 		expect(diagnostics).toContainEqual(expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }));
 		expect(frontier.childReads()).toBe(0);
 	});
+
+	it("warns about declarations the PDF engine can't draw, and only those", () => {
+		const diagnostics = analyzeStylesheet(
+			compile(
+				"@version 1;\nname { text-indent: 4pt; border: 1pt dashed #000; color: red; } picture { border-style: solid; }",
+			),
+			tree,
+		);
+		const unsupported = diagnostics.filter(({ code }) => code === "ENGINE_UNSUPPORTED");
+
+		expect(unsupported.map(({ message }) => message)).toEqual([
+			expect.stringContaining("text-indent"),
+			expect.stringContaining("dashed"),
+		]);
+		expect(unsupported.every(({ severity }) => severity === "warning")).toBe(true);
+	});
 });

@@ -1,14 +1,14 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it, vi } from "vitest";
-import { pdf } from "@react-pdf/renderer";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../document";
+import { pdf } from "../forme/testing";
 
-vi.mock("@react-pdf/renderer", async (importOriginal) => ({
-	...(await importOriginal<typeof import("@react-pdf/renderer")>()),
+vi.mock("../forme/testing", async (importOriginal) => ({
+	...(await importOriginal<typeof import("../forme/testing")>()),
 }));
 
 type HostNode = {
@@ -33,7 +33,7 @@ const renderHostTree = async (data: ResumeData): Promise<HostNode> => {
 };
 
 const renderPdf = async (data: ResumeData, template: Template = "onyx"): Promise<Uint8Array> => {
-	const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>("@react-pdf/renderer");
+	const renderer = await vi.importActual<typeof import("../forme/testing")>("../forme/testing");
 	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<
 		typeof renderer.renderToBuffer
 	>[0];

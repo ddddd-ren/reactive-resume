@@ -8,13 +8,13 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { pdf, renderToBuffer } from "@react-pdf/renderer";
 import { encode } from "fast-png";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { resolveLevelDisplaySizes } from "@reactive-resume/schema/resume/level-display-sizes";
 import { ResumeDocument } from "../../document";
+import { pdf, renderToBuffer } from "../../forme/testing";
 import { resolveResumeRuntime } from "../../semantic/resolve";
 import { rasterizePdf } from "../../semantic/test/rasterize-pdf";
 

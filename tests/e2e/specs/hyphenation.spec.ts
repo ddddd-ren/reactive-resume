@@ -102,7 +102,7 @@ test("keeps hyphenation opt-in saved across reloads and resume language changes"
 	const toggle = page.getByRole("switch", { name: "Hyphenation", exact: true });
 	await expect(toggle).not.toBeChecked();
 	await expect(toggle).toHaveAccessibleDescription(
-		"Currently available for German resumes. Uses the language set in Page.",
+		"Breaks long words between syllables, using the language set in Page.",
 	);
 
 	await openSidebarSection(page, "Page");

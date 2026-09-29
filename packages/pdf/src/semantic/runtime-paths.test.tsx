@@ -1,26 +1,28 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { Buffer } from "node:buffer";
+import type { RenderResumeInput } from "../forme/render";
 import { describe, expect, it, vi } from "vitest";
+import { createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { createResumePdfBlob } from "../browser";
+import { ResumeDocument } from "../document";
+import { pdf } from "../forme/testing";
 import { createResumePdfFile } from "../server";
 
-const captured = vi.hoisted(() => ({
-	browser: undefined as unknown,
-	server: undefined as unknown,
-}));
+// Each entry point hands its input to the engine; the last one to render is the one captured.
+const captured = vi.hoisted(() => ({ inputs: [] as unknown[] }));
 
-vi.mock("#react-pdf-renderer", async (importOriginal) => ({
-	...(await importOriginal<typeof import("@react-pdf/renderer")>()),
-	pdf: (element: unknown) => {
-		captured.browser = element;
-		return { toBlob: async () => new Blob(["%PDF"], { type: "application/pdf" }) };
-	},
-	renderToBuffer: (element: unknown) => {
-		captured.server = element;
-		return Promise.resolve(Buffer.from("%PDF"));
+vi.mock("../forme/render", () => ({
+	renderResume: (_engine: unknown, input: unknown) => {
+		captured.inputs.push(input);
+		return Promise.resolve({
+			pdf: new TextEncoder().encode("%PDF"),
+			pageMap: { pages: [], nodes: [] },
+			layout: { pages: [] },
+			warnings: [],
+		});
 	},
 }));
+vi.mock("@formepdf/core/worker", () => ({ init: () => Promise.resolve() }));
 
 type HostNode = {
 	type: string;
@@ -79,11 +81,15 @@ const buildFatalSourceFixture = (): ResumeData => {
 	return data;
 };
 
-const renderFinalProps = async (element: unknown) => {
-	const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>("@react-pdf/renderer");
-	const instance = renderer.pdf(element as Parameters<typeof renderer.pdf>[0]);
-	await vi.waitFor(() => expect(instance.container.document).not.toBeNull(), { timeout: 15_000 });
-	const document = instance.container.document as HostNode;
+const renderFinalProps = (input: unknown) => {
+	const { data, template, renderOptions, resolveSectionTitle } = input as RenderResumeInput;
+	const element = createElement(ResumeDocument, {
+		data,
+		template: template ?? data.metadata.template,
+		...(renderOptions ? { renderOptions } : {}),
+		resolveSectionTitle,
+	});
+	const document = pdf(element).container.document as HostNode;
 	const page = findFirst(document, ({ type }) => type === "PAGE");
 	const fixed = findFirst(document, ({ props }) => props?.fixed === true);
 
@@ -96,26 +102,29 @@ const renderFinalProps = async (element: unknown) => {
 describe("browser/server semantic runtime identity", () => {
 	it("delivers identical final primitive props through ResumeDocument", async () => {
 		const data = buildFixture();
+		captured.inputs.length = 0;
 		await createResumePdfBlob({ data, template: "onyx" });
 		await createResumePdfFile({ data, filename: "resume.pdf", template: "onyx" });
 
-		const browserProps = await renderFinalProps(captured.browser);
-		const serverProps = await renderFinalProps(captured.server);
+		const [browserProps, serverProps] = captured.inputs.map(renderFinalProps);
 
+		expect(captured.inputs).toHaveLength(2);
 		expect(browserProps).toEqual(serverProps);
-		expect(browserProps.page.size).toBe("LETTER");
-		expect(browserProps.fixed).toMatchObject({ type: "VIEW", fixed: true });
+		expect(browserProps?.page.size).toBe("LETTER");
+		expect(browserProps?.fixed).toMatchObject({ type: "VIEW", fixed: true });
 	}, 30_000);
 
 	it("renders browser and server PDFs with base styles when the stylesheet is fatal", async () => {
 		const data = buildFatalSourceFixture();
 
+		captured.inputs.length = 0;
 		const blob = await createResumePdfBlob({ data, template: "onyx" });
 		const file = await createResumePdfFile({ data, filename: "resume.pdf", template: "onyx" });
 
 		expect(blob.type).toBe("application/pdf");
 		expect(file.type).toBe("application/pdf");
-		expect(await renderFinalProps(captured.browser)).toEqual(await renderFinalProps(captured.server));
+		const [browserProps, serverProps] = captured.inputs.map(renderFinalProps);
+		expect(browserProps).toEqual(serverProps);
 	}, 15_000);
 
 	it("keeps legacy PDF rendering unaffected by the semantic node budget", async () => {
