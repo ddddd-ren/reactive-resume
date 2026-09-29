@@ -16,7 +16,7 @@ import {
 	coverLetterDocumentSchema,
 	coverLetterSchema,
 } from "@reactive-resume/schema/cover-letter/data";
-import { coverLetterItemSchema, resumeDataSchema } from "@reactive-resume/schema/resume/data";
+import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { resumeService } from "../resume/service";
 import { sanitizeCoverLetterHtml } from "./html";
@@ -349,28 +349,6 @@ export const coverLetterService = {
 		if (rows.length) return;
 		await assertUnlocked(input);
 		throw new ORPCError("CONFLICT", { message: "This cover letter changed elsewhere. Reload it before deleting." });
-	},
-	copyEmbedded: async (input: {
-		userId: string;
-		resumeId: string;
-		sectionId: string;
-		itemId: string;
-		name?: string | undefined;
-	}) => {
-		const resume = await resumeService.getById({ userId: input.userId, id: input.resumeId });
-		const data = resumeDataSchema.parse(resume.data);
-		const section = data.customSections.find((item) => item.id === input.sectionId && item.type === "cover-letter");
-		const item = section?.items.find((entry) => entry.id === input.itemId);
-		if (!item) throw new ORPCError("NOT_FOUND");
-		const letter = coverLetterItemSchema.parse(item);
-		return insert({
-			userId: input.userId,
-			name: input.name ?? (section?.title || "Cover Letter").slice(0, 100),
-			recipient: letter.recipient,
-			content: letter.content,
-			style: copyCoverLetterStyle(data, input.sectionId, input.itemId),
-			sourceResumeId: input.resumeId,
-		});
 	},
 	export: async (input: OwnedId): Promise<CoverLetterDocument> => {
 		const letter = await getById(input);

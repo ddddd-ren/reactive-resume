@@ -40,8 +40,7 @@ describe("buildMcpServerCard", () => {
 		expect(tool?.description).toContain("short-lived");
 		expect(tool?.description).toContain("10 minutes");
 		expect(tool?.annotations?.readOnlyHint).toBe(true);
-		const properties = tool?.inputSchema.properties as Record<string, { enum?: string[]; default?: string }>;
-		expect(properties.target).toMatchObject({ enum: ["resume", "cover-letter"], default: "resume" });
+		expect(tool?.inputSchema.properties).not.toHaveProperty("target");
 	});
 
 	it("advertises application tracker tools", () => {
@@ -64,7 +63,6 @@ describe("buildMcpServerCard", () => {
 				"refresh_cover_letter_style",
 				"duplicate_cover_letter",
 				"delete_cover_letter",
-				"copy_embedded_cover_letter",
 				"export_cover_letter",
 				"import_cover_letter",
 			]),

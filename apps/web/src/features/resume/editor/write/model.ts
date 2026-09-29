@@ -46,7 +46,6 @@ export const CUSTOM_SECTION_TYPES = [
 	"references",
 	"profiles",
 	"summary",
-	"cover-letter",
 ] as const satisfies readonly CustomSectionType[];
 
 const isBuiltinSectionType = (id: string): id is SectionType =>

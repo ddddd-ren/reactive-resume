@@ -214,20 +214,13 @@ export const TOOL_META = {
 	[T.downloadResumePdf]: {
 		title: "Download Resume PDF",
 		description: [
-			"Create a short-lived authenticated URL for downloading a resume or its visible cover letter as a PDF.",
+			"Create a short-lived authenticated URL for downloading a resume as a PDF.",
 			"The URL expires in 10 minutes and should be used immediately.",
-			"Set target to `cover-letter` to export the visible cover letter separately; omit it (or use `resume`) for the resume.",
-			"Returns JSON containing: resumeId, target, name, downloadUrl, expiresAt, expiresInSeconds, contentType.",
+			"Cover letters are documents of their own: use the cover-letter tools for them.",
+			"Returns JSON containing: resumeId, name, downloadUrl, expiresAt, expiresInSeconds, contentType.",
 			`Use \`${T.listResumes}\` first to find valid IDs.`,
 		].join("\n"),
-		inputSchema: z.object({
-			id: resumeIdSchema,
-			target: z
-				.enum(["resume", "cover-letter"])
-				.optional()
-				.default("resume")
-				.describe("Document to export. Default: resume."),
-		}),
+		inputSchema: z.object({ id: resumeIdSchema }),
 		annotations: READ_NON_IDEMPOTENT,
 	},
 	[T.createResume]: {
@@ -398,7 +391,7 @@ export const TOOL_META = {
 		title: "List Cover Letters",
 		description: [
 			"List independent cover letters in the account's cover-letter library.",
-			"These are separate from cover-letter sections embedded in resumes.",
+			"Letters are documents of their own, never part of a resume; attach one to an application with `coverLetterId`.",
 			"Use this before other independent cover-letter tools to discover IDs.",
 		].join("\n"),
 		inputSchema: z.object({
@@ -414,7 +407,6 @@ export const TOOL_META = {
 		title: "Read Cover Letter",
 		description: [
 			"Read one independent cover letter from the cover-letter library.",
-			"This does not read a cover-letter section embedded in a resume.",
 			`Use \`${T.listCoverLetters}\` first to find valid IDs.`,
 		].join("\n"),
 		inputSchema: z.object({ id: coverLetterIdSchema }),
@@ -424,7 +416,7 @@ export const TOOL_META = {
 		title: "Create Cover Letter",
 		description: [
 			"Create an independent cover letter in the cover-letter library.",
-			"Optionally associate it with a resume or application; this does not add an embedded section to a resume.",
+			"Optionally link it to a resume (for its sender details and design) or an application.",
 		].join("\n"),
 		inputSchema: z.object({
 			...coverLetterEditableFieldsSchema,
@@ -474,7 +466,6 @@ export const TOOL_META = {
 		description: [
 			"Refresh an independent cover letter's sender styling from a resume while preserving its content and template.",
 			"Pass the latest `revision` as `expectedRevision` to prevent stale concurrent writes.",
-			"This updates the independent letter; it does not modify the embedded cover letter in the resume.",
 		].join("\n"),
 		inputSchema: z.object({
 			id: coverLetterIdSchema,
@@ -487,7 +478,7 @@ export const TOOL_META = {
 		title: "Duplicate Cover Letter",
 		description: [
 			"Create an independent copy of a cover letter in the library.",
-			"The copy is separate from the original and from any embedded resume cover letter.",
+			"The copy is separate from the original.",
 		].join("\n"),
 		inputSchema: z.object({ id: coverLetterIdSchema, name: z.string().min(1).max(100).optional() }),
 		annotations: WRITE_NON_IDEMPOTENT,
@@ -496,31 +487,16 @@ export const TOOL_META = {
 		title: "Delete Cover Letter",
 		description: [
 			"Move an independent cover letter to Trash, where it stays for 30 days before it's deleted.",
-			"Pass the latest `revision` as `expectedRevision`; this does not delete embedded cover-letter sections.",
+			"Pass the latest `revision` as `expectedRevision`.",
 		].join("\n"),
 		inputSchema: z.object({ id: coverLetterIdSchema, expectedRevision: expectedRevisionSchema }),
 		annotations: { ...WRITE_DESTRUCTIVE, openWorldHint: true },
 	},
-	[T.copyEmbeddedCoverLetter]: {
-		title: "Copy Embedded Cover Letter",
-		description: [
-			"Copy a cover-letter item embedded in a resume into the independent cover-letter library.",
-			"The embedded item remains in the resume; the returned letter is a new independent library record.",
-		].join("\n"),
-		inputSchema: z.object({
-			resumeId: z.string().min(1).describe("Resume containing the embedded cover letter."),
-			sectionId: z.string().min(1).describe("Embedded cover-letter section ID."),
-			itemId: z.string().min(1).describe("Embedded cover-letter item ID."),
-			name: z.string().min(1).max(100).optional().describe("Optional name for the independent copy."),
-		}),
-		annotations: WRITE_NON_IDEMPOTENT,
-	},
 	[T.exportCoverLetter]: {
 		title: "Export Cover Letter",
-		description: [
-			"Export an independent library cover letter as versioned Reactive Resume cover-letter JSON.",
-			"This is not a full resume export and does not export an embedded cover letter directly.",
-		].join("\n"),
+		description: ["Export an independent library cover letter as versioned Reactive Resume cover-letter JSON."].join(
+			"\n",
+		),
 		inputSchema: z.object({ id: coverLetterIdSchema }),
 		annotations: READ_IDEMPOTENT,
 	},

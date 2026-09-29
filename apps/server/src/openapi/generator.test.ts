@@ -88,7 +88,6 @@ describe("generateOpenApiSpec", () => {
 			["post", "/cover-letters/{id}/refresh-style", "refreshCoverLetterStyle", "Refresh cover letter style", "200"],
 			["post", "/cover-letters/{id}/duplicate", "duplicateCoverLetter", "Duplicate a cover letter", "200"],
 			["delete", "/cover-letters/{id}", "deleteCoverLetter", "Move a cover letter to Trash", "200"],
-			["post", "/cover-letters/from-resume", "copyEmbeddedCoverLetter", "Copy an embedded cover letter", "200"],
 			["get", "/cover-letters/{id}/export", "exportCoverLetter", "Export a cover letter", "200"],
 			["post", "/cover-letters/import", "importCoverLetter", "Import a cover letter", "200"],
 			["get", "/cover-letters/{id}/versions", "listCoverLetterVersions", "List a cover letter's versions", "200"],

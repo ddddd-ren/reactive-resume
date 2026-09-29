@@ -5,7 +5,7 @@ import { t } from "@lingui/core/macro";
 import { useCallback, useState } from "react";
 import { buildDocx } from "@reactive-resume/docx";
 import { getResumeSectionTitle } from "@reactive-resume/pdf/section-title";
-import { getResumeExportData, resumeHasCoverLetter } from "@reactive-resume/resume/export-sections";
+import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
@@ -89,66 +89,51 @@ export async function createExportFile(
 /** One-click exports that report their own progress and failures in toasts (the bar, ⌘P, public pages). */
 export function useResumeExport(resume: ExportableResume | undefined, exportOptions: UseResumeExportOptions = {}) {
 	const [isExporting, setIsExporting] = useState(false);
-	const hasCoverLetter = resume ? resumeHasCoverLetter(resume.data) : false;
 
 	const onDownloadJSON = useCallback(async () => {
 		if (!resume) return;
 		downloadWithAnchor(await createExportFile(resume, "json"), `${getDefaultFileName(resume)}.json`);
 	}, [resume]);
 
-	const onDownloadMarkdown = useCallback(
-		async (target: ResumeExportTarget = "resume") => {
-			if (!resume) return;
-			if (target === "cover-letter" && !resumeHasCoverLetter(resume.data)) return;
-			const blob = await createExportFile(resume, "md", target);
-			downloadWithAnchor(blob, `${getDefaultFileName(resume, target)}.md`);
-		},
-		[resume],
-	);
+	const onDownloadMarkdown = useCallback(async () => {
+		if (!resume) return;
+		const blob = await createExportFile(resume, "md");
+		downloadWithAnchor(blob, `${getDefaultFileName(resume)}.md`);
+	}, [resume]);
 
-	const onDownloadDOCX = useCallback(
-		async (target: ResumeExportTarget = "resume") => {
-			if (!resume) return;
-			if (target === "cover-letter" && !resumeHasCoverLetter(resume.data)) return;
-			try {
-				const blob = await createExportFile(resume, "docx", target);
-				downloadWithAnchor(blob, `${getDefaultFileName(resume, target)}.docx`);
-			} catch {
-				toast.add({ type: "error", description: t`Could not generate the DOCX. Please try again.` });
-			}
-		},
-		[resume],
-	);
+	const onDownloadDOCX = useCallback(async () => {
+		if (!resume) return;
+		try {
+			const blob = await createExportFile(resume, "docx");
+			downloadWithAnchor(blob, `${getDefaultFileName(resume)}.docx`);
+		} catch {
+			toast.add({ type: "error", description: t`Could not generate the DOCX. Please try again.` });
+		}
+	}, [resume]);
 
-	const onDownloadPDF = useCallback(
-		async (target: ResumeExportTarget = "resume", downloadOptions?: DownloadPdfOptions) => {
-			if (!resume) return;
-			if (target === "cover-letter" && !resumeHasCoverLetter(resume.data)) return;
-			const toastId = toast.add({
-				type: "loading",
-				description: t`Generating your PDF...`,
-			});
-			setIsExporting(true);
-			try {
-				const blob = exportOptions.publicResumePdf
-					? await resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
-					: await createExportFile(resume, "pdf", target, downloadOptions);
-				downloadWithAnchor(blob, `${getDefaultFileName(resume, target)}.pdf`);
-				if (exportOptions.publicResumePdf) {
-					// Statistics are best effort and must not delay or fail a completed browser download.
-					void client.resume.statistics
-						.recordDownload(exportOptions.publicResumePdf.publicResume)
-						.catch(() => undefined);
-				}
-			} catch {
-				toast.add({ type: "error", description: t`Could not generate the PDF. Please try again.` });
-			} finally {
-				setIsExporting(false);
-				toast.close(toastId);
+	const onDownloadPDF = useCallback(async () => {
+		if (!resume) return;
+		const toastId = toast.add({
+			type: "loading",
+			description: t`Generating your PDF...`,
+		});
+		setIsExporting(true);
+		try {
+			const blob = exportOptions.publicResumePdf
+				? await resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
+				: await createExportFile(resume, "pdf");
+			downloadWithAnchor(blob, `${getDefaultFileName(resume)}.pdf`);
+			if (exportOptions.publicResumePdf) {
+				// Statistics are best effort and must not delay or fail a completed browser download.
+				void client.resume.statistics.recordDownload(exportOptions.publicResumePdf.publicResume).catch(() => undefined);
 			}
-		},
-		[exportOptions.publicResumePdf, resume],
-	);
+		} catch {
+			toast.add({ type: "error", description: t`Could not generate the PDF. Please try again.` });
+		} finally {
+			setIsExporting(false);
+			toast.close(toastId);
+		}
+	}, [exportOptions.publicResumePdf, resume]);
 
 	const onPrint = useCallback(async () => {
 		if (!resume) return;
@@ -188,5 +173,5 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 		}
 	}, [exportOptions.publicResumePdf, resume]);
 
-	return { onDownloadJSON, onDownloadMarkdown, onDownloadDOCX, onDownloadPDF, onPrint, isExporting, hasCoverLetter };
+	return { onDownloadJSON, onDownloadMarkdown, onDownloadDOCX, onDownloadPDF, onPrint, isExporting };
 }

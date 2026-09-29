@@ -1,4 +1,3 @@
-import type { ResumeExportTarget } from "@reactive-resume/resume/export-sections";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import type { Resume } from "@/features/resume/builder/draft";
@@ -9,11 +8,9 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useId, useState } from "react";
-import { resumeHasCoverLetter } from "@reactive-resume/resume/export-sections";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
@@ -226,32 +223,23 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 	const words = useLetterWords();
 	const linkedLetter = useLinkedLetter(resume);
 	const headerId = useId();
-	const hasLetter = resumeHasCoverLetter(resume.data);
-	const [target, setTarget] = useState<ResumeExportTarget>("resume");
 	const [format, setFormat] = useState<ExportFormat>("pdf");
-	const [includeHeader, setIncludeHeader] = useState(false);
 	const [withLetter, setWithLetter] = useState(false);
 	const [fileName, setFileName] = useState<string | null>(null);
 	const [state, setState] = useState<DownloadState>("idle");
 
-	const activeTarget = hasLetter ? target : "resume";
-	// JSON is the whole document's data, so it isn't offered for the letter on its own.
-	const activeFormat = activeTarget === "cover-letter" && format === "json" ? "pdf" : format;
-	const formats = getExportFormats().map((option) => ({
-		...option,
-		disabled: option.id === "json" && activeTarget === "cover-letter",
-	}));
-	const selected = formats.find((option) => option.id === activeFormat) ?? (formats[0] as DownloadFormat);
-	const name = fileName ?? getDefaultFileName(resume, activeTarget);
+	const formats = getExportFormats();
+	const selected = formats.find((option) => option.id === format) ?? (formats[0] as DownloadFormat);
+	const name = fileName ?? getDefaultFileName(resume);
 
 	const download = async (as: ExportFormat) => {
 		const extension = formats.find((option) => option.id === as)?.extension ?? ".pdf";
 		setState("busy");
 		try {
-			const blob = await createExportFile(resume, as, activeTarget, { includeCoverLetterHeader: includeHeader });
-			const file = `${sanitizeFileName(name) || getDefaultFileName(resume, activeTarget)}${extension}`;
+			const blob = await createExportFile(resume, as);
+			const file = `${sanitizeFileName(name) || getDefaultFileName(resume)}${extension}`;
 			downloadWithAnchor(blob, file);
-			if (withLetter && linkedLetter && activeTarget === "resume") {
+			if (withLetter && linkedLetter) {
 				const letter = await client.coverLetters.getById({ id: linkedLetter.id });
 				downloadWithAnchor(await createLetterFile(letter, words, as), `${letterFileName(letter, words)}${extension}`);
 				toast.add({ description: t`Downloaded ${file} and the cover letter` });
@@ -266,43 +254,9 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 
 	return (
 		<div className="grid gap-4">
-			{hasLetter && (
-				<div className="grid gap-2">
-					<SegmentedControl
-						aria-label={t`What to download`}
-						value={activeTarget}
-						onValueChange={(value) => {
-							setTarget(value as ResumeExportTarget);
-							setFileName(null);
-							setState("idle");
-						}}
-						className="w-full"
-					>
-						<SegmentedControlItem value="resume">
-							<Trans>Resume</Trans>
-						</SegmentedControlItem>
-						<SegmentedControlItem value="cover-letter">
-							<Trans>Cover letter</Trans>
-						</SegmentedControlItem>
-					</SegmentedControl>
-					{activeTarget === "cover-letter" && (
-						<div className="flex items-center gap-2.5 text-sm">
-							<Checkbox
-								id={`${headerId}-header`}
-								checked={includeHeader}
-								onCheckedChange={(checked) => setIncludeHeader(checked === true)}
-							/>
-							<label htmlFor={`${headerId}-header`} className="cursor-pointer">
-								<Trans>Include the resume's header</Trans>
-							</label>
-						</div>
-					)}
-				</div>
-			)}
-
 			<FormatRadioGroup
 				formats={formats}
-				value={activeFormat}
+				value={format}
 				onChange={(value) => {
 					setFormat(value);
 					setState("idle");
@@ -316,7 +270,7 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 				onChange={setFileName}
 			/>
 
-			{linkedLetter && activeTarget === "resume" && (
+			{linkedLetter && (
 				<div className="flex items-center gap-2.5 text-sm">
 					<Checkbox
 						id={`${headerId}-letter`}
@@ -348,8 +302,8 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 			<DownloadActions
 				state={state}
 				label={selected.label}
-				onDownload={() => void download(activeFormat)}
-				onDownloadPdf={activeFormat === "pdf" ? undefined : () => void download("pdf")}
+				onDownload={() => void download(format)}
+				onDownloadPdf={format === "pdf" ? undefined : () => void download("pdf")}
 			/>
 		</div>
 	);

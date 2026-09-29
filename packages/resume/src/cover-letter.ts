@@ -39,6 +39,46 @@ export function createCoverLetterResumeData(
 	return data;
 }
 
+/** A cover letter written inside a resume, as older versions of the app stored them. */
+export type EmbeddedLetter = {
+	sectionId: string;
+	itemId: string;
+	/** The section's title; empty when the template's default title was used. */
+	title: string;
+	recipient: string;
+	content: string;
+};
+
+/**
+ * Letters are documents of their own; resumes no longer carry them. Takes every cover-letter section out of the
+ * resume (and out of its page layout) and returns the letters it held, so the caller can save them as letters.
+ * Mutates `data` in place; returns no letters, and changes nothing, for a resume without any.
+ */
+export function detachEmbeddedLetters(data: ResumeData): EmbeddedLetter[] {
+	const sections = data.customSections.filter((section) => section.type === "cover-letter");
+	if (sections.length === 0) return [];
+
+	const ids = new Set(sections.map((section) => section.id));
+	data.customSections = data.customSections.filter((section) => !ids.has(section.id));
+	for (const page of data.metadata.layout.pages) {
+		page.main = page.main.filter((id) => !ids.has(id));
+		page.sidebar = page.sidebar.filter((id) => !ids.has(id));
+	}
+
+	return sections.flatMap((section) =>
+		section.items.map((item) => {
+			const { recipient, content } = item as { recipient?: unknown; content?: unknown };
+			return {
+				sectionId: section.id,
+				itemId: item.id,
+				title: section.title,
+				recipient: typeof recipient === "string" ? recipient : "",
+				content: typeof content === "string" ? content : "",
+			};
+		}),
+	);
+}
+
 const escapeHtml = (text: string) =>
 	text
 		.replaceAll("&", "&amp;")

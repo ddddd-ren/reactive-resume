@@ -7,8 +7,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { msg, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import {
@@ -27,7 +25,6 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { orpc } from "@/libs/orpc/client";
 import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "@/libs/resume/move-item";
 import { useEditorStore } from "../store";
 import { EntryFields } from "./entries";
@@ -248,7 +245,6 @@ type EntryMenuProps = { section: WriteSection; entry: Entry };
 /** Hide from page, Duplicate, Move to… and Delete. */
 function EntryMenu({ section, entry }: EntryMenuProps) {
 	const resume = useCurrentResume();
-	const navigate = useNavigate();
 	const updateResumeData = useUpdateResumeData();
 	const customSectionId = section.kind === "custom" ? section.id : undefined;
 	const moveTargets = useMemo(
@@ -277,25 +273,6 @@ function EntryMenu({ section, entry }: EntryMenuProps) {
 		useEditorStore.getState().select({ kind: "item", sectionId: section.id, itemId: copy.id });
 	};
 
-	// Q3k: a letter written inside a resume can become a saved letter in Documents (a copy; this entry stays).
-	const { mutate: copyLetter, isPending: copying } = useMutation(orpc.coverLetters.copyEmbedded.mutationOptions());
-	const copyToDocuments = () =>
-		copyLetter(
-			{ resumeId: resume.id, sectionId: section.id, itemId: entry.id },
-			{
-				onSuccess: (letter) =>
-					toast.add({
-						description: t`Copied to Documents`,
-						actionProps: {
-							children: t`Open`,
-							onClick: () =>
-								void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: letter.id } }),
-						},
-					}),
-				onError: () => toast.add({ type: "error", description: t`Couldn't copy the letter. Save and try again.` }),
-			},
-		);
-
 	const toggleHidden = () =>
 		updateResumeData(
 			(draft) => {
@@ -319,12 +296,6 @@ function EntryMenu({ section, entry }: EntryMenuProps) {
 					<Icon name="content_copy" />
 					<Trans>Duplicate</Trans>
 				</DropdownMenuItem>
-				{section.type === "cover-letter" && section.kind === "custom" && (
-					<DropdownMenuItem disabled={copying} onClick={copyToDocuments}>
-						<Icon name="mail" />
-						<Trans>Copy to Documents</Trans>
-					</DropdownMenuItem>
-				)}
 				<DropdownMenuSub>
 					<DropdownMenuSubTrigger>
 						<Icon name="arrow_forward" />

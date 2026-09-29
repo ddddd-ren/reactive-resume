@@ -20,6 +20,7 @@ const grantResumeAccessMock = vi.hoisted(() => vi.fn());
 const hasResumeAccessMock = vi.hoisted(() => vi.fn());
 const storageDeleteMock = vi.hoisted(() => vi.fn());
 
+vi.mock("../cover-letters/embedded", () => ({ adoptEmbeddedLetters: vi.fn(async () => undefined) }));
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
 vi.mock("@reactive-resume/db/schema", () => ({
 	resume: {
@@ -252,6 +253,11 @@ it("imports", () => {
 });
 
 describe("create", () => {
+	// The resume and any letters it carried save in one transaction.
+	beforeEach(() => {
+		dbMock.transaction.mockImplementation(async (callback: (tx: unknown) => Promise<unknown>) => callback(dbMock));
+	});
+
 	it("rejects out-of-range values before creating any record", async () => {
 		const data = structuredClone(defaultResumeData);
 		data.metadata.page.marginX = 500;
@@ -333,6 +339,11 @@ describe("create", () => {
 });
 
 describe("create", () => {
+	// The resume and any letters it carried save in one transaction.
+	beforeEach(() => {
+		dbMock.transaction.mockImplementation(async (callback: (tx: unknown) => Promise<unknown>) => callback(dbMock));
+	});
+
 	it("generates a unique slug from the name and starts History with the document's origin", async () => {
 		const values = vi.fn((_input: unknown) => Promise.resolve());
 		dbMock.insert.mockReturnValueOnce({ values });

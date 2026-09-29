@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { Pool } from "pg";
-import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
+import { createSampleResumeFromDashboard } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 /** New → "New cover letter instead" opens the letter editor on an untitled letter. */
@@ -101,10 +101,10 @@ test("writes a letter for an application, from the resume's details, and downloa
 	}
 });
 
-test("names a version, restores it, and copies the letter into a resume", async ({ authPage: page }, testInfo) => {
+test("names a version and restores it", async ({ authPage: page }, testInfo) => {
 	test.setTimeout(90_000);
 	await createSampleResumeFromDashboard(page, testInfo);
-	const builderUrl = page.url();
+	const _builderUrl = page.url();
 	await newLetter(page);
 
 	await page.getByRole("button", { name: "Write it myself" }).click();
@@ -130,12 +130,4 @@ test("names a version, restores it, and copies the letter into a resume", async 
 	await expect(versions.getByRole("button", { name: /^Before restore/ })).toBeVisible();
 	await page.keyboard.press("Escape");
 	await expect(body).toContainText("The first version of the letter.");
-
-	// A saved letter can start a letter inside a resume, as a copy that doesn't follow later edits.
-	await page.goto(builderUrl);
-	await openSidebarSection(page, "Cover Letter");
-	await page.getByRole("button", { name: "Add cover letter", exact: true }).click();
-	await page.getByLabel("Import from library", { exact: true }).click();
-	await page.getByRole("option", { name: "Untitled letter", exact: true }).click();
-	await expect(page.getByRole("textbox", { name: "Letter", exact: true })).toContainText("first version");
 });

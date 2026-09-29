@@ -114,15 +114,6 @@ export const coverLetterDto = {
 	refreshStyle: { input: revisionSchema.extend({ resumeId: z.string().min(1) }), output: coverLetterSchema },
 	duplicate: { input: idSchema.extend({ name: editableSchema.shape.name.optional() }), output: coverLetterSchema },
 	delete: { input: revisionSchema, output: z.void() },
-	copyEmbedded: {
-		input: z.object({
-			resumeId: z.string().min(1),
-			sectionId: z.string().min(1),
-			itemId: z.string().min(1),
-			name: editableSchema.shape.name.optional(),
-		}),
-		output: coverLetterSchema,
-	},
 	export: { input: idSchema, output: coverLetterDocumentSchema },
 	import: { input: z.object({ document: coverLetterDocumentSchema }), output: coverLetterSchema },
 };

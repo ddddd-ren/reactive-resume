@@ -20,7 +20,6 @@ export const MCP_TOOL_NAME = {
 	refreshCoverLetterStyle: "refresh_cover_letter_style",
 	duplicateCoverLetter: "duplicate_cover_letter",
 	deleteCoverLetter: "delete_cover_letter",
-	copyEmbeddedCoverLetter: "copy_embedded_cover_letter",
 	exportCoverLetter: "export_cover_letter",
 	importCoverLetter: "import_cover_letter",
 	listApplications: "list_applications",

@@ -1602,6 +1602,11 @@ The items left open in §12 and §13, in the order they were done. Local commits
 - **List markers stay with their first line.** Converted list items carry their index into Forme's layout. `renderResume` finds markers left on a page their first line leaves and renders again with a page break before those items (at most three passes). Eleven expected-failure tests now pass. Presence hints are still ignored.
 - **Right to left:** the award title and date row mirrors like every other header row.
 - **§3.10 contract steps**, listed in §3.10. Migration `20260929063245_contract_redesign_legacy_fields` has a `rollback.sql`. It was applied only to the isolated verification database.
+- **Letters leave resumes.** A cover letter is a document of its own; resumes no longer hold cover-letter sections.
+  - Migration `20260929071322_letters_leave_resumes` (with `rollback.sql`) saves every letter a resume carried (hidden ones too) as a letter linked to that resume's details and design, named "‹resume› — ‹section›". A resume with one letter, used by exactly one letter-less application, hands the letter to that application. The sections then leave the resumes and their layouts. Resume History keeps older versions as they were.
+  - Every resume write on the server (create, import, update, patch, restore) passes through `adoptEmbeddedLetters`, in the same transaction, so a stale tab, an old file, an API client or a restored version still can't put a letter back into a resume. A letter already saved from the same item with the same text isn't saved twice.
+  - Removed: adding a cover letter in the resume editor, "Copy to Documents", "Import from library", the resume Download's Cover letter tab, the `cover-letter` target of resume PDF downloads (API, signed links, MCP) and `copy_embedded_cover_letter`. The sample resume has no letter. Letters still render through the templates as a cover-letter section of their own document.
+  - Letters moved by the migration are stored as they were written; the server sanitises them on their next save.
 - **Knip:** the Forme port's unused exports and types are removed, and the server's engine dependencies are listed.
 - **Engine limits still open** (expected failures in `packages/pdf`, which pass once Forme supports them):
   - Right-to-left lines are laid out left to right, then right-aligned.

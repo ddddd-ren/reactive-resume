@@ -113,9 +113,11 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		expect(results.find((result) => result.status === "rejected")).toMatchObject({ reason: { code: "CONFLICT" } });
 	});
 
-	it("copies an embedded letter without modifying the source and keeps targeted style identifiers", async () => {
-		const source = structuredClone(defaultResumeData);
-		source.customSections = [
+	it("saves letters a resume still carries as linked letters, once, and leaves the resume without them", async () => {
+		const { adoptEmbeddedLetters } = await import("./embedded");
+		const data = structuredClone(defaultResumeData);
+		data.basics.name = "Alice Sender";
+		data.customSections = [
 			{
 				id: "embedded",
 				title: "Embedded Letter",
@@ -125,27 +127,45 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 				hidden: true,
 				keepTogether: false,
 				startOnNewPage: false,
-				items: [{ id: "embedded-item", hidden: true, recipient: "Recipient", content: "<p>Original</p>" }],
+				items: [{ id: "embedded-item", hidden: true, recipient: "<p>Recipient</p>", content: "<p>Original</p>" }],
 			},
 		];
-		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [source]);
-		const copy = await service.copyEmbedded({
-			userId: "alice",
-			resumeId: "alice-resume",
-			sectionId: "embedded",
-			itemId: "embedded-item",
-		});
-		expect(copy).toMatchObject({
-			name: "Embedded Letter",
+		data.metadata.layout.pages = [{ fullWidth: true, main: ["experience", "embedded"], sidebar: [] }];
+		const adopt = (input: typeof data) =>
+			adoptEmbeddedLetters(fixture.db as never, {
+				userId: "alice",
+				resumeId: "alice-resume",
+				resumeName: "Frontend",
+				data: input,
+			});
+
+		const again = structuredClone(data);
+		await adopt(data);
+		expect(data.customSections).toEqual([]);
+		expect(data.metadata.layout.pages).toEqual([{ fullWidth: true, main: ["experience"], sidebar: [] }]);
+
+		const letters = await service.list({ userId: "alice", limit: 20, offset: 0 });
+		expect(letters.items).toHaveLength(1);
+		const [letter] = letters.items;
+		if (!letter) throw new Error("Missing letter.");
+		expect(letter).toMatchObject({
+			name: "Frontend — Embedded Letter",
+			recipient: "<p>Recipient</p>",
 			content: "<p>Original</p>",
+			layout: "freeform",
+			sourceResumeId: "alice-resume",
+			senderLinked: true,
+			designLinked: true,
 			style: { sectionId: "embedded", itemId: "embedded-item" },
 		});
-		await service.update({ userId: "alice", id: copy.id, expectedRevision: 1, content: "Changed independently" });
-		const result = await getPool().query("SELECT data FROM resume WHERE id='alice-resume'");
-		expect(result.rows[0].data).toEqual(source);
-		await expect(
-			service.copyEmbedded({ userId: "bob", resumeId: "alice-resume", sectionId: "embedded", itemId: "embedded-item" }),
-		).rejects.toMatchObject({ code: "NOT_FOUND" });
+		const versions = await getPool().query("SELECT kind FROM cover_letter_version WHERE cover_letter_id=$1", [
+			letter.id,
+		]);
+		expect(versions.rows).toEqual([{ kind: "created" }]);
+
+		// The same section sent again (an older tab still open) doesn't save a second letter.
+		await adopt(again);
+		expect((await service.list({ userId: "alice", limit: 20, offset: 0 })).items).toHaveLength(1);
 	});
 
 	it("isolates every read, mutation, export and context selection by account", async () => {

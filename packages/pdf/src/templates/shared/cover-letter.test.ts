@@ -1,25 +1,16 @@
 import { describe, expect, it } from "vitest";
+import { copyCoverLetterStyle, createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { shouldShowResumeHeader } from "./cover-letter";
 
-const createCoverLetterOnlyData = () => {
-	const data = structuredClone(sampleResumeData);
-	const coverLetter = data.customSections.find((section) => section.type === "cover-letter");
-
-	if (!coverLetter) throw new Error("sample resume must include a cover letter");
-
-	return {
-		...data,
-		customSections: [coverLetter],
-		metadata: {
-			...data.metadata,
-			layout: {
-				...data.metadata.layout,
-				pages: [{ fullWidth: true, main: [coverLetter.id], sidebar: [] }],
-			},
-		},
-	};
-};
+// A letter's document: resume data with one cover-letter section, as the letter export builds it.
+const createCoverLetterOnlyData = () =>
+	createCoverLetterResumeData({
+		name: "Cover Letter",
+		recipient: "<p>Hiring Manager</p>",
+		content: "<p>Dear Hiring Manager,</p>",
+		style: copyCoverLetterStyle(sampleResumeData, "letter-section", "letter-item"),
+	});
 
 describe("shouldShowResumeHeader", () => {
 	it("hides the header when every visible layout section is a cover letter", () => {

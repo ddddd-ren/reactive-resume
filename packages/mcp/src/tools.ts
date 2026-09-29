@@ -9,7 +9,6 @@ import { ORPCError } from "@orpc/server";
 import { resolveUserFromRequestHeaders } from "@reactive-resume/api/context";
 import { createResumePdfDownloadUrl } from "@reactive-resume/api/features/resume/export";
 import { env } from "@reactive-resume/env/server";
-import { resumeHasCoverLetter } from "@reactive-resume/resume/export-sections";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { MCP_TOOL_NAME } from "./mcp-tool-names";
 import { TOOL_META } from "./tool-meta";
@@ -161,40 +160,32 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		}),
 	);
 
-	// ── Download Resume or Cover Letter PDF ───────────────────────
+	// ── Download Resume PDF ───────────────────────────────────────
 	server.registerTool(
 		T.downloadResumePdf,
 		TOOL_META[T.downloadResumePdf],
-		withErrorHandling(
-			"creating PDF download URL",
-			async ({ id, target }: { id: string; target?: "resume" | "cover-letter" }) => {
-				const resume = await client.resume.getById({ id });
-				const user = await resolveUserFromRequestHeaders(requestHeaders);
-				if (!user) throw new Error("Unauthorized");
+		withErrorHandling("creating PDF download URL", async ({ id }: { id: string }) => {
+			const resume = await client.resume.getById({ id });
+			const user = await resolveUserFromRequestHeaders(requestHeaders);
+			if (!user) throw new Error("Unauthorized");
 
-				const documentTarget = target ?? "resume";
-				if (documentTarget === "cover-letter" && !resumeHasCoverLetter(resume.data))
-					throw new Error("No visible cover letter found for this resume.");
+			const signedUrl = createResumePdfDownloadUrl({ resumeId: id, userId: user.id });
 
-				const signedUrl = createResumePdfDownloadUrl({ resumeId: id, userId: user.id, target: documentTarget });
-
-				return text(
-					JSON.stringify(
-						{
-							resumeId: id,
-							target: documentTarget,
-							name: documentTarget === "cover-letter" ? `${resume.name} Cover Letter` : resume.name,
-							downloadUrl: signedUrl.url,
-							expiresAt: signedUrl.expiresAt,
-							expiresInSeconds: signedUrl.expiresInSeconds,
-							contentType: "application/pdf",
-						},
-						null,
-						2,
-					),
-				);
-			},
-		),
+			return text(
+				JSON.stringify(
+					{
+						resumeId: id,
+						name: resume.name,
+						downloadUrl: signedUrl.url,
+						expiresAt: signedUrl.expiresAt,
+						expiresInSeconds: signedUrl.expiresInSeconds,
+						contentType: "application/pdf",
+					},
+					null,
+					2,
+				),
+			);
+		}),
 	);
 
 	// ── Create Resume ─────────────────────────────────────────────
@@ -418,11 +409,6 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 				await client.coverLetters.delete(params as never);
 				return text(`Deleted cover letter (${(params as { id: string }).id}).`);
 			},
-		],
-		[
-			T.copyEmbeddedCoverLetter,
-			"copying embedded cover letter",
-			async (params) => json(await client.coverLetters.copyEmbedded(params as never)),
 		],
 		[
 			T.exportCoverLetter,

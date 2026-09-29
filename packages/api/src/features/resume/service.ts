@@ -9,9 +9,11 @@ import { get } from "es-toolkit/compat";
 import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { detachEmbeddedLetters } from "@reactive-resume/resume/cover-letter";
 import { applyResumePatches, ResumePatchError } from "@reactive-resume/resume/patch";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
+import { adoptEmbeddedLetters } from "../cover-letters/embedded";
 import { getStorageService } from "../storage/service";
 import { grantResumeAccess, hasResumeAccess } from "./access";
 import { assertCanView, isOwner, redactResumeForViewer, shouldCountForStatistics } from "./access-policy";
@@ -81,6 +83,7 @@ async function applyResumePatchTx(
 ) {
 	const [existing] = await client
 		.select({
+			name: schema.resume.name,
 			data: schema.resume.data,
 			isLocked: schema.resume.isLocked,
 			updatedAt: schema.resume.updatedAt,
@@ -118,6 +121,12 @@ async function applyResumePatchTx(
 	}
 
 	patchedData = parseWritableResumeData(patchedData);
+	await adoptEmbeddedLetters(client, {
+		userId: input.userId,
+		resumeId: input.id,
+		resumeName: existing.name,
+		data: patchedData,
+	});
 	// The version guard is the ms-precision JS check above, under the SELECT ... FOR UPDATE lock.
 	// Never compare expectedUpdatedAt in SQL: rows stamped by Postgres now() (defaultNow() on
 	// insert) carry microseconds, while JS Dates are ms-truncated — SQL equality then matches
@@ -528,14 +537,20 @@ export const resumeService = {
 
 		try {
 			const slug = input.slug ?? (await findFreeSlug(db, input.userId, input.name));
-			await db.insert(schema.resume).values({
-				id,
-				name: input.name,
-				autoName: input.autoName ?? false,
-				slug,
-				tags: input.tags,
-				userId: input.userId,
-				data,
+			await db.transaction(async (tx) => {
+				// The resume row comes first: letters an imported file carried are saved linked to it.
+				const stored = structuredClone(data);
+				detachEmbeddedLetters(stored);
+				await tx.insert(schema.resume).values({
+					id,
+					name: input.name,
+					autoName: input.autoName ?? false,
+					slug,
+					tags: input.tags,
+					userId: input.userId,
+					data: stored,
+				});
+				await adoptEmbeddedLetters(tx, { userId: input.userId, resumeId: id, resumeName: input.name, data });
 			});
 
 			// History is never empty: its first entry is where the document came from (best effort).
@@ -581,6 +596,7 @@ export const resumeService = {
 			.transaction(async (tx) => {
 				const [existing] = await tx
 					.select({
+						name: schema.resume.name,
 						data: schema.resume.data,
 						slug: schema.resume.slug,
 						isLocked: schema.resume.isLocked,
@@ -608,6 +624,13 @@ export const resumeService = {
 				}
 
 				const normalizedData = input.data ? parseWritableResumeData(input.data) : undefined;
+				if (normalizedData)
+					await adoptEmbeddedLetters(tx, {
+						userId: input.userId,
+						resumeId: input.id,
+						resumeName: input.name ?? existing.name,
+						data: normalizedData,
+					});
 				// A blank resume is named after its headline until someone names it by hand.
 				const followedName =
 					existing.autoName && input.name === undefined && normalizedData

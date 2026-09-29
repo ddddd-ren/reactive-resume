@@ -94,7 +94,6 @@ describe("tool annotations", () => {
 			MCP_TOOL_NAME.draftApplicationMessage,
 			MCP_TOOL_NAME.createCoverLetter,
 			MCP_TOOL_NAME.duplicateCoverLetter,
-			MCP_TOOL_NAME.copyEmbeddedCoverLetter,
 			MCP_TOOL_NAME.importCoverLetter,
 		]) {
 			const annotations = TOOL_META[name].annotations;

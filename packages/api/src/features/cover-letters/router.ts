@@ -101,19 +101,6 @@ export const coverLettersRouter = {
 		.input(coverLetterDto.delete.input)
 		.output(coverLetterDto.delete.output)
 		.handler(({ context, input }) => coverLetterService.delete({ ...input, userId: context.user.id })),
-	copyEmbedded: protectedProcedure
-		.route({
-			method: "POST",
-			path: "/cover-letters/from-resume",
-			tags: ["Cover Letters"],
-			operationId: "copyEmbeddedCoverLetter",
-			summary: "Copy an embedded cover letter",
-			description: "Creates a saved cover letter by copying an embedded cover-letter item from a resume.",
-			successDescription: "The newly created cover letter.",
-		})
-		.input(coverLetterDto.copyEmbedded.input)
-		.output(coverLetterDto.copyEmbedded.output)
-		.handler(({ context, input }) => coverLetterService.copyEmbedded({ ...input, userId: context.user.id })),
 	export: protectedProcedure
 		.route({
 			method: "GET",

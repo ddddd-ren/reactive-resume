@@ -5,8 +5,42 @@ import {
 	copyCoverLetterStyle,
 	coverLetterTextToHtml,
 	createCoverLetterResumeData,
+	detachEmbeddedLetters,
 	greetingName,
 } from "./cover-letter";
+
+describe("detachEmbeddedLetters", () => {
+	it("takes letters out of the resume and its layout, and returns each one", () => {
+		const data = structuredClone(defaultResumeData);
+		const letter = createCoverLetterResumeData({
+			name: "Letter",
+			recipient: "<p>Acme</p>",
+			content: "<p>Hello</p>",
+			style: copyCoverLetterStyle(data, "letters", "letter-1"),
+		}).customSections[0];
+		if (!letter) throw new Error("Missing letter section.");
+		data.customSections = [
+			{ ...letter, items: [...letter.items, { ...letter.items[0], id: "letter-2", hidden: true } as never] },
+		];
+		data.metadata.layout.pages = [
+			{ fullWidth: false, main: ["experience", "letters"], sidebar: ["letters", "skills"] },
+		];
+
+		expect(detachEmbeddedLetters(data)).toEqual([
+			{ sectionId: "letters", itemId: "letter-1", title: "Letter", recipient: "<p>Acme</p>", content: "<p>Hello</p>" },
+			{ sectionId: "letters", itemId: "letter-2", title: "Letter", recipient: "<p>Acme</p>", content: "<p>Hello</p>" },
+		]);
+		expect(data.customSections).toEqual([]);
+		expect(data.metadata.layout.pages).toEqual([{ fullWidth: false, main: ["experience"], sidebar: ["skills"] }]);
+	});
+
+	it("leaves a resume without letters as it is", () => {
+		const data = structuredClone(defaultResumeData);
+		const before = structuredClone(data);
+		expect(detachEmbeddedLetters(data)).toEqual([]);
+		expect(data).toEqual(before);
+	});
+});
 
 describe("independent cover letters", () => {
 	it("copies sender and style without linking source mutations or retaining private notes", () => {

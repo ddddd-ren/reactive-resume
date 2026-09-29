@@ -1,7 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { copyCoverLetterStyle, createCoverLetterResumeData } from "./cover-letter";
 import { getResumeExportData } from "./export-sections";
 import { buildMarkdown, htmlToMarkdown } from "./markdown";
+
+// A letter's document, as the letter export builds it: resume data with one cover-letter section.
+const withLetter = () => {
+	const data = structuredClone(sampleResumeData);
+	const letter = createCoverLetterResumeData({
+		name: "Cover Letter",
+		recipient: "<p>Hiring Manager</p>",
+		content: "<p>Dear Hiring Manager,</p><p>I'm excited to apply.</p>",
+		style: copyCoverLetterStyle(data, "letter-section", "letter-item"),
+	});
+	data.customSections.push(...letter.customSections);
+	data.metadata.layout.pages.push({ fullWidth: true, main: ["letter-section"], sidebar: [] });
+	return data;
+};
 
 describe("htmlToMarkdown", () => {
 	it("converts the constrained tiptap tag set", () => {
@@ -46,13 +61,13 @@ describe("buildMarkdown", () => {
 	});
 
 	it("excludes the cover letter from the resume scope and includes it in the cover-letter scope", () => {
-		const cover = buildMarkdown(getResumeExportData(sampleResumeData, "cover-letter"));
+		const cover = buildMarkdown(getResumeExportData(withLetter(), "cover-letter"));
 		expect(cover.length).toBeGreaterThan(0);
 		expect(cover).not.toBe(md);
 	});
 
 	it("renders the cover-letter scope without resume header or section heading", () => {
-		const cover = buildMarkdown(getResumeExportData(sampleResumeData, "cover-letter"));
+		const cover = buildMarkdown(getResumeExportData(withLetter(), "cover-letter"));
 
 		expect(cover).toContain("Dear Hiring Manager");
 		expect(cover).not.toContain(`# ${sampleResumeData.basics.name}`);

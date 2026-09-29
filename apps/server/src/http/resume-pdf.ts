@@ -30,17 +30,13 @@ export async function handleResumePdfDownload(request: Request, id: string) {
 
 	const verification = verifyResumePdfDownloadToken({ resumeId: id, token });
 	if (!verification.ok) return verification.reason === "expired" ? expiredResponse() : unauthorizedResponse();
-	const queryTarget = searchParams.get("target");
-	if (
-		verification.target
-			? queryTarget !== null && queryTarget !== verification.target
-			: queryTarget && queryTarget !== "resume"
-	)
-		return unauthorizedResponse();
+	// Links made before letters left resumes may ask for the resume's cover letter, which is now a letter of its own.
+	const target = searchParams.get("target");
+	if (target && target !== "resume")
+		return new Response("Not found", { status: 404, headers: { "Cache-Control": "private, no-store" } });
 
 	try {
-		const target = verification.target ?? "resume";
-		const download = await createResumePdfDownload({ id, userId: verification.userId, target });
+		const download = await createResumePdfDownload({ id, userId: verification.userId });
 
 		return new Response(download.body, {
 			headers: {
