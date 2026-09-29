@@ -5,7 +5,6 @@ import { fileURLToPath } from "node:url";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Pool } from "pg";
-import { migrateLegacyStyles } from "@reactive-resume/api/features/resume/legacy-styles-migration";
 import { env } from "@reactive-resume/env/server";
 import { getLocalDataDirectory } from "@reactive-resume/utils/monorepo.node";
 import { verifyMigratedSchema } from "./schema-check";
@@ -46,15 +45,6 @@ export async function runDatabaseMigrations() {
 			} catch (error) {
 				console.error("Database migrations failed", { error });
 				throw error;
-			}
-
-			// Data migrations need app code, so they run here, once, after the SQL ones. A failure leaves the data as it
-			// was (legacy-styled resumes render unstyled until it's retried on the next start), so it doesn't stop startup.
-			try {
-				const summary = await migrateLegacyStyles(db);
-				if (summary) console.info("Legacy style rules converted to Semantic CSS", summary);
-			} catch (error) {
-				console.error("Converting legacy style rules failed; it will be retried on the next start", { error });
 			}
 
 			// Post-migration verification is not a migration failure, so it gets its own log

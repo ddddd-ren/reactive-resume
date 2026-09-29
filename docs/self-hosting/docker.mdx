@@ -459,6 +459,31 @@ through your managed provider, then follow that image's, host's, or provider's u
 and verify that the backup can be restored before a major-version upgrade. Pulling a new app image and running app
 migrations do not upgrade the PostgreSQL server.
 
+### Converting styles from the old style editor (one time)
+
+Resumes and cover letters styled with the old style editor (before Custom Styles became CSS) keep those styles only once
+they're converted to Custom Styles. The conversion isn't run automatically: after updating to the first version without
+the old editor, run it once from the app container. It uses the container's `DATABASE_URL`.
+
+1. **Dry run.** Converts every affected resume in memory and reports the counts; nothing is written.
+
+   ```bash
+   docker compose exec reactive-resume node apps/server/dist/migrate-legacy-styles.mjs
+   ```
+
+2. **Convert.** Every replaced stylesheet is saved to the backup file first. Only the stylesheet of each resume or letter
+   changes, and running it again (for example after an interruption) skips what's already converted.
+
+   ```bash
+   docker compose exec reactive-resume node apps/server/dist/migrate-legacy-styles.mjs --apply --backup /app/data/legacy-styles-backup.ndjson
+   ```
+
+3. **Undo, if needed.** Puts back the recorded stylesheets, except on resumes edited since.
+
+   ```bash
+   docker compose exec reactive-resume node apps/server/dist/migrate-legacy-styles.mjs --restore /app/data/legacy-styles-backup.ndjson
+   ```
+
 ## Backups (recommended)
 
 Reactive Resume stores data in two places: the PostgreSQL database and file uploads (either local storage or S3). Back up both on a regular schedule.

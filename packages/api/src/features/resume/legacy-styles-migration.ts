@@ -3,7 +3,6 @@ import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { sql } from "drizzle-orm";
 import { migrateLetterStylesheet, migrateResumeStylesheet } from "./legacy-styles";
 
-const MIGRATION = "2026-09-legacy-style-rules-to-semantic-css";
 const BATCH = 200;
 
 type Target = {
@@ -21,72 +20,142 @@ const TARGETS: readonly Target[] = [
 	{ table: "cover_letter_version", column: "data", owner: ["style"], convert: migrateLetterStylesheet },
 ];
 
-type Summary = Record<string, { migrated: number; skipped: number; failed: number }>;
+/** One row's stylesheet before and after conversion: enough to put it back. `before` is the stored JSON text, or null when there was none. */
+export type StylesheetChange = {
+	table: string;
+	id: string;
+	before: string | null;
+	after: SemanticStylesheet;
+};
+
+export type MigrateLegacyStylesOptions = {
+	/** Without it nothing is written: rows are only converted and counted. */
+	apply: boolean;
+	/** Receives each change right before it's written, so it can be backed up first. */
+	onChange?: (change: StylesheetChange) => void;
+	log?: (message: string) => void;
+};
+
+type Counts = { candidates: number; migrated: number; changed: number; failed: number };
+export type MigrateLegacyStylesSummary = Record<string, Counts>;
 
 const jsonPath = (...keys: string[]) => sql.raw(`'{${keys.join(",")}}'`);
 
-/**
- * Converts every stored legacy style (old editor rules, or a legacy-mode stylesheet) to Semantic CSS, once. It only
- * rewrites `metadata.stylesheet` (the rules stay, for rollback), skips a row whose stylesheet changed since it was
- * read (retrying it next startup), and records itself in `data_migration` once nothing is left so later startups
- * skip it. A row whose data doesn't parse is left as it is and counted. Runs under the startup migration lock, so one server does it.
- */
-export async function migrateLegacyStyles(db: NodePgDatabase): Promise<Summary | null> {
-	const done = await db.execute(sql`SELECT 1 FROM "data_migration" WHERE "name" = ${MIGRATION}`);
-	if (done.rows.length > 0) return null;
-
-	const summary: Summary = {};
-	for (const target of TARGETS) {
-		const counts = { migrated: 0, skipped: 0, failed: 0 };
-		summary[target.table] = counts;
-		const table = sql.identifier(target.table);
-		const column = sql.identifier(target.column);
-		const metadata = jsonPath(...target.owner, "metadata");
-		const stylesheetPath = jsonPath(...target.owner, "metadata", "stylesheet");
-		const needsMigration = sql`(
-			${column} #>> ${jsonPath(...target.owner, "metadata", "stylesheet", "mode")} = 'legacy'
-			OR (
-				jsonb_typeof(${column} #> ${stylesheetPath}) IS DISTINCT FROM 'object'
-				AND jsonb_typeof(${column} #> ${jsonPath(...target.owner, "metadata", "styleRules")}) = 'array'
-				AND jsonb_array_length(${column} #> ${jsonPath(...target.owner, "metadata", "styleRules")}) > 0
+const targetSql = (target: Target) => {
+	const column = sql.identifier(target.column);
+	const path = (...keys: string[]) => jsonPath(...target.owner, ...keys);
+	const stylesheetPath = path("metadata", "stylesheet");
+	return {
+		table: sql.identifier(target.table),
+		column,
+		owner: jsonPath(...target.owner),
+		stylesheetPath,
+		// Mirrors `needsLegacyStyleConversion`: still in the old editor's legacy mode, or legacy rules and no stylesheet.
+		needsMigration: sql`(
+			jsonb_typeof(${column} #> ${path("metadata")}) = 'object'
+			AND (
+				${column} #>> ${path("metadata", "stylesheet", "mode")} = 'legacy'
+				OR (
+					jsonb_typeof(${column} #> ${stylesheetPath}) IS DISTINCT FROM 'object'
+					AND jsonb_typeof(${column} #> ${path("metadata", "styleRules")}) = 'array'
+					AND jsonb_array_length(${column} #> ${path("metadata", "styleRules")}) > 0
+				)
 			)
-		)`;
+		)`,
+	};
+};
 
-		let after = "";
-		for (;;) {
-			const batch = await db.execute<{ id: string; owner: unknown; stylesheet: unknown }>(sql`
-				SELECT "id", ${column} #> ${jsonPath(...target.owner)} AS "owner", ${column} #> ${stylesheetPath} AS "stylesheet"
+/**
+ * Converts every stored legacy style (old editor rules, or a legacy-mode stylesheet) to Semantic CSS. Only
+ * `metadata.stylesheet` is rewritten, in place, so edits to the rest of a row aren't lost and the rules stay for
+ * rollback. A row whose stylesheet changed after it was read is left alone (it's counted as `changed`; running again
+ * picks it up if it still needs it), and one whose data doesn't parse is left as it is (`failed`). Safe to run again:
+ * a converted row no longer matches.
+ *
+ * Each table is scanned once for the rows that need it, so it takes a connection without a statement timeout.
+ */
+export async function migrateLegacyStyles(
+	db: NodePgDatabase,
+	{ apply, onChange, log = () => {} }: MigrateLegacyStylesOptions,
+): Promise<MigrateLegacyStylesSummary> {
+	const summary: MigrateLegacyStylesSummary = {};
+
+	for (const target of TARGETS) {
+		const { table, column, owner, stylesheetPath, needsMigration } = targetSql(target);
+		const found = await db.execute<{ id: string }>(
+			sql`SELECT "id" FROM ${table} WHERE ${needsMigration} ORDER BY "id"`,
+		);
+		const ids = found.rows.map((row) => row.id);
+		const counts: Counts = { candidates: ids.length, migrated: 0, changed: 0, failed: 0 };
+		summary[target.table] = counts;
+		log(`${target.table}: ${ids.length} rows need converting`);
+
+		for (let start = 0; start < ids.length; start += BATCH) {
+			const batch = await db.execute<{ id: string; owner: unknown; stylesheet: string | null }>(sql`
+				SELECT "id", ${column} #> ${owner} AS "owner", (${column} #> ${stylesheetPath})::text AS "stylesheet"
 				FROM ${table}
-				WHERE "id" > ${after} AND jsonb_typeof(${column} #> ${metadata}) = 'object' AND ${needsMigration}
-				ORDER BY "id"
-				LIMIT ${BATCH}
+				WHERE "id" IN (SELECT jsonb_array_elements_text(${JSON.stringify(ids.slice(start, start + BATCH))}::jsonb))
+					AND ${needsMigration}
 			`);
-			if (batch.rows.length === 0) break;
+			counts.changed += Math.min(BATCH, ids.length - start) - batch.rows.length;
 
 			for (const row of batch.rows) {
-				after = row.id;
-				let stylesheet: SemanticStylesheet | null;
+				let after: SemanticStylesheet | null;
 				try {
-					stylesheet = target.convert(row.owner);
-				} catch {
+					after = target.convert(row.owner);
+				} catch (error) {
 					counts.failed++;
+					log(`${target.table} ${row.id}: not converted, ${String((error as Error)?.message ?? error).slice(0, 200)}`);
 					continue;
 				}
-				if (!stylesheet) continue;
+				if (!after) continue;
+				if (!apply) {
+					counts.migrated++;
+					continue;
+				}
+
+				onChange?.({ table: target.table, id: row.id, before: row.stylesheet, after });
 				const updated = await db.execute(sql`
 					UPDATE ${table}
-					SET ${column} = jsonb_set(${column}, ${stylesheetPath}, ${JSON.stringify(stylesheet)}::jsonb)
-					WHERE "id" = ${row.id}
-						AND ${column} #> ${stylesheetPath} IS NOT DISTINCT FROM ${row.stylesheet === null ? null : JSON.stringify(row.stylesheet)}::jsonb
+					SET ${column} = jsonb_set(${column}, ${stylesheetPath}, ${JSON.stringify(after)}::jsonb)
+					WHERE "id" = ${row.id} AND (${column} #> ${stylesheetPath}) IS NOT DISTINCT FROM ${row.stylesheet}::jsonb
 				`);
 				if (updated.rowCount) counts.migrated++;
-				else counts.skipped++;
+				else counts.changed++;
 			}
+			log(
+				`${target.table}: ${Math.min(start + BATCH, ids.length)}/${ids.length} (${apply ? "converted" : "would convert"} ${counts.migrated}, changed meanwhile ${counts.changed}, failed ${counts.failed})`,
+			);
 		}
 	}
 
-	// A row that changed while it was being migrated is picked up next startup; one whose data doesn't parse never will.
-	if (Object.values(summary).every(({ skipped }) => skipped === 0))
-		await db.execute(sql`INSERT INTO "data_migration" ("name") VALUES (${MIGRATION}) ON CONFLICT DO NOTHING`);
 	return summary;
+}
+
+/**
+ * Puts back the stylesheets `migrateLegacyStyles` replaced, from the changes it reported. A row whose stylesheet
+ * isn't the converted one any more (edited since) is left alone and counted as `changed`.
+ */
+export async function restoreLegacyStyles(
+	db: NodePgDatabase,
+	changes: Iterable<StylesheetChange>,
+): Promise<{ restored: number; changed: number }> {
+	const counts = { restored: 0, changed: 0 };
+	for (const change of changes) {
+		const target = TARGETS.find(({ table }) => table === change.table);
+		if (!target) throw new Error(`Unknown table in backup: ${change.table}`);
+		const { table, column, stylesheetPath } = targetSql(target);
+		const restored =
+			change.before === null
+				? sql`${column} #- ${stylesheetPath}`
+				: sql`jsonb_set(${column}, ${stylesheetPath}, ${change.before}::jsonb)`;
+		const updated = await db.execute(sql`
+			UPDATE ${table}
+			SET ${column} = ${restored}
+			WHERE "id" = ${change.id} AND (${column} #> ${stylesheetPath}) = ${JSON.stringify(change.after)}::jsonb
+		`);
+		if (updated.rowCount) counts.restored++;
+		else counts.changed++;
+	}
+	return counts;
 }
