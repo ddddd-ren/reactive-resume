@@ -3,12 +3,9 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import Cookies from "js-cookie";
-import { isRTL, localeSchema } from "@reactive-resume/utils/locale";
-
-export { isRTL };
+import { defaultLocale, isLocale } from "@reactive-resume/utils/locale";
 
 const storageKey = "locale";
-const defaultLocale: Locale = "en-US";
 const messageLoaders = import.meta.glob<{ messages: Messages }>("../../locales/*.po");
 const relativeTimeDivisions: Array<{ amount: number; unit: Intl.RelativeTimeFormatUnit }> = [
 	{ amount: 31_536_000_000, unit: "year" },
@@ -77,18 +74,14 @@ export const localeMap = {
 	"zu-ZA": msg`Zulu`,
 } satisfies Record<Locale, MessageDescriptor>;
 
-export function isLocale(locale: string): locale is Locale {
-	return localeSchema.safeParse(locale).success;
-}
-
 export const resolveLocale = (locale: string): Locale => {
 	return isLocale(locale) ? locale : defaultLocale;
 };
 
-export function formatRelativeTime(value: Date | string, formatter: Intl.RelativeTimeFormat, invalidFallback?: string) {
+export function formatRelativeTime(value: Date | string, formatter: Intl.RelativeTimeFormat) {
 	const date = value instanceof Date ? value : new Date(value);
 	const diffMs = date.getTime() - Date.now();
-	if (Number.isNaN(diffMs)) return invalidFallback ?? formatter.format(0, "second");
+	if (Number.isNaN(diffMs)) return formatter.format(0, "second");
 
 	const division = relativeTimeDivisions.find((candidate) => Math.abs(diffMs) >= candidate.amount);
 

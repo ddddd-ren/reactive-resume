@@ -15,7 +15,7 @@ export type DialogSchema =
 	  }
 	| {
 			type: "resume.duplicate";
-			data: { id: string; name: string; slug: string; tags: string[]; shouldRedirect?: boolean };
+			data: { id: string; name: string; slug: string; tags: string[] };
 	  };
 
 export type DialogType = DialogSchema["type"];

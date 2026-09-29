@@ -181,14 +181,6 @@ function getResumeQueryKey(id: string): QueryKey {
 	return orpc.resume.getById.queryOptions({ input: { id } }).queryKey as QueryKey;
 }
 
-function cloneResumeData(data: ResumeData): ResumeData {
-	return structuredClone(data);
-}
-
-function cloneResume(resume: Resume): Resume {
-	return { ...resume, data: cloneResumeData(resume.data) };
-}
-
 export function isEditableElementFocused(): boolean {
 	if (typeof document === "undefined") return false;
 	const element = document.activeElement as HTMLElement | null;
@@ -261,7 +253,7 @@ async function flushResumeSave(id: string) {
 	if (!runtime || runtime.isSaving || !runtime.pendingResume) return;
 
 	const submitted = runtime.pendingResume;
-	const submittedData = cloneResumeData(submitted.data);
+	const submittedData = structuredClone(submitted.data);
 	runtime.pendingResume = undefined;
 	runtime.isSaving = true;
 
@@ -292,7 +284,7 @@ async function flushResumeSave(id: string) {
 
 			if (!runtime.pendingResume && currentResume?.id === submitted.id && !isEqual(currentResume.data, submittedData)) {
 				runtime.syncResume.cancel();
-				runtime.pendingResume = cloneResume(currentResume);
+				runtime.pendingResume = structuredClone(currentResume);
 			}
 		}
 
@@ -319,7 +311,7 @@ async function flushResumeSave(id: string) {
 
 function queueResumeSave(resume: Resume) {
 	const runtime = getRuntime(resume.id);
-	runtime.pendingResume = cloneResume(resume);
+	runtime.pendingResume = structuredClone(resume);
 	runtime.hasPendingLocalChanges = true;
 	runtime.saveFailed = false;
 	void flushResumeSave(resume.id);
@@ -804,7 +796,7 @@ export function savePendingChanges(id: string): boolean | Promise<boolean> {
 	if (!runtime?.hasPendingLocalChanges || current?.id !== id) return true;
 
 	runtime.syncResume.cancel();
-	runtime.pendingResume = cloneResume(current);
+	runtime.pendingResume = structuredClone(current);
 	useResumeStore.getState().setSaveStatus("saving");
 
 	return new Promise<boolean>((resolve) => {

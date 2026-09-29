@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { produce } from "immer";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { contrastOnWhite } from "@reactive-resume/utils/color";
 import {
 	ACCENTS,
 	applyFontPairing,
 	applyTextSize,
-	contrastOnWhite,
 	darkenForWhite,
 	fitToPages,
 	hexToRgba,

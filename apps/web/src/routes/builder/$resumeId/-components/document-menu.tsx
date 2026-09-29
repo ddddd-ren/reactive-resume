@@ -145,7 +145,7 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 				<Icon name="edit" />
 				<Trans>Rename…</Trans>
 			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => openDialog("resume.duplicate", { id, name, slug, tags, shouldRedirect: true })}>
+			<DropdownMenuItem onClick={() => openDialog("resume.duplicate", { id, name, slug, tags })}>
 				<Icon name="content_copy" />
 				<Trans>Duplicate</Trans>
 			</DropdownMenuItem>

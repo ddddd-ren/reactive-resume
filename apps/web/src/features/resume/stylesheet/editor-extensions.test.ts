@@ -7,10 +7,10 @@ import { EditorView } from "@codemirror/view";
 import { compileStylesheet } from "@reactive-resume/resume/stylesheet";
 import { collectCompiledColorTokens } from "./color-tokens";
 import {
+	completionLabels,
 	compositionAwareDocumentListener,
 	copySourceToClipboard,
 	createSemanticCssEditorExtensions,
-	getSemanticCssCompletionLabels,
 	getSemanticCssHoverDocumentation,
 	mapCompilerDiagnostics,
 } from "./editor-extensions";
@@ -63,14 +63,14 @@ afterEach(() => {
 
 describe("Semantic CSS editor extensions", () => {
 	it("uses only Semantic CSS registries and the current resume for completion", async () => {
-		const selectorLabels = await getSemanticCssCompletionLabels("", 0, metadata);
-		const propertyLabels = await getSemanticCssCompletionLabels("section {\n\tco", 13, metadata);
+		const selectorLabels = await completionLabels("", 0, metadata);
+		const propertyLabels = await completionLabels("section {\n\tco", 13, metadata);
 		const variableSource = "resume { --brand-accent: #f00; color: var(--br";
-		const variableLabels = await getSemanticCssCompletionLabels(variableSource, variableSource.length, metadata);
+		const variableLabels = await completionLabels(variableSource, variableSource.length, metadata);
 		// The cursor has to sit at the end of the typed prefix; mid-token it reads as a selector context.
 		const systemSource = "--resume-";
-		const systemLabels = await getSemanticCssCompletionLabels(systemSource, systemSource.length, metadata);
-		const directiveLabels = await getSemanticCssCompletionLabels("@", 1, metadata);
+		const systemLabels = await completionLabels(systemSource, systemSource.length, metadata);
+		const directiveLabels = await completionLabels("@", 1, metadata);
 
 		expect(selectorLabels).toEqual(
 			expect.arrayContaining([
@@ -97,9 +97,9 @@ describe("Semantic CSS editor extensions", () => {
 		const borderStyleSource = "section { border-style: d";
 		const fontSizeSource = "section { font-size: 1";
 
-		const displayLabels = getSemanticCssCompletionLabels(displaySource, displaySource.length, metadata);
-		const borderStyleLabels = getSemanticCssCompletionLabels(borderStyleSource, borderStyleSource.length, metadata);
-		const fontSizeLabels = getSemanticCssCompletionLabels(fontSizeSource, fontSizeSource.length, metadata);
+		const displayLabels = completionLabels(displaySource, displaySource.length, metadata);
+		const borderStyleLabels = completionLabels(borderStyleSource, borderStyleSource.length, metadata);
+		const fontSizeLabels = completionLabels(fontSizeSource, fontSizeSource.length, metadata);
 
 		expect(displayLabels).toEqual(expect.arrayContaining(["flex", "none", "inherit"]));
 		expect(displayLabels).not.toEqual(expect.arrayContaining(["portrait", "dashed", "pt"]));
@@ -111,7 +111,7 @@ describe("Semantic CSS editor extensions", () => {
 
 	it.each(borderShorthands)("offers complete %s shorthand values instead of bare units", (property) => {
 		const source = `section { ${property}: `;
-		const labels = getSemanticCssCompletionLabels(source, source.length, metadata);
+		const labels = completionLabels(source, source.length, metadata);
 
 		expect(labels).toEqual(expect.arrayContaining(["1pt dotted", "1pt dashed", "1pt solid"]));
 		expect(labels).not.toEqual(expect.arrayContaining(["pt", "px", "in", "mm", "cm", "%", "vw", "vh", "em", "rem"]));
@@ -135,7 +135,7 @@ describe("Semantic CSS editor extensions", () => {
 			templateParts: ['timeline"marker\n'],
 		} as const;
 
-		const labels = getSemanticCssCompletionLabels("", 0, unsafeMetadata);
+		const labels = completionLabels("", 0, unsafeMetadata);
 
 		expect(labels).toEqual(
 			expect.arrayContaining([

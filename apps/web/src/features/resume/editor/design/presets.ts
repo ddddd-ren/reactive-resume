@@ -1,5 +1,6 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
+import { contrastOnWhite } from "@reactive-resume/utils/color";
 
 type Data = ResumeData | WritableDraft<ResumeData>;
 /** The design a resume and a letter share. */
@@ -116,18 +117,6 @@ export function rgbaToHex(color: string): string | null {
 		.join("")
 		.toUpperCase()}`;
 }
-
-function luminance(hex: string) {
-	const value = Number.parseInt(HEX.exec(hex)?.[1] ?? "000000", 16);
-	const [r, g, b] = [(value >> 16) & 255, (value >> 8) & 255, value & 255].map((channel) => {
-		const c = channel / 255;
-		return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-	});
-	return 0.2126 * (r ?? 0) + 0.7152 * (g ?? 0) + 0.0722 * (b ?? 0);
-}
-
-/** WCAG contrast ratio of a colour against white. */
-export const contrastOnWhite = (hex: string) => 1.05 / (luminance(hex) + 0.05);
 
 export const isValidHex = (hex: string) => HEX.test(hex.trim());
 

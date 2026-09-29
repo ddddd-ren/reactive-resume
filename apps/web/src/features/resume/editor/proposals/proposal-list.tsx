@@ -13,14 +13,7 @@ import { useEditorStore } from "../store";
 
 /** The visible text of a passage's HTML, for the card. */
 const passageText = (html: string) =>
-	html
-		.replace(/<[^>]*>/g, "")
-		.replace(/&nbsp;/g, " ")
-		.replace(/&lt;/g, "<")
-		.replace(/&gt;/g, ">")
-		.replace(/&quot;/g, '"')
-		.replace(/&amp;/g, "&")
-		.trim();
+	new DOMParser().parseFromString(html, "text/html").body.textContent?.replaceAll("\u00a0", " ").trim() ?? "";
 
 /** Applies proposals to the resume as one undo step; the toast's Undo takes them back, and they show as pending again. */
 export function acceptResumeProposals(proposals: readonly Proposal[]) {

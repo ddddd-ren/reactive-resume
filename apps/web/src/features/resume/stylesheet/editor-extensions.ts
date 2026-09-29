@@ -93,7 +93,7 @@ function declarationProperty(source: string, position: number): string | undefin
 	return property || undefined;
 }
 
-function completionLabels(source: string, position: number, metadata: SemanticCssEditorMetadata): string[] {
+export function completionLabels(source: string, position: number, metadata: SemanticCssEditorMetadata): string[] {
 	switch (completionKind(source, position)) {
 		case "directive":
 			return [...directives];
@@ -116,14 +116,6 @@ function completionLabels(source: string, position: number, metadata: SemanticCs
 			];
 		}
 	}
-}
-
-export function getSemanticCssCompletionLabels(
-	source: string,
-	position: number,
-	metadata: SemanticCssEditorMetadata,
-): readonly string[] {
-	return completionLabels(source, position, metadata);
 }
 
 export function getSemanticCssHoverDocumentation(

@@ -26,9 +26,9 @@ import { PopoverHeader, PopoverTitle, PopoverTrigger } from "@reactive-resume/ui
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Toggle } from "@reactive-resume/ui/components/toggle";
 import { isDarkColor } from "@reactive-resume/utils/color";
+import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { usePrompt } from "@/hooks/use-prompt";
-import { isRTL } from "@/libs/locale";
 import { ColorPicker } from "./color-picker";
 import { ParagraphIndent } from "./paragraph-indent";
 import { defaultHighlightColor, resolveHighlightToolbarState } from "./rich-input.utils";

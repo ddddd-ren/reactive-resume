@@ -2,7 +2,8 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Cookies from "js-cookie";
-import { changeLocale, formatRelativeTime, isLocale, resolveLocale } from "./locale";
+import { isLocale } from "@reactive-resume/utils/locale";
+import { changeLocale, formatRelativeTime, resolveLocale } from "./locale";
 
 afterEach(() => {
 	vi.restoreAllMocks();
@@ -64,10 +65,10 @@ describe("formatRelativeTime", () => {
 		expect(formatRelativeTime("2026-01-02T11:59:45Z", formatter)).toBe("now");
 	});
 
-	it("uses the requested fallback for an invalid date", () => {
+	it("reads an invalid date as now", () => {
 		const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
-		expect(formatRelativeTime("invalid", formatter, "")).toBe("");
+		expect(formatRelativeTime("invalid", formatter)).toBe("now");
 	});
 });
 

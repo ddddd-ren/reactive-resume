@@ -134,7 +134,6 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 					toast.add({ type: "success", description: t`Your resume has been duplicated.`, id: toastId });
 					closeDialog();
 
-					if (!data.shouldRedirect) return;
 					void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
 				},
 				onError: (error) => {

@@ -4,8 +4,9 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ArrowUpRightIcon, CheckIcon, DownloadSimpleIcon, PlusIcon } from "@phosphor-icons/react";
 import { useState } from "react";
+import { isLocale, isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
-import { changeLocale, isLocale, isRTL, localeMap, resolveLocale } from "@/libs/locale";
+import { changeLocale, localeMap, resolveLocale } from "@/libs/locale";
 import { section, sectionHeading, sectionText, sectionTitle, textLink, wrap } from "./classes";
 import "./languages-showcase.css";
 

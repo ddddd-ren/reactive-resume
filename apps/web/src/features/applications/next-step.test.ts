@@ -1,6 +1,6 @@
 import type { Application } from "./types";
 import { describe, expect, it } from "vitest";
-import { getNextStep, isOverdue } from "./next-step";
+import { getNextStep } from "./next-step";
 
 const NOW = new Date("2026-09-28T12:00:00Z");
 const day = (offset: number) => new Date(NOW.getTime() + offset * 86_400_000);
@@ -47,7 +47,6 @@ describe("getNextStep", () => {
 		});
 		const late = getNextStep(application({ followUpAt: day(-1) }), NOW);
 		expect(late).toMatchObject({ kind: "follow-up", overdue: true });
-		expect(isOverdue(late)).toBe(true);
 	});
 
 	it("suggests a follow-up after ten days without a reply, and counts the wait before that", () => {

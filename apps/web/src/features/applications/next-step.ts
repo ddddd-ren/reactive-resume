@@ -56,9 +56,6 @@ export function getNextStep(application: NextStepSource, now = new Date()): Next
 	return { kind: "waiting", days };
 }
 
-/** Whether a next step needs attention now: an overdue follow-up, or no reply for too long. */
-export const isOverdue = (step: NextStep) => step.kind === "no-reply" || (step.kind === "follow-up" && step.overdue);
-
 export type NextStepText = { icon: IconName; title: string; sub: string; tone: "normal" | "warn" | "muted" };
 
 const formatWhen = (date: Date, locale: string, withTime: boolean) =>

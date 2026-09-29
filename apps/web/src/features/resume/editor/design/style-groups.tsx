@@ -13,6 +13,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
+import { contrastOnWhite } from "@reactive-resume/utils/color";
 import { cn } from "@reactive-resume/utils/style";
 import { Combobox } from "@/components/ui/combobox";
 import { getLocaleOptions } from "@/features/locale/locale-options";
@@ -23,7 +24,6 @@ import {
 	applyFontPairing,
 	applyMargins,
 	applyTextSize,
-	contrastOnWhite,
 	darkenForWhite,
 	FONT_PAIRINGS,
 	hexToRgba,
