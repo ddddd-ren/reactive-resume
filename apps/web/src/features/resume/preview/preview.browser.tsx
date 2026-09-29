@@ -10,7 +10,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
-import { EASE_OUT_STRONG } from "@/libs/motion";
+import { EASE } from "@/libs/motion";
 import { isEditableElementFocused, usePreviewPausedStore, useResumeData } from "../builder/draft";
 import { PdfCanvasDocument, PdfCanvasPage } from "./pdf-canvas";
 import { ResumePreviewLoader } from "./preview.shared";
@@ -34,7 +34,7 @@ const UPDATE_DEBOUNCE_MS = 100;
 const TYPING_DEBOUNCE_MS = 250;
 // Incoming layer fades in over the old one; the old layer holds at full opacity until the incoming one is opaque,
 // then drops out. Fading both at once dips the page towards the background mid-swap.
-const INCOMING_TRANSITION = { duration: 0.15, ease: EASE_OUT_STRONG };
+const INCOMING_TRANSITION = { duration: 0.15, ease: EASE };
 const EXITING_TRANSITION = { duration: 0.1, delay: 0.18 };
 // Motion animates in JS, so the CSS reduced-motion rule doesn't reach it: with reduced motion a new render replaces
 // the old one at once, and no half-faded page is ever on screen.

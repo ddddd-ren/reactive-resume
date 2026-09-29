@@ -177,7 +177,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 											render={
 												<button
 													type="button"
-													className="self-start rounded-md px-1.5 py-0.5 text-[11px] text-ink-3 hover:bg-sunken hover:text-ink"
+													className="self-start rounded-md px-1.5 py-0.5 text-[11px] text-ink-3 transition-colors hover:bg-sunken hover:text-ink"
 												/>
 											}
 										>
@@ -320,7 +320,7 @@ function InterviewChip({ item, time, onOpen }: InterviewChipProps) {
 		<button
 			type="button"
 			title={`${time} · ${kind?.label ?? item.interview.kind} · ${item.application.company} — ${item.application.role}`}
-			className="flex min-w-0 items-center gap-1.5 rounded-md border-s-2 bg-sunken/60 px-1.5 py-0.5 text-start text-[11px] leading-tight hover:bg-sunken max-sm:justify-center max-sm:border-s-0 max-sm:bg-transparent"
+			className="flex min-w-0 items-center gap-1.5 rounded-md border-s-2 bg-sunken/60 px-1.5 py-0.5 text-start text-[11px] leading-tight transition-colors hover:bg-sunken max-sm:justify-center max-sm:border-s-0 max-sm:bg-transparent"
 			style={{ borderInlineStartColor: kind?.color }}
 			onClick={onOpen}
 		>

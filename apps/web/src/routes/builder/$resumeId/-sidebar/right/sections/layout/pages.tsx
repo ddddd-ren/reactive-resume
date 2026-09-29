@@ -33,7 +33,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { EASE_OUT_STRONG } from "@/libs/motion";
+import { EASE } from "@/libs/motion";
 import { resolveLayoutSectionTitle } from "./title";
 import { filterVisibleLayoutSectionIds } from "./visibility";
 
@@ -263,7 +263,7 @@ export function LayoutPages() {
 				</Button>
 			</div>
 
-			<DragOverlay dropAnimation={{ duration: 150, easing: `cubic-bezier(${EASE_OUT_STRONG})` }}>
+			<DragOverlay dropAnimation={{ duration: 150, easing: `cubic-bezier(${EASE})` }}>
 				{activeId ? <LayoutItemContent id={activeId} isOverlay /> : null}
 			</DragOverlay>
 		</DndContext>
@@ -612,7 +612,7 @@ function LayoutItemContent({
 			data-overlay={isOverlay ? "true" : undefined}
 			data-dragging={isDragging ? "true" : undefined}
 			className={cn(
-				"group/item flex cursor-grab touch-none select-none items-center gap-x-2 rounded-md border border-line bg-bg px-2 py-1.5 font-medium text-sm transition-[background-color,border-color] duration-150",
+				"group/item flex cursor-grab touch-none select-none items-center gap-x-2 rounded-md border border-line bg-bg px-2 py-1.5 font-medium text-sm transition-[background-color,border-color] duration-quick",
 				"hover:bg-sunken/40 active:cursor-grabbing active:border-accent/60 active:bg-sunken/40",
 				"data-[overlay=true]:cursor-grabbing data-[overlay=true]:border-accent/60 data-[overlay=true]:bg-bg data-[overlay=true]:shadow-md",
 				"data-[dragging=true]:cursor-grabbing data-[dragging=true]:opacity-40",

@@ -104,7 +104,7 @@ function Column({ stage, applications, onOpen }: ColumnProps) {
 					<button
 						type="button"
 						onClick={() => setVisible((count) => count + COLUMN_PAGE_SIZE)}
-						className="rounded-lg border border-line border-dashed py-2 text-ink-3 text-xs hover:bg-hover"
+						className="rounded-lg border border-line border-dashed py-2 text-ink-3 text-xs transition-colors hover:bg-hover"
 					>
 						{t`Show ${Math.min(remaining, COLUMN_PAGE_SIZE)} more`}
 					</button>

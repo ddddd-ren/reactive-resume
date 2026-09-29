@@ -215,10 +215,10 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 					key={`${node.key}:${node.y}`}
 					onClick={() => reveal(node.kind === "header" ? "from" : "body")}
 					className={cn(
-						"absolute cursor-pointer rounded-[4px] transition-[background-color,outline-color] duration-standard",
+						"absolute cursor-pointer rounded-[4px] outline-[1.5px] outline-solid transition-[background-color,outline-color] duration-standard",
 						washed && node.kind === "item"
-							? "bg-[oklch(0.93_0.05_150/0.55)] mix-blend-multiply outline-[1.5px] outline-[oklch(0.5_0.1_150)] outline-solid"
-							: "hover:bg-[oklch(0.5_0.1_150/0.06)]",
+							? "bg-[oklch(0.93_0.05_150/0.55)] mix-blend-multiply outline-[oklch(0.5_0.1_150)]"
+							: "outline-transparent hover:bg-[oklch(0.5_0.1_150/0.06)]",
 					)}
 					style={{
 						left: `calc(${(node.x / page.width) * 100}% - 4px)`,

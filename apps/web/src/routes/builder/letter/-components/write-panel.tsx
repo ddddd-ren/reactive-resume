@@ -1,5 +1,5 @@
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
-import type { ReactElement, ReactNode } from "react";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
 import type { Application } from "@/features/applications/types";
 import type { LetterDraft } from "@/features/letters/store";
 import { t } from "@lingui/core/macro";
@@ -553,8 +553,8 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 				aria-live="polite"
 				aria-busy={streaming}
 				className={cn(
-					"min-h-[120px] whitespace-pre-wrap rounded-lg bg-accent-soft px-3 py-2.5 text-sm leading-relaxed transition-[outline-color] duration-standard",
-					draft.phase === "ready" ? "outline-[1.5px] outline-accent outline-solid" : "outline-transparent",
+					"min-h-[120px] whitespace-pre-wrap rounded-lg bg-accent-soft px-3 py-2.5 text-sm leading-relaxed outline-[1.5px] outline-solid transition-[outline-color] duration-standard",
+					draft.phase === "ready" ? "outline-accent" : "outline-transparent",
 				)}
 			>
 				{text}
@@ -600,8 +600,15 @@ function LengthSection({ content }: { content: string }) {
 					}}
 				/>
 				<span
-					className={cn("absolute inset-y-0 start-0 rounded-full transition-[width] duration-standard", fill)}
-					style={{ width: percent(Math.min(words, LETTER_LENGTH.scale)) }}
+					className={cn(
+						"absolute inset-y-0 start-0 w-full translate-x-(--fill) rounded-full transition-[translate] duration-quick ease-enter rtl:-translate-x-(--fill)",
+						fill,
+					)}
+					style={
+						{
+							"--fill": `${(Math.min(words, LETTER_LENGTH.scale) / LETTER_LENGTH.scale) * 100 - 100}%`,
+						} as CSSProperties
+					}
 				/>
 			</div>
 			<p className="text-ink-3 text-xs">

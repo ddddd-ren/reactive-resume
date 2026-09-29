@@ -79,7 +79,7 @@ function ToastAction({ className, ...props }: ToastPrimitive.Action.Props) {
 		<ToastPrimitive.Action
 			data-slot="toast-action"
 			className={cn(
-				"-my-1 shrink-0 rounded-sm px-1 py-1 font-semibold text-sm underline underline-offset-3 outline-none hover:opacity-80 focus-visible:outline-accent",
+				"-my-1 shrink-0 rounded-sm px-1 py-1 font-semibold text-sm underline underline-offset-3 outline-none transition-opacity hover:opacity-80 focus-visible:outline-accent",
 				className,
 			)}
 			{...props}
@@ -93,7 +93,7 @@ function ToastClose({ className, children, ...props }: ToastPrimitive.Close.Prop
 			data-slot="toast-close"
 			aria-label="Close"
 			className={cn(
-				"-me-2 inline-flex size-7 shrink-0 items-center justify-center rounded-sm opacity-70 outline-none hover:opacity-100 focus-visible:outline-accent",
+				"-me-2 inline-flex size-7 shrink-0 items-center justify-center rounded-sm opacity-70 outline-none transition-opacity hover:opacity-100 focus-visible:outline-accent",
 				className,
 			)}
 			{...props}

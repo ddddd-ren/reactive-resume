@@ -130,7 +130,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 								<button
 									type="button"
 									aria-label={t`Model: ${providerLabel}`}
-									className="flex h-7 max-w-[140px] items-center gap-0.5 rounded-md px-2 text-ink-2 text-xs hover:bg-hover"
+									className="flex h-7 max-w-[140px] items-center gap-0.5 rounded-md px-2 text-ink-2 text-xs transition-colors hover:bg-hover"
 								/>
 							}
 						>
@@ -484,7 +484,7 @@ type ConversationRowProps = {
 
 function ConversationRow({ thread, current, detail, onOpen, onDelete }: ConversationRowProps) {
 	return (
-		<li className="group/row flex items-center gap-1 rounded-lg hover:bg-hover">
+		<li className="group/row flex items-center gap-1 rounded-lg transition-colors hover:bg-hover">
 			<button
 				type="button"
 				aria-current={current ? "true" : undefined}
@@ -498,7 +498,7 @@ function ConversationRow({ thread, current, detail, onOpen, onDelete }: Conversa
 				icon="close"
 				label={t`Delete ${thread.title}`}
 				size="icon-sm"
-				className="me-1 text-ink-3 opacity-0 focus-visible:opacity-100 group-hover/row:opacity-100"
+				className="me-1 text-ink-3 opacity-0 transition-[opacity,background-color,border-color,color,filter] focus-visible:opacity-100 group-hover/row:opacity-100"
 				onClick={onDelete}
 			/>
 		</li>

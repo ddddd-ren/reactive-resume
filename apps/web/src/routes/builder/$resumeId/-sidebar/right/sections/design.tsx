@@ -17,7 +17,7 @@ import { LevelTypeCombobox } from "@/components/level/combobox";
 import { LevelDisplay } from "@/components/level/display";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
-import { EASE_OUT_STRONG } from "@/libs/motion";
+import { D1, EASE } from "@/libs/motion";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../shared/section-base";
 
@@ -180,7 +180,7 @@ function QuickColorCircle({ color, active, onSelect, className, ...props }: Quic
 			onClick={() => onSelect(color)}
 			className={cn(
 				"relative flex size-8 items-center justify-center rounded-md bg-transparent",
-				"transition-[scale,background-color] duration-150 ease-out-strong hover:bg-sunken/80 active:scale-[0.97]",
+				"transition-[scale,background-color] duration-quick ease-enter hover:bg-sunken/80 active:scale-[0.97]",
 				className,
 			)}
 			{...props}
@@ -193,7 +193,7 @@ function QuickColorCircle({ color, active, onSelect, className, ...props }: Quic
 						initial={{ scale: 0.95, opacity: 0 }}
 						animate={{ scale: 1, opacity: 1 }}
 						exit={{ scale: 0.95, opacity: 0 }}
-						transition={{ duration: 0.16, ease: EASE_OUT_STRONG }}
+						transition={{ duration: D1, ease: EASE }}
 						className="absolute inset-0 flex size-8 items-center justify-center"
 					>
 						<div className="size-4 rounded-md bg-ink" />

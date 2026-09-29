@@ -111,7 +111,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 			<button
 				type="button"
 				onClick={() => sortBy(key)}
-				className="inline-flex h-9 items-center gap-1 rounded-md hover:text-ink"
+				className="inline-flex h-9 items-center gap-1 rounded-md transition-colors hover:text-ink"
 			>
 				{label}
 				{sort.key === key && <Icon name={sort.direction === "asc" ? "arrow_upward" : "arrow_downward"} size={14} />}
@@ -157,7 +157,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 										id={groupId}
 										aria-expanded={open}
 										onClick={() => toggleGroup(status)}
-										className="flex h-9 items-center gap-2 rounded-md px-1.5 font-semibold text-sm hover:bg-hover"
+										className="flex h-9 items-center gap-2 rounded-md px-1.5 font-semibold text-sm transition-colors hover:bg-hover"
 									>
 										<Icon
 											name="chevron_right"

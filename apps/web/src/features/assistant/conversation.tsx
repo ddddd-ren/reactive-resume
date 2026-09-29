@@ -482,7 +482,7 @@ function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
 							value={other}
 							onChange={(event) => setOther(event.target.value)}
 							placeholder={t`Or in your own words…`}
-							className="h-8 min-w-0 flex-1 rounded-md border border-line-2 bg-raised px-2 text-ink text-sm outline-none focus:border-accent"
+							className="h-8 min-w-0 flex-1 rounded-md border border-line-2 bg-raised px-2 text-ink text-sm outline-none transition-[border-color,box-shadow] focus:border-accent"
 						/>
 						<Button type="submit" size="sm" disabled={!other.trim()}>
 							<Trans>Send</Trans>
@@ -595,7 +595,7 @@ export function Composer(props: ComposerProps) {
 								type="button"
 								aria-label={t`Don't send ${chip.label}`}
 								onClick={() => onContextChange({ ...context, [chip.key]: false })}
-								className="grid size-5 place-items-center rounded text-ink-3 hover:bg-hover hover:text-ink"
+								className="grid size-5 place-items-center rounded text-ink-3 transition-colors hover:bg-hover hover:text-ink"
 							>
 								<Icon name="close" size={14} />
 							</button>
@@ -612,7 +612,7 @@ export function Composer(props: ComposerProps) {
 								type="button"
 								aria-label={t`Remove ${attachment.filename}`}
 								onClick={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
-								className="grid size-5 place-items-center rounded text-ink-3 hover:bg-hover hover:text-ink"
+								className="grid size-5 place-items-center rounded text-ink-3 transition-colors hover:bg-hover hover:text-ink"
 							>
 								<Icon name="close" size={14} />
 							</button>
@@ -621,7 +621,7 @@ export function Composer(props: ComposerProps) {
 				</div>
 			)}
 
-			<div className="flex items-end gap-1.5 rounded-xl border border-line-2 bg-raised p-1.5 focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft">
+			<div className="flex items-end gap-1.5 rounded-xl border border-line-2 bg-raised p-1.5 transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft">
 				<label htmlFor={id} className="sr-only">
 					<Trans>Message the assistant</Trans>
 				</label>

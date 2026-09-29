@@ -214,7 +214,7 @@ function Rail() {
 					type="button"
 					aria-label={t`Search or run…`}
 					onClick={() => openPalette(true)}
-					className="grid size-10 place-items-center rounded-lg text-ink-2 hover:bg-hover"
+					className="grid size-10 place-items-center rounded-lg text-ink-2 transition-colors hover:bg-hover"
 				/>
 			</RailTip>
 			<nav aria-label={t`App`} className="grid gap-1">
@@ -238,7 +238,7 @@ function Rail() {
 						<Link
 							to={trash.to}
 							aria-label={t`Trash`}
-							className="grid size-10 place-items-center rounded-lg text-ink-2 hover:bg-hover"
+							className="grid size-10 place-items-center rounded-lg text-ink-2 transition-colors hover:bg-hover"
 						/>
 					</RailTip>
 				)}

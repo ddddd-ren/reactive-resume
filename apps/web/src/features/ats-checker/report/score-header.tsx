@@ -32,7 +32,7 @@ export function ScoreHeader({ report }: ScoreHeaderProps) {
 			<div className="h-1.5 overflow-hidden rounded-full bg-sunken">
 				<div
 					className={cn(
-						"h-full translate-x-(--fill) rounded-full transition-[translate] duration-300 ease-out-strong rtl:-translate-x-(--fill)",
+						"h-full translate-x-(--fill) rounded-full transition-[translate] duration-standard ease-enter rtl:-translate-x-(--fill)",
 						tone.bar,
 					)}
 					style={{ "--fill": `${report.score - 100}%` } as CSSProperties}

@@ -191,10 +191,15 @@
 	--transition-duration-standard: var(--d2);
 	--transition-duration-emphasized: var(--d3);
 	--ease-enter: var(--ease);
+	/* Bare `transition-*` utilities get the house values: quick, on the entering curve. */
+	--default-transition-duration: var(--d1);
+	--default-transition-timing-function: var(--ease);
 
-	/* Strong easing curves used by screens that haven't moved to --ease yet. */
-	--ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+	/* On-screen movement (sliding indicators, reorder, settling): `ease-in-out-strong`. */
 	--ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+	/* Landing page only (features/homepage, routes/_home). App UI uses `ease-enter`. */
+	--ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+	/* Drag release of a swipeable bottom sheet (plan 011). */
 	--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 

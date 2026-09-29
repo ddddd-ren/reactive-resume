@@ -59,8 +59,8 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 						data-section-id={node.kind === "header" ? undefined : node.sectionId}
 						data-item-id={node.kind === "item" ? node.itemId : undefined}
 						className={cn(
-							"absolute cursor-pointer rounded-[4px] transition-[background-color,outline-color] duration-quick hover:bg-[oklch(0.5_0.1_150/0.06)]",
-							selected && "outline-[1.5px] outline-accent outline-solid",
+							"absolute cursor-pointer rounded-[4px] outline-[1.5px] outline-solid transition-[background-color,outline-color] duration-quick hover:bg-[oklch(0.5_0.1_150/0.06)]",
+							selected ? "outline-accent" : "outline-transparent",
 						)}
 						style={{
 							left: `calc(${(node.x / page.width) * 100}% - 4px)`,

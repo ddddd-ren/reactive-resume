@@ -1,5 +1,6 @@
 import type { JdTermMatch } from "@reactive-resume/resume/ats-pdf";
 import type { ResumeData, SkillItem } from "@reactive-resume/schema/resume/data";
+import type { CSSProperties } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -155,8 +156,8 @@ export function JobMatchTab({ match, data }: JobMatchTabProps) {
 							className="h-1.5 overflow-hidden rounded-full bg-sunken"
 						>
 							<div
-								className="h-full rounded-full bg-accent transition-[width] duration-emphasized ease-enter"
-								style={{ width: `${(result.found.length / result.total) * 100}%` }}
+								className="h-full translate-x-(--fill) rounded-full bg-accent transition-[translate] duration-standard ease-enter rtl:-translate-x-(--fill)"
+								style={{ "--fill": `${(result.found.length / result.total) * 100 - 100}%` } as CSSProperties}
 							/>
 						</div>
 					</div>

@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { ImportKind } from "@/features/resume/import/read-file";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -467,8 +468,8 @@ function ImportProgress({ stage, notes }: { stage: number; notes: string[] }) {
 				className="h-1 overflow-hidden rounded-full bg-sunken"
 			>
 				<div
-					className="h-full bg-accent transition-[width] duration-standard"
-					style={{ width: `${(stage / 3) * 100}%` }}
+					className="h-full translate-x-(--fill) bg-accent transition-[translate] duration-standard ease-enter rtl:-translate-x-(--fill)"
+					style={{ "--fill": `${(stage / 3) * 100 - 100}%` } as CSSProperties}
 				/>
 			</div>
 		</div>

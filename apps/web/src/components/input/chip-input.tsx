@@ -90,7 +90,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 				<span className="max-w-32 truncate sm:max-w-44">{chip}</span>
 				<div
 					className={cn(
-						"ms-1.5 flex shrink-0 items-center gap-x-0.5 transition-opacity duration-150 group-focus-within/chip:opacity-100 group-hover/chip:opacity-100",
+						"ms-1.5 flex shrink-0 items-center gap-x-0.5 transition-opacity duration-quick group-focus-within/chip:opacity-100 group-hover/chip:opacity-100",
 						isEditing ? "opacity-100" : "opacity-65",
 					)}
 				>

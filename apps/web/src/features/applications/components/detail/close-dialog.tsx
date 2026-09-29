@@ -43,7 +43,10 @@ export function CloseDialog({ open, onOpenChange, onClose }: CloseDialogProps) {
 					className="grid gap-1"
 				>
 					{CLOSED_REASONS.map((value) => (
-						<div key={value} className="flex h-10 items-center gap-2.5 rounded-lg px-2 hover:bg-hover">
+						<div
+							key={value}
+							className="flex h-10 items-center gap-2.5 rounded-lg px-2 transition-colors hover:bg-hover"
+						>
 							<RadioGroupItem id={`${id}-${value}`} value={value} />
 							<label htmlFor={`${id}-${value}`} className="flex-1 cursor-pointer text-sm">
 								{getClosedReasonLabel(value)}
