@@ -185,6 +185,34 @@ const defaultSectionHeadingContainerStyle = {
 	columnGap: 4,
 } satisfies Style;
 
+const sectionHeadingTextProperties = new Set<string>([
+	"color",
+	"direction",
+	"fontSize",
+	"fontStyle",
+	"fontWeight",
+	"letterSpacing",
+	"lineHeight",
+	"textAlign",
+	"textDecoration",
+	"textDecorationColor",
+	"textDecorationStyle",
+	"textIndent",
+	"textTransform",
+]);
+
+/**
+ * With an icon, the heading node is the icon row and its title is a separate text that carries the template's own
+ * heading font, so the heading's text styles have to be handed to that text or they never reach it.
+ */
+const sectionHeadingTextOf = (style: Style | undefined): Style | undefined =>
+	style &&
+	(Object.fromEntries(
+		Object.entries(style).filter(
+			([property, value]) => value !== undefined && sectionHeadingTextProperties.has(property),
+		),
+	) as Style);
+
 export const getSectionHeadingTextStyle = (...styles: StyleInput[]): Style[] => {
 	const textStyles = composeStyles(...styles).map(
 		({
@@ -380,9 +408,7 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 							bindSemanticNode={false}
 							style={getSectionHeadingTextStyle(
 								sectionHeadingStyle,
-								sectionHeadingResolved.style?.color === undefined
-									? undefined
-									: { color: sectionHeadingResolved.style.color },
+								sectionHeadingTextOf(sectionHeadingResolved.style),
 							)}
 						>
 							{sectionTitle}

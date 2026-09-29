@@ -31,21 +31,24 @@ const renderHeading = async (css: string, hideSectionIcons = false) => {
 		const page = await document.getPage(1);
 		const operators = await page.getOperatorList();
 		let fill = "";
+		let size = 0;
 		const text: { value: string; fill: string }[] = [];
+		const sizes: { value: string; size: number }[] = [];
 		const colors: string[] = [];
 		for (const [index, fn] of operators.fnArray.entries()) {
 			const args = operators.argsArray[index];
 			if (fn === OPS.setFillRGBColor) fill = args[0];
+			if (fn === OPS.setFont) size = args[1];
 			if (fn === OPS.setFillRGBColor || fn === OPS.setStrokeRGBColor) colors.push(args[0]);
-			if (fn === OPS.showText)
-				text.push({
-					value: args[0]
-						.map((glyph: { unicode?: string } | number) => (typeof glyph === "number" ? "" : (glyph.unicode ?? "")))
-						.join(""),
-					fill,
-				});
+			if (fn === OPS.showText) {
+				const value = args[0]
+					.map((glyph: { unicode?: string } | number) => (typeof glyph === "number" ? "" : (glyph.unicode ?? "")))
+					.join("");
+				text.push({ value, fill });
+				sizes.push({ value, size });
+			}
 		}
-		return { text, colors };
+		return { text, colors, sizes };
 	} finally {
 		await loadingTask.destroy();
 	}
@@ -71,5 +74,9 @@ describe("Semantic section heading colors (#3348)", () => {
 		const { text, colors } = await renderHeading("");
 		expect(text).toContainEqual({ value: "HEADING", fill: "#000000" });
 		expect(colors).toContain("#dc2626");
+	});
+	it.each([false, true])("gives heading text its text styles with hideSectionIcons=%s", async (hidden) => {
+		const { sizes } = await renderHeading("section-heading { font-size: 21pt; text-transform: lowercase; }", hidden);
+		expect(sizes).toContainEqual({ value: "heading", size: 21 });
 	});
 });
