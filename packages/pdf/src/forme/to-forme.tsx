@@ -32,6 +32,14 @@ type Edges = { top: number; right: number; bottom: number; left: number };
 /** Source location of a repeated page background, so free-form measuring can skip it. */
 export const FIXED_SOURCE = "rr-fixed";
 
+/**
+ * List items carry their place in the document into the layout: a source location's line is the item's index + 1
+ * and its column says what the box is. Forme has no keep-with-next, so `renderResume` finds markers left on a page
+ * their first line leaves, and renders again with a page break before those items.
+ */
+export const LIST_ROLE = { marker: 2, content: 3, item: 4 } as const;
+const LIST_SOURCE = "rr-list";
+
 type Context = {
 	fontSize: number;
 	pageWidth: number;
@@ -56,6 +64,10 @@ type Context = {
 	textDefaults: FormeStyle;
 	warnings: Set<string>;
 	sourceMap: WeakMap<object, SourceLocation>;
+	/** Counts list items in document order and names those that start a page (see `LIST_ROLE`). */
+	lists: { count: number; breakBefore: ReadonlySet<number> };
+	/** The list item being converted, and what part of it. */
+	listItem?: { index: number; role: (typeof LIST_ROLE)[keyof typeof LIST_ROLE] } | undefined;
 };
 
 const PADDING_KEYS = [
@@ -353,8 +365,17 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 	const ownKey = props[RESUME_NODE_PROP];
 	// Everything drawn inside a tagged block carries its key, so a block Forme leaves out of its layout (it does when
 	// a plain box breaks across pages) can be found by what it contains.
-	const context =
-		typeof ownKey === "string" && ownKey.length > 0 ? { ...parentContext, nodeKey: ownKey } : parentContext;
+	let context = typeof ownKey === "string" && ownKey.length > 0 ? { ...parentContext, nodeKey: ownKey } : parentContext;
+	if (props["data-resume-list-item"])
+		context = { ...context, listItem: { index: context.lists.count++, role: LIST_ROLE.item } };
+	else if (context.listItem && (props["data-resume-list-marker"] || props["data-resume-list-content"]))
+		context = {
+			...context,
+			listItem: {
+				index: context.listItem.index,
+				role: props["data-resume-list-marker"] ? LIST_ROLE.marker : LIST_ROLE.content,
+			},
+		};
 
 	switch (node.type) {
 		case HOST.view: {
@@ -366,6 +387,8 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 			);
 			let children = spread.children;
 			const viewStyle = flowStyle(props, spread.style);
+			if (context.listItem?.role === LIST_ROLE.item && context.lists.breakBefore.has(context.listItem.index))
+				viewStyle.breakBefore = true;
 			// Forme ignores a page break on an item of a row: the row takes it, as the item can't start a page without it.
 			if (style.flexDirection === "row" || style.flexDirection === "row-reverse") {
 				const breaks = (child: ReactNode): child is ReactElement<{ style: FormeStyle }> =>
@@ -733,10 +756,13 @@ function fixedOnPage(element: ReactElement, style: FormeStyle, context: Context,
 /** Remembers which Forme element draws a tagged block, so its box can be found in the layout afterwards. */
 function tagNode(element: object, props: Record<string, unknown>, context: Context) {
 	const key = props[RESUME_NODE_PROP];
+	const { listItem } = context;
+	const place = listItem ? { line: listItem.index + 1, column: listItem.role } : { line: 1, column: 1 };
 	if (typeof key === "string" && key.length > 0)
-		context.sourceMap.set(element, { file: `${NODE_SOURCE_PREFIX}${key}`, line: 1, column: 1 });
+		context.sourceMap.set(element, { file: `${NODE_SOURCE_PREFIX}${key}`, ...place });
 	else if (context.nodeKey)
-		context.sourceMap.set(element, { file: `${NODE_CONTENT_PREFIX}${context.nodeKey}`, line: 1, column: 1 });
+		context.sourceMap.set(element, { file: `${NODE_CONTENT_PREFIX}${context.nodeKey}`, ...place });
+	else if (listItem) context.sourceMap.set(element, { file: LIST_SOURCE, ...place });
 }
 
 function convertPage(page: HostElement, context: Context, key: number): ReactNode {
@@ -808,11 +834,13 @@ export type ConvertOptions = {
 	 * converts without it first, and again with it only when the engine misplaces a box.
 	 */
 	keepNestedRowsWhole?: boolean;
+	/** List items (by index, see `LIST_ROLE`) that start a new page, so their marker stays with their first line. */
+	breakBeforeListItems?: ReadonlySet<number>;
 };
 
 export function toFormeDocument(
 	tree: HostNode[],
-	{ images = new Map(), keepNestedRowsWhole = false }: ConvertOptions = {},
+	{ images = new Map(), keepNestedRowsWhole = false, breakBeforeListItems = new Set() }: ConvertOptions = {},
 ): ConvertedDocument {
 	const root = tree.find((node): node is HostElement => node.type === HOST.document);
 	if (!root) throw new Error("The resume didn't render a <Document>.");
@@ -838,6 +866,7 @@ export function toFormeDocument(
 		},
 		warnings: new Set(),
 		sourceMap: new WeakMap(),
+		lists: { count: 0, breakBefore: breakBeforeListItems },
 	};
 
 	const { props } = root;

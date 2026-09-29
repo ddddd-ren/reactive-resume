@@ -15,7 +15,7 @@ import { loadFonts } from "./fonts";
 import { loadIcons } from "./icons";
 import { imageSources, loadImages } from "./images";
 import { renderHostTree } from "./reconciler";
-import { FIXED_SOURCE, FREE_FORM_MEASURE_HEIGHT, toFormeDocument } from "./to-forme";
+import { FIXED_SOURCE, FREE_FORM_MEASURE_HEIGHT, LIST_ROLE, toFormeDocument } from "./to-forme";
 
 /** The Forme entry point for this runtime: `@formepdf/core` in Node, `@formepdf/core/worker` in browsers. */
 export type FormeEngine = {
@@ -58,6 +58,24 @@ const misplacesABox = (result: RenderWithLayoutResult) =>
 
 const isFixed = (element: ElementInfo): boolean =>
 	element.sourceLocation?.file === FIXED_SOURCE || element.children.some(isFixed);
+
+/** List items whose marker sits on an earlier page than their first line (see `LIST_ROLE`). */
+export function listMarkersLeftBehind(layout: RenderWithLayoutResult["layout"]): number[] {
+	const markerPage = new Map<number, number>();
+	const contentPage = new Map<number, number>();
+	layout.pages.forEach((page, pageIndex) => {
+		const visit = (element: ElementInfo) => {
+			const source = element.sourceLocation;
+			const pages =
+				source?.column === LIST_ROLE.marker ? markerPage : source?.column === LIST_ROLE.content ? contentPage : null;
+			// Forme leaves some fragments of a splitting box at y ±Number.MAX_VALUE; they aren't on this page.
+			if (source && pages && !pages.has(source.line) && !offPage(element.y)) pages.set(source.line, pageIndex);
+			element.children.forEach(visit);
+		};
+		page.elements.forEach(visit);
+	});
+	return [...markerPage].flatMap(([line, page]) => ((contentPage.get(line) ?? page) > page ? [line - 1] : []));
+}
 
 /** A free-form page's content height: the lowest box on it plus the page's bottom margin. */
 function measuredHeight(result: RenderWithLayoutResult, pageIndex: number, marginBottom: number) {
@@ -105,8 +123,9 @@ export async function renderResumeElement(engine: FormeEngine, element: ReactEle
 	const tree = renderHostTree(element);
 	const { images, warnings: imageWarnings } = await loadImages(imageSources(tree));
 
-	const layOut = async (keepNestedRowsWhole: boolean) => {
-		const { document, warnings } = toFormeDocument(tree, { images, keepNestedRowsWhole });
+	const breakBeforeListItems = new Set<number>();
+	const layOutOnce = async (keepNestedRowsWhole: boolean) => {
+		const { document, warnings } = toFormeDocument(tree, { images, keepNestedRowsWhole, breakBeforeListItems });
 		// Forme rewrites the font entries it's given (bytes to base64), so each render gets its own.
 		const render = () =>
 			engine.renderSerializedDocWithLayout({ ...document, fonts: fonts.map((font) => ({ ...font })) });
@@ -124,6 +143,17 @@ export async function renderResumeElement(engine: FormeEngine, element: ReactEle
 		});
 		if (measured) result = await render();
 		return { result, warnings };
+	};
+
+	// A marker left on the page its first line leaves: that item starts the next page instead. Breaks move what
+	// follows, so a few passes settle it; an item that already starts a page is never broken again.
+	const layOut = async (keepNestedRowsWhole: boolean) => {
+		for (let pass = 0; ; pass++) {
+			const laidOut = await layOutOnce(keepNestedRowsWhole);
+			const leftBehind = listMarkersLeftBehind(laidOut.result.layout).filter((item) => !breakBeforeListItems.has(item));
+			if (leftBehind.length === 0 || pass === 3) return laidOut;
+			for (const item of leftBehind) breakBeforeListItems.add(item);
+		}
 	};
 
 	let { result, warnings } = await layOut(false);

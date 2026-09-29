@@ -65,8 +65,9 @@ async function listPages(
 	}
 }
 
-// react-pdf kept a list marker with its item's first line through a patch to its layout engine. Forme 0.25 has no
-// keep-with-next, so a marker can stay on a page its first line leaves; these pass once the engine can keep them.
+// Forme 0.25 has no keep-with-next: `renderResume` finds a marker left on a page its first line leaves and renders
+// again with that item starting the next page. Presence hints are still ignored (the editor warns); those tests
+// pass once the engine supports them.
 describe("list marker pagination (#3344)", () => {
 	it("terminates when an authored marker presence hint exceeds a whole page", async () => {
 		if (process.env.RR_LIST_PRESENCE_PROBE !== "1") {
@@ -116,7 +117,7 @@ describe("list marker pagination (#3344)", () => {
 			}
 		}
 	}, 70000);
-	it.fails("moves a bullet with its first paragraph when the paragraph cannot start on this page", async () => {
+	it("moves a bullet with its first paragraph when the paragraph cannot start on this page", async () => {
 		const result = await listPages(194);
 		expect(result.first).toBe(1);
 		expect(result.marker).toBe(result.first);
@@ -126,7 +127,7 @@ describe("list marker pagination (#3344)", () => {
 		expect(result.first).toBe(0);
 		expect(result.marker).toBe(result.first);
 	});
-	it.fails("allows a long list item to continue across pages", async () => {
+	it("allows a long list item to continue across pages", async () => {
 		const result = await listPages(194, 30);
 		expect(result.marker).toBe(result.first);
 		expect(result.last).toBeGreaterThan(result.first);
@@ -138,7 +139,7 @@ describe("list marker pagination (#3344)", () => {
 				.match(/\bSome\b/g),
 		).toHaveLength(30);
 	});
-	it.fails("respects authored paragraph orphan counts", async () => {
+	it("respects authored paragraph orphan counts", async () => {
 		const result = await listPages(190, 30, "paragraph { orphans: 3; }", { multipleParagraphs: true });
 		expect(result.marker).toBe(result.first);
 		expect(result.last).toBeGreaterThan(result.first);
@@ -152,7 +153,7 @@ describe("list marker pagination (#3344)", () => {
 		const result = await listPages(margin, 30, "list-item-content { order: -1; }");
 		expect(result.marker).toBe(result.first);
 	});
-	it.fails.each([194, 200, 208])("keeps reordered list markers with content at margin %i", async (margin) => {
+	it.each([194, 200, 208])("keeps reordered list markers with content at margin %i", async (margin) => {
 		const result = await listPages(margin, 30, "list-item-content { order: -1; }");
 		expect(result.marker).toBe(result.first);
 	});
@@ -160,11 +161,11 @@ describe("list marker pagination (#3344)", () => {
 		const result = await listPages(margin, 30, "", { rtl: true });
 		expect(result.marker).toBe(result.first);
 	});
-	it.fails.each([194, 200, 208])("keeps RTL markers with content at margin %i", async (margin) => {
+	it.each([194, 200, 208])("keeps RTL markers with content at margin %i", async (margin) => {
 		const result = await listPages(margin, 30, "", { rtl: true });
 		expect(result.marker).toBe(result.first);
 	});
-	it.fails("keeps ordered markers with first text", async () => {
+	it("keeps ordered markers with first text", async () => {
 		const result = await listPages(194, 30, "", {
 			html: `<ol><li>TARGET ${"Some words to fill several lines and force wrapping. ".repeat(30)} END</li></ol>`,
 		});
@@ -204,7 +205,7 @@ describe("list marker pagination (#3344)", () => {
 		expect(result.first).toBe(0);
 		expect(result.marker).toBe(result.first);
 	});
-	it.fails("keeps the marker with a paragraph using larger text", async () => {
+	it("keeps the marker with a paragraph using larger text", async () => {
 		const result = await listPages(180, 30, "paragraph { font-size: 15pt; orphans: 2; }", { multipleParagraphs: true });
 		expect(result.marker).toBe(result.first);
 	});
