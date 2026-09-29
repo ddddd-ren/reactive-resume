@@ -21,8 +21,8 @@ export type PropertyDefinition = {
 
 export type PropertyRegistry = Readonly<Record<string, PropertyDefinition | undefined>>;
 
-export const SEMANTIC_CSS_CSS_WIDE_KEYWORDS_V1 = ["inherit", "initial", "revert", "unset"] as const;
-export const SEMANTIC_CSS_LENGTH_UNITS_V1 = ["pt", "px", "in", "mm", "cm", "%", "vw", "vh", "em", "rem"] as const;
+export const SEMANTIC_CSS_CSS_WIDE_KEYWORDS_V1 = ["inherit", "initial"] as const;
+export const SEMANTIC_CSS_LENGTH_UNITS_V1 = ["pt", "px", "in", "mm", "cm", "%", "em", "rem"] as const;
 export const SEMANTIC_CSS_BORDER_STYLE_VALUES_V1 = ["dotted", "dashed", "solid"] as const;
 export const SEMANTIC_CSS_LENGTH_VALUE_KEYWORDS_V1 = [
 	"auto",
@@ -342,45 +342,3 @@ const properties = {
 } satisfies PropertyRegistry;
 
 export const PROPERTY_REGISTRY_V1: PropertyRegistry = properties;
-
-/**
- * What the PDF engine (Forme) can't draw yet, by property: `true` for any value, or a test for the values it can't.
- * These stay valid Semantic CSS, so stylesheets keep working when the engine learns them; the editor warns instead.
- */
-export const SEMANTIC_CSS_ENGINE_UNSUPPORTED_V1: Readonly<Record<string, true | ((value: string) => boolean)>> = {
-	"z-index": true,
-	"max-lines": true,
-	"text-indent": true,
-	"vertical-align": true,
-	"object-position": true,
-	"text-decoration-color": true,
-	"text-decoration-style": true,
-	"-resume-min-presence-ahead": true,
-	transform: (value: string) => /rotate\(\s*-?(?:\d*\.)?\d*[1-9]/.test(value),
-	...Object.fromEntries(
-		["padding", "padding-top", "padding-right", "padding-bottom", "padding-left"].map((property) => [
-			property,
-			(value: string) => value.includes("%"),
-		]),
-	),
-	...Object.fromEntries(
-		[
-			"border",
-			"border-top",
-			"border-right",
-			"border-bottom",
-			"border-left",
-			"border-style",
-			"border-top-style",
-			"border-right-style",
-			"border-bottom-style",
-			"border-left-style",
-		].map((property) => [property, (value: string) => /\b(?:dashed|dotted)\b/i.test(value)]),
-	),
-};
-
-/** Whether the PDF engine draws this declaration (see `SEMANTIC_CSS_ENGINE_UNSUPPORTED_V1`). */
-export function isEngineSupportedDeclaration(property: string, value: string): boolean {
-	const unsupported = SEMANTIC_CSS_ENGINE_UNSUPPORTED_V1[property];
-	return unsupported === undefined || (unsupported !== true && !unsupported(value));
-}

@@ -15,15 +15,7 @@ import { adaptResolvedPdfNode, resolvedPdfFlowProps, resolvedPdfTextProps } from
 const pictureFixture =
 	"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
 const borderShorthands = ["border", "border-top", "border-right", "border-bottom", "border-left"] as const;
-const borderShorthandHints = [
-	"inherit",
-	"initial",
-	"revert",
-	"unset",
-	"1pt dotted",
-	"1pt dashed",
-	"1pt solid",
-] as const;
+const borderShorthandHints = ["inherit", "initial", "1pt dotted", "1pt dashed", "1pt solid"] as const;
 const blankStyle: ResolvedNodeStyle = { style: {}, structural: {}, hidden: false, order: 0 };
 const baseSettings: BaseSettingsSnapshot = {
 	picture: defaultResumeData.picture,
@@ -147,7 +139,7 @@ describe("adaptResolvedPdfNode", () => {
 		});
 	});
 
-	it("preserves explicit values equal to the resolver base and distinguishes initial from host-base resets", () => {
+	it("preserves explicit values equal to the resolver base and emits initial resets", () => {
 		const base = {
 			style: { color: "#111111", "font-weight": "700" },
 			structural: {},
@@ -158,11 +150,11 @@ describe("adaptResolvedPdfNode", () => {
 			...base,
 			style: { color: "#111111" },
 			specifiedStyleProperties: ["color", "font-weight"],
-			hostBaseStyleProperties: ["color"],
 		} satisfies ResolvedNodeStyle;
 
 		expect(adaptResolvedPdfNode(resolved, base)).toEqual({
 			style: {
+				color: "#111111",
 				fontWeight: undefined,
 			},
 		});
@@ -179,7 +171,6 @@ describe("adaptResolvedPdfNode", () => {
 			...base,
 			style: { color: "#111111", "font-size": 10 },
 			specifiedStyleProperties: [],
-			hostBaseStyleProperties: [],
 		} satisfies ResolvedNodeStyle;
 
 		expect(adaptResolvedPdfNode(resolved, base)).toEqual({});

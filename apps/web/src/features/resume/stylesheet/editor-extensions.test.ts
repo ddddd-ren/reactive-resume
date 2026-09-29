@@ -114,7 +114,7 @@ describe("Semantic CSS editor extensions", () => {
 		const labels = completionLabels(source, source.length, metadata);
 
 		expect(labels).toEqual(expect.arrayContaining(["1pt dotted", "1pt dashed", "1pt solid"]));
-		expect(labels).not.toEqual(expect.arrayContaining(["pt", "px", "in", "mm", "cm", "%", "vw", "vh", "em", "rem"]));
+		expect(labels).not.toEqual(expect.arrayContaining(["pt", "px", "in", "mm", "cm", "%", "em", "rem"]));
 	});
 
 	it("escapes dynamic IDs and attribute values before inserting selectors", () => {

@@ -3,7 +3,6 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it } from "vitest";
 import { createElement } from "react";
-import { analyzeStylesheet, compileStylesheet } from "@reactive-resume/resume/stylesheet";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../document";
 import { pdf } from "../forme/testing";
@@ -129,14 +128,12 @@ describe("item-header-row template part", () => {
 	});
 
 	it("reports no diagnostics for the selector", () => {
-		const data = buildFixture();
-		const page = data.metadata.layout.pages[0];
-		if (!page) throw new Error("Missing authored page");
-		const tree = buildSemanticTree({ data, template: "onyx", page, pageNumber: 1, showHeader: true });
-		const compiled = compileStylesheet({ languageVersion: 1, text: NOWRAP_STYLESHEET });
-		if (!compiled.program) throw new Error("Stylesheet failed to compile");
+		const runtime = resolveResumeRuntime({
+			data: buildFixture(),
+			template: "onyx",
+			source: { languageVersion: 1, text: NOWRAP_STYLESHEET },
+		});
 
-		expect(compiled.diagnostics).toEqual([]);
-		expect(analyzeStylesheet(compiled.program, tree)).toEqual([]);
+		expect(runtime.diagnostics).toEqual([]);
 	});
 });

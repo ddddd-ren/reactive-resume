@@ -107,9 +107,7 @@ describe("semantic selector compilation", () => {
 		expect(matches("[type]", "section-experience")).toBe(true);
 		expect(matches('[type="experience"]', "section-experience")).toBe(true);
 		expect(matches('[role~="nested-role"]', "item-second")).toBe(true);
-		expect(matches('[origin|="custom"]', "section-experience")).toBe(true);
 		expect(matches('[type^="exp"]', "section-experience")).toBe(true);
-		expect(matches('[type$="ence"]', "section-experience")).toBe(true);
 		expect(matches('[type*="per"]', "section-experience")).toBe(true);
 	});
 
@@ -117,7 +115,6 @@ describe("semantic selector compilation", () => {
 		expect(getSpecificity(":where(#one) section")).toEqual([0, 0, 1]);
 		expect(getSpecificity(":is(#one, section)")).toEqual([1, 0, 0]);
 		expect(getSpecificity(":not([type]) section")).toEqual([0, 1, 1]);
-		expect(getSpecificity("item:nth-child(2 of #one, section)")).toEqual([1, 1, 1]);
 	});
 
 	it.each([
@@ -136,6 +133,9 @@ describe("semantic selector compilation", () => {
 		"page[type]",
 		'[type="experience" i]',
 		"svg|section",
+		'[origin|="custom"]',
+		'[type$="ence"]',
+		"item:nth-child(2 of section)",
 	])("rejects unsupported or unknown selector %s", (selector) => {
 		expect(compileSelector(selector).selector).toBeNull();
 	});

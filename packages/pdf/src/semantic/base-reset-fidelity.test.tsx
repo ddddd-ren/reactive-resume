@@ -66,7 +66,7 @@ const finalTextStyle = async (template: Template, text: string, rule = "") => {
 	return mergedStyle(findText(instance.container.document as HostNode, text));
 };
 
-const finalOnyxCompanyStyle = async (keyword?: "inherit" | "initial" | "revert" | "unset") => {
+const finalOnyxCompanyStyle = async (keyword?: "inherit" | "initial") => {
 	const data = structuredClone(defaultResumeData);
 	data.picture.hidden = true;
 	data.metadata.typography.body.fontWeights = ["400", "500"];
@@ -103,14 +103,11 @@ describe("PDF semantic base and reset fidelity", () => {
 		});
 	});
 
-	it.each(["inherit", "unset", "revert"])(
-		"resets Bronzor's heading weight with %s against the actual host base",
-		async (keyword) => {
-			expect(
-				await finalTextStyle("bronzor", "Expertise", `section-heading { font-weight: ${keyword}; }`),
-			).toMatchObject({ fontWeight: "400" });
-		},
-	);
+	it("resets Bronzor's heading weight with inherit against the actual host base", async () => {
+		expect(await finalTextStyle("bronzor", "Expertise", "section-heading { font-weight: inherit; }")).toMatchObject({
+			fontWeight: "400",
+		});
+	});
 
 	it("cancels Bronzor's heading weight with the CSS initial value", async () => {
 		expect(await finalTextStyle("bronzor", "Expertise", "section-heading { font-weight: initial; }")).toMatchObject({
@@ -125,38 +122,25 @@ describe("PDF semantic base and reset fidelity", () => {
 		});
 	});
 
-	it.each(["inherit", "unset"])(
-		"cancels Chikorita's sidebar field color with %s and emits the inherited parent value",
-		async (keyword) => {
-			expect(
-				await finalTextStyle("chikorita", "TypeScript", `field[name='name'] { color: ${keyword}; }`),
-			).toMatchObject({ color: "#111111" });
-		},
-	);
-
-	it("restores Chikorita's sidebar field color with revert", async () => {
-		expect(await finalTextStyle("chikorita", "TypeScript", "field[name='name'] { color: revert; }")).toMatchObject({
-			color: "#eeeeee",
+	it("cancels Chikorita's sidebar field color with inherit and emits the inherited parent value", async () => {
+		expect(await finalTextStyle("chikorita", "TypeScript", "field[name='name'] { color: inherit; }")).toMatchObject({
+			color: "#111111",
 		});
 	});
 
-	it.each(["inherit", "unset"] as const)(
-		"cancels Onyx's local company weight with %s and emits the inherited parent value",
-		async (keyword) => {
-			expect(await finalOnyxCompanyStyle(keyword)).toMatchObject({ fontWeight: "400" });
-		},
-	);
+	it("cancels Onyx's local company weight with inherit and emits the inherited parent value", async () => {
+		expect(await finalOnyxCompanyStyle("inherit")).toMatchObject({ fontWeight: "400" });
+	});
 
 	it("cancels Onyx's local company weight with initial", async () => {
 		expect(await finalOnyxCompanyStyle("initial")).toMatchObject({ fontWeight: undefined });
 	});
 
-	it("restores Onyx's local company weight with revert", async () => {
+	it("keeps Onyx's local company weight without a reset", async () => {
 		// The local value is the template's bold weight for the body family:
 		// IBM Plex Serif stored as ["400", "500"] resolves to its true Bold
-		// face (#3310) — still distinct from the inherited 400 and the initial
-		// undefined, so the reset-keyword contract below stays verifiable.
+		// face (#3310) — distinct from the inherited 400 and the initial undefined,
+		// so the reset-keyword contract above stays verifiable.
 		expect(await finalOnyxCompanyStyle()).toMatchObject({ fontWeight: "700" });
-		expect(await finalOnyxCompanyStyle("revert")).toMatchObject({ fontWeight: "700" });
 	});
 });

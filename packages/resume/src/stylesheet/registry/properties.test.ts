@@ -2,15 +2,7 @@ import { describe, expect, it } from "vitest";
 import { PROPERTY_REGISTRY_V1 } from "./properties";
 
 const borderShorthands = ["border", "border-top", "border-right", "border-bottom", "border-left"] as const;
-const borderShorthandHints = [
-	"inherit",
-	"initial",
-	"revert",
-	"unset",
-	"1pt dotted",
-	"1pt dashed",
-	"1pt solid",
-] as const;
+const borderShorthandHints = ["inherit", "initial", "1pt dotted", "1pt dashed", "1pt solid"] as const;
 
 const expectedProperties = [
 	"align-content",
@@ -365,28 +357,18 @@ describe("property registry", () => {
 	});
 
 	it("publishes property-specific fixed value hints", () => {
-		expect(PROPERTY_REGISTRY_V1["border-style"]?.values).toEqual([
-			"inherit",
-			"initial",
-			"revert",
-			"unset",
-			"dotted",
-			"dashed",
-			"solid",
-		]);
+		expect(PROPERTY_REGISTRY_V1["border-style"]?.values).toEqual(["inherit", "initial", "dotted", "dashed", "solid"]);
 		expect(PROPERTY_REGISTRY_V1["object-fit"]?.values).toEqual([
 			"inherit",
 			"initial",
-			"revert",
-			"unset",
 			"contain",
 			"cover",
 			"fill",
 			"none",
 			"scale-down",
 		]);
-		expect(PROPERTY_REGISTRY_V1["font-size"]?.values).toEqual(["inherit", "initial", "revert", "unset"]);
-		expect(PROPERTY_REGISTRY_V1.gap?.values).toEqual(["inherit", "initial", "revert", "unset"]);
+		expect(PROPERTY_REGISTRY_V1["font-size"]?.values).toEqual(["inherit", "initial"]);
+		expect(PROPERTY_REGISTRY_V1.gap?.values).toEqual(["inherit", "initial"]);
 	});
 
 	it.each(borderShorthands)("publishes only complete value hints for the %s shorthand", (property) => {

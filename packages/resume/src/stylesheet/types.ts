@@ -76,7 +76,6 @@ export type AuthoredPageContext = {
 export type ResolvedNodeStyle = {
 	style: Readonly<Record<string, string | number>>;
 	specifiedStyleProperties?: readonly string[];
-	hostBaseStyleProperties?: readonly string[];
 	structural: StructuralPresentation;
 	hidden: boolean;
 	order: number;

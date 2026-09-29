@@ -65,9 +65,7 @@ describe("semantic pagination cancellation", () => {
 	it.each([
 		["auto", false, true],
 		["initial", false, true],
-		["unset", false, true],
 		["inherit", false, true],
-		["revert", true, false],
 	] as const)("maps %s over builder pagination to explicit break=%s and wrap=%s", (value, breakBefore, wrap) => {
 		const data = buildFixture(value);
 		const presentation = resolveResumePresentation({ data, template: "onyx" });
@@ -79,8 +77,6 @@ describe("semantic pagination cancellation", () => {
 	it.each([
 		["auto", false, true],
 		["initial", false, true],
-		["unset", false, true],
-		["revert", true, false],
 	] as const)("puts the %s cancellation on the final existing section View", async (value, breakBefore, wrap) => {
 		const data = buildFixture(value);
 		const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<typeof pdf>[0];

@@ -93,11 +93,6 @@ export const SEMANTIC_CSS_DIAGNOSTIC_CATALOG_V1 = {
 		meaning: "The property cannot affect any matched semantic node kind.",
 		action: "Target a node listed in the property's Applies to column.",
 	},
-	ENGINE_UNSUPPORTED: {
-		severity: "warning",
-		meaning: "The declaration is valid Semantic CSS, but the PDF engine can't draw it yet, so it has no effect.",
-		action: "Remove the declaration or reach the same look with a supported property.",
-	},
 	RESOURCE_LIMIT: {
 		severity: "error",
 		meaning: "Compilation, matching, values, variables, or semantic nodes exceeded a bounded Semantic CSS limit.",

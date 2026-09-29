@@ -510,9 +510,7 @@ function parseMedia(node: AstNode, diagnostics: SemanticCssDiagnostic[]): readon
 	const invalidValue = queries.some((query) =>
 		query?.features.some((feature) => {
 			if (feature.name === "orientation") return false;
-			const match = feature.value.match(
-				/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)(?:pt|px|in|mm|cm|vw|vh|em|rem)?$/i,
-			);
+			const match = feature.value.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)(?:pt|px|in|mm|cm|em|rem)?$/i);
 			if (!match) {
 				return true;
 			}
