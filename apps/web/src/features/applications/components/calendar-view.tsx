@@ -42,6 +42,8 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 		const now = new Date();
 		return new Date(now.getFullYear(), now.getMonth(), 1);
 	});
+	// Which way the last month change went: the new month's days slide in from that side. 0 = no change yet.
+	const [direction, setDirection] = useState<-1 | 0 | 1>(0);
 	const [dialog, setDialog] = useState<DialogState>({ open: false });
 
 	const interviews = collectInterviews(applications);
@@ -63,7 +65,11 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 	const timeFormat = new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit" });
 	const dayHeadingFormat = new Intl.DateTimeFormat(locale, { weekday: "long", month: "long", day: "numeric" });
 
-	const shiftMonth = (delta: number) => setMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + delta, 1));
+	const goToMonth = (next: Date) => {
+		setDirection(next > month ? 1 : -1);
+		setMonth(next);
+	};
+	const shiftMonth = (delta: number) => goToMonth(new Date(month.getFullYear(), month.getMonth() + delta, 1));
 	const schedule = (day: Date | null = null) => setDialog({ open: true, application: null, interview: null, day });
 	const edit = (item: ScheduledInterview) =>
 		setDialog({ open: true, application: item.application, interview: item.interview, day: null });
@@ -100,7 +106,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 							size="sm"
 							variant="secondary"
 							disabled={isCurrentMonth}
-							onClick={() => setMonth(new Date(today.getFullYear(), today.getMonth(), 1))}
+							onClick={() => goToMonth(new Date(today.getFullYear(), today.getMonth(), 1))}
 						>
 							<Trans>This month</Trans>
 						</Button>
@@ -114,91 +120,102 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 					</div>
 				</div>
 
-				<div className="grid shrink-0 grid-cols-7 overflow-hidden rounded-xl border border-line bg-surface">
-					{days.slice(0, 7).map((day) => (
-						<div
-							key={`weekday-${day.getDay()}`}
-							className="border-line border-b px-2 py-2 text-center font-medium text-[11px] text-ink-3 uppercase tracking-wide"
-						>
-							{weekdayFormat.format(day)}
-						</div>
-					))}
-
-					{days.map((day, i) => {
-						const key = dayKey(day);
-						const items = byDay.get(key) ?? [];
-						const inMonth = day.getMonth() === month.getMonth();
-						const isToday = key === todayKey;
-						const extra = items.length - MAX_CHIPS_PER_DAY;
-						const date = dayHeadingFormat.format(day);
-						const scheduleLabel = t`Schedule an interview on ${date}`;
-						return (
+				<div className="shrink-0 overflow-hidden rounded-xl border border-line bg-surface">
+					<div className="grid grid-cols-7">
+						{days.slice(0, 7).map((day) => (
 							<div
-								key={key}
-								data-day={key}
-								className={cn(
-									"group/day relative flex min-h-16 flex-col gap-1 border-line p-1 sm:min-h-24 sm:p-1.5",
-									i % 7 !== 6 && "border-e",
-									i < 35 && "border-b",
-									!inMonth && "bg-sunken/30",
-								)}
+								key={`weekday-${day.getDay()}`}
+								className="border-line border-b px-2 py-2 text-center font-medium text-[11px] text-ink-3 uppercase tracking-wide"
 							>
-								<div className="flex items-center justify-between">
-									<button
-										type="button"
-										title={scheduleLabel}
-										aria-label={scheduleLabel}
-										className="flex size-6 items-center justify-center rounded-md text-ink-3 opacity-0 transition-opacity hover:bg-sunken hover:text-ink focus-visible:opacity-100 group-hover/day:opacity-100 max-sm:hidden"
-										onClick={() => schedule(day)}
-									>
-										<Icon name="add" size={14} />
-									</button>
-									<span
-										className={cn(
-											"flex size-6 items-center justify-center rounded-full text-xs",
-											!inMonth && "text-ink-3/60",
-											isToday && "bg-accent font-semibold text-on-accent",
-										)}
-									>
-										{day.getDate()}
-									</span>
-								</div>
-								{items.slice(0, MAX_CHIPS_PER_DAY).map((item) => (
-									<InterviewChip
-										key={item.interview.id}
-										item={item}
-										time={timeFormat.format(item.start)}
-										onOpen={() => edit(item)}
-									/>
-								))}
-								{extra > 0 && (
-									<Popover>
-										<PopoverTrigger
-											render={
-												<button
-													type="button"
-													className="self-start rounded-md px-1.5 py-0.5 text-[11px] text-ink-3 transition-colors hover:bg-sunken hover:text-ink"
-												/>
-											}
-										>
-											<Trans>+{extra} more</Trans>
-										</PopoverTrigger>
-										<PopoverContent align="start" className="flex w-60 flex-col gap-1 p-2">
-											<p className="px-1 pb-1 font-medium text-xs">{dayHeading(day)}</p>
-											{items.map((item) => (
-												<InterviewChip
-													key={item.interview.id}
-													item={item}
-													time={timeFormat.format(item.start)}
-													onOpen={() => edit(item)}
-												/>
-											))}
-										</PopoverContent>
-									</Popover>
-								)}
+								{weekdayFormat.format(day)}
 							</div>
-						);
-					})}
+						))}
+					</div>
+					<div
+						key={`${month.getFullYear()}-${month.getMonth()}`}
+						className={cn(
+							"grid grid-cols-7",
+							direction !== 0 && "starting:opacity-0 transition-[opacity,translate] duration-standard ease-enter",
+							direction === 1 && "starting:translate-x-2 rtl:starting:-translate-x-2",
+							direction === -1 && "starting:-translate-x-2 rtl:starting:translate-x-2",
+						)}
+					>
+						{days.map((day, i) => {
+							const key = dayKey(day);
+							const items = byDay.get(key) ?? [];
+							const inMonth = day.getMonth() === month.getMonth();
+							const isToday = key === todayKey;
+							const extra = items.length - MAX_CHIPS_PER_DAY;
+							const date = dayHeadingFormat.format(day);
+							const scheduleLabel = t`Schedule an interview on ${date}`;
+							return (
+								<div
+									key={key}
+									data-day={key}
+									className={cn(
+										"group/day relative flex min-h-16 flex-col gap-1 border-line p-1 sm:min-h-24 sm:p-1.5",
+										i % 7 !== 6 && "border-e",
+										i < 35 && "border-b",
+										!inMonth && "bg-sunken/30",
+									)}
+								>
+									<div className="flex items-center justify-between">
+										<button
+											type="button"
+											title={scheduleLabel}
+											aria-label={scheduleLabel}
+											className="flex size-6 items-center justify-center rounded-md text-ink-3 opacity-0 transition-opacity hover:bg-sunken hover:text-ink focus-visible:opacity-100 group-hover/day:opacity-100 max-sm:hidden"
+											onClick={() => schedule(day)}
+										>
+											<Icon name="add" size={14} />
+										</button>
+										<span
+											className={cn(
+												"flex size-6 items-center justify-center rounded-full text-xs",
+												!inMonth && "text-ink-3/60",
+												isToday && "bg-accent font-semibold text-on-accent",
+											)}
+										>
+											{day.getDate()}
+										</span>
+									</div>
+									{items.slice(0, MAX_CHIPS_PER_DAY).map((item) => (
+										<InterviewChip
+											key={item.interview.id}
+											item={item}
+											time={timeFormat.format(item.start)}
+											onOpen={() => edit(item)}
+										/>
+									))}
+									{extra > 0 && (
+										<Popover>
+											<PopoverTrigger
+												render={
+													<button
+														type="button"
+														className="self-start rounded-md px-1.5 py-0.5 text-[11px] text-ink-3 transition-colors hover:bg-sunken hover:text-ink"
+													/>
+												}
+											>
+												<Trans>+{extra} more</Trans>
+											</PopoverTrigger>
+											<PopoverContent align="start" className="flex w-60 flex-col gap-1 p-2">
+												<p className="px-1 pb-1 font-medium text-xs">{dayHeading(day)}</p>
+												{items.map((item) => (
+													<InterviewChip
+														key={item.interview.id}
+														item={item}
+														time={timeFormat.format(item.start)}
+														onOpen={() => edit(item)}
+													/>
+												))}
+											</PopoverContent>
+										</Popover>
+									)}
+								</div>
+							);
+						})}
+					</div>
 				</div>
 
 				<div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-ink-3 text-xs">

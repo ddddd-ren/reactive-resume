@@ -19,3 +19,39 @@
 		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4' viewBox='0 0 6 4'%3E%3Cpath d='M0 3 Q1.5 0 3 3 T6 3' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E")
 		repeat-x left center / 6px 4px;
 }
+
+/*
+ * Page transitions: the router starts a view transition of type `page` when the pathname changes. The page fades
+ * out quickly and the new one fades up 6px; named navigation (app-nav, settings-nav, auth-brand) stays in place.
+ */
+@keyframes vt-page-out {
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes vt-page-in {
+	from {
+		opacity: 0;
+		translate: 0 6px;
+	}
+}
+
+html:active-view-transition-type(page)::view-transition {
+	background-color: var(--bg);
+	pointer-events: none;
+}
+
+html:active-view-transition-type(page)::view-transition-group(*) {
+	animation-duration: var(--d2);
+	animation-timing-function: var(--ease);
+}
+
+html:active-view-transition-type(page)::view-transition-old(root),
+html:active-view-transition-type(page)::view-transition-old(*):only-child {
+	animation: calc(var(--d2) * 0.7) var(--ease) both vt-page-out;
+}
+
+html:active-view-transition-type(page)::view-transition-new(root) {
+	animation: var(--d2) var(--ease) both vt-page-in;
+}

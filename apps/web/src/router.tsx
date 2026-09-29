@@ -7,6 +7,10 @@ import { getQueryClient } from "./libs/query/client";
 import { loadRootContext } from "./libs/root-context";
 import { routeTree } from "./routeTree.gen";
 
+// A pathname change fades the page (styles in index.css). Search-param and hash changes (filters, views, editor
+// modes), the first load, and browsers without view-transition types swap instantly.
+const supportsTransitionTypes = globalThis.CSS?.supports?.("selector(:active-view-transition-type(a))") === true;
+
 export const getRouter = async () => {
 	const queryClient = getQueryClient();
 
@@ -16,6 +20,9 @@ export const getRouter = async () => {
 		routeTree,
 		scrollRestoration: true,
 		defaultStructuralSharing: true,
+		defaultViewTransition: supportsTransitionTypes && {
+			types: ({ fromLocation, pathChanged }) => (fromLocation && pathChanged ? ["page"] : false),
+		},
 		// Hovering a link starts its loaders; TanStack Query decides freshness, not the router's preload cache.
 		defaultPreload: "intent",
 		defaultPreloadStaleTime: 0,

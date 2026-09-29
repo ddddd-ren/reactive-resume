@@ -75,6 +75,8 @@ function RouteComponent() {
 	const [exporting, setExporting] = useState(false);
 	const [editing, setEditing] = useState<Application | null>(null);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
+	// Views animate in only after a switch, never on the page's first render.
+	const [viewSwitched, setViewSwitched] = useState(false);
 
 	const { data: applications, isPending } = useQuery(applicationsListQueryOptions());
 	const setSearch = (patch: Partial<Search>) => void navigate({ search: (prev: Search) => ({ ...prev, ...patch }) });
@@ -135,7 +137,13 @@ function RouteComponent() {
 			) : (
 				<>
 					<div className="flex flex-wrap items-center gap-2">
-						<Tabs value={shown} onValueChange={(value) => setSearch({ view: value as View })}>
+						<Tabs
+							value={shown}
+							onValueChange={(value) => {
+								setViewSwitched(true);
+								setSearch({ view: value as View });
+							}}
+						>
 							<TabsList aria-label={t`View`}>
 								<TabsTrigger value="list">
 									<Icon name="view_agenda" size={18} />
@@ -199,7 +207,13 @@ function RouteComponent() {
 							</Button>
 						</div>
 					) : (
-						<>
+						<div
+							key={shown}
+							className={cn(
+								viewSwitched &&
+									"starting:translate-y-1 starting:opacity-0 transition-[opacity,translate] duration-standard ease-enter",
+							)}
+						>
 							{shown === "list" && (
 								<ApplicationList
 									applications={filtered}
@@ -225,7 +239,7 @@ function RouteComponent() {
 									onOpen={(application) => setSelectedId(application.id)}
 								/>
 							)}
-						</>
+						</div>
 					)}
 				</>
 			)}

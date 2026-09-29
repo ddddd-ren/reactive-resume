@@ -110,7 +110,7 @@ function Sidebar() {
 	const openDialog = useDialogStore((state) => state.openDialog);
 
 	return (
-		<aside className="sticky top-0 flex h-svh flex-col gap-3 border-line border-e bg-surface p-3">
+		<aside className="sticky top-0 flex h-svh flex-col gap-3 border-line border-e bg-surface p-3 [view-transition-name:app-nav]">
 			<Link to="/" className="flex h-9 items-center gap-2.5 px-1.5">
 				<span className="grid size-6 place-items-center rounded-[5px] bg-ink font-display font-medium text-[13px] text-bg">
 					Rr
@@ -201,7 +201,7 @@ function Rail() {
 	const openDialog = useDialogStore((state) => state.openDialog);
 
 	return (
-		<aside className="sticky top-0 flex h-svh flex-col items-center gap-2 border-line border-e bg-surface py-3">
+		<aside className="sticky top-0 flex h-svh flex-col items-center gap-2 border-line border-e bg-surface py-3 [view-transition-name:app-nav]">
 			<Link
 				to="/"
 				aria-label="Reactive Resume"
@@ -297,7 +297,7 @@ function MobileTabs() {
 	return (
 		<nav
 			aria-label={t`App`}
-			className="sticky bottom-0 z-30 grid grid-cols-4 border-line border-t bg-surface pb-[env(safe-area-inset-bottom)]"
+			className="sticky bottom-0 z-30 grid grid-cols-4 border-line border-t bg-surface pb-[env(safe-area-inset-bottom)] [view-transition-name:app-nav]"
 		>
 			<Link
 				to="/dashboard"

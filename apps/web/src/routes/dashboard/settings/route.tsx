@@ -27,7 +27,7 @@ function RouteComponent() {
 		<div className="grid min-h-full content-start lg:grid-cols-[220px_minmax(0,1fr)] lg:content-stretch">
 			<nav
 				aria-label={t`Settings`}
-				className="flex flex-col gap-1 border-line max-sm:hidden max-lg:border-b lg:border-e lg:py-7 lg:ps-6 lg:pe-3"
+				className="flex flex-col gap-1 border-line [view-transition-name:settings-nav] max-sm:hidden max-lg:border-b lg:border-e lg:py-7 lg:ps-6 lg:pe-3"
 			>
 				<h1 className="ms-2 mb-3.5 font-display font-medium text-[26px] leading-8 max-lg:hidden">
 					<Trans>Settings</Trans>

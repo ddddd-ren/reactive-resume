@@ -41,12 +41,18 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const searchRef = useRef<HTMLInputElement>(null);
 	const [tagsFor, setTagsFor] = useState<DocumentSummary | null>(null);
 	const [linkFor, setLinkFor] = useState<DocumentSummary | null>(null);
+	// Grid and list animate in only after a switch, never on the page's first render.
+	const [viewSwitched, setViewSwitched] = useState(false);
 	const { data: documents, isPending } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const view = search.view ?? readStoredView();
 	const setView = (next: "grid" | "list") => {
+		setViewSwitched(true);
 		storeView(next);
 		onSearchChange({ view: next });
 	};
+	const viewEnter =
+		viewSwitched &&
+		"transition-[opacity,translate] duration-standard ease-enter starting:translate-y-1 starting:opacity-0";
 
 	useHotkey("/", (event) => {
 		if (isEditableElementFocused()) return;
@@ -200,7 +206,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							)}
 						</div>
 					) : view === "list" ? (
-						<table className="w-full border-collapse">
+						<table className={cn("w-full border-collapse", viewEnter)}>
 							<thead>
 								<tr className="border-line border-b text-start font-medium text-ink-3 text-xs">
 									<th className="h-10 ps-3 text-start font-medium">
@@ -229,7 +235,12 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							</tbody>
 						</table>
 					) : (
-						<div className="grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4">
+						<div
+							className={cn(
+								"grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4",
+								viewEnter,
+							)}
+						>
 							{shown.map((document) => (
 								<DocumentCard key={`${document.type}:${document.id}`} document={document} {...itemProps} />
 							))}
