@@ -7,7 +7,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useEffect, useId, useRef, useState } from "react";
 import { templateLayouts } from "@reactive-resume/schema/templates";
-import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Slider } from "@reactive-resume/ui/components/slider";
@@ -16,9 +15,7 @@ import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
 import { useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { getSectionTitle } from "@/libs/resume/section";
 import { useEditorStore } from "../store";
-import { getOutlineRows } from "../write/model";
 import { useTemplateThumbnail } from "./thumbnails";
 
 type Filter = "all" | "one" | "two" | "ats";
@@ -209,43 +206,16 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 
 type SidebarPanelProps = { data: ResumeData; template: Template };
 
-/** Two-column templates: the sidebar's side and width, which sections it holds, and the ATS caveat. */
+/** Two-column templates: the sidebar's side and width. Write moves sections between columns. */
 function SidebarPanel({ data, template }: SidebarPanelProps) {
 	const updateResumeData = useUpdateResumeData();
 	// The side the page shows now: the chosen one, else the template's own (mirrored on right-to-left pages).
 	const ownSide = templateLayouts[template].sidebarSide ?? "left";
 	const shownOwnSide = isRTL(data.metadata.page.locale) ? (ownSide === "left" ? "right" : "left") : ownSide;
 	const side = data.metadata.layout.sidebarSide ?? shownOwnSide;
-	const rows = getOutlineRows(data);
 	const width = Math.min(42, Math.max(26, data.metadata.layout.sidebarWidth));
 	const titleId = useId();
 	const widthId = useId();
-
-	const titleOf = (id: string) => {
-		const custom = data.customSections.find((section) => section.id === id);
-		if (custom) return custom.title || getSectionTitle(custom.type);
-		const section = id === "summary" ? data.summary : data.sections[id as keyof ResumeData["sections"]];
-		return section?.title || getSectionTitle(id as never);
-	};
-
-	const toggle = (id: string) =>
-		updateResumeData(
-			(draft) => {
-				for (const page of draft.metadata.layout.pages) {
-					if (page.sidebar.includes(id)) {
-						page.sidebar = page.sidebar.filter((section) => section !== id);
-						page.main.push(id);
-						return;
-					}
-					if (page.main.includes(id)) {
-						page.main = page.main.filter((section) => section !== id);
-						page.sidebar.push(id);
-						return;
-					}
-				}
-			},
-			{ newStep: true },
-		);
 
 	return (
 		<div className="grid gap-3 rounded-lg border border-line bg-bg p-3">
@@ -295,37 +265,6 @@ function SidebarPanel({ data, template }: SidebarPanelProps) {
 					}
 				/>
 			</div>
-			<div className="grid gap-1.5">
-				<span className="text-[13px] text-ink-2">
-					<Trans>In the sidebar · tap to move</Trans>
-				</span>
-				<div className="flex flex-wrap gap-1.5">
-					{rows.map((row) => (
-						<button
-							key={row.id}
-							type="button"
-							aria-pressed={row.column === "sidebar"}
-							onClick={() => toggle(row.id)}
-							className={cn(
-								"h-7 rounded-full border px-2.5 text-[13px] transition-colors duration-quick",
-								row.column === "sidebar"
-									? "border-accent bg-accent-soft text-accent-text"
-									: "border-line-2 text-ink-2 hover:bg-hover",
-							)}
-						>
-							{titleOf(row.id)}
-						</button>
-					))}
-				</div>
-			</div>
-			<Alert variant="info">
-				<Icon name="info" size={20} />
-				<AlertDescription>
-					<Trans>
-						Some applicant tracking systems read columns out of order. Check mode shows the order they'll see.
-					</Trans>
-				</AlertDescription>
-			</Alert>
 		</div>
 	);
 }
