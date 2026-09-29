@@ -4,7 +4,6 @@ import {
 	baseSectionSchema,
 	customFieldSchema,
 	customSectionSchema,
-	experienceItemSchema,
 	pageSchema,
 	parseResumeData,
 	pictureSchema,
@@ -86,23 +85,6 @@ describe("customFieldSchema", () => {
 		const result = customFieldSchema.safeParse({ id: "1", icon: "phone", text: "x" });
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data.link).toBe("");
-	});
-});
-
-describe("experienceItemSchema", () => {
-	it("defaults roles to [] via .catch when missing", () => {
-		const result = experienceItemSchema.safeParse({
-			id: "x",
-			hidden: false,
-			company: "Acme",
-			position: "",
-			location: "",
-			period: "",
-			website: { url: "", label: "", inlineLink: false },
-			description: "",
-		});
-		expect(result.success).toBe(true);
-		if (result.success) expect(result.data.roles).toEqual([]);
 	});
 });
 

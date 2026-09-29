@@ -12,7 +12,7 @@ import { cn } from "@reactive-resume/utils/style";
 type DateSettings = { locale: string; format?: DateFormat | undefined };
 
 /** What someone typed as a date: a year-month, null when cleared, or undefined when it can't be read. */
-export function readTypedDate(text: string, locale: string): YearMonth | null | undefined {
+function readTypedDate(text: string, locale: string): YearMonth | null | undefined {
 	const value = text.trim();
 	if (!value) return null;
 	const reading = readSingleDate(value, locale);

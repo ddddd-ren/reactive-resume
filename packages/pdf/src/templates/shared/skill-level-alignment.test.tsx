@@ -92,6 +92,8 @@ describe("skill rating alignment (#3343)", () => {
 		expect(rows.map((row) => row.circles)).toEqual([10, 5]);
 		expect(text).toContain("Keyword11");
 		expect(text).toContain("Skill 2");
+		expect(text.indexOf("Skill 0")).toBeLessThan(text.indexOf("Skill 1"));
+		expect(text.indexOf("Skill 1")).toBeLessThan(text.indexOf("Skill 2"));
 	});
 	it("aligns language ratings in multi-column rows with unequal fluency text", async () => {
 		const {

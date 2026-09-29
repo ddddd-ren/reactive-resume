@@ -23,18 +23,8 @@ type RasterLoadingTask = {
 	destroy(): Promise<void>;
 };
 
-export type RasterizePdfDependencies = {
-	loadDocument?: (bytes: Uint8Array) => RasterLoadingTask;
-};
-
-const loadPdfDocument = (bytes: Uint8Array): RasterLoadingTask =>
-	getDocument({ data: bytes }) as unknown as RasterLoadingTask;
-
-export async function rasterizePdf(
-	bytes: Uint8Array,
-	dependencies: RasterizePdfDependencies = {},
-): Promise<readonly RasterizedPdfPage[]> {
-	const loadingTask = (dependencies.loadDocument ?? loadPdfDocument)(bytes);
+export async function rasterizePdf(bytes: Uint8Array): Promise<readonly RasterizedPdfPage[]> {
+	const loadingTask = getDocument({ data: bytes }) as unknown as RasterLoadingTask;
 	const pages: RasterizedPdfPage[] = [];
 
 	try {

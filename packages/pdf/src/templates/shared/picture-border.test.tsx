@@ -68,9 +68,9 @@ async function picturePixels(template: "onyx" | "ditto" | "glalie", borderWidth:
 }
 
 describe("picture border visibility (#3017)", () => {
-	it.each(["onyx"] as const)("draws the border around an opaque picture (%s)", async (template) => {
-		const plain = await picturePixels(template, 0);
-		const bordered = await picturePixels(template, 10);
+	it("draws a border and a soft centered shadow without moving the photo", async () => {
+		const plain = await picturePixels("onyx", 0);
+		const bordered = await picturePixels("onyx", 10);
 		expect(plain.borderPixels).toBe(0);
 		expect(bordered.borderPixels).toBeGreaterThan(1000);
 		expect(bordered.imagePixels).toBeGreaterThan(1000);
@@ -78,10 +78,7 @@ describe("picture border visibility (#3017)", () => {
 		// Rasterized border/image edges can differ by one antialiased pixel.
 		for (const edge of ["left", "right", "top", "bottom"] as const)
 			expect(Math.abs(bordered.bounds[edge] - plain.bounds[edge])).toBeLessThanOrEqual(1);
-	});
-	it.each(["onyx"] as const)("draws a soft centered shadow without moving the photo (%s)", async (template) => {
-		const plain = await picturePixels(template, 0);
-		const shadow = await picturePixels(template, 0, 10);
+		const shadow = await picturePixels("onyx", 0, 10);
 		expect(plain.shadowPixels).toBe(0);
 		expect(shadow.shadowPixels).toBeGreaterThan(100);
 		expect(shadow.bounds).toEqual(plain.bounds);

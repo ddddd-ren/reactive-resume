@@ -63,7 +63,9 @@ const finalTextStyle = async (template: Template, text: string, rule = "") => {
 	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
-	return mergedStyle(findText(instance.container.document as HostNode, text));
+	const node = findText(instance.container.document as HostNode, text);
+	expect(node).toBeDefined();
+	return mergedStyle(node);
 };
 
 describe("PDF semantic base and reset fidelity", () => {

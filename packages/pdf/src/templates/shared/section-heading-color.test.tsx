@@ -11,7 +11,8 @@ const renderHeading = async (css: string, hideSectionIcons = false) => {
 	data.metadata.typography.body.fontFamily = "Helvetica";
 	data.metadata.typography.heading.fontFamily = "Helvetica";
 	data.metadata.page.hideSectionIcons = hideSectionIcons;
-	data.metadata.layout.pages = [{ fullWidth: true, main: ["skills"], sidebar: [] }];
+	data.metadata.layout.pages = [{ fullWidth: true, main: ["skills", "summary"], sidebar: [] }];
+	data.summary.content = "<p>Summary body</p>";
 	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: `@version 1; ${css}` } };
 	data.sections.skills.items = [
 		{ id: "skill", hidden: false, name: "Skill", proficiency: "", level: 0, keywords: [], icon: "", iconColor: "" },
@@ -53,12 +54,12 @@ const renderHeading = async (css: string, hideSectionIcons = false) => {
 };
 
 describe("Semantic section heading colors (#3348)", () => {
-	it.each([false])("colors heading text with hideSectionIcons=%s", async (hidden) => {
-		const { text } = await renderHeading("section-heading { color: #1234ef; }", hidden);
+	it("applies heading color and text styles with section icons visible", async () => {
+		const { text, sizes } = await renderHeading(
+			"section-heading { color: #1234ef; } section[type='skills'] section-heading { font-size: 21pt; text-transform: lowercase; }",
+		);
+		expect(text).toContainEqual({ value: "heading", fill: "#1234ef" });
 		expect(text).toContainEqual({ value: "HEADING", fill: "#1234ef" });
-	});
-	it.each([false])("gives heading text its text styles with hideSectionIcons=%s", async (hidden) => {
-		const { sizes } = await renderHeading("section-heading { font-size: 21pt; text-transform: lowercase; }", hidden);
 		expect(sizes).toContainEqual({ value: "heading", size: 21 });
 	});
 });

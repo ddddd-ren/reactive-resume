@@ -95,7 +95,7 @@ const renderGengar = async (data: ResumeData, template: Template = "gengar") => 
 			const page = await pdf.getPage(index);
 			pages.push((await page.getTextContent()).items.flatMap((item) => ("str" in item ? [item] : [])));
 		}
-		return { bytes, pages, raster: await rasterizePdf(bytes.slice()) };
+		return { bytes, pages };
 	} finally {
 		await loading.destroy();
 	}
@@ -141,7 +141,8 @@ describe("Gengar skill rating placement (#2611)", () => {
 		const data = gengarFixture({ design: "rectangle" });
 		const result = await renderGengar(data);
 		const text = result.pages.flat().map((item) => item.str);
-		const raster = required(result.raster[0]);
+		const rasters = await rasterizePdf(result.bytes.slice());
+		const raster = required(rasters[0]);
 		const rows = Array.from({ length: raster.height }, (_, y) => {
 			let pixels = 0;
 			for (let x = 0; x < raster.width; x++) {
@@ -159,6 +160,6 @@ describe("Gengar skill rating placement (#2611)", () => {
 		expect(ratingY).toBeLessThan(nameY);
 		expect(ratingY).toBeGreaterThan(proficiencyY);
 		expect(text.join(" ")).toContain("Engineering");
-		expect(result.raster.length).toBe(1);
+		expect(rasters).toHaveLength(1);
 	});
 });

@@ -1,37 +1,34 @@
 import { createHash, randomBytes } from "node:crypto";
 import { expect, test } from "../fixtures/test";
 
-for (const accept of [false, true]) {
-	test(`requires explicit OAuth consent before ${accept ? "allowing" : "denying"} access`, async ({
-		authPage: page,
-		baseURL,
-	}) => {
-		const origin = new URL(baseURL ?? "http://localhost:3000").origin;
-		const metadata = await page.request.get("/.well-known/oauth-protected-resource");
-		expect(metadata.status()).toBe(200);
-		const advertisedResource = (await metadata.json()).resource;
-		expect(advertisedResource).toBe(origin);
-		const resource = `${origin}/mcp`;
-		const callback = "http://127.0.0.1:33921/callback";
-		const registration = await page.request.post("/api/auth/oauth2/register", {
-			headers: { origin },
-			data: { client_name: "Consent test client", redirect_uris: [callback] },
-		});
-		expect(registration.status(), await registration.text()).toBe(201);
-		const client = await registration.json();
-		const verifier = randomBytes(32).toString("base64url");
-		const query = new URLSearchParams({
-			client_id: client.client_id,
-			redirect_uri: callback,
-			response_type: "code",
-			scope: "openid profile offline_access",
-			code_challenge: createHash("sha256").update(verifier).digest("base64url"),
-			code_challenge_method: "S256",
-			resource,
-			state: "browser-consent-state",
-		});
-		query.append("resource", origin);
-		await page.route(`${callback}**`, (route) => route.fulfill({ body: "Client callback" }));
+test("requires explicit OAuth consent before denying or allowing access", async ({ authPage: page, baseURL }) => {
+	const origin = new URL(baseURL ?? "http://localhost:3000").origin;
+	const metadata = await page.request.get("/.well-known/oauth-protected-resource");
+	expect(metadata.status()).toBe(200);
+	const advertisedResource = (await metadata.json()).resource;
+	expect(advertisedResource).toBe(origin);
+	const resource = `${origin}/mcp`;
+	const callback = "http://127.0.0.1:33921/callback";
+	const registration = await page.request.post("/api/auth/oauth2/register", {
+		headers: { origin },
+		data: { client_name: "Consent test client", redirect_uris: [callback] },
+	});
+	expect(registration.status(), await registration.text()).toBe(201);
+	const client = await registration.json();
+	const verifier = randomBytes(32).toString("base64url");
+	const query = new URLSearchParams({
+		client_id: client.client_id,
+		redirect_uri: callback,
+		response_type: "code",
+		scope: "openid profile offline_access",
+		code_challenge: createHash("sha256").update(verifier).digest("base64url"),
+		code_challenge_method: "S256",
+		resource,
+		state: "browser-consent-state",
+	});
+	query.append("resource", origin);
+	await page.route(`${callback}**`, (route) => route.fulfill({ body: "Client callback" }));
+	for (const accept of [false, true]) {
 		await page.goto(`/api/auth/oauth2/authorize?${query}`);
 		await expect(page.getByRole("heading", { name: "Connect an application" })).toBeVisible();
 		await expect(page.getByText("Consent test client", { exact: true })).toBeVisible();
@@ -49,7 +46,7 @@ for (const accept of [false, true]) {
 			expect(target.searchParams.has("code")).toBe(false);
 			const after = await page.request.get(`${origin}/api/auth/oauth2/get-consents`);
 			expect(await after.json()).toEqual([]);
-			return;
+			continue;
 		}
 		expect(target.searchParams.get("code")).toBeTruthy();
 		const token = await page.request.post(`${origin}/api/auth/oauth2/token`, {
@@ -89,5 +86,5 @@ for (const accept of [false, true]) {
 			data: initializePayload,
 		});
 		expect(wrongAudience.status()).toBe(401);
-	});
-}
+	}
+});
