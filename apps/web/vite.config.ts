@@ -45,6 +45,12 @@ export default defineConfig({
 		},
 	},
 
+	// The PDF worker renders templates with translated section titles, so it needs the catalogs and macros too.
+	worker: {
+		format: "es",
+		plugins: () => [lingui(), babel({ presets: [linguiTransformerBabelPreset()] })],
+	},
+
 	server: {
 		host: true,
 		strictPort: true,
