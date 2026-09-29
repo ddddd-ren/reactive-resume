@@ -14,7 +14,7 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
 		>
 			<CheckboxPrimitive.Indicator
 				data-slot="checkbox-indicator"
-				className="flex items-center justify-center text-current transition-opacity duration-quick data-ending-style:opacity-0 data-starting-style:opacity-0"
+				className="flex items-center justify-center text-current transition-[opacity,scale] duration-quick ease-enter data-ending-style:scale-[0.8] data-starting-style:scale-[0.8] data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d1)*0.7)]"
 			>
 				<Icon name={props.indeterminate ? "remove" : "check"} size={16} />
 			</CheckboxPrimitive.Indicator>

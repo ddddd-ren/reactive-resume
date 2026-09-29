@@ -19,3 +19,14 @@ export const EASE_OUT_STRONG = [0.23, 1, 0.32, 1] as const;
 
 /** dnd-kit timing for things settling into place (sortable shuffles, drop animations): on-screen movement. */
 export const DRAG_SETTLE = { duration: D2 * 1000, easing: `cubic-bezier(${EASE_MOVE.join(", ")})` };
+
+/**
+ * Hotkey mode switches land at once: the editor's mode-switch indicator skips its slide for this one change
+ * (keyboard shortcuts are used too often to animate). The flag stays two frames, until the new position has painted.
+ */
+export function switchModeInstantly(change: () => void) {
+	const list = document.querySelector<HTMLElement>('[data-slot="tabs-list"][data-mode-switch]');
+	list?.setAttribute("data-instant", "");
+	change();
+	requestAnimationFrame(() => requestAnimationFrame(() => list?.removeAttribute("data-instant")));
+}

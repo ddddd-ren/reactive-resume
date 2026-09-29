@@ -35,7 +35,7 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
 		<ToastPrimitive.Root
 			data-slot="toast"
 			className={cn(
-				"group/toast pointer-events-auto flex w-fit max-w-[min(560px,100%)] select-none items-center rounded-lg bg-ink text-bg shadow-e3 outline-none transition-[opacity,translate] duration-emphasized ease-enter [grid-area:1/1] focus-visible:outline-accent data-ending-style:translate-y-2.5 data-starting-style:translate-y-2.5 data-ending-style:opacity-0 data-limited:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)]",
+				"group/toast pointer-events-auto flex w-fit max-w-[min(560px,100%)] select-none items-center rounded-lg bg-ink text-bg shadow-e3 outline-none transition-[opacity,translate,transform] duration-emphasized ease-enter [grid-area:1/1] focus-visible:outline-accent data-[swipe-direction=right]:data-ending-style:translate-x-[calc(var(--toast-swipe-movement-x)+100%)] data-[swipe-direction=down]:data-ending-style:translate-y-[calc(var(--toast-swipe-movement-y)+100%)] data-[swipe-direction=right]:data-ending-style:translate-y-0 data-ending-style:translate-y-2.5 data-limited:translate-y-2.5 data-starting-style:translate-y-2.5 data-ending-style:opacity-0 data-limited:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-limited:duration-[calc(var(--d3)*0.7)]",
 				className,
 			)}
 			{...props}

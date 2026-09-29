@@ -5,6 +5,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { isEditableElementFocused, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
+import { switchModeInstantly } from "@/libs/motion";
 
 /**
  * The editor's keyboard map: 1/2/3 switch modes outside fields, ⌘Z and ⇧⌘Z undo and redo outside fields
@@ -20,9 +21,9 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	const { select, setShareTab, setAssistantOpen } = useEditorStore.getState();
 	const isOnline = () => useResumeStore.getState().saveStatus !== "offline";
 
-	useHotkey("1", () => setMode("write"));
-	useHotkey("2", () => setMode("design"));
-	useHotkey("3", () => setMode("check"));
+	useHotkey("1", () => switchModeInstantly(() => setMode("write")));
+	useHotkey("2", () => switchModeInstantly(() => setMode("design")));
+	useHotkey("3", () => switchModeInstantly(() => setMode("check")));
 
 	useHotkey("Mod+Z", () => {
 		if (!isEditableElementFocused()) undo();

@@ -57,7 +57,7 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 			{layout === "mobile" ? (
 				<span />
 			) : (
-				<TabsList aria-label={t`Editor mode`} className="h-9">
+				<TabsList aria-label={t`Editor mode`} className="h-9" data-mode-switch="">
 					<TabsTrigger value="write" className="px-4">
 						<Icon name="edit" size={18} />
 						<Trans>Write</Trans>

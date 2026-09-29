@@ -1,5 +1,6 @@
 import type * as React from "react";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
+import { popupSlideClassName } from "@reactive-resume/ui/components/menu-styles";
 import { cn } from "@reactive-resume/utils/style";
 
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
@@ -31,7 +32,8 @@ function PopoverContent({
 				<PopoverPrimitive.Popup
 					data-slot="popover-content"
 					className={cn(
-						"z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-xl bg-raised p-3 text-ink text-sm shadow-e2 outline-hidden transition-[opacity,scale,translate] duration-standard ease-enter data-ending-style:-translate-y-1 data-starting-style:-translate-y-1 data-ending-style:scale-[0.98] data-starting-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:opacity-0 data-instant:transition-none data-ending-style:duration-[calc(var(--d2)*0.7)]",
+						"z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-xl bg-raised p-3 text-ink text-sm shadow-e2 outline-hidden transition-[opacity,scale,translate] duration-standard ease-enter data-ending-style:scale-[0.98] data-starting-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:opacity-0 data-instant:transition-none data-ending-style:duration-[calc(var(--d2)*0.7)]",
+						popupSlideClassName,
 						className,
 					)}
 					{...props}

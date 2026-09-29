@@ -6,7 +6,7 @@ function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
 	return <RadioGroupPrimitive data-slot="radio-group" className={cn("grid gap-2", className)} {...props} />;
 }
 
-/** An 18px circle with a 1.5px border; the chosen option shows an 8px accent dot. */
+/** An 18px circle with a 1.5px border; the chosen option's 8px accent dot grows in from half size. */
 function RadioGroupItem({ className, ...props }: Radio.Root.Props) {
 	return (
 		<Radio.Root
@@ -17,7 +17,10 @@ function RadioGroupItem({ className, ...props }: Radio.Root.Props) {
 			)}
 			{...props}
 		>
-			<Radio.Indicator data-slot="radio-group-indicator" className="size-2 rounded-full bg-accent" />
+			<Radio.Indicator
+				data-slot="radio-group-indicator"
+				className="size-2 rounded-full bg-accent transition-[opacity,scale] duration-quick ease-enter data-ending-style:scale-50 data-starting-style:scale-50 data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d1)*0.7)]"
+			/>
 		</Radio.Root>
 	);
 }

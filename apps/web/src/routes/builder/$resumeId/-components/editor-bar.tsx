@@ -68,7 +68,7 @@ function ModeTabs() {
 	const labels: Record<EditorMode, string> = { write: t`Write`, design: t`Design`, check: t`Check` };
 
 	return (
-		<TabsList aria-label={t`Editor mode`} className="h-9">
+		<TabsList aria-label={t`Editor mode`} className="h-9" data-mode-switch="">
 			{(Object.keys(MODE_ICONS) as EditorMode[]).map((mode) => (
 				<TabsTrigger key={mode} value={mode} className="px-4">
 					<Icon name={MODE_ICONS[mode]} size={18} />

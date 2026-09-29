@@ -27,6 +27,7 @@ import {
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { useIsLandscape } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
+import { switchModeInstantly } from "@/libs/motion";
 import { LetterDesignPanel } from "./design-panel";
 import { LetterBar, useDownloadLetter } from "./letter-bar";
 import { LetterPage } from "./letter-page";
@@ -228,8 +229,8 @@ function LetterHotkeys({ onModeChange }: { onModeChange: (mode: LetterMode) => v
 	const download = useDownloadLetter();
 	const setShareTab = useEditorStore((state) => state.setShareTab);
 
-	useHotkey("1", () => onModeChange("write"));
-	useHotkey("2", () => onModeChange("design"));
+	useHotkey("1", () => switchModeInstantly(() => onModeChange("write")));
+	useHotkey("2", () => switchModeInstantly(() => onModeChange("design")));
 	useHotkey("Mod+P", () => void download.run());
 	useHotkey("Mod+Shift+E", () => setShareTab("download"));
 	useHotkey("Mod+J", () => useEditorStore.getState().setAssistantOpen(!useEditorStore.getState().assistantOpen, true));
