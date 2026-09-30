@@ -114,7 +114,7 @@ try {
 			apiKey: process.env.SMOKE_AI_API_KEY,
 		});
 		await rpc("aiProviders/test", { id: provider.id });
-		const thread = await rpc("agent/threads/create", { aiProviderId: provider.id });
+		const thread = await rpc("agent/threads/start", { resumeId: id, aiProviderId: provider.id });
 		const attachment = await rpc(
 			"agent/attachments/create",
 			{
