@@ -12,6 +12,7 @@ vi.mock("@reactive-resume/db/schema", () => ({
 }));
 vi.mock("drizzle-orm", () => ({ eq: (column: unknown, value: unknown) => ({ column, value }) }));
 vi.mock("@reactive-resume/env/server", () => ({ env: {} }));
+vi.mock("@reactive-resume/auth/config", () => ({ isCustomOAuthProviderEnabled: () => false }));
 vi.mock("../storage/service", () => ({ getStorageService: vi.fn() }));
 const { authService } = await import("./service");
 

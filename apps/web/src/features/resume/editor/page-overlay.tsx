@@ -82,7 +82,7 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 						}}
 					>
 						{selected && (
-							<span className="absolute start-1 -top-2 rounded-[3px] bg-accent px-1 font-semibold text-[8px] text-on-accent leading-3">
+							<span className="absolute start-1 -top-2 rounded-[3px] bg-accent px-1 font-semibold text-[8px] text-on-accent leading-3 max-sm:hidden">
 								<Trans>Editing</Trans>
 							</span>
 						)}

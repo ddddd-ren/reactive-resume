@@ -68,10 +68,9 @@ export async function resolveUserFromRequestHeaders(headers: Headers): Promise<U
 	if (apiKey) {
 		const apiKeyUser = await getUserFromApiKey(apiKey);
 		if (apiKeyUser) return apiKeyUser;
-	} else {
-		const bearerUser = await getUserFromBearerToken(headers);
-		if (bearerUser) return bearerUser;
 	}
+	const bearerUser = await getUserFromBearerToken(headers);
+	if (bearerUser) return bearerUser;
 
 	return getUserFromHeaders(headers);
 }

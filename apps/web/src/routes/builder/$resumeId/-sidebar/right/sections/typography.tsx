@@ -136,7 +136,7 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 									onValueChange={(value: string | null) => {
 										if (value === null) return;
 										field.handleChange(value);
-										const nextWeights = getNextWeights(value);
+										const nextWeights = getNextWeights(value, prefix === "heading");
 										if (nextWeights) form.setFieldValue(`${prefix}.fontWeights`, nextWeights);
 										handleAutoSave();
 									}}
@@ -158,6 +158,7 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 						<FormControl
 							render={
 								<FontWeightCombobox
+									single={prefix === "heading"}
 									value={field.state.value}
 									fontFamily={fontFamily}
 									onValueChange={(value) => {

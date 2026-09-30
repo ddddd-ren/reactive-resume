@@ -33,7 +33,7 @@ const SHAPES: Record<string, { title: string[]; subtitle: string[]; meta: string
 const text = (entry: Entry, field: string) => (typeof entry[field] === "string" ? (entry[field] as string).trim() : "");
 
 function sectionOf(data: ResumeData, sectionId: string): { type: string; items: Entry[] } | null {
-	if (sectionId === "summary") return { type: "summary", items: [{ id: "summary", content: data.summary.content }] };
+	if (sectionId === "summary") return { type: "summary", items: [{ id: "content", content: data.summary.content }] };
 	if (sectionId in data.sections) {
 		const section = data.sections[sectionId as keyof ResumeData["sections"]];
 		return { type: sectionId, items: section.items as unknown as Entry[] };
@@ -44,7 +44,14 @@ function sectionOf(data: ResumeData, sectionId: string): { type: string; items: 
 
 function EntryView({ type, entry }: { type: string; entry: Entry }) {
 	const shape = SHAPES[type] ?? SHAPES.projects;
-	const title = shape?.title.map((field) => text(entry, field)).find(Boolean) ?? "";
+	const roles = Array.isArray(entry.roles) ? (entry.roles as Entry[]).filter((role) => text(role, "position")) : [];
+	const repeatedPosition =
+		type === "experience" && roles.some((role) => text(role, "position") === text(entry, "position"));
+	const title =
+		shape?.title
+			.filter((field) => !repeatedPosition || field !== "position")
+			.map((field) => text(entry, field))
+			.find(Boolean) ?? "";
 	const subtitle = [
 		...(type === "experience" && text(entry, "position") ? ["company"] : []),
 		...(shape?.subtitle.filter((field) => field !== "company") ?? []),
@@ -55,7 +62,6 @@ function EntryView({ type, entry }: { type: string; entry: Entry }) {
 	const website = entry.website as { url?: string; label?: string } | undefined;
 	const url = typeof entry.url === "string" ? entry.url : website?.url;
 	const keywords = Array.isArray(entry.keywords) ? (entry.keywords as string[]).filter(Boolean) : [];
-	const roles = Array.isArray(entry.roles) ? (entry.roles as Entry[]) : [];
 	const html = text(entry, "content") || text(entry, "description");
 
 	return (

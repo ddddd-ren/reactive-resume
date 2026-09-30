@@ -9,6 +9,7 @@ import { sortSectionItemsByPeriod } from "@reactive-resume/resume/section-sort";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import {
 	readUnsavedResumeData,
+	savePendingChanges,
 	useBuilderResumeUpdateSubscription,
 	useResumeCleanup,
 	useResumeStore,
@@ -344,6 +345,11 @@ describe("builder resume autosave", () => {
 
 		expect(useResumeStore.getState().saveStatus).toBe("offline");
 		expect(readUnsavedResumeData("resume-offline")?.basics.name).toBe("Written offline");
+		orpcMocks.updateResume.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+		expect(await savePendingChanges("resume-offline")).toBe(false);
+		expect(toastMocks.add).toHaveBeenCalledWith(
+			expect.objectContaining({ id: "resume-offline-navigation", description: expect.stringContaining("Reconnect") }),
+		);
 
 		onLine.mockReturnValue(true);
 		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) =>

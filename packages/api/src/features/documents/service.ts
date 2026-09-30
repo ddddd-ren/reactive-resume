@@ -3,6 +3,7 @@ import { ORPCError } from "@orpc/client";
 import { and, count, eq, isNotNull, isNull, lt, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { applicationService } from "../applications/service";
 import { linkLetterApplication } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
 
@@ -15,7 +16,7 @@ const TRASH_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 // Resumes keep their existing error code, which API and MCP clients already handle.
 const locked = (type: DocumentType) =>
 	type === "resume"
-		? new ORPCError("RESUME_LOCKED")
+		? new ORPCError("RESUME_LOCKED", { status: 403 })
 		: new ORPCError("DOCUMENT_LOCKED", { status: 400, message: "Unlock the letter first." });
 
 /** "{source} — {company}" for a copy made for a job, "{source} (copy)" without one. */
@@ -267,7 +268,7 @@ export const documentsService = {
 		if (application) {
 			await db.update(schema.resume).set({ applicationId: application.id }).where(eq(schema.resume.id, id));
 			if (!application.resumeId) {
-				await db.update(schema.application).set({ resumeId: id }).where(eq(schema.application.id, application.id));
+				await applicationService.update({ userId: input.userId, id: application.id, resumeId: id });
 			}
 		}
 

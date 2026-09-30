@@ -58,7 +58,7 @@ Internal packages are source-consumed through `package.json` export maps pointin
 
 ## Setup
 
-Prerequisites: **Node.js 24** (`.nvmrc`, root `engines`, and Dockerfile), **pnpm 12.6.0** (root `packageManager`; pnpm self-manages to this version), and **Docker with Docker Compose** for local infrastructure. The Dockerfile's `ARG PNPM_VERSION` chooses its base image, not the project's pnpm version. Start your Docker daemon before running Compose.
+Prerequisites: **Node.js 24** (`.nvmrc`, root `engines`, and Dockerfile), **pnpm 12.8.1** (root `packageManager`; pnpm self-manages to this version), and **Docker with Docker Compose** for local infrastructure. The Dockerfile's `ARG PNPM_VERSION` chooses its base image, not the project's pnpm version. Start your Docker daemon before running Compose.
 
 Run commands from the workspace root unless stated otherwise:
 
@@ -78,7 +78,7 @@ S3_ENDPOINT=http://localhost:8333
 REDIS_URL=redis://localhost:6379
 ```
 
-Set `AUTH_SECRET` to a generated secret (`openssl rand -hex 32`). If using saved AI providers or `/agent`, also set a separate `ENCRYPTION_SECRET` of at least 32 characters. For database-only development, start just `postgres` and set `STORAGE_BACKEND=local` to avoid the template's S3 defaults.
+Set `AUTH_SECRET` to a generated secret (`openssl rand -hex 32`). If using saved AI providers or the assistant, also set a separate `ENCRYPTION_SECRET` of at least 32 characters. For database-only development, start just `postgres` and set `STORAGE_BACKEND=local` to avoid the template's S3 defaults.
 
 ## Development workflow
 
@@ -115,7 +115,7 @@ Where each concern lives, and where new code for it goes:
 | DOCX export | `packages/docx` |
 | MCP tools/prompts/resources/server-card | `packages/mcp` |
 | Generic UI primitives + hooks | `packages/ui` (Base UI/shadcn-style); workflow-specific UI stays in the owning web feature |
-| Desktop Shell integration | `packages/dsh-plugin` (separately built/published plugin) |
+| DeepSeek Harness integration | `packages/dsh-plugin` (separately built/published plugin) |
 | Focused support surfaces | `packages/fonts`, `packages/email`, `packages/import`, `packages/ai`, `packages/utils`, `packages/config` — prefer existing exports over cross-package shortcuts |
 | Dev-only scripts | `tooling/`, not `packages/`, so packages only hold runtime-bundled code |
 
@@ -153,7 +153,7 @@ Multi-place changes:
 Host development requires `APP_URL`, `DATABASE_URL`, and non-empty `AUTH_SECRET`. `packages/env/src/server.ts` also loads root `.env` through Node's native `process.loadEnvFile`; existing process variables take precedence. Root dev/database scripts explicitly load `.env.local` through `dotenvx`. Tests and application code can have their own environment loaders; do not assume every command loads `.env.local`.
 
 - **Storage**: explicit `STORAGE_BACKEND=local|s3|blob` wins. Otherwise, complete S3 credentials select S3; Vercel selects private Blob; other deployments select local storage. `.env.example` ships SeaweedFS defaults, so either run SeaweedFS or select `local`/remove the S3 credentials. Local storage defaults to `<workspace>/data` in development and `/app/data` in Docker. `LOCAL_STORAGE_PATH` must be absolute and writable; persist it in deployed installations.
-- **`REDIS_URL` and `ENCRYPTION_SECRET`** are optional for core resume flows but both required for saved AI providers and the authenticated `/agent` workspace. Host-run dev uses `REDIS_URL=redis://localhost:6379`; the container-run app uses `redis://redis:6379`.
+- **`ENCRYPTION_SECRET`** is required for saved AI providers and the assistant. **`REDIS_URL`** is optional outside Vercel; it shares rate limits, cancellation and resumable replies between processes. Vercel deployment preparation requires Redis. Host-run dev uses `REDIS_URL=redis://localhost:6379`; the container-run app uses `redis://redis:6379`.
 - **`drizzle-kit` (used by `pnpm db:migrate`) reads `DATABASE_URL` from `process.env` directly** — it does not auto-load `.env`. The root migration scripts load `.env.local` through `dotenvx` before invoking Drizzle Kit.
 - `DATABASE_MIGRATION_URL` supplies a direct migration connection when runtime `DATABASE_URL` is pooled. Review generated migration SQL before applying it; avoid resetting databases or deleting volumes to fix setup errors.
 - Startup verifies the migrated schema. `STRICT_SCHEMA_CHECK=true` makes detected drift fatal; otherwise the server logs it and continues.

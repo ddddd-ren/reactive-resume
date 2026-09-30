@@ -31,6 +31,10 @@ const withLegacyStylesConverted = (data: ResumeData): ResumeData =>
 export function detectJsonImportKind(parsed: unknown): ImportKind | null {
 	if (!parsed || typeof parsed !== "object") return null;
 	const data = parsed as Record<string, unknown>;
+	// Account archives retain document metadata around the importable resume content.
+	if (data.data && typeof data.data === "object" && !("sections" in data) && !("metadata" in data)) {
+		return detectJsonImportKind(data.data);
+	}
 
 	// A saved cover letter exported from Reactive Resume.
 	if (data.format === "reactive-resume-cover-letter") return "cover-letter-json";
@@ -60,17 +64,35 @@ export async function detectImportKind(file: File): Promise<ImportKind | null> {
 	const isZip = header[0] === 0x50 && header[1] === 0x4b && header[2] === 0x03 && header[3] === 0x04; // "PK\x03\x04"
 
 	if (isPdf || mime === "application/pdf" || name.endsWith(".pdf")) return "pdf";
+	if (mime === "application/msword" || name.endsWith(".doc")) {
+		throw new ImportError(t`Legacy Word files aren't supported. Open the file in Word and save it as .docx first.`);
+	}
 
 	// Word documents are also ZIPs, so a bare "PK" header is ambiguous. LinkedIn's export is
 	// only ever named with a .zip extension, so check that first and let it win the tie.
-	if (name.endsWith(".zip") || mime === "application/zip") return "linkedin";
+	if (name.endsWith(".zip") || mime === "application/zip") {
+		const { unzipSync } = await import("fflate");
+		let accountArchive = false;
+		try {
+			const files = unzipSync(new Uint8Array(await file.arrayBuffer()), {
+				filter: (entry) => entry.name === "account.json",
+			});
+			accountArchive = "account.json" in files;
+		} catch {
+			// The LinkedIn reader reports malformed archives when the file is read.
+		}
+		if (accountArchive) {
+			throw new ImportError(
+				t`Extract this account archive, then import a JSON file from its resumes or letters folder.`,
+			);
+		}
+		return "linkedin";
+	}
 
 	if (
 		isZip ||
-		mime === "application/msword" ||
 		mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-		name.endsWith(".docx") ||
-		name.endsWith(".doc")
+		name.endsWith(".docx")
 	) {
 		return "docx";
 	}
@@ -89,9 +111,11 @@ export async function detectImportKind(file: File): Promise<ImportKind | null> {
 }
 
 export function parseResumeJson(text: string, kind: ResumeJsonKind): ResumeData {
-	if (kind === "reactive-resume-json") return withLegacyStylesConverted(parseReactiveResumeJSON(text));
-	if (kind === "reactive-resume-v4-json") return parseReactiveResumeV4JSON(text);
-	return parseJSONResume(text);
+	const parsed = JSON.parse(text);
+	const data = parsed?.data && !parsed.sections && !parsed.metadata ? JSON.stringify(parsed.data) : text;
+	if (kind === "reactive-resume-json") return withLegacyStylesConverted(parseReactiveResumeJSON(data));
+	if (kind === "reactive-resume-v4-json") return parseReactiveResumeV4JSON(data);
+	return parseJSONResume(data);
 }
 
 function fileToBase64(file: File): Promise<string> {

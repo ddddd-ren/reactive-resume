@@ -38,7 +38,7 @@ export function applyFontPairing(metadata: WritableDraft<Metadata>, id: FontPair
 }
 
 /**
- * Density sets the body line height and the gap between sections. "Normal" is today's default, so resumes
+ * Density sets the body line height and the gap between entries. "Normal" is today's default, so resumes
  * saved before the redesign show as Normal; the others follow the spec's proportions around it.
  */
 const DENSITIES = {

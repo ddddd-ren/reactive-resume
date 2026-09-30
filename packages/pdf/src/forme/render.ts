@@ -10,7 +10,7 @@ import type { SectionTitleResolver } from "../section-title";
 import { createElement } from "react";
 import { ResumeDocument } from "../document";
 import { resolvePdfFonts, resumeContentContainsCJK, resumeContentScripts } from "../hooks/use-register-fonts";
-import { extractPageMap } from "../page-map";
+import { extractPageMap, NODE_SOURCE_PREFIX, parseResumeNodeKey } from "../page-map";
 import { loadFonts } from "./fonts";
 import { loadIcons } from "./icons";
 import { imageSources, loadImages } from "./images";
@@ -55,6 +55,26 @@ const misplacesABox = (result: RenderWithLayoutResult) =>
 			return offPage(element.y) || offPage(element.height) || element.children.some(bad);
 		}),
 	);
+
+/** Whole sections Forme lost while splitting a column, rather than ordinary off-page fragments. */
+function unplacedSections(layout: RenderWithLayoutResult["layout"]): string[] {
+	const placed = new Set(
+		extractPageMap(layout)
+			.nodes.filter((node) => node.kind === "section")
+			.map((node) => node.key),
+	);
+	const missing = new Set<string>();
+	const visit = (element: ElementInfo) => {
+		const source = element.sourceLocation?.file;
+		if (source?.startsWith(NODE_SOURCE_PREFIX) && (offPage(element.y) || offPage(element.height))) {
+			const key = source.slice(NODE_SOURCE_PREFIX.length);
+			if (parseResumeNodeKey(key)?.kind === "section" && !placed.has(key)) missing.add(key);
+		}
+		element.children.forEach(visit);
+	};
+	for (const page of layout.pages) page.elements.forEach(visit);
+	return [...missing];
+}
 
 const isFixed = (element: ElementInfo): boolean =>
 	element.sourceLocation?.file === FIXED_SOURCE || element.children.some(isFixed);
@@ -124,8 +144,14 @@ export async function renderResumeElement(engine: FormeEngine, element: ReactEle
 	const { images, warnings: imageWarnings } = await loadImages(imageSources(tree));
 
 	const breakBeforeListItems = new Set<number>();
+	const breakBeforeSections = new Set<string>();
 	const layOutOnce = async (keepNestedRowsWhole: boolean) => {
-		const { document, warnings } = toFormeDocument(tree, { images, keepNestedRowsWhole, breakBeforeListItems });
+		const { document, warnings } = toFormeDocument(tree, {
+			images,
+			keepNestedRowsWhole,
+			breakBeforeListItems,
+			breakBeforeSections,
+		});
 		// Forme rewrites the font entries it's given (bytes to base64), so each render gets its own.
 		const render = () =>
 			engine.renderSerializedDocWithLayout({ ...document, fonts: fonts.map((font) => ({ ...font })) });
@@ -158,6 +184,12 @@ export async function renderResumeElement(engine: FormeEngine, element: ReactEle
 
 	let { result, warnings } = await layOut(false);
 	if (misplacesABox(result)) ({ result, warnings } = await layOut(true));
+	const missingSections = unplacedSections(result.layout);
+	if (missingSections.length > 0) {
+		// A section that disappeared gets an explicit next-page start; never discard its content to make it fit.
+		for (const key of missingSections) breakBeforeSections.add(key);
+		({ result, warnings } = await layOut(true));
+	}
 	if (misplacesABox(result))
 		warnings.push("render defect: the engine couldn't place a box; a page may be laid out wrong");
 

@@ -107,7 +107,7 @@ export const providerOptions: AIProviderOption[] = [
 	},
 	{
 		value: "ollama",
-		label: "Ollama Cloud",
+		label: "Ollama",
 		keywords: ["ollama", "cloud"],
 		defaultBaseURL: AI_PROVIDER_DEFAULT_BASE_URLS.ollama,
 		defaultModel: "llama3.1",

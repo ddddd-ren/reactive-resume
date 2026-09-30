@@ -28,7 +28,7 @@ const nameSchema = z.string().trim().min(1).max(64);
 const usernameSchema = z
 	.string()
 	.trim()
-	.min(1)
+	.min(3)
 	.max(64)
 	.regex(/^[a-z0-9._-]+$/);
 const emailSchema = z.email().trim();
@@ -189,7 +189,7 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 					validate={(value) =>
 						usernameSchema.safeParse(value).success
 							? null
-							: t`Use lowercase letters, numbers, dots, hyphens and underscores.`
+							: t`Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores.`
 					}
 					save={(username) => updateUser({ username, displayUsername: username })}
 				/>

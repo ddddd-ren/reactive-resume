@@ -136,9 +136,11 @@ export async function findPosting(
 	userId: string,
 	documentId: string,
 	loaded: Pick<LoadedDocument, "kind" | "applicationId">,
+	applicationId?: string,
 ) {
 	// A resume made for an application says so; otherwise, the latest application it's linked to.
-	if (!loaded.applicationId && loaded.kind === "letter") return null;
+	const selectedId = applicationId ?? loaded.applicationId;
+	if (!selectedId && loaded.kind === "letter") return null;
 	const table = schema.application;
 	const [application] = await db
 		.select({
@@ -149,12 +151,7 @@ export async function findPosting(
 			notes: table.notes,
 		})
 		.from(table)
-		.where(
-			and(
-				eq(table.userId, userId),
-				loaded.applicationId ? eq(table.id, loaded.applicationId) : eq(table.resumeId, documentId),
-			),
-		)
+		.where(and(eq(table.userId, userId), selectedId ? eq(table.id, selectedId) : eq(table.resumeId, documentId)))
 		.orderBy(desc(table.updatedAt))
 		.limit(1);
 	if (!application) return null;

@@ -8,7 +8,7 @@ import { agentMessageMetadataSchema } from "@reactive-resume/ai/tools/agent-tool
 import { streamClient } from "@/libs/orpc/client";
 
 /** What a message shares with the model; each context chip turns one off. */
-export type MessageContext = { document: boolean; posting: boolean };
+export type MessageContext = { document: boolean; posting: boolean; applicationId?: string };
 
 export type ChatAttachment = { id: string; filename: string; mediaType: string };
 

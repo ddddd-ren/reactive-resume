@@ -14,8 +14,8 @@ working when you switch templates. Reach for custom styles when you want somethi
 ## Before you start
 
 - Custom styles are per resume. Each resume has its own stylesheet.
-- Nothing checks your CSS as you type. A rule the PDF can't use is skipped without a warning, and the rest still
-  applies. If you see no change on the page, the rule didn't apply. See [When a rule has no effect](#when-a-rule-has-no-effect).
+- The editor reports fatal stylesheet limits. Unsupported declarations or selectors may still be skipped; the
+  engine limitations are listed beside the editor. If you see no change on the page, check those limits. See [When a rule has no effect](#when-a-rule-has-no-effect).
 - Custom styles can't add content, load fonts or images, or change what a section contains. They only restyle what's
   already on the page.
 
@@ -31,7 +31,7 @@ working when you switch templates. Reach for custom styles when you want somethi
     view.
   </Step>
   <Step title="Find Custom Styles">
-    Scroll to **Custom Styles**, near the end of the Advanced group, just above **Reset to template defaults**.
+    Scroll to **Custom Styles**, near the end of the Advanced group, just above **Reset design defaults**.
   </Step>
 </Steps>
 
@@ -43,7 +43,7 @@ On a phone, Design opens as a sheet over the page. Select the **Page** tab, then
 settings.
 
 <Note>
-  **Reset to template defaults** doesn't touch your custom styles. It resets the look (fonts, colors, spacing) and
+  **Reset design defaults** doesn't touch your custom styles. It resets the look (fonts, colors, spacing) and
   keeps your stylesheet, paper size, language, date format and section layout.
 </Note>
 
@@ -110,20 +110,20 @@ A few more editor helpers:
 
 | Button | What it does |
 | --- | --- |
-| **Undo stylesheet edit** / **Redo stylesheet edit** | Steps back or forward through your resume's changes. |
+| **Undo resume change** / **Redo resume change** | Steps back or forward through your resume's changes. |
 | **Copy stylesheet** | Copies the whole stylesheet to your clipboard. |
 | **Format stylesheet** | Tidies indentation and spacing. |
 | **Open focus mode** | Opens the editor in a larger side panel titled **Semantic CSS stylesheet**. Select **Exit focus mode** or close the panel to go back. |
 
-Undo and redo in the stylesheet editor, including <kbd>⌘</kbd> <kbd>Z</kbd> and <kbd>⌘</kbd> <kbd>Shift</kbd>
-<kbd>Z</kbd> while you type in it, use your resume's shared undo history. If your last change was somewhere else, such
-as a template switch, undo reverses that first. See [Undoing changes and version history](/guides/undoing-changes-and-version-history).
+While typing in the stylesheet editor, <kbd>⌘</kbd> <kbd>Z</kbd> and <kbd>⌘</kbd> <kbd>Shift</kbd>
+<kbd>Z</kbd> use the editor's local text history. The toolbar buttons use your resume's shared history, so they can
+also reverse a template switch or another resume change. See [Undoing changes and version history](/guides/undoing-changes-and-version-history).
 
 Your stylesheet saves automatically with the rest of the resume, and it's part of every saved version in **History**.
 
 ## When a rule has no effect
 
-There's no error list or validity checker. The PDF engine applies what it understands and skips the rest: an
+Fatal stylesheet errors appear above the editor. For individual rules, the PDF engine applies what it understands and skips the rest: an
 unsupported declaration is skipped on its own, and a rule with an invalid selector is skipped as a whole. If a change
 doesn't show:
 
@@ -134,7 +134,7 @@ doesn't show:
    [engine limits](#engine-limits) below. For example, `background-color` works on containers such as `section` and
    `header`, but not on text elements such as `field`.
 3. **Simplify.** Reduce the rule to one selector and one declaration, confirm it works, then add more.
-4. **Check the size.** A stylesheet larger than 128 KB, or with more than 1,024 rules, is ignored completely.
+4. **Check the limit message.** More than 128 KB, 1,024 rules, 8,192 declarations, 64 selectors in one rule or four nested media blocks makes the whole stylesheet unusable; the editor reports this.
 
 <Warning>
   Check the downloaded PDF before you send or share a resume with custom styles. Page breaks and template-specific
@@ -145,7 +145,7 @@ doesn't show:
 
 The PDF engine accepts these without an error but doesn't draw them:
 
-- Rotation (`transform: rotate(...)`). The picture's rotation setting has no effect for the same reason.
+- Rotation (`transform: rotate(...)`). The picture's Rotation control is disabled while the PDF engine lacks support.
 - Dashed and dotted borders. They draw as solid lines.
 - Percentages for padding, margin, gaps and font sizes. Percentages work only for `width`, `height`, their `min-` and
   `max-` forms, `flex-basis`, `left` and `right`.

@@ -200,7 +200,7 @@ For Docker, the stack includes:
 - **PostgreSQL** — Database for storing user data and resumes
 - **SeaweedFS** (optional) — S3-compatible storage for file uploads
 
-> **From v5.1.0 onwards** — PDF generation runs entirely client-side via `@react-pdf/renderer`. New deployments no longer need Browserless, Chromium, or any external print service. The `PRINTER_*` and `BROWSERLESS_*` environment variables are no longer read and can be removed from your `.env`.
+> **From v6 onwards** — PDF generation uses Forme in the browser and on the server. New deployments no longer need Browserless, Chromium, or any external print service. The `PRINTER_*` and `BROWSERLESS_*` environment variables are no longer read and can be removed from your `.env`.
 
 Pull the latest image from Docker Hub or GitHub Container Registry:
 

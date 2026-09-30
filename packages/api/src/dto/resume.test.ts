@@ -3,6 +3,19 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { resumeDto } from "./resume";
 
 describe("resume DTO output validation", () => {
+	it.each([
+		["design", ["design"]],
+		[
+			["design", "remote"],
+			["design", "remote"],
+		],
+	])("accepts a single or repeated tag query: %j", (tags, expected) => {
+		expect(resumeDto.list.input.parse({ tags }).tags).toEqual(expected);
+	});
+
+	it("duplicates with only an ID, leaving name, tags and address to the original and service", () => {
+		expect(resumeDto.duplicate.input.parse({ id: "r1" })).toEqual({ id: "r1" });
+	});
 	it("normalizes ordinary PUT data without losing compatible custom-section overlap", () => {
 		const parsed = resumeDto.update.input.parse({
 			id: "resume-id",

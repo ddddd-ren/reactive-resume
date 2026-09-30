@@ -73,11 +73,13 @@ When the assistant needs a fact or a choice from you, it shows a blue question c
 
 ## Choose what's shared with each message
 
-Above the message box, chips show what goes with your next message: the document, and the job posting when the document is linked to an application. Once a conversation has started, select the **×** on a chip to leave it out of your next messages. Without the document, the assistant can't read or edit it for that message. The line under the box always says what will be sent and to which provider, and nothing is sent until you press send.
+Above the message box, chips show what goes with your next message: the document, and the job posting when the document is linked to an application. Select the **×** on a chip to leave it out, including before your first message. Without the document, the assistant can't read or edit it for that message. The line under the box always says what will be sent and to which provider, and nothing is sent until you press send.
+
+When you select **Prepare** from an application's detail panel, the assistant uses that application's posting, even when several applications share the same resume.
 
 ## Attach files
 
-Once a conversation has started, select the paperclip in the message box to attach files, such as a job description PDF or your notes. Each file shows as a chip; select its **×** to remove it before sending.
+Select the paperclip in the message box to attach files, such as a job description PDF or your notes. You can attach them before your first message or later in the conversation. Each file shows as a chip; select its **×** to remove it before sending.
 
 - Plain text, Markdown and JSON files are read as text (up to the first 40,000 characters).
 - Images, PDFs and MP3 or WAV audio are passed to the model directly. Whether the model can use them depends on your provider.
@@ -85,7 +87,8 @@ Once a conversation has started, select the paperclip in the message box to atta
 - You can attach up to 10 files per message, each up to 25 MB, and 100 MB per conversation.
 
 <Note>
-  On self-hosted instances, attachments need S3-compatible or Vercel Blob storage. Local file storage can't hold them.
+  Attachments work with local, S3-compatible or Vercel Blob storage and stay private. If you use a reverse proxy,
+  allow request bodies of at least 50 MB: files travel base64-encoded, which makes them about a third larger.
 </Note>
 
 ## Search the web

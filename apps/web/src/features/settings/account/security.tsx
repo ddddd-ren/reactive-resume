@@ -7,7 +7,7 @@ import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "@/dialogs/store";
-import { usePrompt } from "@/hooks/use-confirm";
+import { useConfirm, usePrompt } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { SettingsRow, SettingsSection } from "../section";
@@ -100,6 +100,7 @@ const PASSKEYS_KEY = ["auth", "passkeys"];
 function Passkeys() {
 	const queryClient = useQueryClient();
 	const prompt = usePrompt();
+	const confirm = useConfirm();
 	const { data: passkeys = [] } = useQuery({
 		queryKey: PASSKEYS_KEY,
 		queryFn: () => authClient.passkey.listUserPasskeys(),
@@ -129,8 +130,24 @@ function Passkeys() {
 
 	const remove = useMutation({
 		mutationFn: async (id: string) => {
+			if (
+				!(await confirm(t`Remove this passkey?`, {
+					description: t`It will no longer sign you in.`,
+					confirmText: t`Remove`,
+				}))
+			)
+				return;
 			const { error } = await authClient.passkey.deletePasskey({ id });
 			if (error) return failed(error, t`Couldn't remove the passkey. Try again.`);
+			await refresh();
+		},
+	});
+	const rename = useMutation({
+		mutationFn: async (passkey: (typeof passkeys)[number]) => {
+			const name = await prompt(t`Name this passkey`, { defaultValue: passkey.name ?? "", confirmText: t`Save` });
+			if (!name?.trim()) return;
+			const { error } = await authClient.passkey.updatePasskey({ id: passkey.id, name: name.trim() });
+			if (error) return failed(error, t`Couldn't rename the passkey.`);
 			await refresh();
 		},
 	});
@@ -150,6 +167,9 @@ function Passkeys() {
 					{passkeys.map((passkey) => (
 						<li key={passkey.id} className="flex items-center gap-3 py-1.5 text-sm">
 							<span className="min-w-0 flex-1 truncate">{passkey.name || t`Unnamed passkey`}</span>
+							<Button size="sm" variant="ghost" disabled={rename.isPending} onClick={() => rename.mutate(passkey)}>
+								<Trans>Rename</Trans>
+							</Button>
 							<Button
 								size="sm"
 								variant="ghost"

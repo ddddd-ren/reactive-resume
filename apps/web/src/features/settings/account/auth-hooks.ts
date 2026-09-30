@@ -1,6 +1,6 @@
 import type { AuthProvider } from "@reactive-resume/auth/types";
 import { t } from "@lingui/core/macro";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { match } from "ts-pattern";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -83,6 +83,7 @@ export function useAuthAccounts() {
  * Hook to manage authentication provider linking/unlinking
  */
 export function useAuthProviderActions() {
+	const queryClient = useQueryClient();
 	const link = useCallback(async (provider: AuthProvider) => {
 		const providerName = getProviderName(provider);
 		const toastId = toast.add({ type: "loading", description: t`Linking your ${providerName} account...` });
@@ -107,32 +108,36 @@ export function useAuthProviderActions() {
 		toast.close(toastId);
 	}, []);
 
-	const unlink = useCallback(async (provider: AuthProvider, accountId: string) => {
-		const providerName = getProviderName(provider);
-		const toastId = toast.add({
-			type: "loading",
-			description: t`Unlinking your ${providerName} account...`,
-		});
-
-		const { error } = await authClient.unlinkAccount({ accountId });
-
-		if (error) {
-			toast.add({
-				type: "error",
-				description: getReadableErrorMessage(
-					error,
-					t({
-						comment: "Fallback toast when unlinking a social authentication provider fails",
-						message: "Failed to unlink provider. Please try again.",
-					}),
-				),
-				id: toastId,
+	const unlink = useCallback(
+		async (provider: AuthProvider, accountId: string) => {
+			const providerName = getProviderName(provider);
+			const toastId = toast.add({
+				type: "loading",
+				description: t`Unlinking your ${providerName} account...`,
 			});
-			return;
-		}
 
-		toast.close(toastId);
-	}, []);
+			const { error } = await authClient.unlinkAccount({ accountId });
+
+			if (error) {
+				toast.add({
+					type: "error",
+					description: getReadableErrorMessage(
+						error,
+						t({
+							comment: "Fallback toast when unlinking a social authentication provider fails",
+							message: "Failed to unlink provider. Please try again.",
+						}),
+					),
+					id: toastId,
+				});
+				return;
+			}
+
+			toast.close(toastId);
+			await queryClient.invalidateQueries({ queryKey: ["auth", "accounts"] });
+		},
+		[queryClient],
+	);
 
 	return { link, unlink };
 }

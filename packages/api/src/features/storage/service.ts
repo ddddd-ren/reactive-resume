@@ -140,16 +140,16 @@ class LocalStorageService implements StorageService {
 	}
 
 	async write({ key, data, private: isPrivate }: StorageWriteInput): Promise<void> {
-		if (isPrivate) {
+		if (isPrivate && !/^uploads\/[A-Za-z0-9_-]+\/agent\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/.test(key)) {
 			throw new Error(
-				"Private storage writes are not supported by the local filesystem backend. Configure S3 to store private attachments.",
+				"Private local writes must use the assistant attachment namespace, which public upload routes never serve.",
 			);
 		}
 
 		const fullPath = this.resolvePath(key);
 
 		await fs.mkdir(dirname(fullPath), { recursive: true });
-		await fs.writeFile(fullPath, data);
+		await fs.writeFile(fullPath, data, isPrivate ? { mode: 0o600 } : undefined);
 	}
 
 	async read(key: string): Promise<StorageReadResult | null> {

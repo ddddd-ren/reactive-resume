@@ -57,7 +57,7 @@ export function getSourceSectionTitle(
 ): string {
 	if (customSectionId) {
 		const customSection = resumeData.customSections.find((s) => s.id === customSectionId);
-		return customSection?.title ?? getDefaultSectionTitle(type);
+		return customSection?.title.trim() || getDefaultSectionTitle(type);
 	}
 
 	return getDefaultSectionTitle(type);
@@ -107,7 +107,7 @@ export function getCompatibleMoveTargets(
 			if (customSection && customSection.type === sourceType) {
 				compatibleSections.push({
 					sectionId: customSection.id,
-					sectionTitle: customSection.title,
+					sectionTitle: customSection.title.trim() || getDefaultSectionTitle(customSection.type),
 					isStandard: false,
 				});
 			}

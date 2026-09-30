@@ -1,11 +1,31 @@
 import { describe, expect, it } from "vitest";
+import { buildResumeSemantics } from "./analyze/semantics";
 import { PDF_ATS_RULE_CODES } from "./catalog";
+import { buildExtractedDocument } from "./extract";
 import { analyzePdfResume } from "./index";
 import { healthyResume, makeRawExtraction } from "./test-fixtures";
 
 const NOW = new Date("2024-06-15T00:00:00Z");
 
 describe("analyzePdfResume", () => {
+	it("extracts contact fields without reading summary fragments or years as contacts", () => {
+		const raw = makeRawExtraction({
+			lines: [
+				{ text: "Ada Lovelace", size: 20 },
+				"ada@example.com",
+				"+1 (555) 291-4756",
+				"Experienced developer creates tools, Leading teams across global projects",
+				"San Francisco, CA",
+				"2022",
+				"2022",
+				"2020 - 2024",
+			],
+		});
+		const { contact } = buildResumeSemantics(raw, buildExtractedDocument(raw), { now: NOW });
+		expect(contact.phones).toEqual(["+1 (555) 291-4756"]);
+		expect(contact.locationLine).toBe("San Francisco, CA");
+	});
+
 	it("scores a clean single-column resume at the top of the range", () => {
 		const report = analyzePdfResume(healthyResume(), { now: NOW });
 

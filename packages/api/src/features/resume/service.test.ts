@@ -247,6 +247,7 @@ describe("update", () => {
 
 		await expect(resumeService.update({ id: "r1", userId: "u1", name: "New" })).rejects.toMatchObject({
 			code: "RESUME_LOCKED",
+			status: 403,
 		});
 		expect(select.forUpdate).toHaveBeenCalledWith("update");
 	});
@@ -376,11 +377,34 @@ describe("delete", () => {
 
 		await expect(resumeService.delete({ id: "r1", userId: "u1" })).rejects.toMatchObject({
 			code: "RESUME_LOCKED",
+			status: 403,
 		});
 	});
 });
 
 describe("getBySlug", () => {
+	it.each(["u1", "other-user"])("password gate exempts only the owner (%s)", async (currentUserId) => {
+		dbMock.select.mockReturnValueOnce(
+			slugLookup([
+				{
+					...createResumeRow(defaultResumeData),
+					userId: "u1",
+					isPublic: true,
+					hasPassword: true,
+					passwordHash: "hash",
+				},
+			]),
+		);
+		const request = resumeService.getBySlug({
+			username: "owner",
+			slug: "resume",
+			currentUserId,
+			requestHeaders: new Headers(),
+		});
+		if (currentUserId === "u1") await expect(request).resolves.toMatchObject({ id: "r1" });
+		else await expect(request).rejects.toMatchObject({ code: "NEED_PASSWORD", status: 401 });
+	});
+
 	it("hides a private resume from an anonymous visitor", async () => {
 		const row = {
 			...createResumeRow(defaultResumeData),
@@ -401,6 +425,23 @@ describe("getBySlug", () => {
 });
 
 describe("statistics.recordDownload", () => {
+	it("lets the owner download a password-protected resume without an unlock cookie", async () => {
+		dbMock.select.mockReturnValueOnce({
+			from: () => ({
+				innerJoin: () => ({
+					where: () => Promise.resolve([{ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" }]),
+				}),
+			}),
+		});
+		await expect(
+			resumeService.statistics.recordDownload({
+				username: "owner",
+				slug: "resume",
+				currentUserId: "u1",
+				requestHeaders: new Headers(),
+			}),
+		).resolves.toBe(true);
+	});
 	it("does not look in Trash for the resume", async () => {
 		const where = vi.fn((_condition: unknown) => Promise.resolve([]));
 		dbMock.select.mockReturnValueOnce({ from: () => ({ innerJoin: () => ({ where }) }) });

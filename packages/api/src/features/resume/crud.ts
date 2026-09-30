@@ -133,6 +133,7 @@ export const crudRouter = {
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.update.output)
 		.errors({
+			RESUME_LOCKED: { status: 403, message: "Unlock the resume first." },
 			RESUME_SLUG_ALREADY_EXISTS: {
 				message: "A resume with this slug already exists.",
 				status: 400,
@@ -166,6 +167,7 @@ export const crudRouter = {
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.patch.output)
 		.errors({
+			RESUME_LOCKED: { status: 403, message: "Unlock the resume first." },
 			INVALID_PATCH_OPERATIONS: {
 				message: "The patch operations are invalid or produced an invalid resume.",
 				status: 400,
@@ -248,5 +250,6 @@ export const crudRouter = {
 		.input(resumeDto.delete.input)
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.delete.output)
+		.errors({ RESUME_LOCKED: { status: 403, message: "Unlock the resume first." } })
 		.handler(({ context, input }) => documentsService.trash({ type: "resume", id: input.id, userId: context.user.id })),
 };

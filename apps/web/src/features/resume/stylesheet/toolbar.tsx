@@ -51,10 +51,10 @@ export function StylesheetToolbar({
 }: StylesheetToolbarProps) {
 	return (
 		<div className="flex flex-wrap items-center gap-1" role="toolbar" aria-label={t`Stylesheet editor`}>
-			<ToolbarButton label={t`Undo stylesheet edit`} disabled={disabled || !canUndo} onClick={onUndo}>
+			<ToolbarButton label={t`Undo resume change`} disabled={disabled || !canUndo} onClick={onUndo}>
 				<Icon name="undo" size={16} />
 			</ToolbarButton>
-			<ToolbarButton label={t`Redo stylesheet edit`} disabled={disabled || !canRedo} onClick={onRedo}>
+			<ToolbarButton label={t`Redo resume change`} disabled={disabled || !canRedo} onClick={onRedo}>
 				<Icon name="redo" size={16} />
 			</ToolbarButton>
 			<ToolbarButton label={t`Copy stylesheet`} onClick={() => void copySourceToClipboard(source)}>

@@ -194,7 +194,7 @@ const EXACT_SECTIONS = [
 	["styles", CustomStylesSectionBuilder],
 ] as const;
 
-/** Every exact value, the date format, custom CSS and Reset to template defaults, collapsed until asked for. */
+/** Every exact value, the date format, custom CSS and Reset design defaults, collapsed until asked for. */
 // Controlled so the nav and Type's Custom row can open it.
 type AdvancedGroupProps = { open: boolean; onOpenChange: (open: boolean) => void };
 
@@ -224,7 +224,7 @@ function AdvancedGroup({ open, onOpenChange }: AdvancedGroupProps) {
 			{ newStep: true },
 		);
 		toast.add({
-			description: t`Design reset to the template defaults`,
+			description: t`Design reset to defaults`,
 			actionProps: { children: t`Undo`, onClick: () => useResumeStore.getState().undo() },
 		});
 	};
@@ -281,7 +281,7 @@ function AdvancedGroup({ open, onOpenChange }: AdvancedGroupProps) {
 
 					<Button variant="secondary" className="w-fit" onClick={reset}>
 						<Icon name="restart_alt" size={18} />
-						<Trans>Reset to template defaults</Trans>
+						<Trans>Reset design defaults</Trans>
 					</Button>
 				</div>
 			</CollapsibleContent>

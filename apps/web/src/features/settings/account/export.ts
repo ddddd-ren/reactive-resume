@@ -11,7 +11,7 @@ const fileName = (name: string, id: string) => `${slugify(name)}-${id}.json`;
 
 /**
  * "Export everything": one zip with the account, each resume and letter as its own JSON file, and the applications.
- * Every file is the stored data, so it can be imported again.
+ * Extract the archive to import individual resumes and letters; account and application files are records.
  */
 export function buildAccountZip(data: AccountExport): Uint8Array {
 	const files: Record<string, Uint8Array> = {
@@ -19,6 +19,12 @@ export function buildAccountZip(data: AccountExport): Uint8Array {
 		"applications.json": json(data.applications),
 	};
 	for (const resume of data.resumes) files[`resumes/${fileName(resume.name, resume.id)}`] = json(resume);
-	for (const letter of data.coverLetters) files[`letters/${fileName(letter.name, letter.id)}`] = json(letter);
+	for (const letter of data.coverLetters) {
+		files[`letters/${fileName(letter.name, letter.id)}`] = json({
+			...letter,
+			format: "reactive-resume-cover-letter",
+			version: 1,
+		});
+	}
 	return zipSync(files);
 }

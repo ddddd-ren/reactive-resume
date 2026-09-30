@@ -195,14 +195,14 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 				withSampleData,
 			}: {
 				name: string;
-				slug: string;
+				slug?: string | undefined;
 				tags: string[];
 				withSampleData: boolean;
 			}) => {
-				const id = await client.resume.create({ name, slug, tags, withSampleData });
+				const id = await client.resume.create({ name, ...(slug ? { slug } : {}), tags, withSampleData });
 
 				return text(
-					`Created resume "${name}" (ID: ${id}) with slug "${slug}".${withSampleData ? " Pre-filled with sample data." : ""}\n\nNext steps: Use \`${T.getResume}\` to view it, or \`${T.patchResume}\` to start editing.`,
+					`Created resume "${name}" (ID: ${id}) ${slug ? `with slug "${slug}"` : "with a generated address"}.${withSampleData ? " Pre-filled with sample data." : ""}\n\nNext steps: Use \`${T.getResume}\` to view it, or \`${T.patchResume}\` to start editing.`,
 				);
 			},
 		),
@@ -239,11 +239,26 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		TOOL_META[T.duplicateResume],
 		withErrorHandling(
 			"duplicating resume",
-			async ({ id, name, slug, tags }: { id: string; name: string; slug: string; tags: string[] }) => {
-				const newId = await client.resume.duplicate({ id, name, slug, tags });
+			async ({
+				id,
+				name,
+				slug,
+				tags,
+			}: {
+				id: string;
+				name?: string | undefined;
+				slug?: string | undefined;
+				tags?: string[] | undefined;
+			}) => {
+				const newId = await client.resume.duplicate({
+					id,
+					...(name ? { name } : {}),
+					...(slug ? { slug } : {}),
+					...(tags ? { tags } : {}),
+				});
 
 				return text(
-					`Duplicated resume as "${name}" (ID: ${newId}) with slug "${slug}".\n\nNext steps: Use \`${T.getResume}\` to view it, or \`${T.patchResume}\` to customize.`,
+					`Duplicated resume${name ? ` as "${name}"` : ""} (ID: ${newId}) ${slug ? `with slug "${slug}"` : "with a generated address"}.\n\nNext steps: Use \`${T.getResume}\` to view it, or \`${T.patchResume}\` to customize.`,
 				);
 			},
 		),
@@ -268,9 +283,9 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		withErrorHandling("updating resume", async (params) => {
 			const { id, name, slug, tags, isPublic } = params as {
 				id: string;
-				name?: string;
-				slug?: string;
-				tags?: string[];
+				name?: string | undefined;
+				slug?: string | undefined;
+				tags?: string[] | undefined;
 				isPublic?: boolean;
 			};
 			if (name === undefined && slug === undefined && tags === undefined && isPublic === undefined)

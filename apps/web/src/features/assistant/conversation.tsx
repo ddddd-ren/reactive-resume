@@ -39,6 +39,8 @@ type ConversationProps = {
 	providerLabel: string;
 	/** A message to send as soon as the conversation opens (the first message, ⌘K Ask). */
 	prompt: string | null;
+	promptAttachments: ChatAttachment[];
+	initialContext: MessageContext;
 	onPromptSent: () => void;
 	onSwitchModel: () => void;
 };
@@ -48,7 +50,7 @@ export function Conversation(props: ConversationProps) {
 	const { threadId, document, readOnly } = props;
 	const queryClient = useQueryClient();
 	const setAssistantProposals = useEditorStore((state) => state.setAssistantProposals);
-	const [context, setContext] = useState<MessageContext>({ document: true, posting: true });
+	const [context, setContext] = useState<MessageContext>(props.initialContext);
 	const [statuses, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
 	const [stopped, setStopped] = useState(false);
 	const scroller = useRef<HTMLDivElement>(null);
@@ -76,14 +78,17 @@ export function Conversation(props: ConversationProps) {
 	};
 
 	// The first message (or ⌘K's question) goes out once the conversation is open.
-	const { prompt, onPromptSent } = props;
+	const { prompt, promptAttachments, onPromptSent } = props;
 	const sentPrompt = useRef(false);
 	useEffect(() => {
 		if (!prompt || sentPrompt.current) return;
 		sentPrompt.current = true;
 		onPromptSent();
-		sendMessage({ text: prompt });
-	}, [prompt, onPromptSent, sendMessage]);
+		const files = promptAttachments.map(attachmentPart);
+		sendMessage(files.length > 0 ? { text: prompt, files } : { text: prompt }, {
+			body: { attachmentIds: promptAttachments.map((attachment) => attachment.id) },
+		});
+	}, [prompt, promptAttachments, onPromptSent, sendMessage]);
 
 	// A failed continuation (after an answer) is sent again as it was; regenerating would drop the answer.
 	const retry = () => {
@@ -529,6 +534,8 @@ type ComposerProps = {
 	disabled: boolean;
 	/** Attachments need a conversation to belong to. */
 	threadId: string | null;
+	/** Creates a draft conversation lazily for the first attachment. */
+	ensureThread?: () => Promise<string>;
 	onSend: (text: string, attachments?: ChatAttachment[]) => void;
 	onStop: () => void;
 };
@@ -547,17 +554,18 @@ export function Composer(props: ComposerProps) {
 	const hasText = text.trim().length > 0;
 
 	const submit = () => {
-		if (!hasText || streaming || disabled) return;
+		if (!hasText || streaming || disabled || uploading) return;
 		props.onSend(text.trim(), attachments);
 		setText("");
 		setAttachments([]);
 	};
 
 	const upload = async (files: FileList | null) => {
-		const { threadId } = props;
-		if (!files?.length || !threadId) return;
+		if (!files?.length) return;
 		setUploading(true);
 		try {
+			const threadId = props.threadId ?? (await props.ensureThread?.());
+			if (!threadId) return;
 			const uploaded = await Promise.all(
 				Array.from(files).map(async (file) => {
 					const attachment = await client.agent.attachments.create({
@@ -575,9 +583,10 @@ export function Composer(props: ComposerProps) {
 				type: "error",
 				description: getOrpcErrorMessage(error, { fallback: t`Couldn't attach the file.` }),
 			});
+		} finally {
+			setUploading(false);
+			if (fileInput.current) fileInput.current.value = "";
 		}
-		setUploading(false);
-		if (fileInput.current) fileInput.current.value = "";
 	};
 
 	const chips = [
@@ -655,7 +664,7 @@ export function Composer(props: ComposerProps) {
 					}}
 					className="field-sizing-content max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-1.5 py-1 text-sm outline-none placeholder:text-ink-3"
 				/>
-				{props.threadId && (
+				{(props.threadId || props.ensureThread) && (
 					<>
 						<IconButton
 							icon="attach_file"
@@ -677,7 +686,7 @@ export function Composer(props: ComposerProps) {
 				<button
 					type="button"
 					aria-label={streaming ? t`Stop` : t`Send`}
-					disabled={!streaming && (!hasText || disabled)}
+					disabled={!streaming && (!hasText || disabled || uploading)}
 					onClick={streaming ? props.onStop : submit}
 					className={cn(
 						"grid size-[34px] shrink-0 place-items-center rounded-lg transition-[background-color,color,scale] duration-quick ease-enter enabled:active:scale-[0.97]",

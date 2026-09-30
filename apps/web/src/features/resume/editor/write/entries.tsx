@@ -309,8 +309,6 @@ export function EntryFields({
 	autoFocus,
 	...props
 }: FieldSetProps & { type: CustomSectionType; autoFocus?: boolean }) {
-	const hasRoles = (valuesOf(props.entry).roles?.length ?? 0) > 0;
-
 	switch (type) {
 		case "experience":
 			return (
@@ -320,7 +318,7 @@ export function EntryFields({
 					<Text {...props} field="location" label={<Trans>Location</Trans>} wide />
 					<Dates {...props} />
 					<Link {...props} />
-					{!hasRoles && <Description {...props} />}
+					<Description {...props} />
 					<Roles {...props} />
 				</>
 			);

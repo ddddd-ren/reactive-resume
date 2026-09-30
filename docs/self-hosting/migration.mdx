@@ -99,6 +99,10 @@ The script:
 
 It ends with a summary of users created, accounts created, and users skipped.
 
+<Warning>
+  Migrated two-factor authentication is disabled. Before switching traffic, tell affected users to enable it again on the new installation. Treat the transition as a change to account security.
+</Warning>
+
 ### Migrate resumes
 
 ```bash
@@ -116,6 +120,10 @@ It ends with a summary of resumes created, resumes skipped, and errors.
 <Tip>
   Each script deletes its progress file when it finishes. Keep `user-id-map.json` as the record of which v4 user became which new user. Don't re-run the scripts against a populated target to "fix" a problem; review the source backup, the map, and the target first.
 </Tip>
+
+<Note>
+  These historical scripts register cleanup on normal exit, not on `SIGINT`. Prefer letting a batch finish before stopping it. After an interruption, retain the progress and ID-map files and verify the last batch before resuming.
+</Note>
 
 ### Start the current version
 

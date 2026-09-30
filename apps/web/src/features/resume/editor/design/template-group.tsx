@@ -213,7 +213,7 @@ function SidebarPanel({ data, template }: SidebarPanelProps) {
 	const ownSide = templateLayouts[template].sidebarSide ?? "left";
 	const shownOwnSide = isRTL(data.metadata.page.locale) ? (ownSide === "left" ? "right" : "left") : ownSide;
 	const side = data.metadata.layout.sidebarSide ?? shownOwnSide;
-	const width = Math.min(42, Math.max(26, data.metadata.layout.sidebarWidth));
+	const width = data.metadata.layout.sidebarWidth;
 	const titleId = useId();
 	const widthId = useId();
 
@@ -251,8 +251,8 @@ function SidebarPanel({ data, template }: SidebarPanelProps) {
 				</div>
 				<Slider
 					aria-labelledby={`${titleId} ${widthId}`}
-					min={26}
-					max={42}
+					min={10}
+					max={50}
 					step={1}
 					value={[width]}
 					onValueChange={(value) =>

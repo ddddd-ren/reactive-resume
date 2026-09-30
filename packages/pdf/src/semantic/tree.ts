@@ -293,10 +293,6 @@ const buildItem = ({
 	}
 
 	for (const name of Object.keys(STANDARD_FIELD_REGISTRY[type])) {
-		if (type === "experience" && name === "description" && Array.isArray(item.roles) && item.roles.length > 0) {
-			continue;
-		}
-
 		const parent =
 			headerFieldNames.includes(name as never) || (requireItemHeaderPrimitive && headerFieldNames.length === 0)
 				? headerKey

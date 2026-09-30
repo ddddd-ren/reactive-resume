@@ -26,10 +26,14 @@ export function FontFamilyCombobox({ className, ...props }: FontFamilyComboboxPr
 	return <Combobox {...props} options={FONT_FAMILY_OPTIONS} className={cn("w-full", className)} />;
 }
 
-type FontWeightComboboxProps = Omit<MultiComboboxProps, "options" | "multiple"> & { fontFamily: string };
+type FontWeightComboboxProps = Omit<MultiComboboxProps, "options" | "multiple"> & {
+	fontFamily: string;
+	single?: boolean;
+};
 
 export function FontWeightCombobox({
 	fontFamily,
+	single = false,
 	onValueChange,
 	value,
 	defaultValue,
@@ -54,10 +58,15 @@ export function FontWeightCombobox({
 		}));
 	}, [fontFamily]);
 
-	const sortedValue = value ? sortFontWeights(value) : value;
-	const sortedDefaultValue = defaultValue ? sortFontWeights(defaultValue) : defaultValue;
+	const sortedValue = value ? sortFontWeights(value).slice(single ? -1 : 0) : value;
+	const sortedDefaultValue = defaultValue ? sortFontWeights(defaultValue).slice(single ? -1 : 0) : defaultValue;
 
 	const handleValueChange = (nextValue: string[] | null) => {
+		if (single && nextValue?.length) {
+			const selected = nextValue.find((weight) => !sortedValue?.includes(weight)) ?? nextValue.at(-1);
+			onValueChange?.(selected ? [selected] : []);
+			return;
+		}
 		onValueChange?.(nextValue ? sortFontWeights(nextValue) : nextValue);
 	};
 

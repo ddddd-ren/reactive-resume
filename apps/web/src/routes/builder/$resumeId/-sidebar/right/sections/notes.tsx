@@ -29,7 +29,7 @@ function NotesSectionForm() {
 				<Trans>Keep private notes about this resume here. Nobody else can see them.</Trans>
 			</p>
 
-			<RichTextEditor label={t`Notes`} value={notes} onChange={onChange} />
+			<RichTextEditor label={t`Notes`} value={notes} onChange={onChange} disabled={resume.isLocked} />
 
 			<p className="text-ink-3">
 				<Trans>For example, note which companies you sent this resume to, or links to the job descriptions.</Trans>

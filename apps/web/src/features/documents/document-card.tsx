@@ -45,6 +45,7 @@ function OpenLink({
 	label?: string;
 }) {
 	const markOpened = useNewDocumentsStore((state) => state.markOpened);
+	if (document.trashedAt) return <span className={className}>{children}</span>;
 	const common = { "aria-label": label, className, onClick: () => markOpened(document.id) };
 
 	return document.type === "resume" ? (

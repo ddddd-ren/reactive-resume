@@ -115,13 +115,21 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 
 	const onDownloadJSON = useCallback(async () => {
 		if (!resume) return;
-		downloadWithAnchor(await createExportFile(resume, "json"), `${getDefaultFileName(resume)}.json`);
+		try {
+			downloadWithAnchor(await createExportFile(resume, "json"), `${getDefaultFileName(resume)}.json`);
+		} catch {
+			toast.add({ type: "error", description: t`Could not generate the JSON. Please try again.` });
+		}
 	}, [resume]);
 
 	const onDownloadMarkdown = useCallback(async () => {
 		if (!resume) return;
-		const blob = await createExportFile(resume, "md");
-		downloadWithAnchor(blob, `${getDefaultFileName(resume)}.md`);
+		try {
+			const blob = await createExportFile(resume, "md");
+			downloadWithAnchor(blob, `${getDefaultFileName(resume)}.md`);
+		} catch {
+			toast.add({ type: "error", description: t`Could not generate the Markdown. Please try again.` });
+		}
 	}, [resume]);
 
 	const onDownloadDOCX = useCallback(async () => {

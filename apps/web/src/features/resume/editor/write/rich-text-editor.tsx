@@ -234,7 +234,7 @@ export function RichTextEditor({
 						style={{ bottom: keyboardInset }}
 						className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-line border-t bg-raised px-1.5 shadow-e2"
 					>
-						{toolbarButtons}
+						<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
 						<button
 							type="button"
 							onMouseDown={(event) => event.preventDefault()}
@@ -242,7 +242,7 @@ export function RichTextEditor({
 								setImproving(null);
 								editor?.commands.blur();
 							}}
-							className="flex h-11 items-center rounded-md px-3 font-semibold text-accent-text text-sm"
+							className="flex h-11 shrink-0 items-center rounded-md px-3 font-semibold text-accent-text text-sm"
 						>
 							<Trans>Done</Trans>
 						</button>

@@ -24,7 +24,7 @@ import { useDialogStore } from "../store";
 const formSchema = z
 	.object({
 		currentPassword: z.string().min(6).max(64),
-		newPassword: z.string().min(6).max(64),
+		newPassword: z.string().min(8).max(64),
 	})
 	.refine((data) => data.newPassword !== data.currentPassword, {
 		message: "New password cannot be the same as the current password.",
@@ -127,7 +127,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 							<FormControl
 								render={
 									<PasswordInput
-										min={6}
+										min={8}
 										max={64}
 										autoComplete="new-password"
 										name={field.name}

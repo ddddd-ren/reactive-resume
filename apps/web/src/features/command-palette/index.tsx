@@ -43,6 +43,7 @@ export function CommandPalette() {
 		},
 		{
 			hotkey: "Backspace",
+			options: { ignoreInputs: false, preventDefault: false, stopPropagation: false },
 			callback: (event) => {
 				// Only handle if the command palette is open
 				if (!open) return;

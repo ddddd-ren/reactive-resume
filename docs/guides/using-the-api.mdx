@@ -171,6 +171,7 @@ If you built against the v5 API, check these changes:
 
 - **Structured dates.** Dated entries have a `dates` object (`start`, `end`, `present`). The text fields `period` and `date` are still returned, but the server rewrites them from `dates` on every save, so writing only the text has no effect. See [Using the patch API](/guides/using-the-patch-api#dates).
 - **Cover letters are their own documents.** Resumes no longer hold cover letters. Use the `/cover-letters` endpoints. If you send a resume that still contains a cover-letter section (for example an old export), the server saves each letter as a separate cover letter and removes the section from the resume.
+- **Application link.** `GET /resumes/{id}` includes `applicationId` for a tailored resume. Trash and automatic naming remain managed through the documents API.
 - **No cover-letter PDF from resumes.** `GET /resumes/{id}/pdf` only accepts `target=resume` (or no target). Old signed download links that ask for a cover letter return `404`.
 - **Delete moves to Trash.** `DELETE /resumes/{id}` and `DELETE /cover-letters/{id}` move the document to Trash for 30 days. Use the `/documents/restore` and `/documents/purge` endpoints to bring it back or delete it at once.
 - **Application stages.** The `rejected` stage and the `archived` flag are gone. Close an application with the `closed` stage and a `closedReason` (`not-selected`, `withdrew`, `accepted-other` or `no-response`).

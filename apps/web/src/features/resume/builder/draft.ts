@@ -803,6 +803,13 @@ export function savePendingChanges(id: string): boolean | Promise<boolean> {
 		const finish = (saved: boolean) => {
 			clearTimeout(timeout);
 			unsubscribe();
+			if (!saved && isBrowserOffline()) {
+				toast.add({
+					type: "info",
+					description: t`You're offline. Reconnect to save your changes before leaving.`,
+					id: "resume-offline-navigation",
+				});
+			}
 			resolve(saved);
 		};
 		const unsubscribe = useResumeStore.subscribe((state) => {

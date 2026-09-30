@@ -58,7 +58,7 @@ const buildFixture = (): ResumeData => {
 			location: "London",
 			period: "1842",
 			website: { url: "https://example.com/company", label: "Company", inlineLink: true },
-			description: "<p>Ignored when roles exist</p>",
+			description: "<p>Company-wide description</p>",
 			roles: [
 				{
 					id: "role/item",
@@ -355,6 +355,27 @@ const buildCompleteFixture = (): ResumeData => {
 };
 
 describe("buildSemanticTree", () => {
+	it("retains company-wide description and prints a repeated position only in the visible role", () => {
+		const data = buildFixture();
+		const item = required(data.sections.experience.items[0], "experience fixture");
+		item.position = required(item.roles[0], "role fixture").position;
+		item.roles.push({ id: "blank-role", position: " ", period: "", description: "<p>Hidden role</p>" });
+		const tree = buildSemanticTree({
+			data,
+			template: "onyx",
+			page: required(data.metadata.layout.pages[0], "authored page"),
+			pageNumber: 1,
+			showHeader: true,
+		});
+		const parent = required(
+			findNode(tree, (node) => node.id === item.id),
+			"experience",
+		);
+		expect(parent.children.some((node) => node.kind === "field" && node.attributes.name === "description")).toBe(true);
+		expect(findNodes(parent, (node) => node.kind === "field" && node.attributes.name === "position")).toHaveLength(1);
+		expect(findNode(tree, (node) => node.id === "blank-role")).toBeUndefined();
+		expect(item.position).toBe("Programmer");
+	});
 	it("builds stable authored-page, section, nested-role, field, and rich-text ancestry", () => {
 		const data = buildFixture();
 		const before = structuredClone(data);

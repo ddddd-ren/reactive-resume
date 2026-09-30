@@ -40,7 +40,8 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 				type: "loading",
 				description: backupCode ? t`Verifying backup code...` : t`Verifying code...`,
 			});
-			const code = backupCode ? `${value.code.slice(0, 5)}-${value.code.slice(5)}` : value.code;
+			const rawCode = value.code.trim().replaceAll("-", "");
+			const code = backupCode ? `${rawCode.slice(0, 5)}-${rawCode.slice(5)}` : value.code;
 			const { data, error } = backupCode
 				? await authClient.twoFactor.verifyBackupCode({ code, ...getOAuthSignInOptions(callbackURL) })
 				: await authClient.twoFactor.verifyTotp({ code, ...getOAuthSignInOptions(callbackURL) });
@@ -109,7 +110,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 									backupCode ? (
 										<Input
 											type="text"
-											maxLength={10}
+											maxLength={11}
 											className="max-w-xs"
 											name={field.name}
 											value={field.state.value}

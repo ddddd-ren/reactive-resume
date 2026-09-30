@@ -90,7 +90,7 @@ async function applyResumePatchTx(
 		.for("update");
 
 	if (!existing) throw new ORPCError("NOT_FOUND");
-	if (existing.isLocked) throw new ORPCError("RESUME_LOCKED");
+	if (existing.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
 	if (input.expectedUpdatedAt && existing.updatedAt.getTime() !== input.expectedUpdatedAt.getTime()) {
 		throw resumeVersionConflict(existing.updatedAt);
 	}
@@ -203,7 +203,11 @@ const statistics = {
 		if (!resume) throw new ORPCError("NOT_FOUND");
 		const viewer = input.currentUserId ? { id: input.currentUserId } : null;
 		assertCanView(resume, viewer);
-		if (resume.passwordHash && !hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash)) {
+		if (
+			resume.passwordHash &&
+			!isOwner(resume, viewer) &&
+			!hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash)
+		) {
 			throw new ORPCError("NEED_PASSWORD", {
 				status: 401,
 				data: { username: input.username, slug: input.slug },
@@ -379,7 +383,7 @@ export const resumeService = {
 		restore: async (input: { resumeId: string; versionId: string; userId: string }) => {
 			// Check lock state before loading or validating historical data so locked resumes fail without expensive work.
 			const current = await resumeService.getById({ id: input.resumeId, userId: input.userId });
-			if (current.isLocked) throw new ORPCError("RESUME_LOCKED");
+			if (current.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
 
 			const version = await getVersion(input);
 
@@ -467,6 +471,7 @@ export const resumeService = {
 		username: string;
 		slug: string;
 		requestHeaders: Headers;
+		trustedClient?: string;
 		currentUserId?: string;
 		requirePublic?: boolean;
 		expectedResumeId?: string;
@@ -502,7 +507,11 @@ export const resumeService = {
 		const viewer = input.currentUserId ? { id: input.currentUserId } : null;
 		assertCanView(resume, viewer);
 
-		if (resume.hasPassword && !hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash)) {
+		if (
+			resume.hasPassword &&
+			!isOwner(resume, viewer) &&
+			!hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash)
+		) {
 			throw new ORPCError("NEED_PASSWORD", {
 				status: 401,
 				data: { username: input.username, slug: input.slug },
@@ -510,7 +519,7 @@ export const resumeService = {
 		}
 
 		if (shouldCountForStatistics(resume, viewer)) {
-			const key = `${resume.id}:${clientKeyFromHeaders(input.requestHeaders)}`;
+			const key = `${resume.id}:${clientKeyFromHeaders(input.trustedClient)}`;
 			if (await shouldCountView(key, Date.now())) {
 				await resumeService.statistics.increment({ id: resume.id, views: true });
 			}
@@ -610,7 +619,7 @@ export const resumeService = {
 					.for("update");
 
 				if (!existing) throw new ORPCError("NOT_FOUND");
-				if (existing.isLocked) throw new ORPCError("RESUME_LOCKED");
+				if (existing.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
 
 				// A new address must follow the pattern; existing ones that don't keep working until changed.
 				const renamed = input.slug !== undefined && input.slug !== existing.slug;
@@ -816,7 +825,7 @@ export const resumeService = {
 				.where(and(eq(schema.resume.id, input.id), eq(schema.resume.userId, input.userId)));
 
 			if (!resume) throw new ORPCError("NOT_FOUND");
-			if (resume.isLocked) throw new ORPCError("RESUME_LOCKED");
+			if (resume.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
 
 			await tx.delete(schema.resume).where(and(eq(schema.resume.id, input.id), eq(schema.resume.userId, input.userId)));
 		});

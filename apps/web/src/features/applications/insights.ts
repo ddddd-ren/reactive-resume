@@ -21,8 +21,8 @@ export type Insights = {
 export function computeInsights(byStage: StageCount[]): Insights {
 	const counts = new Map<ApplicationStatus, number>(byStage.map((row) => [row.status, row.count]));
 	const at = (status: ApplicationStatus) => counts.get(status) ?? 0;
-	const total = byStage.reduce((sum, row) => sum + row.count, 0);
 	const closed = at("closed");
+	const total = byStage.reduce((sum, row) => sum + row.count, 0) - closed;
 
 	// reached[i] = active apps that got at least as far as FORWARD[i].
 	const reached = FORWARD.map((_, i) => FORWARD.slice(i).reduce((sum, s) => sum + at(s), 0));
@@ -61,7 +61,7 @@ export type TimelineBucket = { label: string; count: number };
 
 // Bucket application dates into the last `weeks` calendar weeks (Sunday-started) so the Insights
 // view can show application velocity over time — a dimension the funnel/tiles don't capture.
-export function computeTimeline(dates: Date[], weeks = 8): TimelineBucket[] {
+export function computeTimeline(applications: readonly OutcomeSource[], weeks = 8): TimelineBucket[] {
 	const msWeek = 7 * 86_400_000;
 	const startOfWeek = new Date();
 	startOfWeek.setHours(0, 0, 0, 0);
@@ -73,8 +73,9 @@ export function computeTimeline(dates: Date[], weeks = 8): TimelineBucket[] {
 	});
 
 	const first = buckets[0]?.start ?? 0;
-	for (const date of dates) {
-		const time = date.getTime();
+	for (const application of applications) {
+		if (furthestStage(application) < PIPELINE.indexOf("applied")) continue;
+		const time = sentAt(application).getTime();
 		if (time < first) continue;
 		const index = Math.min(weeks - 1, Math.floor((time - first) / msWeek));
 		const bucket = buckets[index];

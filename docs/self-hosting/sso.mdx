@@ -73,9 +73,9 @@ Set the client credentials and one way of finding the provider's endpoints, then
 
 All URLs must use `http` or `https`. On Docker, restart the container after changing `.env`; on Vercel, add the variables to the project and redeploy.
 
-<Warning>
-  The sign-in button appears as soon as `OAUTH_CLIENT_ID` and `OAUTH_CLIENT_SECRET` are set, but sign-in works only when `OAUTH_DISCOVERY_URL` or all three manual URLs are also set. If the button shows and does nothing useful, check the endpoint variables.
-</Warning>
+<Note>
+  The sign-in button appears only when `OAUTH_CLIENT_ID` and `OAUTH_CLIENT_SECRET` are set together with `OAUTH_DISCOVERY_URL` or all three manual endpoint URLs. If it is missing, check that configuration and restart the server.
+</Note>
 
 ## Check that it works
 
@@ -96,7 +96,7 @@ When someone signs in for the first time, Reactive Resume creates their account 
 | Username | `preferred_username`, then the part of the email before `@`. A number is added if it's taken. |
 | Picture | `image`, then `picture`, then `avatar_url` |
 
-If the email already belongs to an account, the sign-in is linked to that account, which keeps its name and username. This works only when that account's email address is verified in Reactive Resume. If it isn't (common on installations without SMTP, where verification emails never arrive), the sign-in stops with an "account not linked" error.
+If the email already belongs to an account, the sign-in is linked to that account, which keeps its name and username. This works only when that account's email address is verified in Reactive Resume, protecting an existing account from an unverified email match. If it isn't (common on installations without SMTP, where verification emails never arrive), the sign-in stops with an "account not linked" error. Verify the existing account's email before trying SSO again, or sign in to that account and connect the provider in **Settings → Account**.
 
 ## Make SSO the only way in
 

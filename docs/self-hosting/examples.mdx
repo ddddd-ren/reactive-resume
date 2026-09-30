@@ -14,11 +14,10 @@ Whatever proxy you use, configure it so that:
 - **The whole site goes to the app.** The app serves pages, the API (`/api/`), the MCP server (`/mcp`), uploads and
   assets from one address. Don't split or rewrite paths.
 - **`APP_URL` is the public address**, for example `APP_URL="https://resume.example.com"`.
-- **The client's IP address is passed on, and clients can't fake it.** Rate limits (sign-in attempts, public resume
-  passwords) are counted per IP address. The app uses the first of these headers it finds, as sent: `CF-Connecting-IP`,
-  `CF-Connecting-IPv6`, `True-Client-IP`, `X-Forwarded-For` (its first entry), then `X-Real-IP`. Set
-  `X-Forwarded-For` to the address the proxy sees, replacing any value the client sent, and remove the other three
-  headers unless a CDN in front of your proxy sets them. The examples below do both.
+- **Client-supplied IP headers are replaced or removed.** The Node server uses its connection's remote address for
+  IP-based limits, such as sign-in attempts and public resume passwords, and ignores forwarded IP headers. Behind a
+  reverse proxy, users share the proxy's IP-based limit. Vercel uses the client address supplied by its deployment
+  adapter. The examples below also replace `X-Forwarded-For` and remove alternate IP headers at the proxy.
 - **Streaming responses aren't buffered**, and idle reads are allowed for at least 5 minutes. Assistant replies and
   live updates stream from the server, and a single Assistant reply can take up to 4 minutes.
 - **Request bodies of at least 50 MB are accepted.** People can attach files of up to 25 MB to the Assistant, and
@@ -26,7 +25,7 @@ Whatever proxy you use, configure it so that:
 
 <Warning>
   Once a proxy is in front, don't publish the app's port `3000` on a public
-  interface, or clients can bypass the proxy and fake their IP address to get around rate limits. Remove the `ports`
+  interface, or clients can bypass the proxy's HTTPS and access controls. Remove the `ports`
   entry, or bind it to `127.0.0.1:3000:3000`.
 </Warning>
 
@@ -361,10 +360,10 @@ accepts public `https://` provider addresses, so you turn on a flag that allows 
   </Step>
 
   <Step title="Add the provider in Reactive Resume">
-    Open **Settings**, then **AI & developer**, and select **Add provider**. Choose **Ollama Cloud** as the provider and
+    Open **Settings**, then **AI & developer**, and select **Add provider**. Choose **Ollama** as the provider and
     fill in:
 
-    - **API key**: any text, for example `ollama`. A local Ollama server ignores it.
+    - **API key**: leave empty for a local Ollama server that doesn't require authentication.
     - **Model**: the model you pulled, for example `llama3.1`.
     - **Base URL**: `http://ollama:11434/api`
 

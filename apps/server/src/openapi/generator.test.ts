@@ -69,6 +69,10 @@ function findImpossibleRequestSchemas(spec: GeneratedSpecView) {
 }
 
 describe("generateOpenApiSpec", () => {
+	it("keeps instance homepage resolution out of the public API", async () => {
+		const spec = (await generateSpec()) as GeneratedSpecView;
+		expect(spec.paths).not.toHaveProperty("/resume/getRoot");
+	}, 15_000);
 	it("uses the canonical input-side ResumeData schema in update requests", async () => {
 		const spec = (await generateSpec()) as GeneratedSpecView;
 		const { $schema: _dialect, ...canonicalInputSchema } = createResumeDataJsonSchema();

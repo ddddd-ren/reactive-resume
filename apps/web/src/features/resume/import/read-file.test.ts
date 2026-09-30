@@ -41,6 +41,13 @@ describe("detectImportKind", () => {
 });
 
 describe("parseResumeJson (legacy styles)", () => {
+	it("imports a resume extracted from the account archive", () => {
+		const exported = { id: "r1", name: "My resume", data: sampleResumeData };
+		expect(detectJsonImportKind(exported)).toBe("reactive-resume-json");
+		const imported = parseResumeJson(JSON.stringify(exported), "reactive-resume-json");
+		expect(imported.basics).toEqual(sampleResumeData.basics);
+		expect(imported.sections.experience.items).toEqual(sampleResumeData.sections.experience.items);
+	});
 	it("converts an old export's legacy style rules into its stylesheet", () => {
 		const data = structuredClone(sampleResumeData);
 		data.metadata.stylesheet = undefined;
@@ -59,4 +66,11 @@ describe("parseResumeJson (legacy styles)", () => {
 		expect(imported.metadata.stylesheet?.mode).toBe("semantic");
 		expect(imported.metadata.stylesheet?.source.text).toContain("color: #0f766e;");
 	});
+});
+
+it("rejects legacy Word before it reaches the OOXML parser", async () => {
+	const file = new File([new Uint8Array([0xd0, 0xcf, 0x11, 0xe0])], "resume.doc", {
+		type: "application/msword",
+	});
+	await expect(detectImportKind(file)).rejects.toThrow("save it as .docx");
 });

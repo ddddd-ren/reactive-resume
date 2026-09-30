@@ -161,23 +161,30 @@ describe("applicationService.update", () => {
 describe("applicationService sent resume", () => {
 	const sentRow = { ...existing, status: "applied" as const, resumeId: "resume-1", sentResumeVersionId: null };
 
-	it("saves the linked resume as a sent version with its Check score once the application is sent", async () => {
-		const data = structuredClone((await import("@reactive-resume/schema/resume/default")).defaultResumeData);
-		resumeGetByIdMock.mockResolvedValue({ id: "resume-1", data });
-		const setSent = vi.fn(() => ({ where: () => ({ returning: () => Promise.resolve([{ ...sentRow }]) }) }));
-		dbMock.update.mockReturnValueOnce({
-			set: vi.fn(() => ({ where: () => ({ returning: () => Promise.resolve([sentRow]) }) })),
-		});
-		dbMock.update.mockReturnValueOnce({ set: setSent });
+	it.each(["stage", "resume"] as const)(
+		"saves the sent version and score when the %s is linked at Applied",
+		async (field) => {
+			const data = structuredClone((await import("@reactive-resume/schema/resume/default")).defaultResumeData);
+			resumeGetByIdMock.mockResolvedValue({ id: "resume-1", data });
+			const setSent = vi.fn(() => ({ where: () => ({ returning: () => Promise.resolve([{ ...sentRow }]) }) }));
+			dbMock.update.mockReturnValueOnce({
+				set: vi.fn(() => ({ where: () => ({ returning: () => Promise.resolve([sentRow]) }) })),
+			});
+			dbMock.update.mockReturnValueOnce({ set: setSent });
 
-		await applicationService.update({ id: "app-1", userId: "user-1", status: "applied" });
+			await applicationService.update({
+				id: "app-1",
+				userId: "user-1",
+				...(field === "stage" ? { status: "applied" as const } : { resumeId: "resume-1" }),
+			});
 
-		expect(writeVersionMock).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({ resumeId: "resume-1", kind: "sent", name: "Stripe", data }),
-		);
-		expect(setSent).toHaveBeenCalledWith({ sentResumeVersionId: "version-1", sentCheckScore: expect.any(Number) });
-	});
+			expect(writeVersionMock).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({ resumeId: "resume-1", kind: "sent", name: "Stripe", data }),
+			);
+			expect(setSent).toHaveBeenCalledWith({ sentResumeVersionId: "version-1", sentCheckScore: expect.any(Number) });
+		},
+	);
 
 	it("saves it once, and not before the application is sent", async () => {
 		setSelectResults([existing], [existing]);

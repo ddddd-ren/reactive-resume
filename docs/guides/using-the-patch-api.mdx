@@ -217,10 +217,10 @@ If the resume has moved on, you get `409` with the code `RESUME_VERSION_CONFLICT
 | `401` | `UNAUTHORIZED` | The API key is missing, revoked or expired. |
 | `404` | `NOT_FOUND` | The resume doesn't exist or belongs to someone else. |
 | `409` | `RESUME_VERSION_CONFLICT` | The resume changed after `expectedUpdatedAt`. |
-| — | `RESUME_LOCKED` | The resume is locked. Unlock it with `POST /resumes/{id}/lock` and `{ "isLocked": false }`, or in the app. |
+| `403` | `RESUME_LOCKED` | The resume is locked. Unlock it with `POST /resumes/{id}/lock` and `{ "isLocked": false }`, or in the app. |
 
 <Note>
-  A locked resume currently answers with HTTP status `500` rather than a `4xx` status. Check the `code` field for `RESUME_LOCKED` instead of relying on the status.
+  Locked resume writes return HTTP `403` with code `RESUME_LOCKED`. Unlock the resume before retrying.
 </Note>
 
 ## Related guides

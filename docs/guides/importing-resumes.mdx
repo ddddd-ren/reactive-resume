@@ -44,7 +44,7 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
     When the import finishes, the dialog tells you how many sections and entries it found. Select **Open in editor** to start reviewing, or **Stay here** to keep working on Documents. The new resume has a **New** badge on its card.
 
     <Frame caption="A finished import">
-      <img src="/images/guides/importing-resumes/import-finished.webp" alt="The Importing dialog for David-Kowalski-Resume.pdf with all three steps checked, 9 sections and 58 entries found, and Stay here and Open in editor buttons" />
+      <img src="/images/guides/importing-resumes/import-finished.webp" alt="The Imported dialog for David-Kowalski-Resume.pdf with all three steps checked, 9 sections and 58 entries found, and Stay here and Open in editor buttons" />
     </Frame>
   </Step>
 </Steps>
@@ -65,7 +65,7 @@ Go through every section before you send the resume. PDF and Word files don't st
 
 <AccordionGroup>
   <Accordion title="Reactive Resume JSON">
-    Download it from another resume with **Download** and the JSON format (see [Exporting your resume](/guides/exporting-your-resume)). Custom styles written for the older styling system come in converted to the current one. If a version 5 resume contained cover letters, each one becomes its own letter in Documents, linked to the imported resume.
+    Download it from another resume with **Download** and the JSON format, or extract an individual resume JSON file from **Export everything** (see [Exporting your resume](/guides/exporting-your-resume)). Custom styles written for the older styling system come in converted to the current one. If a version 5 resume contained cover letters, each one becomes its own letter in Documents, linked to the imported resume.
   </Accordion>
   <Accordion title="LinkedIn data export">
     In LinkedIn's settings, request a copy of your data and download the archive when LinkedIn emails you. Import the `.zip` file as it is; don't unzip it. Reactive Resume reads `Profile.csv`, `Positions.csv`, `Education.csv`, `Skills.csv`, `Languages.csv` and `Certifications.csv` and ignores everything else, such as messages. The file never leaves your browser.
@@ -74,7 +74,7 @@ Go through every section before you send the resume. PDF and Word files don't st
     With an AI provider set up, the PDF (up to 10 MB) is sent to that provider, which returns the resume's sections. Without one, Reactive Resume reads the PDF's text in your browser and sorts it into sections itself. This works best for simple, one-column resumes. A scanned PDF (a picture of a page) has no text to read and can't be imported this way.
   </Accordion>
   <Accordion title="Word">
-    Word files are always read by your AI provider, so set one up first. Use the modern `.docx` format; if you have an older `.doc` file, open it in Word and save it as `.docx`. Files can be up to 10 MB.
+    Word files are always read by your AI provider, so set one up first. Use the modern `.docx` format; older `.doc` files are rejected before parsing. Open them in Word and save as `.docx`. Files can be up to 10 MB.
   </Accordion>
 </AccordionGroup>
 

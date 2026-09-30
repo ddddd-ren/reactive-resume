@@ -111,6 +111,14 @@ Each run ends with a summary per table:
 
 On Kubernetes, run the same commands with `kubectl exec deploy/<your-deployment> -- node apps/server/dist/migrate-legacy-styles.mjs ...`. On Vercel there's no container: from a checkout of the same release, put the production variables in the root `.env` (for example with `vercel env pull .env --environment production`), set `DATABASE_URL` to the direct, unpooled connection, run `pnpm install` and `pnpm build --filter=server`, and then run the script with `node`.
 
+## Check legacy PostgreSQL volumes
+
+Some v5 Compose examples mounted PostgreSQL 17 at `/var/lib/postgresql`. Unless you explicitly changed `PGDATA`, PostgreSQL 17 stores its database at `/var/lib/postgresql/data`, so Docker created an anonymous volume there instead of using the parent mount. See the [official PostgreSQL image volume guidance](https://github.com/docker-library/docs/blob/master/postgres/README.md#pgdata).
+
+Before recreating that container, inspect its mounts and make a logical database backup from the running instance. Keep the old container and its volumes until you have restored and checked the backup. Do not run `docker compose down -v` or delete anonymous volumes during the upgrade.
+
+PostgreSQL 18 changes the default data layout. Changing the image tag alone does not migrate a PostgreSQL 17 database; restore the logical backup into a fresh PostgreSQL 18 volume, or follow PostgreSQL's supported major-version upgrade procedure.
+
 ## What the migrations change
 
 Every migration runs once, in order, under an advisory lock. Three of them ship a `rollback.sql` next to `migration.sql` in the repository's `migrations/` folder.

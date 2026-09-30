@@ -2,17 +2,18 @@ import { getFont } from "@reactive-resume/fonts";
 
 type Weight = "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
 
-export function getNextWeights(fontFamily: string): Weight[] | null {
+export function getNextWeights(fontFamily: string, single = false): Weight[] | null {
 	const fontData = getFont(fontFamily);
 	if (!fontData || !Array.isArray(fontData.weights) || fontData.weights.length === 0) return null;
 
 	const uniqueWeights = [...new Set(fontData.weights)] as Weight[];
 
-	// Try to pick 400 and 600 if available
+	if (single) return [uniqueWeights.includes("600") ? "600" : (uniqueWeights.at(-1) ?? "400")];
+	// Body text uses a regular weight and a bold weight.
 	const weights: Weight[] = [];
 
 	if (uniqueWeights.includes("400")) weights.push("400");
-	if (uniqueWeights.includes("600")) weights.push("600");
+	if (uniqueWeights.includes("700")) weights.push("700");
 
 	const selectedWeights = new Set(weights);
 

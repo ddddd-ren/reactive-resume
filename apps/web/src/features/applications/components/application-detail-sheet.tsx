@@ -541,13 +541,13 @@ function PrepareButton({ application }: { application: Application }) {
 					void navigate({
 						to: "/builder/$resumeId",
 						params: { resumeId: target.id },
-						search: { assistant: "prepare" },
+						search: { assistant: "prepare", applicationId: application.id },
 					});
 				else if (target)
 					void navigate({
 						to: "/builder/letter/$coverLetterId",
 						params: { coverLetterId: target.id },
-						search: { assistant: "prepare" },
+						search: { assistant: "prepare", applicationId: application.id },
 					});
 			}}
 		>

@@ -87,7 +87,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 			if (data.method === "totp") {
 				setTotpUri(data.totpURI);
 				setBackupCodes(data.backupCodes);
-				setStep("verify");
+				setStep("backup");
 				toast.close(toastId);
 			} else {
 				toast.add({ type: "error", description: t`Could not set up two-factor authentication.`, id: toastId });
@@ -119,7 +119,10 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 			}
 
 			toast.close(toastId);
-			setStep("backup");
+			toast.add({ type: "success", description: t`Two-factor authentication is now enabled.` });
+			void queryClient.invalidateQueries({ queryKey: sessionQueryKey }).then(() => router.invalidate());
+			closeDialog();
+			onReset();
 		},
 	});
 
@@ -137,10 +140,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 	});
 
 	const onConfirmBackup = () => {
-		toast.add({ type: "success", description: t`Two-factor authentication is now enabled.` });
-		void queryClient.invalidateQueries({ queryKey: sessionQueryKey }).then(() => router.invalidate());
-		closeDialog();
-		onReset();
+		setStep("verify");
 	};
 
 	const onReset = () => {

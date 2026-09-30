@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 
 export function getReadableErrorMessage(error: unknown, fallback: string): string {
@@ -36,6 +37,8 @@ export function getOrpcErrorMessage(
 	},
 ): string {
 	if (!(error instanceof ORPCError)) return getReadableErrorMessage(error, options.fallback);
+	if (error.code === "AI_CREDENTIAL_DECRYPTION_FAILED")
+		return t`The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer.`;
 
 	const mappedMessage = options.byCode?.[error.code];
 	if (mappedMessage) return mappedMessage;

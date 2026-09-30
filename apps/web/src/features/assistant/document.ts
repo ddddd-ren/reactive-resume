@@ -1,6 +1,7 @@
 import type { Proposal, ProposalState } from "@reactive-resume/resume/proposals";
 import { t } from "@lingui/core/macro";
 import { useQuery } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
 import {
 	applyTo,
@@ -24,7 +25,7 @@ export type AssistantDocument = {
 	name: string;
 	locked: boolean;
 	/** The application it's for, whose posting is shared as context. */
-	posting: { company: string; role: string } | null;
+	posting: { id: string; company: string; role: string } | null;
 	/** A proposal's state against the document as it reads now. */
 	stateOf: (proposal: Proposal) => ProposalState;
 	/** Applies proposals as one undo step, with Undo in the toast. */
@@ -44,11 +45,13 @@ function locate(passages: readonly { html: string; location: string }[], before:
 
 export function useResumeAssistantDocument(): AssistantDocument {
 	const resume = useCurrentResume();
+	const { applicationId } = useSearch({ strict: false });
 	const { data: applications } = useQuery(applicationsListQueryOptions());
 	// The application it was made for, otherwise the latest one it's linked to (as the server reads it).
-	const application =
-		applications?.find((item) => item.id === resume.applicationId) ??
-		applications?.find((item) => item.resumeId === resume.id);
+	const application = applicationId
+		? applications?.find((item) => item.id === applicationId)
+		: (applications?.find((item) => item.id === resume.applicationId) ??
+			applications?.find((item) => item.resumeId === resume.id));
 
 	return useMemo(() => {
 		const passages = collectPassages(resume.data, {
@@ -64,7 +67,7 @@ export function useResumeAssistantDocument(): AssistantDocument {
 			id: resume.id,
 			name: resume.name,
 			locked: resume.isLocked,
-			posting: application ? { company: application.company, role: application.role } : null,
+			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
 			stateOf: (proposal) => getProposalState(resume.data, proposal),
 			accept: acceptResumeProposals,
 			locationOf: (proposal) => locate(passages, proposal.before),
@@ -74,8 +77,9 @@ export function useResumeAssistantDocument(): AssistantDocument {
 
 export function useLetterAssistantDocument(): AssistantDocument | null {
 	const letter = useLetterEditorStore((state) => state.letter);
+	const { applicationId } = useSearch({ strict: false });
 	const { data: applications } = useQuery(applicationsListQueryOptions());
-	const application = applications?.find((item) => item.id === letter?.sourceApplicationId);
+	const application = applications?.find((item) => item.id === (applicationId ?? letter?.sourceApplicationId));
 
 	return useMemo(() => {
 		if (!letter) return null;
@@ -86,7 +90,7 @@ export function useLetterAssistantDocument(): AssistantDocument | null {
 			id: letter.id,
 			name: letter.name,
 			locked: letter.isLocked,
-			posting: application ? { company: application.company, role: application.role } : null,
+			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
 			stateOf: (proposal) => getStateIn(letter.content, proposal),
 			accept: (proposals) => {
 				const { letter: current, edit } = useLetterEditorStore.getState();

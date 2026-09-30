@@ -173,8 +173,9 @@ function addressMessage({ isPublic, slug, wellFormed, changed, status, url, user
 	if (!wellFormed) return t`Use lowercase letters, numbers and single dashes.`;
 	if (!changed) return t`Live at ${url.replace(/^https?:\/\//, "")}`;
 	if (status === "taken") return null;
-	if (status === "available") return t`Available · ${window.location.host}/${username}/${slug}`;
-	return t`Checking…`;
+	if (status === "available")
+		return t`Saving ${window.location.host}/${username}/${slug}… Copy is available after saving.`;
+	return t`Checking… Copy is available after saving.`;
 }
 
 /** The address, checked as you type. The old one stays live until the new one is valid and saved. */
@@ -197,8 +198,10 @@ function AddressField({ url, username }: AddressFieldProps) {
 			<div className="flex gap-1.5">
 				<div
 					className={cn(
-						"flex h-[38px] min-w-0 flex-1 items-center overflow-hidden rounded-lg border bg-raised transition-colors duration-quick focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft",
-						invalid ? "border-danger" : "border-line-2",
+						"flex h-[38px] min-w-0 flex-1 items-center overflow-hidden rounded-lg border bg-raised transition-colors duration-quick focus-within:ring-3",
+						invalid
+							? "border-danger focus-within:border-danger focus-within:ring-danger/15"
+							: "border-line-2 focus-within:border-accent focus-within:ring-accent-soft",
 					)}
 				>
 					{/* A long host or username truncates, so the part being edited stays visible. */}
@@ -345,7 +348,7 @@ function QrCodeButton({ url }: { url: string }) {
 	);
 }
 
-/** Only the owner sees these; counts are anonymous and kept for 90 days. */
+/** Only the owner sees these; downloads count successful clicks, including repeats. */
 function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 	const resume = useCurrentResume();
 	const { i18n } = useLingui();
@@ -402,11 +405,12 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 				</>
 			) : (
 				<p className="text-[13px] text-ink-2 leading-[19px]">
-					<Trans>
-						Turn on the public link to count views and downloads. Counts are anonymous and kept for 90 days.
-					</Trans>
+					<Trans>Turn on the public link to count views and downloads. Counts are anonymous.</Trans>
 				</p>
 			)}
+			<p className="text-ink-3 text-xs">
+				<Trans>Download totals can include repeat clicks.</Trans>
+			</p>
 		</section>
 	);
 }

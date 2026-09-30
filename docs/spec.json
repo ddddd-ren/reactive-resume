@@ -1190,8 +1190,7 @@
 										"type": "string"
 									},
 									"apiKey": {
-										"type": "string",
-										"minLength": 1
+										"type": "string"
 									}
 								},
 								"required": [
@@ -1401,8 +1400,7 @@
 										"type": "string"
 									},
 									"apiKey": {
-										"type": "string",
-										"minLength": 1
+										"type": "string"
 									},
 									"enabled": {
 										"type": "boolean"
@@ -2220,6 +2218,11 @@
 											"posting": {
 												"type": "boolean",
 												"description": "Share the job posting it's for (on by default)."
+											},
+											"applicationId": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 255
 											}
 										}
 									}
@@ -18604,28 +18607,6 @@
 				}
 			}
 		},
-		"/resume/getRoot": {
-			"post": {
-				"operationId": "resume.getRoot",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"anyOf": [
-										{},
-										{
-											"not": {}
-										}
-									]
-								}
-							}
-						}
-					}
-				}
-			}
-		},
 		"/resumes/tags": {
 			"get": {
 				"operationId": "listResumeTags",
@@ -18890,14 +18871,19 @@
 						"name": "tags",
 						"in": "query",
 						"schema": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							},
+							"anyOf": [
+								{
+									"type": "string"
+								},
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							],
 							"default": []
 						},
-						"style": "deepObject",
-						"explode": true,
 						"allowEmptyValue": true,
 						"allowReserved": true
 					},
@@ -27864,6 +27850,66 @@
 								}
 							}
 						}
+					},
+					"403": {
+						"description": "403",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RESUME_LOCKED"
+												},
+												"status": {
+													"const": 403
+												},
+												"message": {
+													"type": "string",
+													"default": "Unlock the resume first."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
 					}
 				}
 			},
@@ -32374,6 +32420,66 @@
 							}
 						}
 					},
+					"403": {
+						"description": "403",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RESUME_LOCKED"
+												},
+												"status": {
+													"const": 403
+												},
+												"message": {
+													"type": "string",
+													"default": "Unlock the resume first."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
 					"409": {
 						"description": "409",
 						"content": {
@@ -32466,6 +32572,66 @@
 										},
 										{
 											"not": {}
+										}
+									]
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "403",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RESUME_LOCKED"
+												},
+												"status": {
+													"const": 403
+												},
+												"message": {
+													"type": "string",
+													"default": "Unlock the resume first."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
 										}
 									]
 								}
@@ -37192,7 +37358,7 @@
 					}
 				],
 				"requestBody": {
-					"required": true,
+					"required": false,
 					"content": {
 						"application/json": {
 							"schema": {
@@ -37215,11 +37381,7 @@
 										"minLength": 1,
 										"description": "The slug of the copy. Generated from the name, and made unique, when omitted."
 									}
-								},
-								"required": [
-									"name",
-									"tags"
-								]
+								}
 							}
 						}
 					}

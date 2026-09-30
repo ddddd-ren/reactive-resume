@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
+import { ORPCError } from "@orpc/client";
 import { env } from "@reactive-resume/env/server";
 
 const CIPHER = "aes-256-gcm";
@@ -62,14 +63,21 @@ export function encryptCredential(apiKey: string): StoredCredentialFields {
 
 export function decryptCredential(payload: string) {
 	const [version, encodedIv, encodedAuthTag, encodedCiphertext] = payload.split(".");
-	if (version !== CREDENTIAL_VERSION || !encodedIv || !encodedAuthTag || !encodedCiphertext) {
+	if (version !== CREDENTIAL_VERSION || !encodedIv || !encodedAuthTag || encodedCiphertext === undefined) {
 		throw new Error("INVALID_ENCRYPTED_CREDENTIAL");
 	}
 
-	const decipher = createDecipheriv(CIPHER, getEncryptionKey(), decode(encodedIv));
-	decipher.setAuthTag(decode(encodedAuthTag));
-
-	return Buffer.concat([decipher.update(decode(encodedCiphertext)), decipher.final()]).toString("utf8");
+	const key = getEncryptionKey();
+	try {
+		const decipher = createDecipheriv(CIPHER, key, decode(encodedIv));
+		decipher.setAuthTag(decode(encodedAuthTag));
+		return Buffer.concat([decipher.update(decode(encodedCiphertext)), decipher.final()]).toString("utf8");
+	} catch {
+		throw new ORPCError("AI_CREDENTIAL_DECRYPTION_FAILED", {
+			status: 412,
+			message: "The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer.",
+		});
+	}
 }
 
 function isCredentialEncryptionConfigured() {

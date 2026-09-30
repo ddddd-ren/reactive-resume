@@ -13,11 +13,20 @@ import {
 	useSensors,
 } from "@dnd-kit/core";
 import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { useReducedMotion } from "motion/react";
 import { useState } from "react";
+import { Button } from "@reactive-resume/ui/components/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@reactive-resume/ui/components/dialog";
 import { cn } from "@reactive-resume/utils/style";
 import { DRAG_SETTLE } from "@/libs/motion";
-import { getStageColor, getStageLabel, PIPELINE } from "../stages";
+import { CLOSED_REASONS, getClosedReasonLabel, getStageColor, getStageLabel, PIPELINE } from "../stages";
 import { useApplicationActions } from "../use-application-actions";
 import { ApplicationCard } from "./application-card";
 
@@ -38,9 +47,10 @@ const dropSideEffects = defaultDropAnimationSideEffects({
  * other ways to change stage; each card's menu has Move to… for the keyboard. Desktop and tablet only.
  */
 export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProps) {
-	const { moveTo } = useApplicationActions();
+	const { moveTo, close } = useApplicationActions();
 	const reduceMotion = useReducedMotion();
 	const [activeId, setActiveId] = useState<string | null>(null);
+	const [closing, setClosing] = useState<Application | null>(null);
 	// The list query publishes the optimistic move a task after the drop (TanStack Query notifies on a timeout), so
 	// until it does the board shows the dropped card in its new column itself. Otherwise the card blinks back to its
 	// old column for a frame, and the drop animation would fly there.
@@ -74,6 +84,10 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 		const target = event.over?.id as ApplicationStatus | undefined;
 		const application = applications.find((item) => item.id === event.active.id);
 		if (!target || !application || application.status === target) return;
+		if (target === "closed") {
+			setClosing(application);
+			return;
+		}
 		// Same batched render as setActiveId(null): the card is already in its new column when the drop animation measures it.
 		setPendingMove({ id: application.id, from: application.status, to: target });
 		moveTo(application, target);
@@ -91,6 +105,34 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 			<DragOverlay dropAnimation={reduceMotion ? null : { ...DRAG_SETTLE, sideEffects: dropSideEffects }}>
 				{active ? <ApplicationCard application={active} dragging /> : null}
 			</DragOverlay>
+			<Dialog open={Boolean(closing)} onOpenChange={(open) => !open && setClosing(null)}>
+				<DialogContent className="sm:max-w-sm">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Close application</Trans>
+						</DialogTitle>
+						<DialogDescription>
+							{closing?.role} · {closing?.company}
+						</DialogDescription>
+					</DialogHeader>
+					<div className="grid gap-2">
+						{CLOSED_REASONS.map((reason) => (
+							<Button
+								key={reason}
+								variant="secondary"
+								onClick={() => {
+									if (!closing) return;
+									setPendingMove({ id: closing.id, from: closing.status, to: "closed" });
+									close(closing, reason);
+									setClosing(null);
+								}}
+							>
+								{getClosedReasonLabel(reason)}
+							</Button>
+						))}
+					</div>
+				</DialogContent>
+			</Dialog>
 		</DndContext>
 	);
 }

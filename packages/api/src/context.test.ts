@@ -40,6 +40,17 @@ const reset = () => {
 };
 
 describe("resolveUserFromRequestHeaders", () => {
+	it("falls back to a valid bearer token when an API key is invalid", async () => {
+		reset();
+		authMock.api.verifyApiKey.mockResolvedValueOnce({ valid: false });
+		verifyOAuthTokenMock.mockResolvedValueOnce({ sub: "bearer-user" });
+		setupDbResolves({ id: "bearer-user" });
+		const user = await resolveUserFromRequestHeaders(
+			new Headers({ "x-api-key": "expired-key", authorization: "Bearer valid-token" }),
+		);
+		expect(user).toMatchObject({ id: "bearer-user" });
+		expect(verifyOAuthTokenMock).toHaveBeenCalledWith("valid-token");
+	});
 	it("returns the user resolved from a valid x-api-key", async () => {
 		reset();
 		authMock.api.verifyApiKey.mockResolvedValueOnce({ valid: true, key: { referenceId: "user-1" } });

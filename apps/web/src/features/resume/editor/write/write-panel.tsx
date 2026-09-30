@@ -97,7 +97,7 @@ function ImportedNote() {
 					{toCheck > 0 ? (
 						<Plural value={toCheck} one="# field needs a look." other="# fields need a look." />
 					) : (
-						<Trans>Everything was read clearly.</Trans>
+						<Trans>Review each section before using this resume.</Trans>
 					)}
 				</span>
 				<button

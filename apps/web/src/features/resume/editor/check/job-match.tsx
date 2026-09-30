@@ -94,7 +94,7 @@ function termAsWritten(forms: readonly string[], posting: string): string | unde
 
 type JobMatchTabProps = { match: JobMatch; data: ResumeData };
 
-export function JobMatchTab({ match, data }: JobMatchTabProps) {
+export function JobMatchTab({ match }: JobMatchTabProps) {
 	const { application, posting, result, hiddenTerms } = match;
 	const [openTerm, setOpenTerm] = useState<string | null>(null);
 	const highlightTerm = useEditorStore((state) => state.highlightTerm);
@@ -104,14 +104,11 @@ export function JobMatchTab({ match, data }: JobMatchTabProps) {
 	if (!posting) return <NoPosting application={application} />;
 
 	const open = result?.missing.find((term) => term.term === openTerm);
-	const skills = data.sections.skills.items.find((item) => !item.hidden);
 
 	const addToSkills = (term: MatchedTerm) => {
 		const written = term.label;
 		editWithUndo((draft) => {
-			const target = draft.sections.skills.items.find((item) => item.id === skills?.id);
-			if (target) target.keywords.push(written);
-			else draft.sections.skills.items.push(newSkill(written));
+			draft.sections.skills.items.push(newSkill(written));
 		}, t`“${written}” added to Skills`);
 		setOpenTerm(null);
 		setHighlightTerm(term.term);
@@ -205,7 +202,7 @@ export function JobMatchTab({ match, data }: JobMatchTabProps) {
 									<div className="grid justify-items-start gap-1">
 										<Button size="sm" disabled={locked} onClick={() => addToSkills(open)}>
 											<Icon name="add" size={16} />
-											{skills?.name ? <Trans>Add to Skills · {skills.name}</Trans> : <Trans>Add to Skills</Trans>}
+											<Trans>Add to Skills</Trans>
 										</Button>
 										<Button size="sm" variant="secondary" disabled={locked} onClick={() => askAssistant(open.label)}>
 											<Icon name="auto_awesome" size={16} />

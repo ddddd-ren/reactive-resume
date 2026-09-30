@@ -132,7 +132,10 @@ export const aiProvidersService = {
 					eq(schema.aiProvider.testStatus, "success"),
 				),
 			)
-			.orderBy(asc(schema.aiProvider.createdAt))
+			.orderBy(
+				desc(sql<Date>`coalesce(${schema.aiProvider.lastUsedAt}, '1970-01-01T00:00:00.000Z'::timestamptz)`),
+				asc(schema.aiProvider.createdAt),
+			)
 			.limit(1);
 
 		return provider

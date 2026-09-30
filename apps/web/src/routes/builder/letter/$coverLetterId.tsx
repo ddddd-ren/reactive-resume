@@ -15,6 +15,7 @@ const searchSchema = z.object({
 	// Opens the assistant on a conversation ("new" for a fresh one), or on a question to send (⌘K Ask).
 	assistant: z.string().optional().catch(undefined),
 	ask: z.string().max(2_000).optional().catch(undefined),
+	applicationId: z.string().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/builder/letter/$coverLetterId")({

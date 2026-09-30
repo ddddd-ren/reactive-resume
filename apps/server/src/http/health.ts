@@ -77,7 +77,7 @@ export async function handleHealth() {
 	};
 
 	if (status === "unhealthy") {
-		console.warn("[Healthcheck]", { route: "/api/health", database, storage });
+		console.warn("[Healthcheck]", { route: "/api/health", database, storage, ...(redis ? { redis } : {}) });
 	}
 
 	return Response.json(checks, { status: checks.status === "unhealthy" ? 503 : 200 });

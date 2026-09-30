@@ -125,6 +125,14 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 	const invalidate = useInvalidateApplications();
 	const [date, setDate] = useState("");
 	const [note, setNote] = useState("");
+	const [wasOpen, setWasOpen] = useState(false);
+	if (open !== wasOpen) {
+		setWasOpen(open);
+		if (open) {
+			setDate(application.followUpAt ? dayKey(new Date(application.followUpAt)) : "");
+			setNote(application.followUpNote ?? "");
+		}
+	}
 	const update = useMutation({
 		...orpc.applications.update.mutationOptions(),
 		onSuccess: () => {
@@ -135,16 +143,7 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 	});
 
 	return (
-		<Dialog
-			open={open}
-			onOpenChange={(next) => {
-				if (next) {
-					setDate(application.followUpAt ? dayKey(new Date(application.followUpAt)) : "");
-					setNote(application.followUpNote ?? "");
-				}
-				onOpenChange(next);
-			}}
-		>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="sm:max-w-sm">
 				<DialogHeader>
 					<DialogTitle>

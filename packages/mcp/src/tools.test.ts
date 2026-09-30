@@ -2,6 +2,7 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ORPCError } from "@orpc/server";
+import { TOOL_META } from "./tool-meta";
 
 vi.mock("@reactive-resume/api/context", () => ({
 	resolveUserFromRequestHeaders: vi.fn(),
@@ -101,6 +102,19 @@ const clientMock = {
 describe("registerTools", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+	});
+
+	it("creates and duplicates with an automatically generated address", async () => {
+		const { server, registered } = makeFakeServer();
+		registerTools(server as never, clientMock as never, new Headers());
+		clientMock.resume.create.mockResolvedValueOnce("created");
+		clientMock.resume.duplicate.mockResolvedValueOnce("copied");
+		const create = registered.find((tool) => tool.name === MCP_TOOL_NAME.createResume)!;
+		const duplicate = registered.find((tool) => tool.name === MCP_TOOL_NAME.duplicateResume)!;
+		await create.handler(TOOL_META[MCP_TOOL_NAME.createResume].inputSchema.parse({ name: "Resume" }));
+		await duplicate.handler(TOOL_META[MCP_TOOL_NAME.duplicateResume].inputSchema.parse({ id: "r1" }));
+		expect(clientMock.resume.create).toHaveBeenCalledWith({ name: "Resume", tags: [], withSampleData: false });
+		expect(clientMock.resume.duplicate).toHaveBeenCalledWith({ id: "r1" });
 	});
 
 	it("imports applications with followUpAt coerced to Date and null preserved", async () => {

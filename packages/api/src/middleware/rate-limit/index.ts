@@ -1,40 +1,19 @@
 import type { Ratelimiter } from "@orpc/experimental-ratelimit";
 import { createRatelimitMiddleware } from "@orpc/experimental-ratelimit";
-import { rateLimitConfig, TRUSTED_IP_HEADERS } from "@reactive-resume/utils/rate-limit";
+import { env } from "@reactive-resume/env/server";
+import { rateLimitConfig } from "@reactive-resume/utils/rate-limit";
 import { createRateLimiter } from "../../redis";
 
-const isRateLimitEnabled = process.env.NODE_ENV === "production";
+const isRateLimitEnabled = process.env.NODE_ENV === "production" && !env.FLAG_DISABLE_API_RATE_LIMIT;
 
 type ContextWithHeaders = {
 	reqHeaders?: Headers;
 	user?: { id: string } | null;
+	trustedClient?: string;
 };
 
-function getTrustedIp(headers?: Headers): string | null {
-	if (!headers) return null;
-
-	for (const headerName of TRUSTED_IP_HEADERS) {
-		const raw = headers.get(headerName)?.trim();
-		if (!raw) continue;
-
-		// Some proxies provide a comma-delimited chain; first item is the original client.
-		const ip = raw.split(",")[0]?.trim();
-		if (!ip) continue;
-
-		return ip;
-	}
-
-	return null;
-}
-
-export function getClientKey(headers?: Headers): string {
-	const trustedIp = getTrustedIp(headers);
-	if (trustedIp) return `ip:${trustedIp}`;
-
-	const userAgent = headers?.get("user-agent")?.trim() ?? "unknown";
-	const language = headers?.get("accept-language")?.split(",")[0]?.trim() ?? "none";
-
-	return `fp:${userAgent.slice(0, 64)}:${language.slice(0, 16)}`;
+export function getClientKey(trustedClient?: string): string {
+	return `ip:${trustedClient?.trim() || "unknown"}`;
 }
 
 function getUserKey(context: ContextWithHeaders): string {
@@ -85,7 +64,7 @@ export const resumePasswordRateLimit = createRatelimitMiddleware<
 	{ username: string; slug: string }
 >({
 	limiter: productionLimiter(resumePasswordLimiter),
-	key: ({ context }, input) => `resume-password:${input.username}:${input.slug}:${getClientKey(context.reqHeaders)}`,
+	key: ({ context }, input) => `resume-password:${input.username}:${input.slug}:${getClientKey(context.trustedClient)}`,
 });
 
 export const pdfExportRateLimit = createRatelimitMiddleware<ContextWithHeaders, { id: string }>({
@@ -99,7 +78,7 @@ export const resumeDownloadRateLimit = createRatelimitMiddleware<
 >({
 	limiter: productionLimiter(resumeDownloadLimiter),
 	key: ({ context }, input) =>
-		`resume-download:${input.username}:${input.slug}:${getUserKey(context)}:${getClientKey(context.reqHeaders)}`,
+		`resume-download:${input.username}:${input.slug}:${getUserKey(context)}:${getClientKey(context.trustedClient)}`,
 });
 
 export const aiRequestRateLimit = createRatelimitMiddleware<ContextWithHeaders, unknown>({

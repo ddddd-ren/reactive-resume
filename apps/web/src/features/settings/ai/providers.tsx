@@ -23,6 +23,7 @@ import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 import { Combobox } from "@/components/ui/combobox";
 import { useClosingValue } from "@/hooks/use-closing-value";
+import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { SettingsSection } from "../section";
@@ -203,7 +204,13 @@ function ProviderFieldsForm({ provider, value, onChange, keyOptional }: Provider
 					id={`${id}-key`}
 					type="password"
 					value={value.apiKey}
-					placeholder={keyOptional ? t`Leave empty to keep the saved key` : undefined}
+					placeholder={
+						keyOptional
+							? t`Leave empty to keep the saved key`
+							: provider === "ollama"
+								? t`Optional for local Ollama`
+								: undefined
+					}
 					onChange={(event) => set({ apiKey: event.target.value })}
 					{...secretInputProps}
 				/>
@@ -301,7 +308,7 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 	};
 
 	const pending = create.isPending || test.isPending;
-	const ready = Boolean(fields.apiKey.trim() && fields.model.trim());
+	const ready = Boolean((provider === "ollama" || fields.apiKey.trim()) && fields.model.trim());
 
 	return (
 		<Dialog
@@ -382,6 +389,7 @@ type EditProviderFormProps = { provider: SavedProvider; onClose: () => void };
 
 function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
 	const queryClient = useQueryClient();
+	const confirm = useConfirm();
 	const [fields, setFields] = useState<ProviderFields>({
 		label: provider.label,
 		model: provider.model,
@@ -471,7 +479,14 @@ function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
 						variant="ghost"
 						className="text-danger-text hover:bg-danger-soft"
 						loading={remove.isPending}
-						onClick={() =>
+						onClick={async () => {
+							if (
+								!(await confirm(t`Delete this provider?`, {
+									description: t`Its saved key is deleted. Conversations using it need another provider.`,
+									confirmText: t`Delete`,
+								}))
+							)
+								return;
 							remove.mutate(
 								{ id: provider.id },
 								{
@@ -482,8 +497,8 @@ function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
 									onError: (error) =>
 										setFailure(getOrpcErrorMessage(error, { fallback: t`Couldn't delete the provider.` })),
 								},
-							)
-						}
+							);
+						}}
 					>
 						<Trans>Delete provider</Trans>
 					</Button>

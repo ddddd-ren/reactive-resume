@@ -24,6 +24,7 @@ export const messagesRouter = {
 					.object({
 						document: z.boolean().optional().describe("Share the open document (on by default)."),
 						posting: z.boolean().optional().describe("Share the job posting it's for (on by default)."),
+						applicationId: z.string().trim().min(1).max(255).optional(),
 					})
 					.optional(),
 			}),

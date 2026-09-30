@@ -268,7 +268,7 @@ function RouteComponent() {
 				open={exporting}
 				onOpenChange={setExporting}
 				applications={applications ?? []}
-				filtered={filtered}
+				filtered={filtered.filter((application) => closed || application.status !== "closed")}
 			/>
 			<ApplicationDetailSheet
 				application={selected}

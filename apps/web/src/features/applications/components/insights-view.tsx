@@ -1,4 +1,3 @@
-import type { ApplicationTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { Application } from "../types";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -12,13 +11,6 @@ import { stagger } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { computeInsights, computeOutcomes, computeTimeline } from "../insights";
 import { getStageColor, getStageLabel } from "../stages";
-
-const byNewest = (a: ApplicationTimelineEntry, b: ApplicationTimelineEntry) =>
-	new Date(b.at).getTime() - new Date(a.at).getTime();
-
-const appliedDate = (app: Application) =>
-	[...app.activity].sort(byNewest).find((entry) => entry.type === "stage" && entry.stage === "applied")?.at ??
-	app.appliedAt;
 
 /** The page's shape while stats load: the funnel, the two figures, then the charts. */
 export function InsightsSkeleton() {
@@ -46,10 +38,8 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 		Boolean(application.resumeId && madeFor.get(application.resumeId) === (application as Application).id),
 	);
 
-	// Weekly application velocity — derived from the already-loaded list, closed ones excluded.
-	const timeline = computeTimeline(
-		applications.filter((app) => app.status !== "closed").map((app) => new Date(appliedDate(app))),
-	);
+	// Sending history includes applications that later closed, and excludes jobs never sent.
+	const timeline = computeTimeline(applications);
 	const maxWeek = Math.max(1, ...timeline.map((bucket) => bucket.count));
 
 	if (!data) return <InsightsSkeleton />;
@@ -352,7 +342,7 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 					{t`Job search pipeline`}
 				</text>
 				<text x={padX} y={60} fontSize={12} fill="#71717a">
-					{t`${insights.total} applications tracked`}
+					{t`${insights.total} active applications`}
 				</text>
 				{insights.closed > 0 && (
 					<g>

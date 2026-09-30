@@ -8,7 +8,7 @@ import { tagsRouter } from "./tags";
 import { versionsRouter } from "./versions";
 
 export const resumeRouter = {
-	getRoot: publicProcedure.handler(({ context }) =>
+	getRoot: publicProcedure.route({ tags: ["Internal"] }).handler(({ context }) =>
 		getRootResume({
 			requestHeaders: context.reqHeaders,
 			...(context.user?.id ? { currentUserId: context.user.id } : {}),

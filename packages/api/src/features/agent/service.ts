@@ -88,7 +88,11 @@ type StartThreadInput = {
 };
 
 /** What a message shares with the model: the open document and the posting it's for. Both on by default. */
-type MessageContext = { document?: boolean | undefined; posting?: boolean | undefined };
+type MessageContext = {
+	document?: boolean | undefined;
+	posting?: boolean | undefined;
+	applicationId?: string | undefined;
+};
 
 type SendMessageInput = {
 	userId: string;
@@ -970,7 +974,10 @@ export const agentService = {
 
 			const loaded = await loadDocument(input.userId, document);
 			if (loaded.locked) throw new ORPCError("BAD_REQUEST", { message: "Unlock the document to change it." });
-			const posting = input.context?.posting === false ? null : await findPosting(input.userId, document.id, loaded);
+			const posting =
+				input.context?.posting === false
+					? null
+					: await findPosting(input.userId, document.id, loaded, input.context?.applicationId);
 
 			const [runnableProvider, attachments] = await Promise.all([
 				aiProvidersService.getRunnableById({
@@ -1290,7 +1297,7 @@ export const agentService = {
 
 			const mediaType = input.mediaType || inferContentType(input.filename);
 			const id = generateId();
-			const key = `uploads/${input.userId}/agent/${input.threadId}/${id}-${input.filename}`;
+			const key = `uploads/${input.userId}/agent/${input.threadId}/${id}`;
 			const storage = getStorageService();
 			let storageAttempted = false;
 			try {

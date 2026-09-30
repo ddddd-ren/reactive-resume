@@ -324,7 +324,7 @@ type Row = { key: string; title: string; count: string; tone: "danger" | "warn" 
 /** One row per category with something to fix, worst first, plus the posting's terms when one was pasted. */
 function issueRows(report: PdfAtsReport): Row[] {
 	const byCategory = new Map<PdfCategory, PdfAtsReport["findings"]>();
-	for (const finding of report.findings)
+	for (const finding of [...report.findings, ...report.tips])
 		byCategory.set(finding.category, [...(byCategory.get(finding.category) ?? []), finding]);
 
 	const rows: Row[] = [...byCategory.entries()]
@@ -332,7 +332,11 @@ function issueRows(report: PdfAtsReport): Row[] {
 			key: category,
 			title: getPdfCategoryLabel(category),
 			count: String(findings.length),
-			tone: findings.some((finding) => finding.severity === "blocker") ? ("danger" as const) : ("warn" as const),
+			tone: findings.some((finding) => finding.severity === "blocker")
+				? ("danger" as const)
+				: findings.every((finding) => finding.severity === "tip")
+					? ("accent" as const)
+					: ("warn" as const),
 			body: (
 				<ul className="grid gap-2">
 					{findings.map((finding) => {
@@ -429,7 +433,15 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 										className="flex h-12 w-full items-center gap-2.5 px-3.5 text-start font-medium text-sm transition-colors duration-quick hover:bg-hover"
 									>
 										<Icon
-											name={row.tone === "accent" ? "work" : row.tone === "danger" ? "error" : "warning"}
+											name={
+												row.key === "content"
+													? "edit"
+													: row.tone === "accent"
+														? "work"
+														: row.tone === "danger"
+															? "error"
+															: "warning"
+											}
 											size={20}
 											className={cn(
 												row.tone === "danger" && "text-danger-text",

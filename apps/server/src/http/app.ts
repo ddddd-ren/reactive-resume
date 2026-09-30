@@ -58,7 +58,7 @@ export function createApp(options: AppOptions = {}) {
 	app.all("/api/openapi", (c) => handleOpenApi(c.req.raw, client(c)));
 	app.all("/api/openapi/*", (c) => handleOpenApi(c.req.raw, client(c)));
 	app.get("/api/auth/oauth", (c) => handleOAuth(c.req.raw));
-	app.all("/api/auth/*", (c) => handleAuth(c.req.raw));
+	app.all("/api/auth/*", (c) => handleAuth(c.req.raw, client(c)));
 	app.get("/api/health", () => handleHealth());
 	app.get("/api/resumes/:username/:slug/pdf", (c) =>
 		handlePublicResumePdf(c.req.raw, c.req.param("username"), c.req.param("slug"), client(c)),

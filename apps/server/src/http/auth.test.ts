@@ -36,6 +36,25 @@ beforeEach(() => {
 });
 
 describe("handleAuth", () => {
+	it.each(["203.0.113.9", "unknown"])("uses only the adapter's client address (%s)", async (trustedClient) => {
+		const { handleAuth } = await import("./auth");
+		await handleAuth(
+			new Request("http://localhost:3000/api/auth/get-session", {
+				headers: {
+					"cf-connecting-ip": "198.51.100.1",
+					"true-client-ip": "198.51.100.2",
+					"x-forwarded-for": "198.51.100.3, 192.0.2.1",
+					"x-real-ip": "198.51.100.4",
+				},
+			}),
+			trustedClient,
+		);
+		const request = mocks.handler.mock.calls[0]?.[0] as Request;
+		expect(request.headers.get("cf-connecting-ip")).toBeNull();
+		expect(request.headers.get("true-client-ip")).toBeNull();
+		expect(request.headers.get("x-forwarded-for")).toBeNull();
+		expect(request.headers.get("x-real-ip")).toBe(trustedClient === "unknown" ? null : trustedClient);
+	});
 	it.for([null, false, 42, "client", [], [{ redirect_uris: [] }]])(
 		"rejects non-object registration payload %j",
 		async (body) => {

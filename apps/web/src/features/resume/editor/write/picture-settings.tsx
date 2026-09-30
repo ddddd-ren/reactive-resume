@@ -6,7 +6,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import { pictureSchema } from "@reactive-resume/schema/resume/data";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
 import {
@@ -32,6 +31,7 @@ import "react-easy-crop/react-easy-crop.css";
 import { ColorPicker } from "@/components/input/color-picker";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useClosingValue } from "@/hooks/use-closing-value";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -223,6 +223,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 							<FormControl
 								render={
 									<InputGroupInput
+										disabled
 										name={field.name}
 										value={field.state.value}
 										type="number"
@@ -243,6 +244,9 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 								<InputGroupText>°</InputGroupText>
 							</InputGroupAddon>
 						</InputGroup>
+						<p className="text-ink-3 text-xs">
+							<Trans>Rotation isn't supported by PDF rendering.</Trans>
+						</p>
 					</FormItem>
 				)}
 			</form.Field>
@@ -687,6 +691,7 @@ function ColorWidthFields(props: ColorWidthFieldsProps) {
 /** Every photo option: upload with crop, address, show or hide, delete, fit, size, rotation, shape, border and shadow. */
 export function PictureSettings() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const confirm = useConfirm();
 	const appOrigin = window.location.origin;
 
 	const [cropState, setCropState] = useState<CropState | null>(null);
@@ -715,8 +720,9 @@ export function PictureSettings() {
 		fileInputRef.current?.click();
 	};
 
-	const onDeletePicture = () => {
+	const onDeletePicture = async () => {
 		if (!picture.url) return;
+		if (!(await confirm(t`Remove this photo?`, { confirmText: t`Remove` }))) return;
 
 		const appOrigin = window.location.origin;
 		const pictureUrl = new URL(picture.url, appOrigin);
@@ -728,8 +734,9 @@ export function PictureSettings() {
 		// If the picture is from the same origin, attempt to delete it
 		if (pictureOrigin === appOrigin) deleteFile({ filename });
 
-		form.reset(defaultResumeData.picture);
-		persist(defaultResumeData.picture);
+		const removed = { ...picture, url: "" };
+		form.reset(removed);
+		persist(removed);
 	};
 
 	const uploadPictureFile = (file: File) => {

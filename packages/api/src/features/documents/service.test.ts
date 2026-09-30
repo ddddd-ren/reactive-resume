@@ -7,9 +7,11 @@ const resumeServiceMock = vi.hoisted(() => ({
 	delete: vi.fn(),
 	setLocked: vi.fn(),
 }));
+const applicationServiceMock = vi.hoisted(() => ({ update: vi.fn() }));
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
 vi.mock("../resume/service", () => ({ resumeService: resumeServiceMock }));
 vi.mock("../cover-letters/service", () => ({ linkLetterApplication: vi.fn() }));
+vi.mock("../applications/service", () => ({ applicationService: applicationServiceMock }));
 
 const { documentsService } = await import("./service");
 
@@ -25,7 +27,12 @@ const updates = () => {
 };
 
 beforeEach(() => {
-	for (const mock of [...Object.values(dbMock), ...Object.values(resumeServiceMock)]) mock.mockReset();
+	for (const mock of [
+		...Object.values(dbMock),
+		...Object.values(resumeServiceMock),
+		...Object.values(applicationServiceMock),
+	])
+		mock.mockReset();
 });
 
 describe("Trash", () => {
@@ -34,6 +41,7 @@ describe("Trash", () => {
 
 		await expect(documentsService.trash({ userId: "u1", type: "resume", id: "r1" })).rejects.toMatchObject({
 			code: "RESUME_LOCKED",
+			status: 403,
 		});
 		expect(dbMock.update).not.toHaveBeenCalled();
 	});
@@ -70,7 +78,7 @@ describe("copyForJob", () => {
 			expect.objectContaining({ name: "Product Designer — Orbital", tags: ["design"] }),
 		);
 		expect(set).toHaveBeenCalledWith({ applicationId: "a1" });
-		expect(set).toHaveBeenCalledWith({ resumeId: "copy" });
+		expect(applicationServiceMock.update).toHaveBeenCalledWith({ userId: "u1", id: "a1", resumeId: "copy" });
 	});
 
 	it("leaves an application's existing resume alone", async () => {
@@ -83,5 +91,6 @@ describe("copyForJob", () => {
 
 		expect(resumeServiceMock.create).toHaveBeenCalledWith(expect.objectContaining({ name: "Mine" }));
 		expect(set).toHaveBeenCalledTimes(1);
+		expect(applicationServiceMock.update).not.toHaveBeenCalled();
 	});
 });

@@ -1,13 +1,13 @@
 import type { Extension } from "@codemirror/state";
-import type { SemanticNode } from "@reactive-resume/resume/stylesheet";
+import type { SemanticCssDiagnostic, SemanticNode } from "@reactive-resume/resume/stylesheet";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
 import type { SemanticCssColorToken } from "./color-tokens";
 import type { SemanticCssEditorMetadata } from "./protocol";
-import { defaultKeymap, indentWithTab } from "@codemirror/commands";
+import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
 import { css } from "@codemirror/lang-css";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
-import { Annotation, Compartment, EditorState, Prec, Transaction } from "@codemirror/state";
+import { Annotation, Compartment, EditorState, Transaction } from "@codemirror/state";
 import {
 	drawSelection,
 	EditorView,
@@ -26,6 +26,7 @@ import {
 	semanticNodeKeys,
 	shouldShowResumeHeader,
 } from "@reactive-resume/pdf/semantic-tree";
+import { isFatalStylesheetDiagnostic } from "@reactive-resume/resume/stylesheet";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
@@ -116,8 +117,6 @@ type StylesheetCodeEditorProps = {
 	/** Where the cursor is while the editor has focus; null once it loses focus. */
 	onCursorChange?(offset: number | null): void;
 	onReady?(view: EditorView | null): void;
-	onUndo(): void;
-	onRedo(): void;
 };
 
 function StylesheetCodeEditor({
@@ -131,8 +130,6 @@ function StylesheetCodeEditor({
 	onFocusChange,
 	onCursorChange,
 	onReady,
-	onUndo,
-	onRedo,
 }: StylesheetCodeEditorProps) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const viewRef = useRef<EditorView | null>(null);
@@ -142,8 +139,6 @@ function StylesheetCodeEditor({
 	const onFocusChangeRef = useRef(onFocusChange);
 	const onCursorChangeRef = useRef(onCursorChange);
 	const onReadyRef = useRef(onReady);
-	const onUndoRef = useRef(onUndo);
-	const onRedoRef = useRef(onRedo);
 	const [selectedColor, setSelectedColor] = useState<{
 		token: SemanticCssColorToken;
 		left: number;
@@ -162,8 +157,6 @@ function StylesheetCodeEditor({
 		onFocusChangeRef.current = onFocusChange;
 		onCursorChangeRef.current = onCursorChange;
 		onReadyRef.current = onReady;
-		onUndoRef.current = onUndo;
-		onRedoRef.current = onRedo;
 	});
 
 	useEffect(() => {
@@ -189,32 +182,8 @@ function StylesheetCodeEditor({
 				syntaxHighlighting(highlightStyle),
 				EditorView.editorAttributes.of({ dir: "ltr" }),
 				EditorView.contentAttributes.of({ "aria-label": initial.label, dir: "ltr", spellcheck: "false" }),
-				Prec.high(
-					keymap.of([
-						{
-							key: "Mod-z",
-							run: () => {
-								onUndoRef.current();
-								return true;
-							},
-						},
-						{
-							key: "Mod-Shift-z",
-							run: () => {
-								onRedoRef.current();
-								return true;
-							},
-						},
-						{
-							key: "Mod-y",
-							run: () => {
-								onRedoRef.current();
-								return true;
-							},
-						},
-					]),
-				),
-				keymap.of([indentWithTab, ...defaultKeymap]),
+				history(),
+				keymap.of([...historyKeymap, indentWithTab, ...defaultKeymap]),
 				EditorView.domEventHandlers({
 					focus: () => {
 						onFocusChangeRef.current?.(true);
@@ -294,7 +263,7 @@ function StylesheetCodeEditor({
 		if (!view || view.state.doc.toString() === value) return;
 		view.dispatch({
 			changes: { from: 0, to: view.state.doc.length, insert: value },
-			annotations: externalReplacement.of(true),
+			annotations: [externalReplacement.of(true), Transaction.addToHistory.of(false)],
 		});
 	}, [value]);
 
@@ -409,7 +378,11 @@ const NO_TOKENS: readonly SemanticCssColorToken[] = [];
 function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps) {
 	const { resolvedTheme: theme } = useTheme();
 	const [focusOpen, setFocusOpen] = useState(false);
-	const [compiled, setCompiled] = useState<{ source: StylesheetSource; tokens: readonly SemanticCssColorToken[] }>();
+	const [compiled, setCompiled] = useState<{
+		source: StylesheetSource;
+		tokens: readonly SemanticCssColorToken[];
+		diagnostics: readonly SemanticCssDiagnostic[];
+	}>();
 	const [compiler, setCompiler] = useState<ReturnType<typeof createCompileWorkerClient>>();
 	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();
@@ -486,7 +459,11 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				})
 				.then((result) => {
 					if (cancelled || result.editGeneration !== compileGenerationRef.current) return;
-					setCompiled({ source, tokens: result.colorTokens ?? [] });
+					setCompiled({
+						source,
+						tokens: result.colorTokens ?? [],
+						diagnostics: result.diagnostics.filter(isFatalStylesheetDiagnostic),
+					});
 				})
 				// Swatches are a nicety: a stylesheet that doesn't compile just shows none.
 				.catch(() => undefined);
@@ -527,8 +504,6 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 			onReady={(view) => {
 				editorViewRef.current = view;
 			}}
-			onUndo={undo}
-			onRedo={redo}
 		/>
 	);
 	const editorChrome = (
@@ -547,6 +522,24 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				}}
 				onFocusToggle={toggleFocus}
 			/>
+			{compiled?.source === source && compiled.diagnostics.length > 0 && (
+				<div role="alert" className="text-danger-text text-xs">
+					<p>
+						<Trans>Custom styles aren't applied. Fix these errors to apply them:</Trans>
+					</p>
+					<ul className="list-inside list-disc">
+						{compiled.diagnostics.map((diagnostic, index) => (
+							<li key={`${diagnostic.code}-${index}`}>{diagnostic.message}</li>
+						))}
+					</ul>
+				</div>
+			)}
+			<p className="text-ink-3 text-xs">
+				<Trans>
+					PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are
+					ignored.
+				</Trans>
+			</p>
 
 			<p className="flex items-center gap-1.5 text-ink-3 text-xs">
 				<Icon name="ink_highlighter" size={16} aria-hidden="true" className="shrink-0" />

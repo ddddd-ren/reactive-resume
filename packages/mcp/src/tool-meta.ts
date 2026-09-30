@@ -226,7 +226,7 @@ export const TOOL_META = {
 	[T.createResume]: {
 		title: "Create Resume",
 		description: [
-			"Create a new, empty resume with a name and URL-friendly slug.",
+			"Create a new, empty resume with a name. Its URL-friendly slug is generated when omitted.",
 			"",
 			"Returns the ID of the newly created resume.",
 			"Set `withSampleData` to true to pre-fill with example content (useful for testing).",
@@ -238,7 +238,8 @@ export const TOOL_META = {
 				.string()
 				.min(1)
 				.max(64)
-				.describe("URL-friendly slug, must be unique across your resumes (e.g. 'software-engineer-2026')"),
+				.optional()
+				.describe("Optional URL-friendly slug; generated from the name when omitted."),
 			tags: z
 				.array(z.string())
 				.optional()
@@ -269,14 +270,14 @@ export const TOOL_META = {
 			"Create a copy of an existing resume with all its data.",
 			"",
 			"Returns the ID of the newly duplicated resume.",
-			"You must provide a new name and slug for the copy.",
+			"Name and tags default to the original; a unique slug is generated when omitted.",
 			"Useful for creating job-specific variants of a base resume.",
 		].join("\n"),
 		inputSchema: z.object({
 			id: resumeIdSchema.describe("ID of the resume to duplicate"),
-			name: z.string().min(1).max(64).describe("Name for the duplicate"),
-			slug: z.string().min(1).max(64).describe("URL-friendly slug for the duplicate (must be unique)"),
-			tags: z.array(z.string()).optional().default([]).describe("Tags for the duplicate"),
+			name: z.string().min(1).max(64).optional().describe("Name for the duplicate; defaults to the original"),
+			slug: z.string().min(1).max(64).optional().describe("Optional unique slug; generated when omitted"),
+			tags: z.array(z.string()).optional().describe("Tags for the duplicate; defaults to the original"),
 		}),
 		annotations: WRITE_NON_IDEMPOTENT,
 	},

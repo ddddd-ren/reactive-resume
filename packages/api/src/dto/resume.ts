@@ -19,8 +19,8 @@ const resumeSchema = createSelectSchema(schema.resume, {
 	createdAt: z.date().describe("The date and time the resume was created."),
 	updatedAt: z.date().describe("The date and time the resume was last updated."),
 })
-	// Document-library columns (Trash, the application a copy was made for, automatic naming) stay internal to
-	// the documents API.
+	// Trash and automatic naming stay internal to the documents API. getById exposes the application link
+	// explicitly because the editor uses it to select the application a tailored copy belongs to.
 	.omit({ applicationId: true, trashedAt: true, autoName: true });
 
 const versionSchema = z.object({
@@ -38,7 +38,10 @@ export const resumeDto = {
 	list: {
 		input: z
 			.object({
-				tags: z.array(z.string()).optional().default([]),
+				tags: z
+					.union([z.string().transform((tag) => [tag]), z.array(z.string())])
+					.optional()
+					.default([]),
 				sort: z.enum(["lastUpdatedAt", "createdAt", "name"]).optional().default("lastUpdatedAt"),
 			})
 			.optional()
@@ -149,7 +152,9 @@ export const resumeDto = {
 	},
 
 	duplicate: {
-		input: resumeSchema.pick({ id: true, name: true, tags: true }).extend({
+		input: resumeSchema.pick({ id: true }).extend({
+			name: resumeSchema.shape.name.optional(),
+			tags: resumeSchema.shape.tags.optional(),
 			slug: resumeSchema.shape.slug
 				.optional()
 				.describe("The slug of the copy. Generated from the name, and made unique, when omitted."),

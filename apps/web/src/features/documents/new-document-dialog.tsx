@@ -44,7 +44,7 @@ type Step =
 
 type OpenResumeOptions = { withAssistant?: boolean; importedFrom?: string };
 
-const ACCEPT = ".pdf,.doc,.docx,.json,.zip,application/pdf,application/json,application/zip";
+const ACCEPT = ".pdf,.docx,.json,.zip,application/pdf,application/json,application/zip";
 
 const formatSize = (bytes: number) =>
 	bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -306,11 +306,20 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 		<div className={cn(ENTER_CLASS, "grid gap-4")}>
 			<DialogHeader>
 				<DialogTitle className="font-display font-medium text-[22px]">
-					{step.name === "failed" ? <Trans>Couldn't import</Trans> : <Trans>Importing</Trans>}
+					{step.name === "failed" ? (
+						<Trans>Couldn't import</Trans>
+					) : step.name === "imported" ? (
+						<Trans>Imported</Trans>
+					) : (
+						<Trans>Importing</Trans>
+					)}
 				</DialogTitle>
 			</DialogHeader>
 			<div className="flex items-center gap-3 rounded-[10px] border border-line p-3">
-				<Icon name="picture_as_pdf" className="text-ink-2" />
+				<Icon
+					name={step.file.name.toLowerCase().endsWith(".pdf") ? "picture_as_pdf" : "description"}
+					className="text-ink-2"
+				/>
 				<span className="grid min-w-0 flex-1">
 					<span className="truncate font-medium text-sm">{step.file.name}</span>
 					<span className="text-ink-3 text-xs">{formatSize(step.file.size)}</span>

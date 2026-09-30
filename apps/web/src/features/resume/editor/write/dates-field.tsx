@@ -67,6 +67,7 @@ function MonthYearInput({
 				onChange={(event) => {
 					setTyped(event.target.value);
 					const next = readTypedDate(event.target.value, locale);
+					onInvalid(next === undefined);
 					if (next !== undefined && next !== value) onCommit(next);
 				}}
 				onBlur={() => {
@@ -155,7 +156,10 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 				{hasError ? (
 					<p className="flex items-start gap-1 text-danger-text text-xs leading-4">
 						<Icon name="error" size={16} className="shrink-0" />
-						<Trans>Use a month and year, like Mar 2022, or just a year.</Trans>
+						<Trans>
+							This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the
+							last valid date.
+						</Trans>
 					</p>
 				) : dates.raw !== undefined ? (
 					<p className="flex items-start gap-1 text-warn-text text-xs leading-4">

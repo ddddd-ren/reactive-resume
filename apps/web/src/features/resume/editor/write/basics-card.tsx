@@ -112,7 +112,7 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 								})
 							}
 						/>
-						<CustomFields fields={basics.customFields} />
+						<CustomFields fields={basics.customFields} locked={locked} />
 					</fieldset>
 				</CollapsibleContent>
 			</Collapsible>
@@ -159,7 +159,8 @@ function PhotoRow({ locked }: { locked: boolean }) {
 }
 
 /** Extra contact details (icon, text and an optional link), as "Add field" under Website. */
-function CustomFields({ fields }: { fields: CustomField[] }) {
+type CustomFieldsProps = { fields: CustomField[]; locked: boolean };
+function CustomFields({ fields, locked }: CustomFieldsProps) {
 	const updateResumeData = useUpdateResumeData();
 
 	const edit = (key: string, mutate: (list: CustomField[]) => void) =>
@@ -170,6 +171,7 @@ function CustomFields({ fields }: { fields: CustomField[] }) {
 			{fields.map((field, index) => (
 				<div key={field.id} className="flex items-center gap-1.5">
 					<IconPicker
+						disabled={locked}
 						value={field.icon}
 						popoverProps={{ modal: true }}
 						onChange={(icon) =>
@@ -180,6 +182,7 @@ function CustomFields({ fields }: { fields: CustomField[] }) {
 						}
 					/>
 					<Input
+						disabled={locked}
 						aria-label={t`Field ${index + 1}`}
 						value={field.text}
 						onChange={(event) =>
@@ -193,6 +196,7 @@ function CustomFields({ fields }: { fields: CustomField[] }) {
 						<PopoverTrigger
 							render={
 								<IconButton
+									disabled={locked}
 									icon={field.link ? "link" : "link_off"}
 									label={field.link ? t`Edit link` : t`Add a link`}
 									className={field.link ? "text-accent-text" : "text-ink-3"}
@@ -201,6 +205,7 @@ function CustomFields({ fields }: { fields: CustomField[] }) {
 						/>
 						<PopoverContent align="end" className="w-72">
 							<Input
+								disabled={locked}
 								type="url"
 								aria-label={t`Link address`}
 								placeholder="https://"
@@ -218,12 +223,13 @@ function CustomFields({ fields }: { fields: CustomField[] }) {
 						icon="arrow_upward"
 						label={t`Move field up`}
 						size="icon-sm"
-						disabled={index === 0}
+						disabled={locked || index === 0}
 						onClick={() => edit(`${field.id}.move`, (list) => list.splice(index - 1, 0, ...list.splice(index, 1)))}
 					/>
 					<IconButton
 						icon="close"
 						label={t`Remove field`}
+						disabled={locked}
 						size="icon-sm"
 						onClick={() => edit(`${field.id}.remove`, (list) => list.splice(index, 1))}
 					/>
@@ -231,7 +237,8 @@ function CustomFields({ fields }: { fields: CustomField[] }) {
 			))}
 			<button
 				type="button"
-				className="flex h-9 w-fit items-center gap-1.5 rounded-lg px-2 text-accent-text text-sm hover:bg-hover"
+				disabled={locked}
+				className="flex h-9 w-fit items-center gap-1.5 rounded-lg px-2 text-accent-text text-sm hover:bg-hover disabled:pointer-events-none disabled:opacity-50"
 				onClick={() => edit("add", (list) => list.push({ id: generateId(), icon: "acorn", text: "", link: "" }))}
 			>
 				<Icon name="add" size={18} />

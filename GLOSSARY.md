@@ -23,7 +23,7 @@ PDF, DOCX, JSON, CSV, API, MCP, oRPC, SSO, CSS, URL, JSON Resume.
 
 AI provider names are brand names and stay in English: OpenAI, Anthropic Claude, Google
 Gemini, Vercel AI Gateway, OpenRouter, Mistral AI, Cohere, xAI Grok, Groq, DeepSeek, Together.ai,
-Fireworks, Cerebras, Perplexity, Ollama Cloud.
+Fireworks, Cerebras, Perplexity, Ollama.
 
 Template names are proper nouns and are never translated: Azurill, Bronzor, Chikorita, Ditgar,
 Ditto, Gengar, Glalie, Kakuna, Lapras, Leafish, Meowth, Onyx, Pikachu, Rhyhorn, Scizor.
@@ -38,8 +38,7 @@ Where a locale's normal word for this document is CV, use CV.
 
 **Resumes** — plural of the above. A list of the user's documents.
 
-**Cover letter** — the letter accompanying a resume. Stored as a resume section, not a separate
-document.
+**Cover letter** — the letter accompanying a resume. Stored as its own document, with optional links to a resume and an application.
 
 **Builder** — the editor where a resume is composed. A tool, not a construction worker or a
 person who builds.
@@ -165,7 +164,7 @@ order, not the builder's layout settings.
 **Blocker, Warning, Tip** — the three severity levels of a finding.
 
 **Note** — the label for an informational finding, in
-`apps/web/src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx`. A severity label,
+the resume editor's Check panel. A severity label,
 not a written note. Unrelated to **Notes** in the application tracker.
 
 **Parse / parsing** — software reading text out of the PDF.
@@ -208,7 +207,7 @@ section, above.
 **Custom** — in `color-picker.tsx`, a user-chosen color as opposed to a preset. An adjective.
 
 **Public URL** — the shareable address of a published resume. Use one term consistently; the
-English strings say "public URL" rather than "public link".
+English interface strings say "Public link"; URL refers to the address itself.
 
 ## Redesigned workspace
 

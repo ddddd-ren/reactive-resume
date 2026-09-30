@@ -96,7 +96,7 @@ describe("aiProvidersService", () => {
 		queryState.orderByArgs = [];
 	});
 
-	it("gets the first enabled and tested provider by creation order", async () => {
+	it("prefers the most recently used enabled and tested provider, then creation order", async () => {
 		queryState.rows = [providerRow({ id: "first-created" })];
 
 		await expect(aiProvidersService.getDefaultRunnable({ userId: "user-1" })).resolves.toMatchObject({
@@ -112,7 +112,17 @@ describe("aiProvidersService", () => {
 				{ type: "eq", left: "ai_provider.test_status", right: "success" },
 			],
 		});
-		expect(queryState.orderByArgs).toEqual([{ type: "asc", value: "ai_provider.created_at" }]);
+		expect(queryState.orderByArgs).toEqual([
+			{
+				type: "desc",
+				value: {
+					type: "sql",
+					strings: ["coalesce(", ", '1970-01-01T00:00:00.000Z'::timestamptz)"],
+					values: ["ai_provider.last_used_at"],
+				},
+			},
+			{ type: "asc", value: "ai_provider.created_at" },
+		]);
 		expect(queryMock.limit).toHaveBeenCalledWith(1);
 	});
 });

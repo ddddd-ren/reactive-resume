@@ -125,8 +125,8 @@ backends.
 | `DEPLOYMENT_NAMESPACE` | `default` | Prefix for Redis keys and Blob paths, so several instances can share one Redis or Blob store without mixing data. Letters, numbers, `.`, `_` and `-` only. On Vercel it is `production`, or the branch address on previews. |
 
 <Note>
-  Local storage keeps only public uploads. Files people attach in the Assistant are private and need S3-compatible
-  storage or Vercel Blob; on local storage, attaching a file fails.
+  Assistant attachments stay private with every backend. Local storage writes them in a separate namespace that
+  public upload routes never serve. General file uploads allow 10 MB; Assistant attachments allow 25 MB per file.
 </Note>
 
 Switching backends does not move files that are already stored. Copy them yourself before you switch.
@@ -155,6 +155,8 @@ Redis is optional on a single server. Without it, everything works, with these l
 Set `REDIS_URL` when you run more than one server process, or when you want replies to survive a reload. When Redis is
 configured, the [health endpoint](/self-hosting/docker#check-the-health-endpoint) also checks it.
 
+Saved AI providers and Assistant conversations are kept in PostgreSQL, so they remain available without Redis.
+
 ## Feature flags
 
 All flags default to `false`.
@@ -164,7 +166,7 @@ All flags default to `false`.
 | `FLAG_DISABLE_SIGNUPS` | No new accounts can be created, by email or by social sign-in. Existing accounts keep working. Create your own account first. |
 | `FLAG_DISABLE_EMAIL_AUTH` | Turns off email and password sign-in and sign-up, along with forgot password and reset password. People sign in with social or custom OAuth providers only, so configure at least one first. |
 | `FLAG_DISABLE_IMAGE_PROCESSING` | Stores uploaded pictures as they are. Normally pictures are resized to fit 800 × 800 pixels and saved as JPEG. Useful on low-powered hardware such as a Raspberry Pi. |
-| `FLAG_DISABLE_API_RATE_LIMIT` | Turns off rate limiting on sign-in, sign-up, the OAuth endpoints and requests made with API keys. Other limits, such as PDF export and AI requests, stay on. Intended for test installations. |
+| `FLAG_DISABLE_API_RATE_LIMIT` | Turns off API and authentication rate limiting, including sign-in, sign-up, OAuth, requests made with API keys, PDF export and AI requests. Intended for test installations. |
 | `FLAG_ALLOW_UNSAFE_AI_BASE_URL` | Lets AI providers use `http://` addresses and private or local network addresses, such as an Ollama server on your network. Without it, a provider's base URL must be public `https://`. |
 | `FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI` | Lets MCP and OAuth clients that register themselves use any redirect address, including custom schemes and private hosts. By default a redirect must go to your instance's own address, an `http://` loopback address (`localhost`, `127.0.0.1`, `::1`) or a public `https://` address. |
 

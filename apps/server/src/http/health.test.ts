@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { execute, healthcheck } = vi.hoisted(() => ({ execute: vi.fn(), healthcheck: vi.fn() }));
+const { execute, healthcheck, ping } = vi.hoisted(() => ({ execute: vi.fn(), healthcheck: vi.fn(), ping: vi.fn() }));
 
 vi.mock("@reactive-resume/db/client", () => ({ db: { execute } }));
 vi.mock("@reactive-resume/api/features/storage", () => ({ getStorageService: () => ({ healthcheck }) }));
+vi.mock("@reactive-resume/db/redis", () => ({ getRedis: () => ({ ping }) }));
 
 import { handleHealth } from "./health";
 
@@ -11,16 +12,17 @@ describe("health failure reporting", () => {
 	beforeEach(() => {
 		execute.mockResolvedValue([]);
 		healthcheck.mockResolvedValue({ status: "healthy" });
+		ping.mockResolvedValue("PONG");
 	});
 
 	afterEach(() => {
 		vi.restoreAllMocks();
 	});
 
-	it.each(["database", "storage"])("keeps thrown %s error details in server logs only", async (dependency) => {
+	it.each(["database", "storage", "redis"])("keeps thrown %s error details in server logs only", async (dependency) => {
 		const detail = "Connection failed for private-user at internal.example:5432";
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-		(dependency === "database" ? execute : healthcheck).mockRejectedValueOnce(new Error(detail));
+		({ database: execute, storage: healthcheck, redis: ping })[dependency]?.mockRejectedValueOnce(new Error(detail));
 
 		const response = await handleHealth();
 		const body = await response.json();

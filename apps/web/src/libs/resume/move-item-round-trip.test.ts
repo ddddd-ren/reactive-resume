@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { i18n } from "@lingui/core";
 import { produce } from "immer";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { moveItem } from "./move-item";
+import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "./move-item";
 
 const company = (id: string) => ({
 	id,
@@ -25,6 +26,18 @@ const split = () =>
 	});
 
 describe("moving the last custom-section item (#3180)", () => {
+	it("labels blank custom move destinations with their section type", () => {
+		i18n.load("en", {});
+		i18n.activate("en");
+		const moved = produce(split(), (draft) => {
+			const section = draft.customSections[0];
+			if (!section) throw new Error("Missing custom section fixture");
+			section.title = " ";
+		});
+		const targets = getCompatibleMoveTargets(moved, "experience", undefined);
+		expect(targets.find((page) => page.pageIndex === 1)?.sections[0]?.sectionTitle).toBe("Experience");
+		expect(getSourceSectionTitle(moved, "experience", moved.customSections[0]?.id)).toBe("Experience");
+	});
 	it("restores the original JSON after moving an experience item to a new page and back", () => {
 		const initial = base();
 		const moved = split();

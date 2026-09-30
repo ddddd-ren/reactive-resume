@@ -37,9 +37,13 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	useHotkey("Mod+P", () => {
 		if (isOnline()) void onDownloadPDF();
 	});
-	useHotkey("Mod+Shift+S", () => {
-		if (isOnline()) useEditorStore.getState().setShareTab("link");
-	});
+	useHotkey(
+		"Mod+Shift+S",
+		() => {
+			if (isOnline()) useEditorStore.getState().setShareTab("link");
+		},
+		{ ignoreInputs: true },
+	);
 	useHotkey("Mod+Shift+E", () => {
 		if (isOnline()) useEditorStore.getState().setShareTab("download");
 	});
@@ -47,7 +51,15 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 		const { assistantOpen, setAssistantOpen } = useEditorStore.getState();
 		setAssistantOpen(!assistantOpen, true);
 	});
-	useHotkey("Escape", () => useEditorStore.getState().select(null), { preventDefault: false, stopPropagation: false });
+	useHotkey(
+		"Escape",
+		() => {
+			if (!useEditorStore.getState().selection) return;
+			if (isEditableElementFocused() && document.activeElement instanceof HTMLElement) document.activeElement.blur();
+			useEditorStore.getState().select(null);
+		},
+		{ preventDefault: false, stopPropagation: false },
+	);
 
 	useHotkey("Mod+S", () => {
 		toast.add({ type: "info", description: t`Your changes are saved automatically.`, id: "auto-save" });

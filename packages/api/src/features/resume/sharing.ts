@@ -22,6 +22,7 @@ export const sharingRouter = {
 			resumeService.getBySlug({
 				...input,
 				requestHeaders: context.reqHeaders,
+				...(context.trustedClient ? { trustedClient: context.trustedClient } : {}),
 				...(context.user?.id ? { currentUserId: context.user.id } : {}),
 			}),
 		),

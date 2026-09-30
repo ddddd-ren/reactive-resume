@@ -1,6 +1,7 @@
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import type { RouterOutput } from "@/libs/orpc/client";
+import type { ChatAttachment, MessageContext } from "./chat";
 import type { AssistantDocument } from "./document";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -60,6 +61,11 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const [providerId, setProviderId] = useState<string | null>(null);
 	const [modelMenuOpen, setModelMenuOpen] = useState(false);
 	const [starting, setStarting] = useState(false);
+	const [context, setContext] = useState<MessageContext>({ document: true, posting: true });
+	const [promptAttachments, setPromptAttachments] = useState<ChatAttachment[]>([]);
+	const [draftKey, setDraftKey] = useState(0);
+	const draftThread = useRef<string | null>(null);
+	const creatingThread = useRef<Promise<string> | null>(null);
 
 	const mine = (threads.data ?? []).filter((thread) => belongsTo(thread, document));
 	// Opens the document's latest conversation unless a new one (or another) was asked for.
@@ -72,17 +78,36 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 		(threadId ? undefined : usable[0]);
 	const providerLabel = provider?.label ?? summary?.providerLabel ?? t`your provider`;
 
-	const start = async (text: string) => {
-		if (starting) return;
-		setStarting(true);
+	const ensureThread = async (): Promise<string> => {
+		if (draftThread.current) return draftThread.current;
+		if (creatingThread.current) return creatingThread.current;
+		// A list refetch must not auto-open this empty draft while its composer still holds unsent files.
+		setSelected("new");
 		const input = {
 			...(document.kind === "letter" ? { coverLetterId: document.id } : { resumeId: document.id }),
 			...(provider ? { aiProviderId: provider.id } : {}),
 		};
+		const creating = client.agent.threads.start(input).then((created) => {
+			if (creatingThread.current === creating) draftThread.current = created.id;
+			return created.id;
+		});
+		creatingThread.current = creating;
 		try {
-			const created = await client.agent.threads.start(input);
+			return await creating;
+		} finally {
+			if (creatingThread.current === creating) creatingThread.current = null;
+		}
+	};
+
+	const start = async (text: string, attachments: ChatAttachment[] = []) => {
+		if (starting) return;
+		setStarting(true);
+		try {
+			const id = await ensureThread();
 			setPrompt(text);
-			setSelected(created.id);
+			setPromptAttachments(attachments);
+			setSelected(id);
+			draftThread.current = null;
 			useEditorStore.getState().setAssistantSuggestions(null);
 			setView("thread");
 			void queryClient.invalidateQueries({ queryKey: orpc.agent.threads.list.key() });
@@ -104,9 +129,11 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	});
 
 	const chooseProvider = async (id: string) => {
-		if (!threadId) return setProviderId(id);
+		if (!threadId) setProviderId(id);
+		const targetThreadId = threadId ?? draftThread.current;
+		if (!targetThreadId) return;
 		try {
-			await client.agent.threads.update({ id: threadId, aiProviderId: id });
+			await client.agent.threads.update({ id: targetThreadId, aiProviderId: id });
 			await queryClient.invalidateQueries({ queryKey: orpc.agent.threads.list.key() });
 		} catch (error) {
 			toast.add({ type: "error", description: getOrpcErrorMessage(error, { fallback: t`Couldn't switch models.` }) });
@@ -140,6 +167,11 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 					label={t`New conversation`}
 					className="text-ink-2"
 					onClick={() => {
+						draftThread.current = null;
+						creatingThread.current = null;
+						setDraftKey((key) => key + 1);
+						setContext({ document: true, posting: true });
+						setPromptAttachments([]);
 						setSelected("new");
 						setView("thread");
 					}}
@@ -192,21 +224,28 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 					document={document}
 					providerLabel={providerLabel}
 					prompt={selected === threadId ? prompt : null}
-					onPromptSent={() => setPrompt(null)}
+					promptAttachments={promptAttachments}
+					initialContext={{ ...context, ...(document.posting ? { applicationId: document.posting.id } : {}) }}
+					onPromptSent={() => {
+						setPrompt(null);
+						setPromptAttachments([]);
+					}}
 					onSwitchModel={() => setModelMenuOpen(true)}
 				/>
 			) : (
 				<>
 					<EmptyState document={document} disabled={document.locked || starting} onPick={(text) => void start(text)} />
 					<Composer
+						key={draftKey}
 						document={document}
-						context={{ document: true, posting: true }}
-						onContextChange={() => undefined}
+						context={context}
+						onContextChange={setContext}
 						providerLabel={providerLabel}
 						streaming={starting}
 						disabled={document.locked}
 						threadId={null}
-						onSend={(text) => void start(text)}
+						ensureThread={ensureThread}
+						onSend={(text, attachments) => void start(text, attachments)}
 						onStop={() => undefined}
 					/>
 				</>
@@ -220,6 +259,8 @@ type ConversationLoaderProps = {
 	document: AssistantDocument;
 	providerLabel: string;
 	prompt: string | null;
+	promptAttachments: ChatAttachment[];
+	initialContext: MessageContext;
 	onPromptSent: () => void;
 	onSwitchModel: () => void;
 };

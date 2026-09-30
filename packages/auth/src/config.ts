@@ -20,7 +20,7 @@ import * as schema from "@reactive-resume/db/schema";
 import { ResetPasswordEmail, VerifyEmail, VerifyEmailChange } from "@reactive-resume/email/templates/auth";
 import { sendEmail } from "@reactive-resume/email/transport";
 import { env } from "@reactive-resume/env/server";
-import { rateLimitConfig, TRUSTED_IP_HEADERS } from "@reactive-resume/utils/rate-limit";
+import { rateLimitConfig } from "@reactive-resume/utils/rate-limit";
 import { generateId, toUsername } from "@reactive-resume/utils/string";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
 import { createGithubProfileMapper, createProfileMapper } from "./oauth-profile";
@@ -78,7 +78,7 @@ export async function verifyOAuthToken(token: string): Promise<JWTPayload> {
 	});
 }
 
-function isCustomOAuthProviderEnabled() {
+export function isCustomOAuthProviderEnabled() {
 	const hasDiscovery = Boolean(env.OAUTH_DISCOVERY_URL);
 	const hasManual =
 		Boolean(env.OAUTH_AUTHORIZATION_URL) && Boolean(env.OAUTH_TOKEN_URL) && Boolean(env.OAUTH_USER_INFO_URL);
@@ -201,7 +201,7 @@ const getAuthConfig = () => {
 		advanced: {
 			database: { generateId },
 			useSecureCookies: authBaseUrl.startsWith("https://"),
-			ipAddress: { ipAddressHeaders: TRUSTED_IP_HEADERS },
+			ipAddress: { ipAddressHeaders: ["X-Real-IP"] },
 		},
 
 		emailAndPassword: {

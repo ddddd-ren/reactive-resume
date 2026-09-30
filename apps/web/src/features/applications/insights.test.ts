@@ -1,6 +1,6 @@
 import type { StageCount } from "./insights";
 import { describe, expect, it } from "vitest";
-import { computeOutcomes } from "./insights";
+import { computeInsights, computeOutcomes, computeTimeline } from "./insights";
 
 describe("computeOutcomes", () => {
 	const at = (day: number) => new Date(Date.UTC(2026, 8, day, 12));
@@ -56,4 +56,25 @@ describe("computeOutcomes", () => {
 		expect(outcomes.heardBack).toBe(2);
 		expect(outcomes.medianDaysToReply).toBe(7); // 4 and 10 days
 	});
+
+	it("counts sent applications in weekly activity after closing, excluding never-sent jobs", () => {
+		const now = new Date();
+		const current = applications.map((application) => ({
+			...application,
+			appliedAt: now,
+			activity: application.activity.map((entry) => ({ ...entry, at: now })),
+		}));
+		expect(computeTimeline(current, 1)[0]?.count).toBe(3);
+	});
+});
+
+it("labels the pipeline total and percentages using active applications", () => {
+	const insights = computeInsights([
+		{ status: "saved", count: 1 },
+		{ status: "applied", count: 2 },
+		{ status: "closed", count: 4 },
+	]);
+	expect(insights.total).toBe(3);
+	expect(insights.closed).toBe(4);
+	expect(insights.funnel[0]?.pct).toBe(100);
 });
