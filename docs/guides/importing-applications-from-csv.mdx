@@ -1,128 +1,117 @@
 ---
 title: "Importing applications from CSV"
-description: "Move existing job applications into the Reactive Resume Application Tracker by uploading a CSV file or pasting spreadsheet rows with headers."
+description: "Move job applications from a spreadsheet into Reactive Resume with CSV import, check how columns are matched, and export your applications back to CSV."
 ---
 
-Use CSV import when you already track applications in a spreadsheet and want to move them into Reactive Resume.
-
-## Open CSV import
-
-<Steps>
-  <Step title="Go to Applications">
-    In the dashboard sidebar, click **Applications**.
-  </Step>
-
-  <Step title="Click Import CSV">
-    If you have no applications yet, click **Import from CSV** in the empty state. Otherwise, click **Import CSV** in the
-    page header.
-  </Step>
-</Steps>
-
-<Frame caption="CSV import sheet with a recognized preview">
-  <img
-    src="/images/guides/importing-applications-from-csv/screenshot-1.webp"
-    alt="CSV import sheet showing upload, pasted CSV rows, recognized fields, and one application ready to import"
-  />
-</Frame>
-
-## Prepare your CSV
-
-The importer uses the first row as headers. Each imported row must include a company and role.
-
-Supported headers include:
-
-| Field | Recognized headers |
-| --- | --- |
-| **Company** | `Company`, `Employer`, `Organization` |
-| **Role** | `Role`, `Title`, `Position`, `Job Title` |
-| **Stage** | `Stage`, `Status` |
-| **Location** | `Location` |
-| **Salary** | `Salary`, `Salary Range`, `Compensation` |
-| **Source** | `Source` |
-| **Notes** | `Notes`, `Note` |
-| **Job posting URL** | `URL`, `Link`, `Job URL`, `Job Posting` |
-| **Tags** | `Tags` |
-| **Contact name** | `Contact Name` |
-| **Contact role** | `Contact Role` |
-| **Contact label** | `Contact Type` |
-| **Contact email** | `Contact Email` |
-| **Contact phone** | `Contact Phone` |
-
-Tags can be separated with commas, semicolons, or vertical bars.
-
-Each row can carry one contact. A contact needs a `Contact Name`, and `Contact Email` must be a valid email address — if
-either is wrong, the contact is dropped and the application still imports.
-
-```csv
-Company,Role,Stage,Location,Salary,Source,Tags,Contact Name,Contact Email,Contact Phone
-Stripe,Frontend Engineer,applied,Remote,$180k,LinkedIn,remote;react,Jane Doe,jane@example.com,+1 555 0100
-```
+If you've been tracking your job search in a spreadsheet, you can bring it into **Applications** in one go. Save the sheet as CSV, paste or upload it, check how the columns were matched, and import. You can also export your applications to CSV at any time.
 
 ## Import applications
 
 <Steps>
-  <Step title="Upload or paste rows">
-    Upload a `.csv` file, or paste CSV rows directly into the **CSV data** field.
+  <Step title="Open Import from CSV">
+    In **Applications**, select the import/export button (the two arrows next to **Add application**), then **Import from CSV…**. If you have no applications yet, select **Import from CSV** on the empty page.
   </Step>
-
-  <Step title="Review the preview">
-    Reactive Resume shows how many rows are ready to import, which columns it recognized, and how many rows were skipped.
+  <Step title="Add your rows">
+    Select **Upload .csv** to choose a file, or paste rows into **CSV data**. The first row must be the column headings. Select **Use sample** to see an example.
   </Step>
-
-  <Step title="Fix skipped rows">
-    Rows without a company or role are skipped. Add the missing values before importing if you want those rows included.
-    The preview also counts skipped contacts — those rows still import, just without the contact.
+  <Step title="Check the column matches">
+    Under **Columns**, each heading from your file points to the field it goes into. Reactive Resume matches common headings automatically. Change any match with its menu, or choose **Leave out** to skip a column.
   </Step>
-
+  <Step title="Review the summary">
+    The summary says how many applications are ready to import, and how many rows or contacts will be skipped.
+  </Step>
   <Step title="Import">
-    Click **Import**. Imported applications are added to your Application Tracker.
+    Select **Import *n* applications**. They're added to your Applications right away.
   </Step>
 </Steps>
 
-## Use valid stages
+<Frame caption="Columns matched automatically, with an unknown column left out">
+  <img src="/images/guides/importing-applications-from-csv/import-from-csv-column-matching.webp" alt="Import from CSV sheet with pasted rows, and a Columns list matching Company to Company, Position to Role, Status to Stage, Applied Date to Stage date, Location, Source, Tags, Contact Name and Contact Email to their fields, and Referrer to Leave out" />
+</Frame>
 
-The **Stage** column is optional. If you include it, use one of these values:
+<Frame caption="The summary before importing">
+  <img src="/images/guides/importing-applications-from-csv/import-from-csv-ready-summary.webp" alt="Summary reading 2 applications ready to import and 1 row has no company or role and will be skipped, with a Download them link and an Import 2 applications button" />
+</Frame>
 
-- `saved`
-- `applied`
-- `screening`
-- `interview`
-- `offer`
-- `rejected`
+## Prepare your spreadsheet
 
-If a row has an unrecognized stage, the importer ignores that stage value and uses the default application stage.
+Each row becomes one application. Only **Company** and **Role** are required; rows missing either are skipped. Select **Download them** in the summary to get the skipped rows as a CSV file, fix them, and import them again.
+
+These are the fields you can match columns to, with the headings that match automatically (capitals and extra spaces don't matter):
+
+| Field | Headings matched automatically | Notes |
+| --- | --- | --- |
+| **Company** | Company, Employer, Organization | Required. |
+| **Role** | Role, Title, Position, Job Title | Required. |
+| **Stage** | Stage, Status | One of `saved`, `applied`, `screening`, `interview`, `offer` or `closed`. `rejected` is read as `closed`. Other values are ignored, and rows without a stage import as **Saved**. |
+| **Stage date** | Applied Date, Stage Date, Stage Entered At | The date the application entered its stage, as `YYYY-MM-DD`. Other formats are ignored and today's date is used. |
+| **Location** | Location | |
+| **Salary** | Salary, Salary Range, Compensation | |
+| **Source** | Source | Shows in the Insights sources chart. |
+| **Link** | URL, Link, Job URL, Job Posting | The job posting's address. |
+| **Notes** | Notes, Note | |
+| **Tags** | Tags | Separate tags with commas, semicolons or vertical bars, such as `remote;unity`. |
+| **Contact name**, **Contact role**, **Contact label**, **Contact email**, **Contact phone** | Contact Name, Contact Role, Contact Type, Contact Email, Contact Phone | One contact per row. |
+| **Archived (closes it)** | Archived | For files exported from older versions: `true` imports the application as closed. |
+
+A contact needs a name, and its email must be a valid address. If not, the summary counts it as skipped and the application imports without it.
+
+Here's a small example:
+
+```csv
+Company,Role,Stage,Stage Date,Location,Source,Tags,Contact Name,Contact Email
+Orchard Lane Games,Gameplay Programmer,applied,2026-09-02,Remote,LinkedIn,remote;unity,Nadia Brooks,nadia@orchardlane.example
+Silverpine Interactive,AI Programmer,screening,2026-08-28,Stockholm,Referral,ai,,
+```
 
 ## Import large files
 
-Reactive Resume imports up to 500 applications at a time. If your CSV has more than 500 valid rows, split it into smaller files and import each file separately.
+Up to 500 applications import at a time. If your file has more, the summary says how many were left out. Split the file and import the rest separately.
 
 <Tip>
-  Import first, then use the table view to select multiple applications and apply tags, move stages, archive rows, or delete rows in bulk.
+  After importing, use the List view's checkboxes to tag, move or close many applications at once. See [Tracking job applications](/guides/tracking-job-applications#acting-on-several-applications-at-once).
 </Tip>
 
-<Tip>
-  MCP clients can also import application rows directly with `import_applications`. See [Managing applications with MCP](/guides/managing-applications-with-mcp) for agent prompt examples.
-</Tip>
+## Export applications to CSV
+
+<Steps>
+  <Step title="Open Export to CSV">
+    Select the import/export button, then **Export to CSV…**.
+  </Step>
+  <Step title="Choose what to export">
+    Under **Applications to export**, choose **Current filters** (the applications matching your current search, closed ones included) or **All applications (including closed)**.
+  </Step>
+  <Step title="Limit by date, if you like">
+    Set **Application date from** and **Application date to** to export only applications from that period. Leave them empty to include every date.
+  </Step>
+  <Step title="Download">
+    Check the count of applications to export, then select **Download CSV**.
+  </Step>
+</Steps>
+
+<Frame caption="Export options">
+  <img src="/images/guides/importing-applications-from-csv/export-applications-sheet.webp" alt="Export applications sheet with Applications to export set to Current filters, empty Application date from and Application date to fields, and 11 applications to export" />
+</Frame>
+
+The file is named `applications-YYYY-MM-DD.csv` and opens in any spreadsheet app. It has these columns: Company, Role, Stage, Stage Date, Application Date, Location, Salary, Source, URL, Tags, Contacts, Notes, Closed Reason, Stage History, Timeline, Created At and Updated At.
+
+You can import an exported file again; most columns match automatically. To download everything in your account, including documents, see [Exporting your data](/guides/exporting-your-data).
 
 ## Troubleshooting
 
-### Some rows were skipped
+<AccordionGroup>
+  <Accordion title="Some rows were skipped">
+    Every row needs a company and a role. Check that those columns are matched under **Columns**, then fill in the missing values. **Download them** gives you the skipped rows.
+  </Accordion>
+  <Accordion title="A column wasn't recognized">
+    Pick the right field from the column's menu under **Columns**, or rename the heading in your file to one from the table above.
+  </Accordion>
+  <Accordion title="A stage or date didn't import">
+    Use one of the stage values listed above, and write dates as `YYYY-MM-DD`, for example `2026-09-02`.
+  </Accordion>
+  <Accordion title="Tags didn't split correctly">
+    Separate tags with commas, semicolons or vertical bars. If you use commas, put the whole cell in double quotes, such as `"remote,unity"`, so the commas aren't read as new columns.
+  </Accordion>
+</AccordionGroup>
 
-Make sure every row has both a company and a role. These fields are required.
-
-### A contact did not import
-
-The contact needs a `Contact Name`, and `Contact Email` must be a valid address. The application imports either way — fix
-the contact columns and import that row again if you want the contact.
-
-### A column was not recognized
-
-Rename the header to one of the recognized names in the table above, then import again.
-
-### Tags did not split correctly
-
-Separate tags with commas, semicolons, or vertical bars, such as `remote;react` or `frontend|senior`.
-
-### A stage did not import
-
-Use lowercase stage values such as `applied` or `interview`. Custom stages are not supported.
+MCP clients can import applications too. See [Managing applications with MCP](/guides/managing-applications-with-mcp).

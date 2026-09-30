@@ -1,88 +1,76 @@
 ---
-title: "AI Agent tools"
-description: "Reference for the tools the Reactive Resume AI Agent can call to read, edit, patch, and preview resume drafts inside an isolated workspace."
+title: "Assistant tools"
+description: "Reference for the tools the Reactive Resume assistant can call: reading your document and attachments, proposing edits, asking questions and searching the web."
 ---
 
-The AI Agent workspace has a fixed set of tools it can use while it chats with you. You do not call these tools directly. The agent picks them when your request needs resume data, supported provider web context, attachments, questions, or a resume patch.
+The assistant works through a small, fixed set of tools. You never call them yourself: the assistant picks one when your request needs it, and the conversation shows a short status line for each step. This page lists every tool, what it does, and when it's available.
 
-## Tool activity in chat
-
-Tool activity appears inside the conversation. Some activity is collapsed by default so the chat stays readable.
-
-Applied resume patches are shown as a small inline **Patch applied** item. Open it to inspect the raw JSON payload.
-
-<Frame caption="Patch details and tool activity in the AI Agent chat">
-  <img
-    src="/images/guides/ai-agent-tools/screenshot-1.webp"
-    alt="AI Agent chat showing an applied patch with raw JSON details"
-  />
+<Frame caption="Tool steps appear as short status lines in the conversation">
+  <img src="/images/guides/ai-agent-tools/tool-status-in-conversation.webp" alt="A request to tighten the summary, followed by the status line Read the resume with a checkmark and the start of a card titled 1 of 1 applied" />
 </Frame>
 
-## Available tools
+## Tools
 
-| Tool | What it does | Example request |
-| --- | --- | --- |
-| `read_resume` | Reads the current AI draft and gives the agent the resume data it can safely edit. | "What are the weakest parts of this resume?" |
-| `web_search` | Uses the selected provider's native web search when that provider/model supports it. | "Research this company and adjust the summary for its product area." |
-| `read_attachment` | Reads extracted text from attached plain text, Markdown, or JSON files. Other supported attachments, such as images or PDFs, are passed to the model when the selected provider can use them. | "Use the attached notes to update the keywords." |
-| `ask_user_question` | Shows a question card with answer choices when the agent needs your decision. | "Ask me before changing the career narrative." |
-| `apply_resume_patch` | Applies a JSON Patch to the AI draft and stores a rollback snapshot. | "Change the visible name to Amruth Pillai." |
+| Tool | What it does | Shown in the conversation as | Available when |
+| --- | --- | --- | --- |
+| `read_resume` | Reads the open resume: its full text, plus every passage an edit can target (each paragraph of the summary, each bullet or paragraph of an entry's description), each with an ID. Hidden sections and entries are left out. | **Read the resume** | You're in a resume and the document chip is included in your message. |
+| `read_letter` | Reads the open cover letter's body, sender and recipient, plus the text of the resume it's linked to, if any. The greeting and sign-off aren't editable through the assistant. | **Read the letter** | You're in a letter and the document chip is included in your message. |
+| `propose_edits` | Proposes a set of up to 12 edits with a short title. Each edit either rewrites one passage or adds a new passage after it, and comes with a one-line reason. Nothing changes until you accept. | **Preparing edits…**, then the proposed edits card | Same as the read tool. |
+| `ask_user_question` | Asks you a short question, with up to four suggested answers, before the assistant continues. | A blue question card | Always. |
+| `read_attachment` | Reads a file attached to a message. Text, Markdown and JSON files return their content (up to 40,000 characters). | **Read the attachment** | Always; useful only when the message has attachments. |
+| `web_search` | Searches the web through the provider's own search tool and returns sources. | **Searched the web**, with **Sources** under the reply | Only with an OpenAI provider on its default base URL and a supported model. |
 
-## Resume patches
+## How edits are placed
 
-Resume patches are rooted at the resume data object. For example, the visible resume name is patched at `/basics/name`.
+Every edit targets one passage by the ID the read tool returned. When you accept, the new text replaces that passage (or is added after it) in your document, as a single step you can undo.
 
-When a patch is applied:
+If you or another change edits a passage after the assistant read it, the edit can no longer be placed. The card then says, for example, "1 edit couldn't be placed: its text changed. Ask again to redo it." Edits that were placed but whose passage changed afterwards show **Out of date: the text has changed since.**
 
-- the AI draft updates immediately;
-- the raw JSON Patch is available from the **Patch applied** details;
-- a snapshot is stored so the draft can be restored to the state before that patch;
-- the resume preview refreshes to show the updated draft.
+The assistant is instructed to rewrite only what your document already says: it doesn't add employers, titles, dates, numbers, skills or achievements that aren't in the document or the conversation. When a job posting asks for something your document doesn't mention, it uses `ask_user_question` first, and only drafts it from your answer.
 
-Restoring an older patch rolls back that patch and any patches applied after it. If the resume changed after the latest agent patch, restore or apply can fail with a version conflict. In that case, ask the agent to retry from the latest draft.
+## What the assistant also sees
 
-## Web access
+Besides what the tools return, each message can include:
 
-Live web research is handled only by the selected AI provider's native web search tool. When the provider/model supports it, the agent can use `web_search` for current company, industry, role, or URL-based context.
+- **The job posting**: the role, the company, the job description (or its requirements list) and your notes from the linked application. A resume uses the application it was made for, or else the most recently updated application it's linked to. A letter uses only the application it was made for. Removing the posting chip leaves it out.
+- **Attachments**: images, PDFs and MP3 or WAV audio are passed to the model directly, when the provider supports them. Other types are only listed by name.
+- **The conversation so far**: earlier messages, tool results and your answers.
 
-Provider-native `web_search` is not JSearch and does not restore the removed structured job-listings experience. It supplies web context to the agent; it does not provide a structured job-results API or guarantee that a provider/model can search.
+## Web search support
 
-When the provider/model does not support native web search, the agent still works for normal resume editing. If you ask it to browse, search the web, fetch a URL, or use current online context, it should tell you that live web research is unavailable with the selected provider/model and ask you to paste or attach the relevant content instead.
+`web_search` uses OpenAI's native search, so it's only offered when all of these are true:
 
-For a controlled workflow that works without live research, follow [Tailor a resume to a supplied job description](/guides/using-ai-agent#tailor-a-resume-to-a-supplied-job-description). Configure, test, and enable providers as described in [Using artificial intelligence](/guides/using-ai).
+- The provider is **OpenAI** (not OpenAI-compatible or a gateway).
+- The base URL is the default, `https://api.openai.com/v1`.
+- The model is one of `gpt-5.5-pro`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-pro`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`, `gpt-4.1`, `gpt-4.1-mini` or `o4-mini`, or a dated snapshot of one of them (such as `gpt-4.1-2025-04-14`).
 
-For self-hosted deployments:
+Otherwise, the assistant tells you it can't browse with this model and asks you to paste what it needs, such as the text of a job page.
 
-- app-owned URL crawling is not available;
-- web access depends on the selected provider/model supporting native web search;
-- unsafe/private AI provider base URLs require `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`, which should only be used on trusted self-hosted deployments.
+## Limits
 
-## Attachments
+| Limit | Value |
+| --- | --- |
+| Edits per proposal set | 12 |
+| Tool steps per reply | 30 |
+| Length of one reply | About 4 minutes, then "Time limit reached. Your progress is saved. Ask me to continue." |
+| Attachments per message | 10 |
+| Size per attachment | 25 MB |
+| Attachments per conversation | 100 MB in total |
+| Text read from one attachment | 40,000 characters |
 
-Attach files from the chat composer when the agent needs extra context, such as:
+## Earlier conversations
 
-- a job description PDF;
-- a portfolio brief;
-- a screenshot;
-- a plain text note with constraints.
+Before v6, the AI agent changed resumes directly with an `apply_resume_patch` tool. Conversations from that time still open. Those steps show as **Changed the resume directly (an earlier conversation)**, and the assistant no longer has that tool.
 
-Self-hosted deployments need S3-compatible storage for private agent attachments. Local filesystem storage rejects private objects.
+The assistant's tools are separate from the MCP server, which lets outside AI clients such as Claude or Cursor work with your resumes. See [Using the MCP server](/guides/using-the-mcp-server).
 
-## Good prompts for tool use
+## Related guides
 
-Use direct prompts that tell the agent what context to use and how cautious to be:
-
-- "Research this role, identify the most important keywords, and apply a conservative patch."
-- "Read the attached job description and ask me before changing anything outside the summary."
-- "Compare my current projects against this company page and suggest only truthful wording."
-- "Apply a patch for the visible resume name, then show me what changed."
-
-## When tools are unavailable
-
-Tool use can be limited by the selected provider, deployment configuration, or thread state.
-
-- A deleted provider makes the thread read-only; a disabled or untested provider blocks new agent runs until it is enabled and tested again.
-- A deleted working resume makes the thread read-only.
-- Archived threads cannot receive new messages.
-- Live web research is unavailable when the selected provider/model does not support native web search.
-- Attachments may fail if private object storage is not configured.
+<CardGroup cols={2}>
+  <Card title="Using the assistant" href="/guides/using-the-assistant">
+    Ask for changes and review proposed edits.
+  </Card>
+  <Card title="Connecting an AI provider" href="/guides/using-ai">
+    Choose the provider and model the assistant uses.
+  </Card>
+</CardGroup>

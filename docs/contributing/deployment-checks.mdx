@@ -1,51 +1,70 @@
 ---
 title: "Deployment checks"
-description: "How CI verifies the Vercel build artifact, and how to run the deployment smoke test against Vercel or Docker."
+description: "How CI verifies the Vercel build artifact on every pull request, and how to run the deployment smoke test against a Vercel or Docker installation."
 ---
 
-The **Vercel compatibility** workflow (`.github/workflows/vercel.yml`) has two jobs.
+Reactive Resume ships as a Docker image and as a Vercel project. The **Vercel compatibility** workflow (`.github/workflows/vercel.yml`) catches problems that only show up in a deployed build. It has two jobs: an offline artifact build that runs on every pull request, and a live smoke test you start by hand. You can run the same smoke test against your own installation.
 
 ## Artifact build
 
-Runs on every pull request and every push to `main`. It needs no Vercel account and no secrets, so fork pull requests run it safely.
+The `artifact` job runs on every pull request, every push to `main`, and every manual run. It needs no Vercel account and no secrets, so pull requests from forks run it safely.
 
 The job:
 
 1. Starts an isolated PostgreSQL service.
-2. Writes a local `.vercel/project.json` with the `services` framework and runs `vercel build --prod` offline, with placeholder Blob credentials. This also applies migrations to the isolated database.
+2. Writes a local `.vercel/project.json` with the `services` framework, then runs `vercel build --prod` offline with placeholder Blob credentials. The build applies migrations to the isolated database.
 3. Checks the `backend` service Function:
-   - runtime is `nodejs24.x`, `maxDuration` is `300`, and the handler is `apps/server/vercel.mjs`;
-   - a copy of the Function outside the checkout loads with `--no-experimental-require-module`, which matches the Vercel runtime, so a dependency the build left out fails the job;
-   - the copy rejects an unauthenticated staging request and serves the prerendered homepage.
+   - its runtime is `nodejs24.x`, `maxDuration` is `300`, and its handler is `apps/server/vercel.mjs`;
+   - a copy of the Function outside the checkout loads with `--no-experimental-require-module`, like the Vercel runtime does, so a dependency the build left out fails the job;
+   - the copy rejects an unauthenticated upload-staging request with `401` and serves the prerendered homepage with its JSON-LD metadata.
 
-If a new server dependency fails the loading check, add it and its own dependencies to `bundledInteropPackages` in `apps/server/tsdown.config.ts`. CommonJS dependencies need this: Vercel's service builder loads them through pnpm links that it leaves out of the Function.
+### When the loading check fails
+
+If a new server dependency breaks the loading check, add it and its own dependencies to `bundledInteropPackages` in `apps/server/tsdown.config.ts`. CommonJS dependencies need this, because Vercel's service builder leaves out the pnpm links they load through.
 
 ## Live smoke test
 
-Runs only when started manually (`workflow_dispatch`). It uses the `vercel-smoke` GitHub environment and runs `tooling/deployment/smoke.mjs` against `VERCEL_SMOKE_URL`.
+The `live-smoke` job runs only when you start the workflow manually (`workflow_dispatch`). It uses the `vercel-smoke` GitHub environment and runs `tooling/deployment/smoke.mjs` against the installation at `VERCEL_SMOKE_URL`.
 
 <Warning>
-  Point the smoke test only at a dedicated test installation. It creates an account, a public resume, and files, then deletes them.
+	Point the smoke test only at a dedicated test installation. It signs up a new account, publishes a resume, and uploads files, then deletes the account and everything in it.
 </Warning>
 
-The script checks health, public pages, signup, resume CRUD, public PDF rendering, a 10 MiB upload and download, and one-time use of staged requests.
+The script checks, in order:
 
-To also check a 25 MiB agent attachment, configure a deterministic OpenAI-compatible test provider that serves the model `smoke-model`:
+1. `/api/health` reports `healthy`, and `/`, `/auth/login`, `/robots.txt`, `/sitemap.xml`, and `/.well-known/oauth-protected-resource` respond. A missing asset returns `404`.
+2. An email sign-up creates a session.
+3. A resume created from sample data can be read back and made public, and its public page and server-rendered public PDF load.
+4. A 10 MiB file uploads, downloads intact, and is deleted. On Vercel the upload goes through a staged request, and the script checks that a staged request can't be replayed.
+5. Optionally, a 25 MiB assistant attachment uploads and is deleted (see below).
+6. The account is deleted, even if an earlier check failed.
+
+The installation must allow sign-ups and email sign-in, so `FLAG_DISABLE_SIGNUPS` and `FLAG_DISABLE_EMAIL_AUTH` must not be `true`.
+
+### Attachment check
+
+To include the 25 MiB attachment check, configure an OpenAI-compatible test provider that answers a connection test for the model `smoke-model`. No paid AI model is needed; a deterministic stub works.
 
 | Name | Kind | Value |
 | --- | --- | --- |
-| `VERCEL_SMOKE_URL` | Variable | Test installation origin |
-| `VERCEL_SMOKE_AI_BASE_URL` | Variable | Test provider base URL |
-| `VERCEL_SMOKE_AI_API_KEY` | Secret | Test provider API key |
+| `VERCEL_SMOKE_URL` | Variable | Origin of the test installation |
+| `VERCEL_SMOKE_AI_BASE_URL` | Variable | Base URL of the test provider |
+| `VERCEL_SMOKE_AI_API_KEY` | Secret | API key for the test provider |
 
-No paid AI model is needed.
+The installation needs `ENCRYPTION_SECRET` set to save the provider. A provider on a private or `http://` address also needs `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`, which is only safe on an isolated test installation.
 
-## Run the smoke test locally
+## Run the smoke test yourself
 
-Against a local Docker installation:
+The script needs only Node.js 24 and a checkout. Set `SMOKE_URL` to the installation's origin:
 
 ```bash
 SMOKE_URL=http://localhost:3000 node tooling/deployment/smoke.mjs
 ```
 
-Add `SMOKE_AI_BASE_URL` and `SMOKE_AI_API_KEY` to include the attachment check.
+Add `SMOKE_AI_BASE_URL` and `SMOKE_AI_API_KEY` to include the attachment check. The script detects the platform on its own: on Docker, the staging endpoint returns `404` and uploads go directly to the server.
+
+## Related pages
+
+- [Development setup](/contributing/development): run the app and the test suites locally.
+- [Deploying to Vercel](/self-hosting/vercel): set up your own Vercel installation.
+- [Self-hosting with Docker](/self-hosting/docker): run the production image.

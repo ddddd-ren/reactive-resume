@@ -1,161 +1,113 @@
 ---
 title: "Tracking job applications"
-description: "Use the Application Tracker to record jobs, link the resume you sent, manage follow-ups, and move applications through your hiring pipeline."
+description: "Keep every job you apply for in one place: see what needs you next, move applications through stages, and switch between List, Board, Insights and Calendar."
 ---
 
-The **Application Tracker** keeps your job search tied to the resumes you build in Reactive Resume. Each application can store the company, role, stage, job posting, resume, cover letter, contacts, notes, and follow-up details.
+**Applications** is where you keep track of the jobs you're going for. Each application holds the role, the company, the saved job posting, the resume and letter you sent, your contacts, notes and a dated history. It also works out what each application needs next, such as an interview coming up or a follow-up that's due.
 
-## Open the Application Tracker
+To open it, select **Applications** in the sidebar (on a phone, it's in the bottom tab bar).
 
-<Steps>
-  <Step title="Sign in">
-    Open Reactive Resume and sign in to your account.
-  </Step>
-
-  <Step title="Go to Applications">
-    In the dashboard sidebar, click **Applications**.
-  </Step>
-</Steps>
-
-<Frame caption="Application Tracker board view">
-  <img
-    src="/images/guides/tracking-job-applications/screenshot-1.webp"
-    alt="Application Tracker showing search, tag filters, board columns, and application cards grouped by stage"
-  />
+<Frame caption="The Applications page in the List view, with the follow-up reminder at the top">
+  <img src="/images/guides/tracking-job-applications/applications-list-view.webp" alt="Applications page showing a follow-up reminder banner, the List, Board, Insights and Calendar tabs, a search field, Show closed, and applications grouped under Interview, Offer, Screening, Applied and Saved" />
 </Frame>
 
-<Tip>
-  Press `Cmd/Ctrl+K` from anywhere in the app to open the command palette. Select **Applications** to search your pipeline by company or role, or run **New Application** to jump straight to the add form.
-</Tip>
+## How stages work
 
-## Add an application
-
-<Steps>
-  <Step title="Click Add application">
-    If this is your first application, use the button in the empty state. Otherwise, use **Add application** in the page header.
-  </Step>
-
-  <Step title="Fill in the role details">
-    Add the **Company** and **Role / title**. These two fields are required. You can also add the location, salary range,
-    source, tags, notes, and follow-up details.
-  </Step>
-
-  <Step title="Choose a stage">
-    Pick the current stage of the opportunity.
-  </Step>
-
-  <Step title="Link or upload the resume you sent">
-    Pick a Reactive Resume in the **Resume** field to keep a live link to it. You can also upload the exact resume PDF you
-    sent.
-  </Step>
-
-  <Step title="Attach a cover letter">
-    If you sent a cover letter, attach the PDF in the **Cover letter** field.
-  </Step>
-
-  <Step title="Save">
-    Click **Add to pipeline**.
-  </Step>
-</Steps>
-
-<Frame caption="Add application form">
-  <img
-    src="/images/guides/tracking-job-applications/screenshot-2.webp"
-    alt="Add application form with job posting auto-fill, company, role, stage, resume, cover letter, tags, and follow-up fields"
-  />
-</Frame>
-
-<Tip>
-  Linking a Reactive Resume enables AI match scoring and resume tailoring for that application.
-</Tip>
-
-## Use AI to fill a job posting
-
-If you have an AI provider configured, paste a job posting URL at the top of the add form and click **Auto-fill**. Reactive Resume reads the posting and fills in what it can, such as company, role, location, salary, and job description.
-
-If auto-fill fails or the posting is private, paste the job description manually.
-
-For AI setup, see [Using artificial intelligence](/guides/using-ai).
-
-## Understand application stages
-
-Applications move through a fixed set of stages:
+Every application sits in one stage. The first five stages form a pipeline you move through in order:
 
 | Stage | Use it when |
 | --- | --- |
-| **Saved** | You found a role but have not applied yet. |
-| **Applied** | You submitted the application. |
-| **Screening** | A recruiter, hiring manager, or automated process is reviewing you. |
-| **Interview** | You are in an interview process. |
+| **Saved** | You found the job but haven't applied yet. |
+| **Applied** | You sent your application. |
+| **Screening** | A recruiter or hiring manager got back to you, or you have a first call. |
+| **Interview** | You're in the interview process. |
 | **Offer** | You received an offer. |
-| **Rejected** | The company declined or the opportunity ended. |
+| **Closed** | The application ended, whatever the outcome. |
 
-You can move applications by dragging cards on the board, using the action menu, using bulk actions in the table, or opening an application and clicking **Move to**.
+You can close an application from any stage. Closing asks for a reason (**Not selected**, **I withdrew**, **Accepted another offer** or **No response**), which Insights uses later. Closed applications are hidden until you turn on **Show closed**. See [Managing an application](/guides/managing-an-application#closing-an-application).
 
-## Choose a view
+<Note>
+  When an application with a linked resume or letter reaches **Applied** or a later stage, Reactive Resume saves a copy of each as a "Sent to *company*" version. You can always open exactly what you sent, even after you keep editing the document.
+</Note>
 
-The Application Tracker has three views:
+## Choosing a view
 
-| View | Best for |
-| --- | --- |
-| **Board** | Moving applications through stages visually. |
-| **Table** | Reviewing many applications, selecting rows, and making bulk updates. |
-| **Insights** | Understanding your pipeline, response rate, interviews, offers, sources, and application velocity. |
+Use the tabs above the list to switch views. Your choice is kept in the page address, so a bookmark opens the same view.
 
-Use search, tag filters, sorting, and the archived toggle to narrow the list.
+<Tabs>
+  <Tab title="List">
+    The default view. Applications are grouped by stage in the order that usually needs you first: **Interview**, **Offer**, **Screening**, **Applied**, **Saved**, then **Closed** when shown.
 
-<Frame caption="Application Tracker insights view">
-  <img
-    src="/images/guides/tracking-job-applications/screenshot-4.webp"
-    alt="Application Tracker insights view showing pipeline metrics, a funnel chart, applications over time, and source counts"
-  />
+    - Select a group heading to collapse or expand it.
+    - Select the **Role**, **Next step** or **Updated** column heading to sort within each group. Select it again to reverse the order.
+    - The **Next step** column shows the next interview, the follow-up you set, or how long you've been waiting. It turns amber when something is overdue or you've had no reply for 10 days or more.
+    - The **Sent** column shows an icon for a linked resume and a linked letter. It says **None** in amber when an application was sent without a linked document.
+    - Select a row to open its details.
+  </Tab>
+  <Tab title="Board">
+    One column per stage, with a card for each application. Drag a card to another column to move it to that stage. Each card also has a **⋯** menu with **Move to…**, **Close…** and **Delete…**, which is handy if you prefer the keyboard. When **Show closed** is on, a **Closed** column appears too. Dragging a card there closes it without a reason, so use **Close…** if you want Insights to know why.
+
+    <Frame caption="The Board view">
+      <img src="/images/guides/tracking-job-applications/applications-board-view.webp" alt="Board view with Saved, Applied, Screening and Interview columns, each card showing the role, company and next step" />
+    </Frame>
+
+    <Frame caption="A card's menu, with Move to… open">
+      <img src="/images/guides/tracking-job-applications/board-card-move-to-menu.webp" alt="Card menu with Move to…, Close… and Delete…, and the Move to submenu listing Saved, Applied, Screening, Interview and Offer" />
+    </Frame>
+  </Tab>
+  <Tab title="Insights">
+    Charts about how your applications are going: how far they get, how often and how quickly people reply, and where your applications come from. See [Viewing application insights](/guides/viewing-application-insights).
+  </Tab>
+  <Tab title="Calendar">
+    A month calendar of your interviews, with a list of upcoming ones beside it. See [Scheduling interviews](/guides/scheduling-interviews).
+  </Tab>
+</Tabs>
+
+On phones, the page shows **List** and **Insights** only, and list rows show the company and next step on a second line.
+
+## Finding applications
+
+Type in **Search role, company or contact** to filter the list as you type. Search looks at the role, company, location, contact names and tags. If nothing matches, select **Clear search**.
+
+**Show closed** adds closed applications to the List, Board and Calendar views. Insights always counts every application.
+
+## Acting on several applications at once
+
+In the List view on a computer or tablet, select the checkboxes next to the applications you want. A bar appears at the bottom of the page with:
+
+- **Move to…** to move them all to one stage
+- **Add tag** to add the same tag to each
+- **Close…** to close them all with one reason
+- **Delete…** to delete them permanently (you're asked to confirm)
+- **Clear** to deselect
+
+<Frame caption="Two applications selected, with the bulk actions bar">
+  <img src="/images/guides/tracking-job-applications/list-bulk-actions-bar.webp" alt="Two application rows checked in the List view and a dark bar reading 2 selected with Move to…, Add tag, Close…, Delete… and Clear" />
 </Frame>
 
-## Update an application
+## Follow-up reminders
 
-Open an application from the board or table to view its detail panel. From there you can:
+When an application has been at **Applied** for 10 days or more without a reply, a reminder appears above the list for the one that has waited longest, for example "Harborlight Labs: no reply for 17 days." Select **Open** to go to that application, or **×** to dismiss the reminder. Dismissing is remembered in this browser, so that application's reminder doesn't come back here.
 
-- edit the application details;
-- move it to the next stage;
-- open the original job posting;
-- attach or replace resume and cover letter PDFs;
-- add contacts;
-- add follow-up information;
-- add notes to the timeline;
-- archive, unarchive, mark rejected, or delete the application.
+## Opening Applications from anywhere
 
-Stage changes and notes appear in the timeline automatically.
+Press <kbd>⌘</kbd> <kbd>K</kbd> (<kbd>Ctrl</kbd> <kbd>K</kbd> on Windows and Linux) and choose **Applications** to go to the page or to search your applications by company or role. Run **New Application** to open the add dialog. See [Using the command bar](/guides/using-the-command-bar).
 
-<Frame caption="Application detail panel">
-  <img
-    src="/images/guides/tracking-job-applications/screenshot-3.webp"
-    alt="Application detail panel showing stage progress, linked resume, Application Copilot, contacts, and timeline activity"
-  />
-</Frame>
+## Related guides
 
-## Use Application Copilot
+<CardGroup cols={2}>
+  <Card title="Adding an application" href="/guides/adding-an-application">
+    Paste a job link or posting and start tracking it.
+  </Card>
+  <Card title="Managing an application" href="/guides/managing-an-application">
+    Stages, next steps, what you sent, notes, contacts and history.
+  </Card>
+  <Card title="Tailoring a resume for a job" href="/guides/tailoring-a-resume-for-a-job">
+    Make a copy of your resume for one application, or write a letter.
+  </Card>
+  <Card title="Importing applications from CSV" href="/guides/importing-applications-from-csv">
+    Bring in a spreadsheet, or export your applications.
+  </Card>
+</CardGroup>
 
-Application Copilot appears in the application detail panel. It can:
-
-- score how well the linked resume matches the job description;
-- create a tailored copy of the linked resume;
-- draft a cover letter;
-- draft a follow-up message.
-
-Match scoring and resume tailoring require both a linked Reactive Resume and a job description. Drafting also works from the application and resume context available in the tracker.
-
-<Warning>
-  Review AI-generated content before sending it. You are responsible for the final resume, cover letter, and follow-up message.
-</Warning>
-
-## Manage applications from an MCP client
-
-You can also manage the Application Tracker from an MCP-compatible AI client. This lets an agent list applications, create new records, move stages, add notes, attach the PDFs you sent, and run Application Copilot without opening the web app.
-
-For setup and prompt examples, see [Managing applications with MCP](/guides/managing-applications-with-mcp).
-
-## Archive or delete applications
-
-Archive an application to hide it from the active board without losing its history. Use the **Archived** toggle to see archived applications and unarchive them later.
-
-Delete an application only when you no longer need its record. Deleting an application removes its timeline and cannot be undone.
+You can also manage applications from an AI client over MCP. See [Managing applications with MCP](/guides/managing-applications-with-mcp).
